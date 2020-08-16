@@ -4,9 +4,6 @@
  */
 package j4np.physics;
 
-
-
-
 /**
  *
  * @author gagikgavalian

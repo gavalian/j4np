@@ -1,0 +1,9 @@
+import j4np.physics.*;
+
+LorentzVector vec = new LorentzVector();
+vec.setPxPyPzM(0.5,0.5,1.0,1.115);
+System.out.println(vec);
+
+System.out.println("done....");
+/exit
+
