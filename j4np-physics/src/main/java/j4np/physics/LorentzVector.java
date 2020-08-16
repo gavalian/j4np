@@ -27,6 +27,7 @@ public class LorentzVector {
 		this.energy = v.energy;
 	}
 
+
 	public LorentzVector(double px, double py, double pz, double en) {
 		vector = new Vector3();
 		vector.setXYZ(px, py, pz);
@@ -35,6 +36,11 @@ public class LorentzVector {
 
         public static LorentzVector from(LorentzVector vL){
            return new LorentzVector(vL.px(),vL.py(),vL.pz(),vL.e());
+        }
+
+        public static LorentzVector add(LorentzVector v1, LorentzVector v2){
+            LorentzVector vec = LorentzVector.from(v1);
+            return vec.add(v2);
         }
         
 	public void setPxPyPzE(double px, double py, double pz, double e) {

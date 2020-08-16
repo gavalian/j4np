@@ -5,6 +5,8 @@
  */
 package j4np.physics;
 
+import java.util.List;
+
 /**
  *
  * @author gavalian
@@ -45,15 +47,15 @@ public class DecayKinematics {
         return results;
     }
     
-    private static  LorentzVector[] decay(LorentzVector parent, double m1, double m2, 
+    private static  List<LorentzVector> decay(LorentzVector parent, double m1, double m2, 
            double m3, double theta_restframe, double phi_restframe){
         LorentzVector[] results = new LorentzVector[]{ new LorentzVector(), new LorentzVector(), new LorentzVector()};
         
-        return results;
+        return List.of(results[0],results[1]);
     }
     
 
-    public static LorentzVector[] decay(LorentzVector parent, double[] childrenMass, double theata, double phi, Frame frame){
+    public static List<LorentzVector> decay(LorentzVector parent, double[] childrenMass, double theata, double phi, Frame frame){
         LorentzVector[] results = DecayKinematics.decay(parent, 
                 childrenMass[0], childrenMass[1], theata, phi);
         if(frame == Frame.LAB){
@@ -61,7 +63,7 @@ public class DecayKinematics {
                     results[0].boost(vboost);
                     results[1].boost(vboost);
         }
-        return results;
+        return List.of(results[0],results[1]);
     }
     
 }
