@@ -42,8 +42,10 @@ public class DecayKinematics {
         v1.setMagThetaPhi(momentum, theta_restframe, phi_restframe);
         vz.sub(v1);
         v2.setMagThetaPhi(momentum, Math.PI-theta_restframe, 2.0*Math.PI-phi_restframe);
-        results[0].setVectM(v1, m1);
-        results[1].setVectM(vz, m2);
+        Vector3 v1f = DecayKinematics.vectorToFrame(parent.vect(), v1);
+        Vector3 vzf = DecayKinematics.vectorToFrame(parent.vect(), vz);
+        results[0].setVectM(v1f, m1);
+        results[1].setVectM(vzf, m2);
         return results;
     }
     

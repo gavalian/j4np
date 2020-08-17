@@ -3,12 +3,9 @@
 //--------------------------------------------------//
 import j4np.physics.*;
 
-
-LorentzVector vec = new LorentzVector();
-
 //----- set vector with momentum and mass
 //----- coincidentally this is Lambda
-vec.setPxPyPzM(0.5,0.5,1.0,1.115);
+LorentzVector vec = LorentzVector.withPxPyPzM(0.5,0.5,1.0,1.115);
 System.out.println(vec);
 
 //--- decay the Lambda particle to proton and pi-

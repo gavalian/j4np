@@ -1,0 +1,23 @@
+//--------------------------------------------------//
+// Example script for manipulating LorentzVectors   //
+//--------------------------------------------------//
+import j4np.physics.*;
+
+//---------> define a electron beam, with momentum 6.5 GeV
+//----------> anf target proton at rest.
+LorentzVector    beam = LorentzVector.withPxPyPzM(0.0,0.0,6.5,0.0005);
+LorentzVector  target = new LorentzVector(0.0,0.0,0.0,0.938);
+//--------- define a particle (Lambda) with momentum sqrt(0.7*0.7+2.4*2.4)
+LorentzVector  lambda = LorentzVector.withPxPyPzM(0.0,0.7,2.4,1.115);
+System.out.println("in reaction rest frame:\n" + lambda + "\n");
+Vector3 boost = beam.add(target).boostVector();
+lambda.boost(boost);
+System.out.println("in the lab frame:\n" + lambda + "\n");
+
+Vector3 unboost = Vector3.from(boost);
+unboost.invert();
+lambda.boost(unboost);
+System.out.println("un boosted to center-of-mass frame:\n" + lambda + "\n");
+
+System.out.println("done....");
+/exit

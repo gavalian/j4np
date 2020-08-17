@@ -38,6 +38,11 @@ public class LorentzVector {
            return new LorentzVector(vL.px(),vL.py(),vL.pz(),vL.e());
         }
 
+        public static LorentzVector withPxPyPzM(double px, double py, double pz, double m){
+            LorentzVector v = new LorentzVector();
+            v.setPxPyPzM(px, py, pz, m);
+            return v;
+        }
         public static LorentzVector add(LorentzVector v1, LorentzVector v2){
             LorentzVector vec = LorentzVector.from(v1);
             return vec.add(v2);
