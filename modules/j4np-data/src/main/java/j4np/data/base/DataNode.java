@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package j4np.ui.weblaf;
+package j4np.data.base;
 
 /**
  *
  * @author gavalian
  */
-public class StudioFrame {
+public interface DataNode extends DataBuffer {
+    
+    public int getType();
+    public int count();
+    public String format();
     
 }

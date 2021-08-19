@@ -15,50 +15,39 @@ import java.util.List;
  *
  * @author gavalian
  */
-public class DataStructure {
+public class DataStructure  extends BaseStructure {
     
-    private ByteBuffer                 structBuffer = null;
-    private DataStructureDescriptor  dataDescriptor = null;
-
-    /**
-     * Index of size element and the first element in the 
-     * buffer.
-     */
-    protected int DEFAULT_BUFFER_SIZE = 1024*4;
-    protected int FIRST_ELEMENT_INDEX = 8;
-    protected int          SIZE_INDEX = 0;
+    DataStructureDescriptor dataDescriptor = null;
+ 
     
     public DataStructure(){
-        structBuffer = ByteBuffer.wrap(new byte[DEFAULT_BUFFER_SIZE]);
-        structBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        super();
     }
         
     public DataStructure(String format){
         dataDescriptor = new DataStructureDescriptor();
         dataDescriptor.parse(format);
-        //int size = dataDescriptor.getStructureLength();
-        //size += (FIRST_ELEMENT_INDEX+16);
-        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-        structBuffer  = ByteBuffer.wrap(buffer);
-        structBuffer.order(ByteOrder.LITTLE_ENDIAN);        
+        require(dataDescriptor.getStructureLength()*200);
     }
     
     public DataStructure(String format, int rows){
         dataDescriptor = new DataStructureDescriptor();
         dataDescriptor.parse(format);
         int rowLength = dataDescriptor.getStructureLength();
-        int size = rowLength*rows + (FIRST_ELEMENT_INDEX+16);
-        byte[] buffer = new byte[size];
-        structBuffer  = ByteBuffer.wrap(buffer);
-        structBuffer.order(ByteOrder.LITTLE_ENDIAN);        
+        int size = rowLength*rows + 16;
+        require(size);
     }
     
     public final void setRows(int rows){
-        structBuffer.putInt(SIZE_INDEX, rows);
+        int rowLength = dataDescriptor.getStructureLength();
+        int size = rowLength*rows;
+        setSize(size);
     }
     
     public final int getRows(){
-        return structBuffer.getInt(SIZE_INDEX);
+        int size = getSize();
+        int rowLength = dataDescriptor.getStructureLength();
+        return size/rowLength;
     }
     
     public int getEntries(){ return this.dataDescriptor.getEntries();}    
@@ -71,22 +60,7 @@ public class DataStructure {
     public int getRowsSize(){
         return dataDescriptor.structureLength;
     }
-    
-    protected void require(int size){
-        if(structBuffer.capacity()<size){
-            byte[] buffer = new byte[size+64];
-            structBuffer  = ByteBuffer.wrap(buffer);
-            structBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        }
-    } 
-    
-    protected void requireRows(int nrows){
-        int sizeByRow = FIRST_ELEMENT_INDEX + 16 +
-                nrows*this.dataDescriptor.structureLength;
-        this.require(sizeByRow);
-        //int
-    }    
-    
+        
     private boolean testTypeForEntry(int entry, int type){
         if(dataDescriptor.getEntryType(entry)==type) return true;
         Log.warn("error : the type for entry " + entry + " is not " + type);
@@ -95,7 +69,7 @@ public class DataStructure {
     
     public DataStructure putInt(int row, int entry, int number){
         if(testTypeForEntry(entry,3)==true){
-            int offset = FIRST_ELEMENT_INDEX + 
+            int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
             structBuffer.putInt(offset, number);
@@ -105,7 +79,7 @@ public class DataStructure {
     
     public DataStructure putLong(int row, int entry, long number){
         if(testTypeForEntry(entry,3)==true){
-            int offset = FIRST_ELEMENT_INDEX + 
+            int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
             structBuffer.putLong(offset, number);
@@ -115,7 +89,7 @@ public class DataStructure {
     
     public DataStructure putByte(int row, int entry, byte number){
         if(testTypeForEntry(entry,1)==true){
-            int offset = FIRST_ELEMENT_INDEX + 
+            int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
             structBuffer.put(offset, number);
@@ -124,7 +98,7 @@ public class DataStructure {
     }
     public DataStructure putShort(int row, int entry, short number){
         if(testTypeForEntry(entry,2)==true){
-            int offset = FIRST_ELEMENT_INDEX + 
+            int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
             structBuffer.putShort(offset, number);
@@ -134,7 +108,7 @@ public class DataStructure {
     
     public DataStructure putFloat(int row, int entry, float number){
         if(testTypeForEntry(entry,4)==true){
-            int offset = FIRST_ELEMENT_INDEX + 
+            int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
             structBuffer.putFloat(offset, number);
@@ -144,7 +118,7 @@ public class DataStructure {
     
     public DataStructure putDouble(int row, int entry, double number){
         if(testTypeForEntry(entry,5)==true){
-            int offset = FIRST_ELEMENT_INDEX + 
+            int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
             structBuffer.putDouble(offset, number);
@@ -153,7 +127,7 @@ public class DataStructure {
     }
     
     public int getInt(int row, int entry){
-        int offset = FIRST_ELEMENT_INDEX + 
+        int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
         int type = dataDescriptor.getEntryType(entry);
@@ -167,7 +141,7 @@ public class DataStructure {
     }
     
     public double getDouble(int row, int entry){
-        int offset = FIRST_ELEMENT_INDEX +
+        int offset = getDataOffset() +
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
         int type = dataDescriptor.getEntryType(entry);
@@ -389,6 +363,7 @@ public class DataStructure {
         }
         
         struct.setRows(8);
+        struct.info();
         DataStructureUtils.print(struct, new int[]{0,2,4,5});
         
     }

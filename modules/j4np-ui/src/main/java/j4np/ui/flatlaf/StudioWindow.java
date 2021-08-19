@@ -99,6 +99,11 @@ public class StudioWindow extends JFrame implements ActionListener {
         JPanel panel = this.createInspector();
         //this.add(panel,BorderLayout.LINE_END);
         //this.pack();
+        
+        panel4 = createInspector();
+        this.add(panel4,BorderLayout.LINE_END);
+        panel4.setVisible(false);
+        
     }
     
     public static void changeLook(){
@@ -167,25 +172,27 @@ public class StudioWindow extends JFrame implements ActionListener {
         
         if(arg0.getActionCommand().compareTo("Show Inspector")==0){
             System.out.println("---> show inspector");
-            panel4 = createInspector();
-            this.add(panel4,BorderLayout.LINE_END);
+            /*panel4 = createInspector();
+            this.add(panel4,BorderLayout.LINE_END);*/
             Dimension dim = this.getSize();
             this.repaint();
             this.pack();
             this.setSize(dim);
-            //this.setSize(800, 500);
+            //this.setSize(800, 500);*/
+            panel4.setVisible(true);
             inspectorMenuItem.setText("Hide Inspector");
         }
         
         if(arg0.getActionCommand().compareTo("Hide Inspector")==0){
             System.out.println("---> hiding inspector");
-            BorderLayout layout = (BorderLayout) this.getLayout();
+            /*BorderLayout layout = (BorderLayout) this.getLayout();
             this.remove(panel4);;//layout.getLayoutComponent(BorderLayout.LINE_END));
             Dimension dim = this.getSize();
             this.repaint();
-            this.pack();
+            this.pack();*/
             //this.setSize(800, 500);
-            this.setSize(dim);
+            //this.setSize(dim);
+            panel4.setVisible(false);
             inspectorMenuItem.setText("Show Inspector");
         }
         

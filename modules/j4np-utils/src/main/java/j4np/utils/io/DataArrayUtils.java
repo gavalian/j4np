@@ -82,8 +82,10 @@ public class DataArrayUtils {
     
     public static String doubleToString(double[] array, String delim){
         StringBuilder str = new StringBuilder();
-        for(int i = 0; i < array.length; i++) 
-            str.append(String.format("%8.5f", array[i])).append(delim);
+        for(int i = 0; i < array.length; i++) {
+            if(i!=0) str.append(delim);
+            str.append(String.format("%8.5f", array[i]));
+        }//.append(delim);
         return str.toString();
     }
     

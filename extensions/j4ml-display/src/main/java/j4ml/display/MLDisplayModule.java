@@ -54,6 +54,8 @@ public class MLDisplayModule {
             int label = Integer.parseInt(tokens[0]);
             for(int j = 0; j < vec.length; j++) gr.addPoint(vec[j], j+1, 0.0, 0.0);
             System.out.printf("%3d : (%2d) : %s\n",i+1,label,DataArrayUtils.doubleToString(vec, " "));
+            for(int j = 0; j < vec.length; j++) System.out.printf("%.2f:%d,",vec[j]*112,j+1);
+            System.out.println();
             gr.setMarkerSize(8);
             if(label>0){
                 gr.setMarkerColor(highLightColor);
@@ -81,6 +83,7 @@ public class MLDisplayModule {
             }
         }
         
-        c.setAxisLimits(0, 112, 0.5, nLength+0.5);
+        c.setAxisLimits(0.0, 1.0, 0.5, nLength+0.5);
+        c.repaint();
     }
 }

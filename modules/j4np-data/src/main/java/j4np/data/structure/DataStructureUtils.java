@@ -22,7 +22,8 @@ public class DataStructureUtils {
     public static void print(DataStructure struct, int[] mask){
         int    nrows = struct.getRows();
         int nentries = struct.getEntries();
-        System.out.printf("structure : rows = %5d, entries = %5d\n",nrows,nentries);
+        System.out.printf("structure : rows = %5d, row length = %5d, entries = %5d\n",
+                nrows,struct.dataDescriptor.getStructureLength(),nentries);
         for(int e = 0; e < nentries; e++){
             
             boolean showEntry = false;

@@ -54,7 +54,7 @@ public class DSLClass {
     }
     
     public List<String> getCommandList(){
-        List<String> commandList = new ArrayList<String>();
+        List<String> commandList = new ArrayList<>();
         for(Map.Entry<String,DSLCommandDescriptor> entry : this.descriptors.entrySet()){
             commandList.add(this.getSystemName() + "/" + entry.getValue().getCommand());
         }

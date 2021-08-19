@@ -103,7 +103,7 @@ public class DSLModuleManager {
         }
         return new StringsCompleter(args);
     }*/
-    
+    public List<String> getCommandsList(){ return this.completerCommands;}
     /**
      * returns a String containing only arguments from the command
      * @param commandLine
