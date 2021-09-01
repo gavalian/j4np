@@ -1,3 +1,5 @@
 j4ml.display.MLDisplayModule
 j4np.studio.DSLGraphOperations
+j4np.studio.DSLVectorOperations
 j4np.studio.DSLCanvasOperations
+j4np.studio.DSLHistogramOperations

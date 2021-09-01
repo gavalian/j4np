@@ -14,6 +14,7 @@ import j4np.utils.io.TextFileReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.jlab.groot.data.GraphErrors;
+import org.jlab.groot.data.H1F;
 import org.jlab.jnp.groot.graphics.TDataCanvas;
 
 /**
@@ -86,4 +87,46 @@ public class MLDisplayModule {
         c.setAxisLimits(0.0, 1.0, 0.5, nLength+0.5);
         c.repaint();
     }
+    
+    
+    @DSLCommand(
+            command="regression",
+            info="show results of regression evaluation",
+            defaults={"file.txt","1", "1"},
+            descriptions={"filename with space separated format",
+                "number of output nodes", "starting column",}
+    )    
+    public void regression(String file,int nparams, int skip){
+        List<RegressionGraphs>  graphs = new ArrayList<>();
+        for(int i = 0; i < nparams; i++) graphs.add(new RegressionGraphs());
+        
+        TextFileReader reader = new TextFileReader();
+        reader.open(file);
+        int counter = 0;
+        while(reader.readNext()==true){
+            String[] tokens = reader.getString().split("\\s+");
+            for(int i = 0 ; i < nparams; i++){
+                double infer = Double.parseDouble(tokens[i*2+skip]);
+                double real = Double.parseDouble(tokens[i*2+skip+1]);
+                graphs.get(i).addEvaluation(real, infer);
+            }
+            counter++;
+        }
+        
+        System.out.println("[regression] results loaded = " + counter);
+        TDataCanvas c = DataStudio.getInstance().getDefaultCanvas();
+        c.divide(3, nparams);
+        
+        for(int p = 0; p < nparams; p++){
+            H1F h = graphs.get(p).getResolution();
+            c.cd(p*3).draw(graphs.get(p).getH1().get(0));
+            c.cd(p*3+1).draw(graphs.get(p).getH1().get(1));
+            c.cd(p*3+2).draw(graphs.get(p).getH1().get(2));
+            //c.cd(p*3+1).draw(graphs.get(p).getH2().get(0));
+            //c.getDataCanvas().getRegion(p*3+1).getGraphicsAxis().setAxisLimits(0.0, 1.0, -1.0, 1.0);
+            //c.cd(p*3+2).draw(graphs.get(p).getH2().get(1));
+            //c.getDataCanvas().getRegion(p*3+2).getGraphicsAxis().setAxisLimits(0.0, 1.0, 0.0, 1.0);
+        }
+    }
+    
 }

@@ -33,7 +33,15 @@
         <artifactId>deepnetts-core</artifactId>
         <version>1.12</version>
         <!-- <version>1.13.1</version>  -->
-      </dependency>      
+      </dependency>
+      
+      <dependency>
+	<groupId>org.ejml</groupId>
+	<artifactId>ejml-simple</artifactId>
+	<version>0.40</version>
+      </dependency>
+ 
+
       
     </dependencies>
 

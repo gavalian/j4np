@@ -27,7 +27,7 @@ public class DeepNettsRegression {
         
     public DeepNettsRegression(){}
     
-     public void init(int[] layers){
+    public void init(int[] layers){
         
         FeedForwardNetwork.Builder b = FeedForwardNetwork.builder();
         b.addInputLayer(layers[0]);
@@ -41,6 +41,66 @@ public class DeepNettsRegression {
         neuralNet = b.build();
         
         System.out.println(neuralNet);
+    }
+    
+    public  String getString(float[] array, int start, int length,  String delim){
+        StringBuilder str = new StringBuilder();
+        //str.append("[");
+        for(int i = 0; i < length; i++)
+        {
+            if(i!=0) str.append(delim);
+            str.append(String.format("%.12f", array[i+start]));
+         }
+        //str.append("]");
+        return str.toString();
+    }
+    
+    public  String getString(float[] array, String delim){
+        StringBuilder str = new StringBuilder();
+        //str.append("[");
+        for(int i = 0; i < array.length; i++)
+        {
+            if(i!=0) str.append(delim);
+            str.append(String.format("%.12f", array[i]));
+        }
+        //str.append("]");
+        return str.toString();
+    }
+    
+    public List<String>  getNetworkStream(){
+        
+        List<String> stream = new ArrayList<String>();
+        int nLayers = neuralNet.getLayers().size();
+         for(int i = 1; i < nLayers; i++){
+             // Write Input Layers and Output Layers
+             stream.add(neuralNet.getLayers().get(i-1).getWidth()
+                     +","+neuralNet.getLayers().get(i).getWidth());
+             //System.out.println(DataSetReader.getString(neuralNet.getLayers().get(i).getWeights().getValues(),","));
+             float[] weigths = neuralNet.getLayers().get(i).getWeights().getValues();
+             int     width   = neuralNet.getLayers().get(i).getWidth();
+             int     widthP  = neuralNet.getLayers().get(i-1).getWidth();
+             for(int k = 0; k < widthP; k++){
+                 //System.out.println(DataSetReader.getString(neuralNet.getLayers().get(i).getWeights().getValues(),
+                 //        k*width, width,","));
+                 stream.add(this.getString(neuralNet.getLayers().get(i).getWeights().getValues(),
+                         k*width, width,","));
+             }
+             //System.out.println(DataSetReader.getString(neuralNet.getLayers().get(i).getBiases(),","));
+             stream.add(this.getString(neuralNet.getLayers().get(i).getBiases(),","));
+         }
+         return stream;
+    }
+    
+    
+    public void save(String filename){
+        TextFileWriter writer = new TextFileWriter();
+        writer.open(filename);
+        
+        List<String> networkLines = this.getNetworkStream();
+        for(int i = 0; i < networkLines.size(); i++){
+            writer.writeString(networkLines.get(i));
+        }
+        writer.close();
     }
     
     public void initTrainer(){

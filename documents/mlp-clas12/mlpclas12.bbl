@@ -1,0 +1,31 @@
+\begin{thebibliography}{1}
+
+\bibitem{Burkert:2020akg}
+V.~Burkert {\em et~al.}, ``{The CLAS12 Spectrometer at Jefferson Laboratory},''
+  {\em Nucl. Instrum. Meth. A}, vol.~959, p.~163419, 2020.
+
+\bibitem{Gavalian:2020oxg}
+G.~Gavalian, P.~Thomadakis, A.~Angelopoulos, V.~Ziegler, and N.~Chrisochoides,
+  ``{Using Artificial Intelligence for Particle Track Identification in CLAS12
+  Detector},'' 8 2020.
+
+\bibitem{Gavalian:2020xmc}
+G.~Gavalian, ``{Auto-encoders for Track Reconstruction in Drift Chambers for
+  CLAS12},'' 9 2020.
+
+\bibitem{Gyurjyan:2011zz}
+V.~Gyurjyan, D.~Abbott, J.~Carbonneau, G.~Gilfoyle, D.~Heddle, G.~Heyes,
+  S.~Paul, C.~Timmer, D.~Weygand, and E.~Wolin, ``{CLARA: A contemporary
+  approach to physics data processing},'' {\em J. Phys. Conf. Ser.}, vol.~331,
+  p.~032013, 2011.
+
+\bibitem{Ziegler:2020gsr}
+V.~Ziegler {\em et~al.}, ``{The CLAS12 software framework and event
+  reconstruction},'' {\em Nucl. Instrum. Meth. A}, vol.~959, p.~163472, 2020.
+
+\bibitem{Stepanyan:2020bg}
+S.~Stepanyan {\em et~al.}, ``{CLAS12 FD charge particle reconstruction
+  efficiency and the beam background merging},'' {\em CLAS12-NOTE, 2020-005},
+  2020.
+
+\end{thebibliography}

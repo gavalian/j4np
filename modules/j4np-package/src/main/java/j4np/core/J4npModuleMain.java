@@ -49,6 +49,7 @@ public class J4npModuleMain {
             J4npModuleMain.printWelcome();
             System.out.println();
             System.out.printf("environment : %s\n",System.getenv("J4NPDIR"));
+            System.out.println("run the command with flag -cli to start interactive mode");
             return;
         }
         

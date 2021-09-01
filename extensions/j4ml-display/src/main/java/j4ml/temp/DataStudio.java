@@ -7,6 +7,7 @@ package j4ml.temp;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.jlab.groot.data.DataVector;
 import org.jlab.groot.data.IDataSet;
 import org.jlab.groot.data.TDirectory;
 import org.jlab.jnp.groot.graphics.TDataCanvas;
@@ -26,6 +27,7 @@ public class DataStudio {
     private Map<String,TDataCanvas> canvasMap = new HashMap<>();
     //private TDirectory        studioDirectory = new TDirectory();
     private DataDirectory<IDataSet>  studioDirectory = new DataDirectory<IDataSet>();
+    private Map<String,DataVector>  vectorMap = new HashMap<>();
     
     public DataStudio(){
         studioDirectory.setName("studio");
@@ -37,11 +39,13 @@ public class DataStudio {
 
     public TDataCanvas getDefaultCanvas(){
         if(canvasMap.containsKey("default")==false){
+            
             canvasMap.put("default", new TDataCanvas());
         }
         return canvasMap.get("default");
     }    
     
     public DataDirectory  getDirectory(){ return studioDirectory;}
+    public Map<String,DataVector> getVectorDirectory(){ return vectorMap;}
     
 }

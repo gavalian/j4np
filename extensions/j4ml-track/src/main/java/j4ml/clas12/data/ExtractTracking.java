@@ -53,10 +53,14 @@ public class ExtractTracking {
     public static void main(String[] args){
         
         List<String> inputs = new ArrayList<>();
-        inputs.addAll(Arrays.asList(
+        /*inputs.addAll(Arrays.asList(
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00055-00059.hipo",
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00025-00029.hipo",
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00055-00059.hipo"
+        ));*/
+        
+        inputs.addAll(Arrays.asList(               
+                "/Users/gavalian/Work/DataSpace/ml/exclusive_epiX_005038.hipo"
         ));
         
         if(args.length>0){

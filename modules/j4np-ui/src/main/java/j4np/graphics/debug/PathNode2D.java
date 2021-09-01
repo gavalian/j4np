@@ -28,6 +28,7 @@ public class PathNode2D extends Node2D {
     public Color        lineColor   = Color.BLACK;
     public Color        nodeColor   = Color.BLACK;
     
+    //public Color        fillColor   = new Color(210,210,210);
     public Color        fillColor   = new Color(210,210,210);
     
     public int          lineSize    = 2;

@@ -18,14 +18,15 @@ import org.jlab.jnp.groot.settings.GRootTheme;
  * @author gavalian
  */
 public class TrainPhysics {
+    
     public TrainPhysics(){
         
     }
     
     public static void main(String[] args){
         
-        H1F h1 = new H1F("h1","",120,0.0,4.5);
-        H1F h2 = new H1F("h2","",120,0.0,4.5);
+        H1F h1 = new H1F("h1","",120,0.0,1.5);
+        H1F h2 = new H1F("h2","",120,0.0,1.5);
         
         TextFileReader reader = new TextFileReader();
         reader.open("dc_physics_features_36.csv");
@@ -48,9 +49,9 @@ public class TrainPhysics {
             Vector3 vp3 = new Vector3();
             LorentzVector vp = new LorentzVector();
             vp3.setMagThetaPhi(p, th, phi);            
-            vp.setVectM(vp3, 0.135);
+            vp.setVectM(vp3, 0.139);
             
-            LorentzVector vb = LorentzVector.withPxPyPzM(0.0, 0.0, 10.0, 0.0005);
+            LorentzVector vb = LorentzVector.withPxPyPzM(0.0, 0.0, 10.5, 0.0005);
             LorentzVector vt = LorentzVector.withPxPyPzM(0.0, 0.0,  0.0, 0.938);
             
             vb.add(vt).sub(ve).sub(vp);

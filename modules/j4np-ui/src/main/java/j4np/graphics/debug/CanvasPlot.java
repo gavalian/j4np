@@ -97,9 +97,16 @@ public class CanvasPlot {
         {0.15 ,0.20 ,0.3 ,0.45 ,0.65 ,0.85 },
         {0.75, 0.73, 0.67, 0.58, 0.40, 0.22},
         {0.75 ,0.20 ,0.3 ,0.45 ,0.40 ,0.85 },
-        {0.75, 0.20, 0.67, 0.58, 0.40, 0.85}
+        {0.75, 0.20, 0.67, 0.58, 0.40, 0.85},
+         {    0.4500,  0.3500,  0.5500,  0.4500,  0.65,  0.5500  }
     };
     
+    public static double[][] dcTracksSmooth5 = new double[][]{
+        {0.15 ,0.20 ,0.3 ,0.45 ,0.65 ,0.85 },
+        {0.75, 0.73, 0.67, 0.58, 0.40, 0.22},
+        {0.75 ,0.20 ,0.3 ,0.45 ,0.40 ,0.85 },
+        {0.75, 0.20, 0.67, 0.58, 0.40, 0.85}
+    };
     public static double[][] dcTracksFale = new double[][]{
         { 0.33185,0.56696 ,0.45982 ,0.47449 ,0.29464 ,0.42857 },
         {0.33185, 0.56696 , 0.34286,0.34375,0.29464,0.42857},
@@ -167,8 +174,7 @@ public class CanvasPlot {
                     path.skip.add(k);
                     path.skipDraw = true;
                     path.lineColor = Color.red;
-                }
-                
+                }                
                 list.add(path);
             }
         }
@@ -368,6 +374,121 @@ public class CanvasPlot {
         node.setBackgroundColor(255, 255, 255);
         List<Node2D> dc = CanvasPlot.createChambers();
         for(Node2D n : dc) node.addNode(n);
+        
+        //PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcEventCombi5[1]);
+        PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        tr.skip.add(2);
+        tr.lineSize = 1;
+        tr.lineColor = Color.red;
+        tr.nodeColor = Color.red;
+        tr.skipDraw = false;
+        node.addNode(tr);
+        
+        PathNode2D       tr2 = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[4]);
+        tr2.skip.add(1);
+        tr2.lineSize = 1;
+        tr2.lineColor = Color.red;
+        tr2.nodeColor = Color.red;
+        tr2.skipDraw = false;
+        node.addNode(tr2);
+        //PathNode2D       trt = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        //node.addNode(trt);
+        return node;
+    }
+    
+    public static Node2D example7(){
+        
+        Node2D  node = new Node2D(0,0,160,200);
+        node.setBackgroundColor(255, 255, 255);
+        List<Node2D> dc = CanvasPlot.createChambers();
+        for(Node2D n : dc) node.addNode(n);
+        
+        //PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcEventCombi5[1]);
+        PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        tr.skip.add(2);
+        tr.lineSize = 1;
+        tr.lineColor = Color.red;
+        tr.nodeColor = Color.red;
+        tr.skipDraw = true;
+        node.addNode(tr);
+        
+        PathNode2D       tr2 = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[4]);
+        tr2.skip.add(1);
+        tr2.lineSize = 1;
+        tr2.lineColor = Color.red;
+        tr2.nodeColor = Color.red;
+        tr2.skipDraw = true;
+        node.addNode(tr2);
+        //PathNode2D       trt = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        //node.addNode(trt);
+        return node;
+    }
+    
+    public static Node2D example8(){
+        
+        Node2D  node = new Node2D(0,0,160,200);
+        node.setBackgroundColor(255, 255, 255);
+        List<Node2D> dc = CanvasPlot.createChambers();
+        for(Node2D n : dc) node.addNode(n);
+        
+        //PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcEventCombi5[1]);
+       
+        
+        PathNode2D       tr2 = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[4]);
+        tr2.skip.add(1);
+        tr2.lineSize = 1;
+        tr2.lineColor = Color.red;
+        tr2.nodeColor = Color.red;
+        tr2.skipDraw = true;
+        node.addNode(tr2);
+
+        PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        //tr.skip.add(2);
+        tr.lineSize = 1;
+        tr.lineColor = Color.BLACK;
+        tr.nodeColor = Color.BLACK;
+        tr.skipDraw = true;
+        node.addNode(tr);
+        //PathNode2D       trt = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        //node.addNode(trt);
+        return node;
+    }
+    
+     public static Node2D example9(){
+        
+        Node2D  node = new Node2D(0,0,160,200);
+        node.setBackgroundColor(255, 255, 255);
+        List<Node2D> dc = CanvasPlot.createChambers();
+        for(Node2D n : dc) node.addNode(n);
+        
+        //PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcEventCombi5[1]);
+       
+        
+        PathNode2D       tr2 = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[1]);
+        //tr2.skip.add(1);
+        tr2.lineSize = 1;
+        tr2.lineColor = Color.black;
+        tr2.nodeColor = Color.black;
+        tr2.skipDraw = true;
+        node.addNode(tr2);
+
+        PathNode2D       tr = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        tr.skip.add(2);
+        tr.lineSize = 1;
+        tr.lineColor = Color.BLACK;
+        tr.nodeColor = Color.BLACK;
+        tr.skipDraw = true;
+        node.addNode(tr);
+        //PathNode2D       trt = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[0]);
+        //node.addNode(trt);
+        return node;
+    }
+    public static Node2D example10(){
+        
+        Node2D  node = new Node2D(0,0,160,200);
+        node.setBackgroundColor(255, 255, 255);
+        List<Node2D> dc = CanvasPlot.createChambers();
+        for(Node2D n : dc) node.addNode(n);
         List<PathNode2D> tr = CanvasPlot.getTracks5();
         for(PathNode2D n : tr) node.addNode(n);;
         //PathNode2D       trt = CanvasPlot.createPath(CanvasPlot.dcTracksSmooth[1]);
@@ -376,6 +497,7 @@ public class CanvasPlot {
         node.addNode(trt);
         return node;
     }
+    
     public static void main(String[] args){
     
         JFrame frame = new JFrame();
@@ -400,11 +522,13 @@ public class CanvasPlot {
         //node.getChildren().addAll(dc);*/
         
         //Node2D node = CanvasPlot.example1();
+        //Node2D node = CanvasPlot.example2();
 
-        Node2D node = CanvasPlot.example22(5);
+        //Node2D node = CanvasPlot.example22(5);
         //Node2D node = CanvasPlot.example3(3,new Color(255,0,0));
         //Node2D node = CanvasPlot.example5();
-        //Node2D node = CanvasPlot.example6();
+        Node2D node = CanvasPlot.example7();
+        //Node2D node = CanvasPlot.example4();
         
         
         canvas.addNode(node);

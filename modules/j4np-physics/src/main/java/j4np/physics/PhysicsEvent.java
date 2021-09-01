@@ -9,41 +9,36 @@ package j4np.physics;
  *
  * @author gavalian
  */
-public class PhysicsEvent {
+public abstract class PhysicsEvent {
     
     public PhysicsEvent(){
         
-    }
-            
-    public int charge(int index){
-        throw new UnsupportedOperationException("(PhysicsEvent) Method is not implemented.");
-    }
+    }    
     
-    public int pid(int index){
-        throw new UnsupportedOperationException("(PhysicsEvent) Method is not implemented.");
-    }
+    abstract public int   count();
+    abstract public int   charge(int index);
+    abstract public int   pid(int index);        
+    abstract public int   status(int index);        
+    abstract public void  vector(Vector3 v, int index);
+    abstract public void  vertex(Vector3 v, int index);    
     
-    public int status(int index){
-        throw new UnsupportedOperationException("(PhysicsEvent) Method is not implemented.");
-    }
     
-    public void vector(Vector3 v, int index){
-        throw new UnsupportedOperationException("(PhysicsEvent) Method is not implemented.");
-    }
-    
-    public void vertex(Vector3 v, int index){
-        throw new UnsupportedOperationException("(PhysicsEvent) Method is not implemented.");
-    }        
     
     public void vector(Vector3 v, int pid, int skip){
         int index = getOrderByPid(pid,skip);
-        if(index<=0){ v.setXYZ(0, 0, 0); return; }
+        if(index<0){ v.setXYZ(0, 0, 0); return; }
         vector(v,index);
+    }
+    
+    public void vertex(Vector3 v, int pid, int skip){
+        int index = getOrderByPid(pid,skip);
+        if(index<0){ v.setXYZ(0, 0, 0); return; }
+        vertex(v,index);
     }
     
     public void vector(LorentzVector v, double mass,  int pid, int skip){
         int index = getOrderByPid(pid,skip);
-        if(index<=0){ v.setPxPyPzM(0, 0, 0, 0); return; }
+        if(index<0){ v.setPxPyPzM(0, 0, 0, 0); return; }
         vector(v.vect(),index);
         v.setE(Math.sqrt(v.vect().mag2() + mass*mass));
     }
@@ -78,9 +73,7 @@ public class PhysicsEvent {
         return -1;
     }
     
-    public int count(){
-        return 1;
-    }
+    
     
     public int countByPid(int pid){
         int counter = 0;

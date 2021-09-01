@@ -32,7 +32,7 @@ public class Node2D {
     public static int  PIN_CORNER_RIGTH_BOTTOM = 4;
     
     private boolean        canMove = true;
-    private boolean    isDebugMode = true;
+    private boolean    isDebugMode = false;//true;
     
     private int     ALIGN_MODE = Node2D.ALIGN_INSETS;
     private int       PIN_MODE = Node2D.PIN_CORNER_NONE;
@@ -43,8 +43,8 @@ public class Node2D {
     private int    oW = 280;
     private int    oH = 50;
     
-    private Color        nodeBackground = new Color(255,255,255,255);
-    private Color            nodeBorder = new Color(185,185,185,255);
+    protected Color        nodeBackground = new Color(255,255,255,255);
+    protected Color            nodeBorder = new Color(185,185,185,255);
     /*
     private Point2D           objectPosition = new Point2D.Double();    
     private Point2D    objectPositionClicked = new Point2D.Double();
@@ -113,9 +113,9 @@ public class Node2D {
         
         if(this.nodeBackground!=null){
             g2d.setColor(this.nodeBackground);
-        } else {
+        } /*else {
             g2d.setColor(Color.WHITE);
-        }
+        }*/
         
         g2d.fillRoundRect((int) nodeRegion.getBounds().getX(), (int) nodeRegion.getBounds().getY() ,
                 (int) nodeRegion.getBounds().getWidth(), (int) nodeRegion.getBounds().getBounds().getHeight() 
