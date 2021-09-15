@@ -6,6 +6,7 @@
 package j4np.data.evio;
 
 import j4np.data.base.DataEvent;
+import j4np.data.base.DataFrame;
 import j4np.data.base.DataNodeCallback;
 import j4np.data.base.DataSource;
 import java.io.FileNotFoundException;
@@ -40,9 +41,9 @@ public class EvioFile implements DataSource {
     
     public final void open(String filename){
         try {
-            System.out.println("[READER] ----> opening current file : " + filename);
+             System.out.println("[READER] ----> opening current file : " + filename);
             inStreamRandom = new RandomAccessFile(filename,"r");
-            System.out.println("[READER] ---> open successful, size : " + inStreamRandom.length());
+             System.out.println("[READER] ---> open successful, size : " + inStreamRandom.length());
             firstBlock();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(EvioFile.class.getName()).log(Level.SEVERE, null, ex);
@@ -74,7 +75,7 @@ public class EvioFile implements DataSource {
             int description = byteBuffer.getInt(4);
             int offset      = length*4 + 4;
             nextEventPosition = nextEventPosition + offset;
-            System.out.printf("debug : length = %d, readin %d\n",buffer.length, offset);
+            //System.out.printf("debug : length = %d, readin %d\n",buffer.length, offset);
             nextEventLength   = byteBuffer.getInt(offset)*4+4;
 
             System.out.println("EVENT BUFFER");
@@ -148,7 +149,7 @@ public class EvioFile implements DataSource {
             ByteBuffer header = ByteBuffer.wrap(headerBytes);
             header.order(ByteOrder.LITTLE_ENDIAN);
             int firstEventLength = header.getInt(32);
-            System.out.println("FIRST EVENT LENGTH = " + firstEventLength);
+            //System.out.println("FIRST EVENT LENGTH = " + firstEventLength);
             nextEventPosition = 32;
             nextEventLength   = firstEventLength*4 + 4;            
         } catch (IOException ex) {
@@ -217,7 +218,7 @@ public class EvioFile implements DataSource {
             int counter = 0;
             int[] tdc = new int[1000];
             @Override
-            public void apply(int position, int[] identification) {
+            public void apply(DataEvent event, int position, int[] identification) {
                 if(identification[2]==57634){
                     EvioNode node = new EvioNode();
                     event.getAt(node, position);
@@ -254,5 +255,15 @@ public class EvioFile implements DataSource {
         System.out.printf("---> events in the block = %s, time = %8.5f, total time = %8.5f", 
                 counter,((double)nanoTime)*10e-9,((double)nanoTimeTotal)*10e-9
         );
+    }
+
+    @Override
+    public int nextFrame(DataFrame frame) {
+        int counter = 0;
+        int entries = frame.getCount();
+        for(int loop = 0; loop < entries; loop++){
+            if(next(frame.getEvent(loop))==true) counter++;
+        }
+        return counter;
     }
 }

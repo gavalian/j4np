@@ -51,5 +51,13 @@ public interface DataSource {
      * @return number of events contained in the file
      */
     public int entries();
-    
+    /**
+     * reads the next frame from the file. returns the
+     * number of events that were read from the file. if
+     * the end of file is not reached returned value should 
+     * be equal to frame.getCount().
+     * @param frame
+     * @return 
+     */
+    public int nextFrame(DataFrame frame);
 }

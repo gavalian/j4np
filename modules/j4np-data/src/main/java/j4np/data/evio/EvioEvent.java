@@ -25,7 +25,13 @@ public class EvioEvent extends BaseStructure implements DataEvent {
         DATA_POSITION = 8;
         BUFFERSIZE_POSITION = 0;
     }
-
+    
+    public EvioEvent(int size){
+        super(size);
+        IDENTIFIER_POSITION = 4;
+        DATA_POSITION = 8;
+        BUFFERSIZE_POSITION = 0;
+    }
 
 
 
@@ -99,7 +105,7 @@ public class EvioEvent extends BaseStructure implements DataEvent {
             if(callback!=null){
                 iden[2] = tag_n;
                 iden[3] = num_n;
-                callback.apply(position, iden);
+                callback.apply(this,position, iden);
             }
             /*System.out.printf("\t\t\tnode : size = %9d , identity = (%5d, %4d), type = %4d, pos = %6d\n",
                     nodeSize,
@@ -113,7 +119,7 @@ public class EvioEvent extends BaseStructure implements DataEvent {
 
     @Override
     public void getAt(DataNode node, int position) {
-        int length = this.structBuffer.getInt(position);
+        int length = this.structBuffer.getInt(position)*4;
         node.allocate(length+4);
         System.arraycopy(this.structBuffer.array(), position, 
                 node.getBuffer().array(), 0, length + 4);

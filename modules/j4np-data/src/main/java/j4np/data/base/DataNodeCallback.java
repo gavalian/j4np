@@ -10,5 +10,5 @@ package j4np.data.base;
  * @author gavalian
  */
 public interface DataNodeCallback {
-    public void apply(int position, int[] identification);
+    public void apply(DataEvent event, int position, int[] identification);
 }

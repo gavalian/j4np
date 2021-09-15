@@ -24,6 +24,7 @@ public class ExtractFeaturesCSV extends ExtractModule {
     public ExtractFeaturesCSV(String... files){
         super(files);
     }
+    
     @Override
     public void process(BankStore store) {        
         //System.out.println("-----");

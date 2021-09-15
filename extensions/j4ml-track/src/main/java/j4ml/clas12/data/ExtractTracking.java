@@ -24,7 +24,9 @@ public class ExtractTracking {
         banks = new BankStore(new String[]
             {"TimeBasedTrkg::TBTracks",
             "TimeBasedTrkg::TBClusters",
-            "TimeBasedTrkg::TBHits","REC::Particle"}
+            "TimeBasedTrkg::TBHits",
+            "REC::Particle",
+            ""}
         );
     }
     

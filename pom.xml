@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>j4np</groupId>
+  <artifactId>j4np-tools</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+
+  <!--
+  <properties>
+    <revision>1.0.2</revision>
+  </properties>
+  -->
+  
+  <parent>
+    <groupId>j4np</groupId>
+    <artifactId>j4np-parent</artifactId>
+    <relativePath>parent/pom.xml</relativePath>
+    <version>${revision}</version>
+  </parent>
+
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+<!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.2.2</version>
+        <configuration>	  
+         <updatePomFile>true</updatePomFile>
+         <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+-->
+    </plugins>
+  </build>
+  
+  <modules>
+    <module>parent</module>
+    <module>modules/j4np-utils</module>
+    <module>modules/j4np-physics</module>
+    <module>modules/j4np-package</module>
+    <module>modules/j4np-data</module>
+    <module>extensions/j4ml-track</module>
+    <module>extensions/j4np-analysis</module>
+    <module>extensions/j4ml-display</module>
+  </modules>
+  
+</project>

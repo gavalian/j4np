@@ -20,11 +20,19 @@
         <artifactId>j4np-utils</artifactId>
         <version>${revision}</version>
       </dependency>
+      
+      <dependency>
+        <groupId>j4np</groupId>
+        <artifactId>j4np-data</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      
       <dependency>
         <groupId>org.jline</groupId>
         <artifactId>jline</artifactId>
         <version>3.1.2</version>
       </dependency>
+
     </dependencies>
     
     <build>

@@ -22,6 +22,12 @@ public class EvioNode extends BaseStructure implements DataNode {
         DATA_POSITION       = 8;
     }
     
+    public EvioNode(int size){
+        super(size);
+        BUFFERSIZE_POSITION = 0;
+        IDENTIFIER_POSITION = 4;
+        DATA_POSITION       = 8;
+    }
     @Override
     public ByteBuffer getBuffer() {
         return this.structBuffer;

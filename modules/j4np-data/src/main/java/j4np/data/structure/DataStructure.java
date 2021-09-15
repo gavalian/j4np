@@ -63,7 +63,8 @@ public class DataStructure  extends BaseStructure {
         
     private boolean testTypeForEntry(int entry, int type){
         if(dataDescriptor.getEntryType(entry)==type) return true;
-        Log.warn("error : the type for entry " + entry + " is not " + type);
+        //.warn("error : the type for entry " + entry + " is not " + type);
+        System.out.println("error : the type for entry " + entry + " is not " + type);
         return false;
     }
     
@@ -174,18 +175,18 @@ public class DataStructure  extends BaseStructure {
             
         }
                 
-        public void init(int[] dataEntries, int[] entryTypes) {
+        public void init(int[] entryType, int[] entryLength) {
             
-            dataLength = new int[dataEntries.length];
-            dataOffset = new int[dataEntries.length];
-            dataType   = new int[dataEntries.length];
+            dataLength = new int[entryType.length];
+            dataOffset = new int[entryType.length];
+            dataType   = new int[entryType.length];
             
             int offset = 0;
             for(int i = 0; i < dataLength.length; i++){
-                dataLength[i] = dataEntries[i];
+                dataLength[i] = entryLength[i];
                 dataOffset[i] = offset;
-                dataType[i] = entryTypes[i];
-                offset += dataEntries[i];
+                dataType[i] = entryType[i];
+                offset += entryLength[i];
             }
             structureLength = offset;
         }
@@ -266,6 +267,8 @@ public class DataStructure  extends BaseStructure {
                     pos++;
                     char ff = format.charAt(pos);
                     int type = this.getType(ff);
+                    
+                    //System.out.printf(" letter = %s, type = %3d\n",ff,type);
                     if(type==0){
                         System.out.println("[parser] error at position "
                         + pos + ", unknown type ["+cc+"]");
@@ -277,6 +280,7 @@ public class DataStructure  extends BaseStructure {
                     }
                 } else {                                       
                     int type = this.getType(cc);
+                    //System.out.printf(" letter = %s, type = %3d\n",cc,type);
                     if(type==0){
                         System.out.println("[parser] error at position "
                         + pos + ", unknown type ["+cc+"]");
@@ -294,6 +298,7 @@ public class DataStructure  extends BaseStructure {
             for(int i = 0; i < types.length; i++){
                 types[i] = dataTypes.get(i);
                 lengths[i] = this.getTypeSize(types[i]);
+                //System.out.println(" data " + i + " = " + dataTypes.get(i) + " size = " + lengths[i]);
             }
             
             this.init(types,lengths);
@@ -349,12 +354,16 @@ public class DataStructure  extends BaseStructure {
     }        
     
     public static void main(String[] args){
+        
+        DataStructure struct = new DataStructure("iiifffbsbsbs",40);
+        struct.show();
         /*DataStructureDescriptor desc = new DataStructureDescriptor();
         desc.init(new int[]{4,4,2,2,1,1},new int[]{4,4,2,2,1,1});
         desc.show();        
         desc.parse("3b3f2i");        
         desc.show();*/        
-        DataStructure struct = new DataStructure("2bs8f",40);
+        /*
+        DataStructure struct = new DataStructure("2bs8fi",40);
         struct.show();
         
         for(int i = 0; i < 8 ; i++) {
@@ -365,6 +374,6 @@ public class DataStructure  extends BaseStructure {
         struct.setRows(8);
         struct.info();
         DataStructureUtils.print(struct, new int[]{0,2,4,5});
-        
+        */
     }
 }
