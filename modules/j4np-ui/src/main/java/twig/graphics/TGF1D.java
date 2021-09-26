@@ -47,6 +47,7 @@ public class TGF1D extends TDataNode2D {
         
         int lineWidth = this.dataSet.attr().getLineWidth();
         int lineColor = this.dataSet.attr().getLineColor();
+        int lineStyle = this.dataSet.attr().getLineStyle();
         
         int markerColor = this.dataSet.attr().getMarkerColor();
         int markerSize = this.dataSet.attr().getMarkerSize();
@@ -75,7 +76,9 @@ public class TGF1D extends TDataNode2D {
         if(lineColor>=0){
             Color lColor = style.getPalette().getColor(lineColor);
             g2d.setColor(lColor);
-            g2d.setStroke(new BasicStroke(lineWidth));
+
+            //g2d.setStroke(new BasicStroke(lineWidth));
+            g2d.setStroke(style.getLineStroke(lineStyle, lineWidth));
             g2d.draw(path);
         }
     }

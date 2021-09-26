@@ -42,11 +42,12 @@ public class TPalette {
     
     
     public TPalette(){
-        init("gold10");
+        //init("gold10");
+        init("tab10");
         this.initSpacialtyPalette();
     }
     
-    public void init(String type){
+    public final void init(String type){
         if(type.contains("default")==true){
             colorPalette.clear();
             colorPalette3D.clear();
@@ -82,7 +83,7 @@ public class TPalette {
      * @param color
      * @return 
      */
-    protected void initSpacialtyPalette(){
+    protected final void initSpacialtyPalette(){
         specialtyColorPalette.clear();
         specialtyColorPalette.add(new Color(0,0,0));
         specialtyColorPalette.add(new Color(0,0,0));

@@ -263,6 +263,7 @@ public class LatexText {
         g2d.setColor(this.latexTextColor);
         g2d.drawString(latexString.getIterator(),-posX ,posY - descent);
         g2d.setTransform(orig);
+        
     }
     
     public void drawString(Graphics2D  g2d, int x, int y, int alignX, int alignY){  
@@ -291,7 +292,40 @@ public class LatexText {
         //if(alignY==2) yp = (int)  y;
         g2d.setFont(textFont);
         g2d.setColor(latexTextColor);
-        g2d.drawString(latexString.getIterator(), xp, yp);        
+        g2d.drawString(latexString.getIterator(), xp, yp);     
+        //if(type==0) return rect.getHeight();
+        //return rect.getWidth();
+    }
+    
+    public int drawString(Graphics2D  g2d, int x, int y, TextAlign alignX, TextAlign alignY, int type){  
+        g2d.setFont(textFont);
+        FontMetrics fmg = g2d.getFontMetrics(textFont);
+        Rectangle2D rect = fmg.getStringBounds(this.latexString.getIterator(), 0,
+                this.latexString.getIterator().getEndIndex(),g2d);
+        
+        //Rectangle2D rect = fmg.getStringBounds(asciiString,g2d);
+        //Rectangle2D asciiRect = fmg.getStringBounds(asciiString,g2d);
+        
+        int  ascend   = fmg.getAscent();
+        int leading   = fmg.getLeading();
+        int  descent  = fmg.getDescent();
+        int  height   = fmg.getHeight();
+        //int leading   = fmg.getLeading();
+        
+        //System.out.println("ascend = " + ascend + " leading = " + leading);
+        int  xp     = x;
+        int  yp     = y - descent;
+        if(alignX==TextAlign.CENTER) xp = (int) (xp-0.5*rect.getWidth());
+        if(alignX==TextAlign.RIGHT) xp = (int) (xp-rect.getWidth());
+        if(alignY==TextAlign.TOP) yp = (int) (y + ascend);
+        if(alignY==TextAlign.CENTER) yp = (int)  (y + ascend - height/2);
+        //if(alignY==1) yp = (int) (y + 0.5*(height));
+        //if(alignY==2) yp = (int)  y;
+        g2d.setFont(textFont);
+        g2d.setColor(latexTextColor);
+        g2d.drawString(latexString.getIterator(), xp, yp);     
+        if(type==0)  return  (int) rect.getHeight();
+        return (int) rect.getWidth();
     }
     
     public  Rectangle2D  getBoundsNumber(Graphics2D g2d){

@@ -67,6 +67,66 @@ public class TGRegion extends Node2D implements StyleNode {
         return this;
     }
     public void clear(){ this.axisFrame.clear();}
+    
+    
+    public TGRegion setAxisTicksX(double[] values){
+        /*
+        getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().clear();
+        getAxisFrame().getAxisX().getAttributes().getAxisTicksString().clear();
+        for(int i = 0; i < values.length; i++){
+            getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().add(values[i]);
+        }*/
+        if(values==null){
+            getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().clear();
+            getAxisFrame().getAxisX().getAttributes().getAxisTicksString().clear();
+        }
+        return this;
+    }
+    
+    public TGRegion setAxisTicksY(double[] values){
+        /*
+        getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().clear();
+        getAxisFrame().getAxisX().getAttributes().getAxisTicksString().clear();
+        for(int i = 0; i < values.length; i++){
+            getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().add(values[i]);
+        }*/
+        if(values==null){
+            getAxisFrame().getAxisY().getAttributes().getAxisTicksPosition().clear();
+            getAxisFrame().getAxisY().getAttributes().getAxisTicksString().clear();
+        }
+        return this;
+    }
+    
+    public TGRegion setAxisTicksX(double[] values, String[] labels){
+        getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().clear();
+        getAxisFrame().getAxisX().getAttributes().getAxisTicksString().clear();
+        
+        if(labels.length!=values.length){
+            System.out.println("region:setaxisticks: error, inconsistent size of lables and values");
+        } else {
+            for(int i = 0; i < values.length; i++){
+                getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().add(values[i]);
+                getAxisFrame().getAxisX().getAttributes().getAxisTicksString().add(labels[i]);
+            }
+        }
+        return this;
+    }
+    
+    public TGRegion setAxisTicksY(double[] values, String[] labels){
+        getAxisFrame().getAxisY().getAttributes().getAxisTicksPosition().clear();
+        getAxisFrame().getAxisY().getAttributes().getAxisTicksString().clear();
+        
+        if(labels.length!=values.length){
+            System.out.println("region:setaxisticks: error, inconsistent size of lables and values");
+        } else {
+            for(int i = 0; i < values.length; i++){
+                getAxisFrame().getAxisY().getAttributes().getAxisTicksPosition().add(values[i]);
+                getAxisFrame().getAxisY().getAttributes().getAxisTicksString().add(labels[i]);
+            }
+        }
+        return this;
+    }
+    
     public static void main(String[] args){
         JFrame frame = new JFrame();
         Canvas2D canvas = Canvas2D.createFrame(frame, 600, 500);

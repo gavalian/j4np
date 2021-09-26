@@ -64,6 +64,17 @@ public class PaveText implements Widget {
         textPositions.add(new Point2D.Double(0.0,0.0));
     }
     
+    public PaveText(List<String> texts, double x, double y){
+        //super(x,y);
+        //setBackgroundColor(240,240,240);
+        this.positionX = x;
+        this.positionY = y;
+        //setName("pave_text");
+        for(String text : texts)
+            this.addLine(text);
+        //textPositions.add(new Point2D.Double(0.0,0.0));
+    }
+    
     public PaveText(double x, double y){
         //super(x,y);
         //setBackgroundColor(240,240,240);
@@ -95,7 +106,7 @@ public class PaveText implements Widget {
         this.textColor = col;
     }
     
-    public PaveText addLine(String line){
+    public final PaveText addLine(String line){
         textStrings.add(line); 
         textPositions.add(new Point2D.Double(0.0,0.0));
         return this;

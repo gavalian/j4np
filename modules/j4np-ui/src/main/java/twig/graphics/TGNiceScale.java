@@ -161,6 +161,9 @@ public class TGNiceScale {
         return -1;
     }
     
+    public static void getScaleOrder(double[] values){
+        
+    }
     public String getOrderString(){return this.orderString;}
     
     public void   setOrderString(){

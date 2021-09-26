@@ -191,7 +191,8 @@ public class TGCanvas extends JFrame implements ActionListener {
             if(ac.startsWith("divide_3x2")) dataCanvas.divide(3, 2);            
         }
         if(ac.compareTo("Export PDF")==0){
-            dataCanvas.save(this.dataCanvasTitle+".pdf");
+            //dataCanvas.save(this.dataCanvasTitle+".pdf");
+            dataCanvas.export(this.dataCanvasTitle+".pdf","PDF");
         }   
     }
 }

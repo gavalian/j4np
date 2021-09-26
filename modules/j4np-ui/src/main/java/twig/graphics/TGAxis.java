@@ -90,7 +90,11 @@ public class TGAxis implements StyleNode {
                 int xpos = (int) tr.getX(attributes.getAxisTicksPosition().get(i),r);
                 String xlabel = attributes.getAxisTicksString().get(i);                    
                 g2d.drawLine( xpos, y1, xpos, yend);
-                labelHeight = textWidget.drawString(xlabel, g2d, xpos, ytoplabel, 1, 3, 0);
+                
+                textWidget.setText(xlabel);
+                //labelHeight = textWidget.drawString(xlabel, g2d, xpos, ytoplabel, 1, 3, 0);
+                labelHeight = 
+                    textWidget.drawString(g2d, xpos, ytoplabel,TextAlign.CENTER,TextAlign.TOP,0);
             }
         }  else {
             g2d.setColor(lineColor);
@@ -100,8 +104,12 @@ public class TGAxis implements StyleNode {
                 int xpos = (int) tr.getX(axisTicksBuffer.get(i),r);
                 String xlabel = axisTextsBuffer.get(i);                    
                 g2d.drawLine( xpos, y1, xpos, yend);
-                if(this.attributes.getAxisLabelsDraw()==true)
-                    labelHeight = textWidget.drawString(xlabel, g2d, xpos, ytoplabel, 1, 3, 0);
+                if(this.attributes.getAxisLabelsDraw()==true){
+                    textWidget.setText(xlabel);
+                    //textWidget.setFont(this.attributes.getAxisLabelFont());                    
+                    labelHeight = 
+                    textWidget.drawString(g2d, xpos, ytoplabel,TextAlign.CENTER,TextAlign.TOP,0);
+                }
             }
         }
         //double x = ( int ) r.getX();
@@ -121,9 +129,11 @@ public class TGAxis implements StyleNode {
         System.out.println("Rect = " + r);
         System.out.printf("string @ : %8d %8d\n",titlePositionX,titlePositionY);
         */
-        textWidget.setText(attributes.getAxisTitle());
-        textWidget.drawString(g2d,
-                titlePositionX ,  titlePositionY, LatexText.ALIGN_CENTER,LatexText.ALIGN_TOP);
+        if(attributes.getAxisTitle().length()>0){
+            textWidget.setText(attributes.getAxisTitle());
+            textWidget.drawString(g2d,
+                    titlePositionX ,  titlePositionY, LatexText.ALIGN_CENTER,LatexText.ALIGN_TOP);
+        }
         /*
         textWidget.drawString(attributes.getAxisTitle(), g2d,
                 titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.TOP, 0);*/
@@ -179,12 +189,15 @@ public class TGAxis implements StyleNode {
                     //System.out.println(" R = " + r);
 //int ypos = (int)( tr.getY(attributes.getAxisTicksPosition().get(i),r));
                     String ylabel = attributes.getAxisTicksString().get(i);
-                    g2d.drawLine( x1, ypos, xend, ypos);                    
-                    int textWidth = textWidget.drawString(ylabel, g2d, xrightlevel, ypos, TextAlign.RIGHT,TextAlign.CENTER,0);
+                    g2d.drawLine( x1, ypos, xend, ypos);
+                    textWidget.setText(ylabel);
+                    //int textWidth = textWidget.drawString(ylabel, g2d, xrightlevel, ypos, TextAlign.RIGHT,TextAlign.CENTER,0);
+                    int textWidth = textWidget.drawString( g2d, xrightlevel, ypos, TextAlign.RIGHT, TextAlign.CENTER ,1);
                     if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
                 } 
                 //double x = ( int ) r.getX();
             } else {
+                textWidget.setFont(this.attributes.getAxisLabelFont());
                 this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
                 this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
                 for(int i = 0; i < axisTicksBuffer.size(); i++){
@@ -192,8 +205,9 @@ public class TGAxis implements StyleNode {
                     //int ypos = (int)( tr.getY(axisTicksBuffer.get(i),r));
                     String ylabel = axisTextsBuffer.get(i);
                     g2d.drawLine( x1, ypos, xend, ypos);
+                    textWidget.setText(ylabel);
                     if(this.attributes.getAxisLabelsDraw()==true){
-                        int textWidth = textWidget.drawString(ylabel, g2d, xrightlevel, ypos, TextAlign.RIGHT,TextAlign.CENTER,0);                            
+                        int textWidth = textWidget.drawString( g2d, xrightlevel, ypos, TextAlign.RIGHT, TextAlign.CENTER ,1);                            
                         if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
                     }
                 } 
@@ -215,11 +229,11 @@ public class TGAxis implements StyleNode {
                 titlePositionX -= attributes.getAxisTitleOffset();
                 titlePositionX -= maximumLabelSize;
                 
-                textWidget.setText(attributes.getAxisTitle());
-                
-                textWidget.drawString(attributes.getAxisTitle(), g2d,
-                        titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);
-                
+                if(attributes.getAxisTitle().length()>0){
+                    textWidget.setText(attributes.getAxisTitle());                
+                    textWidget.drawString(attributes.getAxisTitle(), g2d,
+                            titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);
+                }
                 /*textWidget.drawString("abra-catabra", g2d,
                         titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);*/
                 //double x = ( int ) r.getX();
