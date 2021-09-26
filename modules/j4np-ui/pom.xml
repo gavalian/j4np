@@ -15,7 +15,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-utils</artifactId>
@@ -28,6 +27,17 @@
 	<version>1.4</version>
 	<!--	<scope>runtime</scope> -->
       </dependency>
+      <dependency>
+        <groupId>net.objecthunter</groupId>
+        <artifactId>exp4j</artifactId>
+        <version>0.4.4</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.freehep/freehep-jminuit -->
+      <dependency>
+	<groupId>org.freehep</groupId>
+	<artifactId>freehep-jminuit</artifactId>
+	<version>1.0.2</version>
+      </dependency> 
       <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf-intellij-themes -->
       <dependency>
 	<groupId>com.formdev</groupId>
@@ -47,6 +57,7 @@
         <version>0.13</version>
       </dependency>
 
+      
       <!-- https://mvnrepository.com/artifact/com.weblookandfeel/weblaf-ui -->
       <!--
       <dependency>
@@ -61,14 +72,14 @@
         <version>1.7.27</version>
       </dependency>-->
     </dependencies>
-<!--
+
     <repositories>
       <repository>
-	<id>jhep-maven</id>
-	<url>https://clasweb.jlab.org/jhep/maven</url>
+        <id>freehep</id>
+        <url>https://java.freehep.org/maven2</url>
       </repository>
     </repositories>
--->
+
     <build>
       <extensions>
         <extension>

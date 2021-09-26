@@ -12,13 +12,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import javax.swing.JFrame;
 import twig.config.TStyle;
-import twig.widgets.Widget;
+import twig.widgets.StyleNode;
 
 /**
  *
  * @author gavalian
  */
-public class TGRegion extends Node2D implements Widget {
+public class TGRegion extends Node2D implements StyleNode {
     
     protected TGAxisFrame  axisFrame = new TGAxisFrame();
     protected TStyle          tStyle = null;
@@ -27,8 +27,16 @@ public class TGRegion extends Node2D implements Widget {
         super(x,y,w,h);
         this.nodeBackground = null;
         axisFrame.setParent(this);
+        getInsets().left(60).bottom(60).top(40).right(40);
     }
  
+    public TGRegion(){
+        super(0,0,50,50);
+        this.nodeBackground = null;
+        axisFrame.setParent(this);
+        getInsets().left(60).bottom(60).top(40).right(40);
+    }
+    
     @Override
     public void drawLayer(Graphics2D g2d, int layer){ 
         axisFrame.drawLayer(g2d, layer);        
@@ -47,6 +55,18 @@ public class TGRegion extends Node2D implements Widget {
     
     public TGAxisFrame getAxisFrame(){return this.axisFrame;}
     
+    public TGRegion setAxisLabelFont(Font font){
+        this.getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(font);
+        this.getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(font);
+        return this;
+    }
+    
+    public TGRegion setAxisTitleFont(Font font){
+        this.getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(font);
+        this.getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(font);
+        return this;
+    }
+    public void clear(){ this.axisFrame.clear();}
     public static void main(String[] args){
         JFrame frame = new JFrame();
         Canvas2D canvas = Canvas2D.createFrame(frame, 600, 500);

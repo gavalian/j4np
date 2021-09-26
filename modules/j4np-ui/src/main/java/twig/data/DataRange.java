@@ -15,8 +15,13 @@ public class DataRange {
     
     Rectangle2D.Double rect = new Rectangle2D.Double();
     
+    public DataRange(){
+        rect.x = 0.0; rect.width  = 1.0;                 
+        rect.y = 0.0; rect.height = 1.0;
+    }
+    
     public DataRange(double xmin, double xmax, double ymin, double ymax){        
-        rect.x = xmin; rect.width = (xmax-xmin);                 
+        rect.x = xmin; rect.width  = (xmax-xmin);                 
         rect.y = ymin; rect.height = ymax - ymin;
     }
     

@@ -502,6 +502,15 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         return canvas;
     }
     
+    public static JFrame getFrame(Canvas2D canvas, int w,int h){
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(w, h);
+        frame.add(canvas);
+        frame.setVisible(true);
+        return frame;
+    }
+    
     public static void main(String[] args){
         JFrame frame = new JFrame();
         Canvas2D  canvas = Canvas2D.createFrame(frame, 500, 500);

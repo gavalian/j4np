@@ -58,6 +58,7 @@
     <module>modules/j4np-physics</module>
     <module>modules/j4np-package</module>
     <module>modules/j4np-data</module>
+    <module>modules/j4np-ui</module>
     <module>extensions/j4ml-track</module>
     <module>extensions/j4np-analysis</module>
     <module>extensions/j4ml-display</module>

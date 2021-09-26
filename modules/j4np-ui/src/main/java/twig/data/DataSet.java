@@ -6,6 +6,7 @@
 package twig.data;
 
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import twig.config.TDataAttributes;
 
 /**
@@ -24,4 +25,6 @@ public interface DataSet {
      * @return 
      */
     public TDataAttributes attr();
+    public List<String>  getStats(String options);
+    public void reset();
 }

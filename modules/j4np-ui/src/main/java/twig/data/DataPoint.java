@@ -10,6 +10,7 @@ package twig.data;
  * @author gavalian
  */
 public class DataPoint {
+    
     public double x = 0.0;
     public double y = 0.0;
     public double z = 0.0;
@@ -19,7 +20,5 @@ public class DataPoint {
     
     public DataPoint(){
         
-    }
-    
-    
+    }        
 }

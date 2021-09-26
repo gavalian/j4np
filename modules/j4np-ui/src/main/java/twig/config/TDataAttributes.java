@@ -126,9 +126,8 @@ public class TDataAttributes {
     public TDataAttributes(){
         
     }
-    
-    
-    private int    lineColor = 1;
+        
+    public  int    lineColor = 1;
     private int    lineWidth = 1;
     private int    lineStyle = 1;
     
@@ -145,6 +144,6 @@ public class TDataAttributes {
     private String  titleZ = "";
     
     private String  drawOptions = "PE";
-    private String  statOptions = "";
+    private String  statOptions = "11";
     
 }

@@ -15,6 +15,14 @@ import java.util.List;
  */
 public class TAxisAttributes {
 
+    public Boolean getAxisLineDraw() {
+        return axisLineDraw;
+    }
+
+    public void setAxisLineDraw(Boolean axisLineDraw) {
+        this.axisLineDraw = axisLineDraw;
+    }
+
     public int getAxisLineColor() {
         return axisLineColor;
     }
@@ -47,12 +55,12 @@ public class TAxisAttributes {
         this.axisTitle = axisTitle;
     }
 
-    public int getAixsLineWidth() {
-        return aixsLineWidth;
+    public int getAxisLineWidth() {
+        return axisLineWidth;
     }
 
-    public void setAixsLineWidth(int aixsLineWidth) {
-        this.aixsLineWidth = aixsLineWidth;
+    public void setAxisLineWidth(int aixsLineWidth) {
+        this.axisLineWidth = aixsLineWidth;
     }
 
     public AxisType getAxisType() {
@@ -193,7 +201,7 @@ public class TAxisAttributes {
     private int axisMinorTickMarkSize =  0;
     private int       axisLabelOffset =  4;
     private int       axisTitleOffset =  0;
-    private int         aixsLineWidth =  1;
+    private int         axisLineWidth =  1;
     private int         axisLineColor = 30001;
     private int        axisLabelColor = 30002;
     private int        axisTitleColor = 30002;
@@ -209,6 +217,8 @@ public class TAxisAttributes {
      */
     private Boolean           axisBoxDraw = false;
     private Boolean         axisTicksDraw = true;
+    private Boolean          axisLineDraw = true;
+    
     private Boolean        axisLabelsDraw = true;
     private Boolean        axisTitlesDraw = true;
     

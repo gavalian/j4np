@@ -165,7 +165,7 @@ public class LatexText {
         
         g2d.setColor(latexTextColor);
         g2d.setFont(textFont);
-        g2d.drawString(text, posX, posY);                
+        g2d.drawString(text, posX, posY);
         if(type==0) return (int) rect.getHeight();
         return (int) rect.getWidth();
     }

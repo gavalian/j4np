@@ -27,7 +27,7 @@ public class GraphErrors implements DataSet {
     private final DataVector dataEY = new DataVector();
 
     private String graphName = "graphErrors";
-    private TDataAttributes graphAttr = null;
+    private TDataAttributes graphAttr = new TDataAttributes();
 
     //private Func1D fitFunction = null;
 
@@ -261,6 +261,17 @@ public class GraphErrors implements DataSet {
     @Override
     public TDataAttributes attr() {
         return this.graphAttr;
+    }
+
+    @Override
+    public void reset() {
+        dataX.clear(); dataY.clear();
+        dataEX.clear(); dataEY.clear();
+    }
+
+    @Override
+    public List<String> getStats(String options) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

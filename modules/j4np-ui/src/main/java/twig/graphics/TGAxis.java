@@ -10,85 +10,152 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 import twig.config.TAxisAttributes;
 import twig.config.TAxisAttributes.AxisType;
 import twig.config.TStyle;
+import twig.data.Range;
 import twig.widgets.LatexText;
 import twig.widgets.LatexText.TextAlign;
-import twig.widgets.Widget;
+import twig.widgets.LatexText.TextRotate;
+import twig.widgets.StyleNode;
 
 /**
  * 
  * @author gavalian
  */
-public class TGAxis implements Widget {
+public class TGAxis implements StyleNode {
     
     private TAxisAttributes attributes = new TAxisAttributes();
     private LatexText       textWidget = new LatexText("1",0,0);
     private TStyle              tStyle = null;
     
+    private List<Double>  axisTicksBuffer = new ArrayList<>();
+    private List<String>  axisTextsBuffer = new ArrayList<>();    
+    private Range               axisRange = new Range();
+    private Range          fixedAxisRange = null;
+    private TGNiceScale     axisScaleTool = new TGNiceScale(0.0,1.0);
     
     public TGAxis(){}
+    
     public TGAxis(AxisType type){attributes.setAxisType(type);}
     
     public TAxisAttributes getAttributes(){ return this.attributes;}
-        
-    public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
+    
+    public void setLimits(double min, double max){
+        if(this.fixedAxisRange==null)
+            this.axisRange.set(min,max);
+    }
+    
+    
+    public void drawAxisX(Graphics2D g2d, Rectangle2D r, Translation2D tr){
         TStyle style = getStyle();
+        int x1 = ( int ) r.getX();
+        int x2 = ( int ) (r.getWidth()+r.getX());
+        int y1 = ( int ) (r.getY()+r.getHeight());
+        int y2 = ( int ) (r.getY());
         
-        if(attributes.getAxisType()==AxisType.AXIS_X){
-            
-            int x1 = ( int ) r.getX();
-            int x2 = ( int ) (r.getWidth()+r.getX());
-            int y1 = ( int ) (r.getY()+r.getHeight());
-            int yend = y1 - attributes.getAxisTickMarkSize();
-            
-            int ytoplabel = y1 + attributes.getAxisLabelOffset();
-            if(attributes.getAxisTickMarkSize()<0) 
-                ytoplabel -= attributes.getAxisTickMarkSize();
-
-            Color lineColor = style.getPalette().getColor(attributes.getAxisLineColor());
-            Color textColor = style.getPalette().getColor(attributes.getAxisLabelColor());
-            
-            textWidget.setColor(textColor);
-            
-            g2d.setColor(lineColor);
-            
-            g2d.setStroke(new BasicStroke(attributes.getAixsLineWidth()));            
+        int yend = y1 - attributes.getAxisTickMarkSize();
+        
+        int ytoplabel = y1 + attributes.getAxisLabelOffset();
+        
+        if(attributes.getAxisTickMarkSize()<0) 
+            ytoplabel -= attributes.getAxisTickMarkSize();
+        
+        Color lineColor = style.getPalette().getColor(attributes.getAxisLineColor());
+        Color textColor = style.getPalette().getColor(attributes.getAxisLabelColor());
+        
+        textWidget.setColor(textColor);
+        
+        g2d.setColor(lineColor);
+        /*
+        * Draw Axis line if the axis the draw box is set, then 
+        * the oposite side will be drawn as well. 
+        */
+        if(this.attributes.getAxisLineDraw()==true){
+            g2d.setStroke(new BasicStroke(attributes.getAxisLineWidth()));            
             g2d.drawLine(x1,y1,x2,y1);
-            
-            textWidget.setFont(attributes.getAxisLabelFont());
-            int labelHeight = 0;
-            
-            if(attributes.getAxisTicksPosition().size()>0){
-                g2d.setColor(lineColor);
-                for(int i = 0; i < attributes.getAxisTicksPosition().size(); i++){
-                    int xpos = (int) tr.getX(attributes.getAxisTicksPosition().get(i),r);
-                    String xlabel = attributes.getAxisTicksString().get(i);
-                    
-                    g2d.drawLine( xpos, y1, xpos, yend);
-                    labelHeight = textWidget.drawString(xlabel, g2d, xpos, ytoplabel, 1, 3, 0);
-                }
+        }
+        
+        if(this.getAttributes().getAxisBoxDraw()==true)
+            g2d.drawLine(x1,y2,x2,y2);
+        
+        textWidget.setFont(attributes.getAxisLabelFont());
+        int labelHeight = 0;
+        
+        if(attributes.getAxisTicksPosition().size()>0){            
+            g2d.setColor(lineColor);
+            for(int i = 0; i < attributes.getAxisTicksPosition().size(); i++){
+                int xpos = (int) tr.getX(attributes.getAxisTicksPosition().get(i),r);
+                String xlabel = attributes.getAxisTicksString().get(i);                    
+                g2d.drawLine( xpos, y1, xpos, yend);
+                labelHeight = textWidget.drawString(xlabel, g2d, xpos, ytoplabel, 1, 3, 0);
             }
-            //double x = ( int ) r.getX();
-            int titlePositionX = (int) (x1+(x2-x1)*0.5);
-            int titlePositionY = (int) (ytoplabel-labelHeight);
-            
-            textWidget.setFont(attributes.getAxisTitleFont());
-            textWidget.drawString(attributes.getAxisTitle(), g2d, 
-                    titlePositionX, titlePositionY, TextAlign.CENTER, TextAlign.TOP, 0);
-            //System.out.println(" printing : " + attributes.getAxisTitle());
+        }  else {
+            g2d.setColor(lineColor);
+            this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
+            this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
+            for(int i = 0; i < axisTicksBuffer.size(); i++){
+                int xpos = (int) tr.getX(axisTicksBuffer.get(i),r);
+                String xlabel = axisTextsBuffer.get(i);                    
+                g2d.drawLine( xpos, y1, xpos, yend);
+                if(this.attributes.getAxisLabelsDraw()==true)
+                    labelHeight = textWidget.drawString(xlabel, g2d, xpos, ytoplabel, 1, 3, 0);
+            }
+        }
+        //double x = ( int ) r.getX();
+        int titlePositionX = (int) (x1+(x2-x1)*0.5);
+        int titlePositionY = (int) (ytoplabel-labelHeight);
+        
+        textWidget.setFont(attributes.getAxisTitleFont());
+        titlePositionY = (int) (
+                r.getY() + r.getHeight()                
+                );
+        if(attributes.getAxisTickMarkSize()<0) 
+            titlePositionY += Math.abs(attributes.getAxisTickMarkSize());
+        
+        titlePositionY += attributes.getAxisLabelOffset() + 
+                attributes.getAxisTitleOffset() + labelHeight;
+        /*System.out.println(" Title offset = " + attributes.getAxisTitleOffset());
+        System.out.println("Rect = " + r);
+        System.out.printf("string @ : %8d %8d\n",titlePositionX,titlePositionY);
+        */
+        textWidget.setText(attributes.getAxisTitle());
+        textWidget.drawString(g2d,
+                titlePositionX ,  titlePositionY, LatexText.ALIGN_CENTER,LatexText.ALIGN_TOP);
+        /*
+        textWidget.drawString(attributes.getAxisTitle(), g2d,
+                titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.TOP, 0);*/
+        //System.out.println(" printing : " + attributes.getAxisTitle());
+    }
+    
+    public void drawAxisY(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        
+    }
+    
+    public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
+        
+        TStyle style = getStyle();
+        if(attributes.getAxisType()==AxisType.AXIS_X){
+            drawAxisX(g2d, r, tr);
         }
         
         if(attributes.getAxisType()==AxisType.AXIS_Y){
+            
             int x1 = ( int ) r.getX();
             int x2 = ( int ) (r.getWidth()+r.getX());
             int y1 = ( int ) (r.getY()+r.getHeight());
             int y2 = ( int ) (r.getY());
-            int xend = x1 + attributes.getAxisTickMarkSize();
+            int xend = x1 + attributes.getAxisTickMarkSize();            
             
-            g2d.setStroke(new BasicStroke(attributes.getAixsLineWidth()));            
-            g2d.drawLine(x1,y1,x1,y2);
+            if(this.attributes.getAxisLineDraw()==true){
+                g2d.setStroke(new BasicStroke(attributes.getAxisLineWidth()));            
+                g2d.drawLine(x1,y1,x1,y2);
+            }
+            
+            if(this.getAttributes().getAxisBoxDraw()==true)
+                g2d.drawLine(x2,y1,x2,y2);
            
             
             int xrightlevel = x1 - attributes.getAxisLabelOffset();
@@ -96,21 +163,80 @@ public class TGAxis implements Widget {
             if(attributes.getAxisTickMarkSize()<0) 
                 xrightlevel += attributes.getAxisTickMarkSize();
             
+            
             textWidget.setFont(attributes.getAxisLabelFont());
+            
+            int maximumLabelSize = 0;
             
             if(attributes.getAxisTicksPosition().size()>0){
                 for(int i = 0; i < attributes.getAxisTicksPosition().size(); i++){
-                    int ypos = (int)(y1 - tr.getY(attributes.getAxisTicksPosition().get(i),r));
+                    int ypos = (int)(y1 + r.getY() - tr.getY(attributes.getAxisTicksPosition().get(i),r));
+                    
+                    //System.out.println("y1 = " + y1  + " point = " 
+                    //        + attributes.getAxisTicksPosition().get(i) 
+                    //        + " pos = " + tr.getY(attributes.getAxisTicksPosition().get(i),r));
+                    //tr.show();
+                    //System.out.println(" R = " + r);
+//int ypos = (int)( tr.getY(attributes.getAxisTicksPosition().get(i),r));
                     String ylabel = attributes.getAxisTicksString().get(i);
                     g2d.drawLine( x1, ypos, xend, ypos);                    
-                    textWidget.drawString(ylabel, g2d, xrightlevel, ypos, TextAlign.RIGHT,TextAlign.CENTER,0);                            
+                    int textWidth = textWidget.drawString(ylabel, g2d, xrightlevel, ypos, TextAlign.RIGHT,TextAlign.CENTER,0);
+                    if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
+                } 
+                //double x = ( int ) r.getX();
+            } else {
+                this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
+                this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
+                for(int i = 0; i < axisTicksBuffer.size(); i++){
+                    int ypos = (int)(y1 + r.getY() - tr.getY(axisTicksBuffer.get(i),r));
+                    //int ypos = (int)( tr.getY(axisTicksBuffer.get(i),r));
+                    String ylabel = axisTextsBuffer.get(i);
+                    g2d.drawLine( x1, ypos, xend, ypos);
+                    if(this.attributes.getAxisLabelsDraw()==true){
+                        int textWidth = textWidget.drawString(ylabel, g2d, xrightlevel, ypos, TextAlign.RIGHT,TextAlign.CENTER,0);                            
+                        if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
+                    }
+                } 
             }
-            //double x = ( int ) r.getX();
-        }
-            //double x = ( int ) r.getX();
+            
+            
+            if(attributes.getAxisTitle().length()>0){
+                
+                textWidget.setFont(attributes.getAxisTitleFont());
+                
+                int titlePositionX = (int) (r.getX());
+                int titlePositionY = (int) (r.getY()+r.getHeight()*0.5);
+                
+                if(this.attributes.getAxisTickMarkSize()<0){
+                    titlePositionX -= Math.abs(attributes.getAxisTickMarkSize());
+                }
+                
+                titlePositionX -= attributes.getAxisLabelOffset();
+                titlePositionX -= attributes.getAxisTitleOffset();
+                titlePositionX -= maximumLabelSize;
+                
+                textWidget.setText(attributes.getAxisTitle());
+                
+                textWidget.drawString(attributes.getAxisTitle(), g2d,
+                        titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);
+                
+                /*textWidget.drawString("abra-catabra", g2d,
+                        titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);*/
+                //double x = ( int ) r.getX();
+            }
         }
     }
 
+    public void setFixedLimits(double min, double max){
+        fixedAxisRange = new Range(min, max);
+        axisRange.set(min, max);
+    }
+    
+    public void unsetFixedLimits(){
+        fixedAxisRange = null;        
+    }
+    
+    public Range getRange(){ return axisRange;}
     @Override
     public void setStyle(TStyle style) {
         tStyle = style;

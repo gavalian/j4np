@@ -45,7 +45,7 @@ public class TPalette {
         init("gold10");
         this.initSpacialtyPalette();
     }
-        
+    
     public void init(String type){
         if(type.contains("default")==true){
             colorPalette.clear();
@@ -67,6 +67,7 @@ public class TPalette {
             colorPalette.add(new Color(138,194,84));
             colorPalette.add(new Color(102,60,180));            
         }
+        this.setColorScheme(type);
     }
       /**
      * returns color from color pallette. There are some reserved colors.
@@ -148,7 +149,8 @@ public class TPalette {
             colorPalette.add(new Color( 220,156,191)); // Purple 50 - 8
             colorPalette.add(new Color( 160,27,104)); // Dark Purple - 9
             colorPalette.add(new Color( 231,158,142)); // Red 60 - 10
-            colorPalette.add(new Color( 209,65,36)); // Red - 11             
+            colorPalette.add(new Color( 209,65,36)); // Red - 11 
+            colorPalette.add(new Color( 50,50,50)); // 12 - gray
         }
     }
 
@@ -176,14 +178,25 @@ public class TPalette {
         if(color<colorPalette.size()){
             return this.colorPalette.get(color);
         }
+        
         if(color>=20&&color<99){
             double fraction = 0.9-(color-20)/100.0;
-            return TPalette.getLighter(colorPalette.get(color-20), fraction);                        
+            int    index    = (color-20)%10;
+            /*System.out.printf(" color = %4d, index = %4d, fraction = %.4f\n",
+                    color,index,fraction);*/
+            Color  lighter = TPalette.lighter(colorPalette.get(index), (float) fraction);
+            return lighter;
+            //int lookup = ;
+            //System.out.println("color = " + color + "  look up = " + lookup);
+            //return TPalette.getLighter(colorPalette.get(index), fraction);                        
         }
         
         if(color>=100&&color<199){
             double fraction = 0.9-(color-100)/100.0;
-            return TPalette.getTanslucent(colorPalette.get(color-20), fraction);                        
+            int       index = (color-120)%10;
+            /*System.out.printf(" color = %4d, index = %4d, fraction = %.4f\n",
+                    color,index,fraction);*/
+            return TPalette.getTanslucent(colorPalette.get(index), fraction);                        
         }
         
         int alfa = 255 - 25*(color/10);
@@ -205,5 +218,36 @@ public class TPalette {
                 (int) (col.getGreen()),
                 (int) (col.getBlue()), (int) (255*fraction)
         );
+    }
+    
+    /**
+     * Make a color lighter.
+     * 
+     * @param color
+     *          Color to mix with white.
+     * @param ratio
+     *          White ratio (1.0 = complete white, 0.0 = color).
+     * @return Lighter color.
+     */
+    public static Color lighter(Color color, float ratio) {
+        return mergeColors(Color.WHITE, ratio, color, 1 - ratio);
+    }
+    
+    /**
+     * Merges two colors. The two floating point arguments specify "how much" of the corresponding color is added to the
+     * resulting color. Both arguments should (but don't have to) add to <code>1.0</code>.
+     * <p>
+     * This method is null-safe. If one of the given colors is <code>null</code>, the other color is returned (unchanged).
+     */
+    public static Color mergeColors(Color a, float fa, Color b, float fb) {
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        return new Color((fa * a.getRed() + fb * b.getRed()) / (fa + fb) / 255f,
+                (fa * a.getGreen() + fb * b.getGreen()) / (fa + fb) / 255f,
+                (fa * a.getBlue() + fb * b.getBlue()) / (fa + fb) / 255f);
     }
 }
