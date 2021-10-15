@@ -6,13 +6,17 @@
 package j4np.physics.analysis;
 
 import j4np.physics.LorentzVector;
+import j4np.physics.PhysicsReaction;
 import j4np.physics.Vector3;
-import org.jlab.groot.data.H1F;
-import org.jlab.jnp.groot.graphics.TDataCanvas;
+import java.util.ArrayList;
+import java.util.List;
+import org.jlab.jnp.hipo4.data.Bank;
 import org.jlab.jnp.hipo4.data.Event;
 import org.jlab.jnp.hipo4.io.HipoChain;
 import org.jlab.jnp.hipo4.io.HipoReader;
 import org.jlab.jnp.hipo4.io.HipoWriter;
+import twig.data.H1F;
+import twig.graphics.TGCanvas;
 
 /**
  *
@@ -20,10 +24,63 @@ import org.jlab.jnp.hipo4.io.HipoWriter;
  */
 public class ClasAnalysis {
     
+    protected List<? extends PhysicsReaction> reactions = new ArrayList<>();
+    
+    public ClasAnalysis(){
+        
+    }
+    
+    
+    
+    public static void filter(String file){
+        HipoChain chain = new HipoChain();
+        chain.addFile(file);
+        chain.open();
+        
+        Bank mc = chain.getBank("MC::Particle");
+        
+        ClasEvent clasEvent = ClasEvent.with(chain, new String[]{"MC::Particle"});
+        Event event = new Event();
+        //LorentzVector vE = LorentzVector.withPxPyPzM(0, 0, 10.5, 0.0005);
+        //vE.add(0, 0, 0, 0.938);
+        LorentzVector vCombo = new LorentzVector();
+
+        //H1F hMass = new H1F("hMass",120,0.5,1.05);
+        
+        while(chain.hasNext()==true){
+            chain.nextEvent(event);
+            clasEvent.read(event);
+            if(clasEvent.countByPid(211)==1&&clasEvent.countByPid(-211)==1&&
+                    clasEvent.countByPid(11)==1&&clasEvent.countByPid(2212)==1&&clasEvent.count()==4){
+                
+                //clasEvent.show();
+                //System.out.println(clasEvent.toLundString());
+                LorentzVector vE = LorentzVector.withPxPyPzM(0, 0, 10.5, 0.0005);
+                vE.add(0, 0, 0, 0.938);
+                
+                clasEvent.makeVector(vCombo, new int[]{11,211,-211}, 
+                        new double[]{0.0005,0.1396,0.1396}, new int[]{0,0,0}, 
+                        new int[]{-1,-1,-1});
+                vE.add(vCombo);
+                if(vE.mass()>0.5&&vE.mass()<1.1){
+                    System.out.print(clasEvent.toLundString());
+                }
+                //System.out.println("mass = " + vE.mass());
+                //hMass.fill(vE.mass());
+            }
+        }
+        
+        //TGCanvas c = new TGCanvas();
+        //c.view().region().draw(hMass);
+        //System.out.println("integral = " + hMass.integral());
+    }
+    
     public static void main(String[] args){
         
-        
-        
+        String file = "/Users/gavalian/Work/DataSpace/pid/mc_sidis.hipo";
+
+        ClasAnalysis.filter(file);
+        /*
         HipoChain reader = new HipoChain();
         
         if(args.length>0){
@@ -85,11 +142,7 @@ public class ClasAnalysis {
                     clasEvent.vertex(vrtE, 11,0);
                     clasEvent.vertex(vrtPi, 211,0);
 
-                    /*System.out.println("----- " + clasEvent.countByPid(11));
-                    System.out.println(vec);
-                    System.out.println(" E  = " + vE);
-                    System.out.println(" Pi = " + vPi);*/
-                    //System.out.printf("mass = %8.5f\n",vB.mass());
+                 
                     if(Math.abs(vrtE.z()-vrtPi.z())<2.0
                             &&vrtE.z()>-15.0&&vrtE.z()<5){
                         h1.fill(vB.mass());
@@ -117,11 +170,7 @@ public class ClasAnalysis {
                                         
                     clasEvent.vector(vec, 11,0);
 
-                    /*System.out.println("----- " + clasEvent.countByPid(11));
-                    System.out.println(vec);
-                    System.out.println(" E  = " + vE);
-                    System.out.println(" Pi = " + vPi);*/
-                    //System.out.printf("mass = %8.5f\n",vB.mass());
+                  
                     Vector3  vrtE = new Vector3();
                     Vector3  vrtPi = new Vector3();
                                         
@@ -131,7 +180,7 @@ public class ClasAnalysis {
                     if(vrtE.z()>-15.0&&vrtE.z()<5){                    
                         h2.fill(vB.mass());
                     }
-                    //h2.fill(vB.mass());
+                   
                 }
             }
             
@@ -140,6 +189,6 @@ public class ClasAnalysis {
         TDataCanvas c1 = new TDataCanvas(500,600);
         c1.divide(2,2);
         c1.cd(0).draw(h1).cd(1).draw(h2);
-        c1.cd(2).draw(h3).cd(3).draw(h4);
+        c1.cd(2).draw(h3).cd(3).draw(h4);*/
     }
 }

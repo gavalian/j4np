@@ -12,11 +12,13 @@ event by event to ascertain improvements of tracking.
  assistance from artificial intelligence we processed one run at nominal luminosity (45 nA) compare performances.
  
  %The efficiency of track reconstruction was obtained for separate track topologies (6 super-layer and 5 super-layer).
- \begin{figure}[!h]
+ \begin{figure}[!ht]
 \begin{center}
 % \includegraphics[width=2.0in]{images/pos_theta_5SL.png}
-  \includegraphics[width=5.0in]{images/summary_5SL_6SL_neg.pdf}
-\caption { }
+  \includegraphics[width=6.5in]{images/figure_p.pdf}
+  \includegraphics[width=6.5in]{images/figure_theta.pdf}
+    \includegraphics[width=6.5in]{images/figure_vz.pdf}
+\caption { Comparison of number of tracks reconstructed with conventional algorithm vs AI assisted tracking code as a function of momentum, polar angle and particle interaction vertex. The comparison is shown for 5 super-layer, 6 super-layer tracks (left two columns) and the total number (right column).}
  \label{track:efficiency}
  \end{center}
 \end{figure}
@@ -90,8 +92,8 @@ with $b=\frac{c}{a}$. The slope parameter b is the rate of the reconstruction in
  
  \begin{figure}[!ht]
 \begin{center}
- \includegraphics[width=3.0in]{images/lumi_scan_positive.pdf}
- \includegraphics[width=3.0in]{images/lumi_scan_negative.pdf}
+ \includegraphics[width=3.0in]{images/figure_lscan_pos.pdf}
+ \includegraphics[width=3.0in]{images/figure_lscan_neg.pdf}
 \caption {Tracking efficiency for positively and negatively charged particles as a function of beam current (luminosity).  Conventional algorithm 
 track reconstruction efficiency (diamonds) is compared to AI assisted track reconstruction efficiency (circles). }
  \label{lumi:scan}
@@ -115,7 +117,7 @@ there is a visible peak of a missing proton that we can use to measure impact of
 
  \begin{figure}[!ht]
 \begin{center}
- \includegraphics[width=6.0in]{images/physics_results.pdf}
+ \includegraphics[width=6.0in]{images/physics_scan.pdf}
 \caption {Architecture of corruption fixing Auto-Encoder.}
  \label{physics:outcome}
  \end{center}

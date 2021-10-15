@@ -7,6 +7,7 @@ package twig.math;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import twig.data.H1F;
 
 
 /**
@@ -194,5 +195,71 @@ public class FunctionFactory {
             divergence += Math.abs(acosF-acosM);
         }
         System.out.println(String.format("Divergence : %.8f", divergence));
+    }
+    
+    
+    public static double significance(H1F data, Func1D back, Func1D signal){
+        double  LpB = 0.0;
+        double LpSB = 0.0;
+        int nbins = data.getAxis().getNBins();
+        for(int i = 0; i < nbins; i++){
+            double x = data.getAxis().getBinCenter(i);
+            if(x>=back.getMin()&&x<=back.getMax()){
+                double ni = data.getBinContent(i);
+                double bi = back.evaluate(x);
+                double si = signal.evaluate(x);
+                LpSB += 2*((si+bi) - ni + ni*Math.log(ni/(si+bi)));
+                LpB  += bi - ni + ni*Math.log(ni/bi);
+            }
+        }
+        System.out.printf("LpB = %f, LpSB = %f\n",LpB,LpSB);
+        return 1.0;
+    }
+    
+    public static double significance(H1F data, Func1D back, Func1D signal,
+            double min, double max){
+        double  LpB = 0.0;
+        double LpSB = 0.0;
+        int nbins = data.getAxis().getNBins();
+        for(int i = 0; i < nbins; i++){
+            double x = data.getAxis().getBinCenter(i);
+            if(x>=min&&x<=max){
+                double ni = data.getBinContent(i);
+                double bi = back.evaluate(x);
+                double si = signal.evaluate(x);
+                LpSB += 2*((si+bi) - ni + ni*Math.log(ni/(si+bi)));
+                LpB  += bi - ni + ni*Math.log(ni/bi);
+            }
+        }
+
+        double sig = Math.sqrt(2*(LpB/LpSB));
+        System.out.printf("LpB = %f, LpSB = %f, sig = %f\n",
+                LpB,LpSB,sig);
+        return sig;
+    }
+    
+    
+    public static double significance(H1F data, Func1D total, Func1D back, 
+            Func1D signal, double min, double max){
+        double  LpB = 0.0;
+        double LpSB = 0.0;
+        int nbins = data.getAxis().getNBins();
+        for(int i = 0; i < nbins; i++){
+            double x = data.getAxis().getBinCenter(i);
+            if(x>=min&&x<=max){
+                double ni = data.getBinContent(i);
+                double bi = back.evaluate(x);
+                double si = signal.evaluate(x);
+                double ti = total.evaluate(x);
+                
+                LpSB += 2*(ti - ni + ni*Math.log(ni/ti));
+                LpB  += bi - ni + ni*Math.log(ni/bi);
+            }
+        }
+
+        double sig = Math.sqrt(2*(LpB/LpSB));
+        System.out.printf("LpB = %f, LpSB = %f, sig = %f\n",
+                LpB,LpSB,sig);
+        return sig;
     }
 }

@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import twig.config.TStyle;
 
 /**
  *
@@ -45,6 +46,13 @@ public class TGCanvas extends JFrame implements ActionListener {
         CANVAS_DEFAULT_HEIGHT = ysize;  
         dataCanvasTitle = name;
         initUI(true);
+    }
+    
+    public TGCanvas(String name, int xsize, int ysize, boolean exitOnClose){
+        CANVAS_DEFAULT_WIDTH  = xsize;
+        CANVAS_DEFAULT_HEIGHT = ysize;  
+        dataCanvasTitle = name;
+        initUI(exitOnClose);
     }
     
     private void initUI(boolean closeOnExit){
@@ -125,7 +133,12 @@ public class TGCanvas extends JFrame implements ActionListener {
         themeMenu.add(theme_DL);
         themeMenu.add(theme_SL);
         themeMenu.add(theme_SD);
-        
+         JMenu paletteMenu = this.createMenu("Color Palette", 
+                new String[]{"Gold","Tab"},new String[]{"gold10","tab10"}
+                );
+         
+         themeMenu.addSeparator();
+         themeMenu.add(paletteMenu);
         
         JMenu resizeMenu = this.createMenu("Resize", 
                 new String[]{"600x500","800x400","500x900","Custom"}
@@ -136,6 +149,9 @@ public class TGCanvas extends JFrame implements ActionListener {
                 new String[]{"divide_1x1","divide_2x2","divide_3x3",
                     "divide_3x2","divide_2x3","-","divide_Custom"}
         );
+        
+        
+       
         
         editMenu.add(resizeMenu);
         editMenu.add(divideMenu);
@@ -193,6 +209,18 @@ public class TGCanvas extends JFrame implements ActionListener {
         if(ac.compareTo("Export PDF")==0){
             //dataCanvas.save(this.dataCanvasTitle+".pdf");
             dataCanvas.export(this.dataCanvasTitle+".pdf","PDF");
-        }   
+        }
+        
+        if(ac.compareTo("Colors and Lines")==0){
+            TGCanvas c = new TGCanvas("canvasStyles",900,700,false);
+            TGStyleFactory.markersAndColors(c.view());
+        }
+        
+        if(ac.compareTo("tab10")==0){
+            TStyle.getInstance().getPalette().init("tab10");            
+        }
+        if(ac.compareTo("gold10")==0){
+            TStyle.getInstance().getPalette().init("gold10");            
+        }
     }
 }

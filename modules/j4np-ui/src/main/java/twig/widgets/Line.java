@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
  * @author gavalian
  */
 public class Line implements Widget {
+    
     private double xOrigin = 0;
     private double yOrigin = 0;
     private double xEnd = 0;

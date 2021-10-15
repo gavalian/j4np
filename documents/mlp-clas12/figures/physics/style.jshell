@@ -1,0 +1,76 @@
+import java.awt.Font;
+
+void setStyle3x1(TGCanvas c, int xdiv, int ydiv){
+
+   c.setSize(1200,300);
+   int regions = c.view().count();
+
+   for(int i = 0; i < regions; i++){
+    c.view().cd(i);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkCount(xdiv);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkCount(ydiv);
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkSize(5);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkSize(5);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLineWidth(1);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLineWidth(1);
+    c.view().region().getInsets().left(60).top(10).bottom(50).right(20);
+   }
+}
+
+void setStyle1x1(TGCanvas c, int xdiv, int ydiv){
+
+   c.setSize(550,450);
+   int regions = c.view().count();
+
+   for(int i = 0; i < regions; i++){
+    c.view().cd(i);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkCount(xdiv);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkCount(ydiv);
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkSize(5);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkSize(5);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLineWidth(1);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLineWidth(1);
+    c.view().region().getInsets().left(60).top(10).bottom(50).right(20);
+   }
+}
+
+void setStyle2x2(TGCanvas c, int xdiv, int ydiv){
+
+   c.setSize(1050,650);
+   int regions = c.view().count();
+
+   for(int i = 0; i < regions; i++){
+    c.view().cd(i);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkCount(xdiv);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkCount(ydiv);
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkSize(5);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkSize(5);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLineWidth(1);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLineWidth(1);
+    c.view().region().getInsets().left(60).top(10).bottom(50).right(20);
+   }
+}

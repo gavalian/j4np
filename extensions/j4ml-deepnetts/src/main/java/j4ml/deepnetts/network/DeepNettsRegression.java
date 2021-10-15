@@ -67,6 +67,13 @@ public class DeepNettsRegression {
         return str.toString();
     }
     
+    public static String[] generateNames(int input, int output){
+          String[] names = new String[input+output];
+        for(int i = 0; i < input; i++) names[i] = "in" + i;
+        for(int i = 0; i < output; i++) names[i+input] = "out" + i;        
+        return names;
+    }
+    
     public List<String>  getNetworkStream(){
         
         List<String> stream = new ArrayList<String>();

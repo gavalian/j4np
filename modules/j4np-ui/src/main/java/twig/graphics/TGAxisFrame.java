@@ -68,6 +68,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
     
     @Override
     public void drawLayer(Graphics2D g2d, int layer){
+        
         Node2D parent = this.getParent();
         Rectangle2D r = parent.getBounds().getBounds();
         /**
@@ -138,7 +139,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
                 axisY.getRange().min(),
                 axisY.getRange().max()
                 );
-    }
+    }        
     
     public void addWidget(Widget wi){
         widgetNodes.add(wi);

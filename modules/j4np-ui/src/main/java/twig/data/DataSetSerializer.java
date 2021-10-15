@@ -152,7 +152,7 @@ public class DataSetSerializer {
             String  name = jsonAttr.get(l).asObject().get("name").asString();
             String  type = jsonAttr.get(l).asObject().get("type").asString();
             String value = jsonAttr.get(l).asObject().get("value").asString();
-            System.out.printf("%12s, %24s, %s\n",name,type,value);
+            //System.out.printf("%12s, %24s, %s\n",name,type,value);
             String accessor = "set" + name;
 
 

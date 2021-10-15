@@ -122,10 +122,11 @@ public class Vector3 {
         return this;
     }
     
-    public void add(double x, double y, double z){
+    public Vector3 add(double x, double y, double z){
         fX = fX + x;
-        fY = fY + x;
-        fZ = fZ + x;
+        fY = fY + y;
+        fZ = fZ + z;
+        return this;
     }
     
     public void negative()
@@ -143,10 +144,11 @@ public class Vector3 {
         return this;
     }
     
-    public void sub(double x, double y, double z){
+    public Vector3 sub(double x, double y, double z){
        fX = fX - x;
        fY = fY - y;
        fZ = fZ - z;
+       return this;
     }
     
     public double compare(Vector3 vect)

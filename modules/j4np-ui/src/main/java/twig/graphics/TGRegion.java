@@ -10,9 +10,15 @@ import j4np.graphics.Canvas2D;
 import j4np.graphics.Node2D;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.List;
 import javax.swing.JFrame;
 import twig.config.TStyle;
+import twig.data.DataSet;
+import twig.data.GraphErrors;
+import twig.data.H1F;
+import twig.math.Func1D;
 import twig.widgets.StyleNode;
+import twig.widgets.Widget;
 
 /**
  *
@@ -42,6 +48,7 @@ public class TGRegion extends Node2D implements StyleNode {
         axisFrame.drawLayer(g2d, layer);        
     }
     
+        
     @Override
     public void setStyle(TStyle style) {
         this.tStyle = style;
@@ -55,6 +62,28 @@ public class TGRegion extends Node2D implements StyleNode {
     
     public TGAxisFrame getAxisFrame(){return this.axisFrame;}
     
+    
+    public TGRegion setAxisLabelSize(int size){
+        Font fx = getAxisFrame().getAxisX().getAttributes().getAxisLabelFont();
+        getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(fx.deriveFont(size));
+        
+        Font fy = getAxisFrame().getAxisY().getAttributes().getAxisLabelFont();
+        getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(fy.deriveFont(size));
+        /*
+        this.getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(font);
+        this.getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(font);
+        */
+        return this;
+    }
+    
+    public TGRegion setAxisTitleSize(int size){
+        Font fx = getAxisFrame().getAxisX().getAttributes().getAxisTitleFont();
+        getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(fx.deriveFont(size));
+        Font fy = getAxisFrame().getAxisY().getAttributes().getAxisTitleFont();
+        getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(fy.deriveFont(size));
+        return this;
+    }
+    
     public TGRegion setAxisLabelFont(Font font){
         this.getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(font);
         this.getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(font);
@@ -66,6 +95,7 @@ public class TGRegion extends Node2D implements StyleNode {
         this.getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(font);
         return this;
     }
+    
     public void clear(){ this.axisFrame.clear();}
     
     
@@ -123,6 +153,48 @@ public class TGRegion extends Node2D implements StyleNode {
                 getAxisFrame().getAxisY().getAttributes().getAxisTicksPosition().add(values[i]);
                 getAxisFrame().getAxisY().getAttributes().getAxisTicksString().add(labels[i]);
             }
+        }
+        return this;
+    }
+    
+    public TGRegion draw(DataSet ds){
+        draw(ds,"*"); return this;
+    }
+    
+    public TGRegion draw(List<? extends DataSet> list, String options){
+        if(options.contains("same")==false){
+            this.axisFrame.clear();
+        }
+        String localOpts = options;
+        if(localOpts.contains("same")==false){
+            localOpts = options + "same";
+        }
+        
+        for(DataSet ds : list){
+            draw(ds,localOpts);
+        }
+        return this;
+    }
+    
+    public TGRegion draw(Widget w){
+        this.axisFrame.addWidget(w);
+        return this;
+    }
+    
+    public TGRegion draw(DataSet ds, String options){
+        if(options.contains("same")==false){
+            this.axisFrame.clear();
+        }
+        if(ds instanceof H1F){
+            axisFrame.addDataNode(new TGH1F((H1F) ds,options));
+        }
+        
+        if(ds instanceof GraphErrors){
+            axisFrame.addDataNode(new TGENode2D((GraphErrors) ds,options));
+        }
+        
+        if(ds instanceof Func1D){
+            axisFrame.addDataNode(new TGF1D((Func1D) ds,options));
         }
         return this;
     }

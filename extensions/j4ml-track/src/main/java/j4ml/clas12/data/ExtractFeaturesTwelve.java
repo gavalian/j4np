@@ -25,7 +25,7 @@ public class ExtractFeaturesTwelve extends ExtractModule {
     }
     
     @Override
-    public void process(BankStore store) {        
+    public void process(BankStore store) {
         //System.out.println("-----");
         List<Track>  tracks = Track.read(
                 store.getMap().get("TimeBasedTrkg::TBTracks"),

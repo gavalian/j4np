@@ -1,0 +1,49 @@
+//import org.jlab.groot.ui.*;
+
+import java.awt.Font;
+import j4np.utils.io.*;
+
+TStyle.getInstance().getPalette().setColorScheme("gold10");
+
+TGCanvas c = new TGCanvas("figure_8",600,540);
+c.view().divide(3,2);
+c.repaint();
+
+setStyle3x2(c,10,10);
+
+List<H1F> hList = new ArrayList<>();
+List<PaveText> tList = new ArrayList<>();
+
+for(int i = 0; i < 6; i++){
+ H1F h = new H1F("h",120,-6.5,6.5);
+  h.attr().setFillColor(6);
+  String label = String.format("SL-%d",i+1);
+  PaveText t = new PaveText(label,0.8,1.0);
+  t.setNDF(true);
+  t.setDrawBox(false);
+  t.setFillBox(false);
+  t.setFont(new Font("Avenir",Font.PLAIN,20));
+
+  h.attr().setTitleX("Predicted Wire - Actual Wire");
+  hList.add(h);
+  tList.add(t);
+}
+
+TextFileReader reader = new TextFileReader();
+reader.open("evaluate.txt");
+
+while(reader.readNext()==true){
+   int index = reader.getAsInt(0);
+   double[] values = reader.getAsDoubleArray(1,2);
+   double diff = (values[0]-values[1])*112;
+   hList.get(index).fill(diff);
+}
+
+for(int i =0; i < 6; i++){
+ c.view().cd(i).region().draw(hList.get(i));
+ c.view().cd(i).region().draw(tList.get(i));
+
+}
+
+c.repaint();
+c.view().export("encoder_performance.pdf","pdf");

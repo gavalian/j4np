@@ -30,6 +30,16 @@ public class TGDataCanvas extends Canvas2D {
         divide(1,1);
     }
     
+    public void divide(double[][] fractions){
+        int ncolumns = fractions.length;
+        int size = 0;
+        for(int i = 0; i < ncolumns; i++) size += fractions[i].length;
+        System.out.println("DIVIDING CANVAS (cols): " + ncolumns + " TOTAL SIZE = " + size);
+        this.getGraphicsComponents().clear();
+        for(int i = 0; i < size; i++)  addNode(new TGRegion());
+        arrange(fractions);
+    }
+    
     @Override
     public void divide(int cols, int rows){
         this.getGraphicsComponents().clear();
@@ -59,10 +69,13 @@ public class TGDataCanvas extends Canvas2D {
         return (TGRegion) getGraphicsComponents().get(index);         
     }
     
-    
+    public int count(){
+        return getGraphicsComponents().size();
+    }
     
     public void export(String filename, String type){
         if(type.compareTo("PDF")==0||type.compareTo("pdf")==0){
+            System.out.println("[canvas] >>> exporting file : " + filename);
             PDFDocument pdfDoc = new PDFDocument();
             Page page = pdfDoc.createPage(new Rectangle(this.getSize().width, this.getSize().height));
             PDFGraphics2D g2 = page.getGraphics2D();

@@ -22,9 +22,10 @@ The Machine Learning approach was to teach the neural network to recognize good 
  
  \begin{figure}[!ht]
 \begin{center}
- \includegraphics[width=3.5in]{images/Multilayer-Perceptron.jpg}
+% \includegraphics[width=3.5in]{images/Multilayer-Perceptron.jpg}
+  \includegraphics[width=5.0in]{images/mlp_diagram.pdf}
 % \includegraphics[width=2.5in]{images/image-29.jpg}
-\caption {Architecture of Multi-Layer Preceptron.}
+\caption {Architecture of Multi-Layer Perceptron used for track classification. Network has 6 input nodes, corresponding to average wire position of the segment in each super-layer, three hidden layers with 12 nodes in each and 3 output nodes.}
  \label{mlp:architecture}
  \end{center}
 \end{figure}
@@ -43,10 +44,11 @@ The structure of the network can be seen on Figure~\ref{autoencoder:architecture
 
  \begin{figure}[!ht]
 \begin{center}
- \includegraphics[width=2.0in]{images/auto_encoder.png}
-\includegraphics[width=2.0in]{images/auto_encoder_result_2d.pdf}
-\includegraphics[width=2.0in]{images/auto_encoder_result_1d.pdf}
-\caption {Architecture of corruption fixing Auto-Encoder.}
+ %\includegraphics[width=2.0in]{images/auto_encoder.png}
+%\includegraphics[width=2.0in]{images/auto_encoder_result_2d.pdf}
+%\includegraphics[width=2.0in]{images/auto_encoder_result_1d.pdf}
+\includegraphics[width=5.0in]{images/aue_diagram.pdf}
+\caption {Corruption recovery auto-encoder architecture with 6 input nodes representing track segments mean wire values with one of the values is set to 0, and 6 output nodes with the correct value for the node that has 0 in the input. }
  \label{autoencoder:architecture}
  \end{center}
 \end{figure}
@@ -54,11 +56,24 @@ The structure of the network can be seen on Figure~\ref{autoencoder:architecture
 To train the network good track candidates reconstructed by conventional tracking algorithm are used (same sample 
 as for track classifier network training). The output for the network was set to the good track parameters (where all 6 
 segments have non-zero values) and the input was modified by setting one of the nodes (randomly) to zero. The network
-learns to fix the node containing zero by assigning it a value based on the other 5 segment values. The test results 
-of the trained network are shown on Figure~\ref{autoencoder:architecture}, where the difference between true value 
+learns to fix the node containing zero by assigning it a value based on the other 5 segment values. 
+ \begin{figure}[!ht]
+\begin{center}
+ %\includegraphics[width=2.0in]{images/auto_encoder.png}
+%\includegraphics[width=2.0in]{images/auto_encoder_result_2d.pdf}
+%\includegraphics[width=2.0in]{images/auto_encoder_result_1d.pdf}
+\includegraphics[width=6.0in]{images/encoder_performance.pdf}
+\caption {Performance of corruption recovery auto-encoder. The difference between predicted and actual wire position 
+is shown for all super-layers. Average accuracy of wire position prediction is  $0.36$ wire.}
+ \label{autoencoder:performance}
+ \end{center}
+\end{figure}
+The test results of the trained network are shown on Figure~\ref{autoencoder:architecture}, where the difference between true value 
 of the segment position and reconstructed by network position is plotted, showing reconstruction accuracy of $0.36$ wires.
 On Figure~\ref{autoencoder:architecture} this difference is shown vs the super-layer number which was corrupted in the input, 
 as can be seen the performance of the network is uniform across all super-layers.
+
+
 
 %\subsection{Implementation in reconstruction software}
 %The CLAS12 track reconstruction software consist of several parts. The first stage of the process is to isolate clusters

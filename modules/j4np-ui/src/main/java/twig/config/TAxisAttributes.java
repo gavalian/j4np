@@ -15,6 +15,22 @@ import java.util.List;
  */
 public class TAxisAttributes {
 
+    public int getAxisTickMarkCount() {
+        return axisTickMarkCount;
+    }
+
+    public void setAxisTickMarkCount(int axisTickMarkCount) {
+        this.axisTickMarkCount = axisTickMarkCount;
+    }
+
+    public int getAxisTicksLineWidth() {
+        return axisTicksLineWidth;
+    }
+
+    public void setAxisTicksLineWidth(int axisTicksLineWidth) {
+        this.axisTicksLineWidth = axisTicksLineWidth;
+    }
+    
     public Boolean getAxisLineDraw() {
         return axisLineDraw;
     }
@@ -98,7 +114,7 @@ public class TAxisAttributes {
     public int getAxisTickMarkSize() {
         return axisTickMarkSize;
     }
-
+    
     public void setAxisTickMarkSize(int axisTickMarkSize) {
         this.axisTickMarkSize = axisTickMarkSize;
     }
@@ -197,11 +213,14 @@ public class TAxisAttributes {
     /**
      * Basic offsets for markers, labels and titles.
      */    
-    private int      axisTickMarkSize = -6;
-    private int axisMinorTickMarkSize =  0;
-    private int       axisLabelOffset =  4;
-    private int       axisTitleOffset =  0;
-    private int         axisLineWidth =  1;
+    private int      axisTickMarkSize  = -6;
+    private int      axisTickMarkCount = 10;
+    private int axisMinorTickMarkSize  =  0;
+    private int       axisLabelOffset  =  4;
+    private int       axisTitleOffset  =  0;
+    private int         axisLineWidth  =  1;
+    private int         axisTicksLineWidth =  1;
+    
     private int         axisLineColor = 30001;
     private int        axisLabelColor = 30002;
     private int        axisTitleColor = 30002;
@@ -215,12 +234,11 @@ public class TAxisAttributes {
      * Various boolean fields for enabling and disabling 
      * drawing of some of the components.
      */
-    private Boolean           axisBoxDraw = false;
+    private Boolean           axisBoxDraw = true;
     private Boolean         axisTicksDraw = true;
     private Boolean          axisLineDraw = true;
     
     private Boolean        axisLabelsDraw = true;
     private Boolean        axisTitlesDraw = true;
     
-     
 }

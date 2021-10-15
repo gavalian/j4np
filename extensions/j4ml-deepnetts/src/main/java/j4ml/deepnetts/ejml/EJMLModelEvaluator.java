@@ -1,5 +1,8 @@
 package j4ml.deepnetts.ejml;
 
+import j4np.utils.io.DataArrayUtils;
+import j4np.utils.io.DataPair;
+import j4np.utils.io.LSVMFileReader;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -208,12 +211,25 @@ public class EJMLModelEvaluator {
             results[i] = (float) matrix.get(0, i);
     }
 
+    public int getClass(float[] output){
+        double  max = output[0]; 
+        int    item = 0; 
+        for(int i = 0; i < output.length; i++){
+            if(output[i]>max){
+                max = output[i]; item = i;
+            }
+        }
+        return item;
+    }
+    
     public static void main(String[] args) {
         //EJMLModelEvaluator model = new EJMLModelEvaluator("model.csv");
-        EJMLModelEvaluator model = new EJMLModelEvaluator("etc/ejml/trackClassifierModel.csv");
-        float[] in = new float[]{0.1161f, 0.0000f, 0.1403f, 0.1607f, 0.2604f, 0.2783f};
+        EJMLModelEvaluator model = new EJMLModelEvaluator("network/5038/default/trackClassifier.network");
+        //float[] in = new float[]{0.1161f, 0.0000f, 0.1403f, 0.1607f, 0.2604f, 0.2783f};
         float[] out = new float[3];
-        model.feedForward(in, out);
+        model.feedForward(new float[]{0.26339f, 0.30208f, 0.23214f, 0.25298f, 0.15051f, 0.15689f}, out);
+        System.out.println(Arrays.toString(out));
+        model.feedForward(new float[]{0.73393f, 0.73661f, 0.78036f, 0.79911f, 0.15051f, 0.15689f}, out);
         System.out.println(Arrays.toString(out));
     }
 }

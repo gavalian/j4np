@@ -24,8 +24,25 @@ public class DataPair {
         second = as;
     }
     
+    public final void  set(double[] af, double[] as){
+        first  = af;
+        second = as;
+    }
+    
     public double[] getFirst(){return first;}
     public double[] getSecond(){return second;}    
+    
+    public float[]  floatFirst(){ 
+       float[] data = new float[first.length];
+       for(int k = 0; k < data.length; k++) data[k] = (float) first[k];
+       return data;
+    }
+    
+    public float[]  floatSecond(){ 
+       float[] data = new float[second.length];
+       for(int k = 0; k < data.length; k++) data[k] = (float) second[k];
+       return data;
+    }
     
     public void show(){
         if(first!=null)

@@ -33,6 +33,7 @@ public class ExtractFeaturesCNN extends ExtractModule {
         );
         for(int s = 1; s <= 6; s++ ){
             List<Track>  tSector = this.forSector(tracks, s);
+            
             if(tSector.size()==2){
                 //System.out.println("sector - " + s);
                 //for(Track t : tSector) System.out.println(t);

@@ -1,0 +1,25 @@
+import j4np.utils.io.*;
+
+
+void save(String name, int bins, double min, double max){
+
+  String hname = name.replace(".txt","");
+
+  H1F h = new H1F(hname,bins,min,max);
+
+  TextFileReader r = new TextFileReader();
+  r.open(name);
+
+  while(r.readNext()==true){
+    String[] tokens = r.getString().split("\\s+");
+    int bin = Integer.parseInt(tokens[0]);
+
+    if(bin>=0&&bin<h.getAxis().getNBins()-1){
+        h.setBinContent(bin, Double.parseDouble(tokens[2]));
+      }
+    }
+
+    DataSetSerializer.export(h,"trResults.twig","classifier/results");
+    System.out.println(">>>>> saved histogram : " + hname + "\n");
+    //System.out.println(h);
+}

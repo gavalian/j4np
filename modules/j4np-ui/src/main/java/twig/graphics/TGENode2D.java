@@ -42,6 +42,39 @@ public class TGENode2D extends TDataNode2D {
         }
     }
     
+    protected void drawLine(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        
+        TStyle style = getStyle();        
+        int lineWidth = this.dataSet.attr().getLineWidth();
+        int lineColor = this.dataSet.attr().getLineColor();
+        int lineStyle = this.dataSet.attr().getLineStyle();
+        Color lColor = style.getPalette().getColor(lineColor);
+        
+        GeneralPath line = new GeneralPath();
+
+        int nPoints = dataSet.getSize(0);        
+        dataSet.getPoint(point, 0);
+        double relativeX = tr.relativeX(point.x,r);
+        double relativeY = tr.relativeY(point.y,r);
+        int coordX = (int) (r.getX() + relativeX);
+        int coordY = (int) (r.getY() + r.getHeight() - relativeY);
+        line.moveTo(coordX, coordY);
+        
+        for(int i = 1; i < nPoints; i++){            
+            dataSet.getPoint(point, i);
+            relativeX = tr.relativeX(point.x,r);
+            relativeY = tr.relativeY(point.y,r);
+            coordX = (int) (r.getX() + relativeX);
+            coordY = (int) (r.getY() + r.getHeight() - relativeY);
+            line.lineTo(coordX, coordY);
+            //g2d.drawOval(coordX,coordY, 6, 6);
+        }
+        BasicStroke lineStroke = style.getLineStroke(lineStyle, lineWidth);
+        g2d.setStroke(lineStroke);
+        g2d.setColor(lColor);
+        g2d.draw(line);
+    }
+    
     @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
 
@@ -56,7 +89,11 @@ public class TGENode2D extends TDataNode2D {
         
         Color mColor = style.getPalette().getColor(markerColor);
         Color lColor = style.getPalette().getColor(lineColor);
-        
+        //System.out.println("options = " + options);
+        if(hasOption("L")==true){
+            //System.out.println(" line is being drawn");
+            drawLine(g2d, r, tr);
+        }
         
         if(hasOption("F")==true){
             
@@ -101,15 +138,22 @@ public class TGENode2D extends TDataNode2D {
             dataSet.getPoint(point, i);
             double relativeX = tr.relativeX(point.x,r);
             double relativeY = tr.relativeY(point.y,r);
+
+            double    errorX = tr.getLengthX(point.xerror, r);
             double    errorY = tr.getLengthY(point.yerror, r);
-            int     errorBar = (int) (errorY/2.0);
+            
+            int     errorBarX = (int) (errorX/2.0);
+            int     errorBarY = (int) (errorY/2.0);
+            
             int coordX = (int) (r.getX() + relativeX);
             int coordY = (int) (r.getY() + r.getHeight() - relativeY);
-            
+            //System.out.printf("%8.5f %8.5f  %8.5f  %8.5f\n",point.xerror,point.yerror,
+            //        errorX, errorY);
             //g2d.drawOval(coordX,coordY, 6, 6);
             g2d.setColor(lColor);
             g2d.setStroke(lineStroke);
-            g2d.drawLine(coordX, coordY-errorBar, coordX, coordY+errorBar);
+            g2d.drawLine(coordX, coordY-errorBarY, coordX, coordY+errorBarY);
+            g2d.drawLine(coordX-errorBarX, coordY, coordX+errorBarX, coordY);
             
             MarkerTools.drawMarker(g2d, coordX, coordY, mColor, lColor, markerSize, 0, markerStyle);
         }

@@ -176,28 +176,30 @@ public class LorentzVector {
                 return this;
 	}
         
-        public void add(double px, double py, double pz, double mass){
+        public LorentzVector add(double px, double py, double pz, double mass){
             vector.add(px, py, pz);
             energy = energy + Math.sqrt(px*px+py*py+pz*pz+mass*mass);
+            return this;
         }
         
 	public LorentzVector sub(LorentzVector vLor) {
-		vector.sub(vLor.vect());
-		energy = this.e() - vLor.e();
+            vector.sub(vLor.vect());
+            energy = this.e() - vLor.e();
                 return this;
 	}
         
-        public void sub(double px, double py, double pz, double mass){
+        public LorentzVector sub(double px, double py, double pz, double mass){
             vector.sub(px, py, pz);
             energy = energy - Math.sqrt(px*px+py*py+pz*pz+mass*mass);
+            return this;
         }
         
 	public void invert() {
-		this.vector.setXYZ(-this.vector.x(), -this.vector.y(), -this.vector.z());
-		this.energy = -this.energy;
+            this.vector.setXYZ(-this.vector.x(), -this.vector.y(), -this.vector.z());
+            this.energy = -this.energy;
 	}
         
 	public void print() {
-		System.out.format("L Vect : %12.6f %12.6f %12.6f %12.6f %12.6f\n", this.px(), this.py(), this.pz(), this.p(), this.mass());
+            System.out.format("L Vect : %12.6f %12.6f %12.6f %12.6f %12.6f\n", this.px(), this.py(), this.pz(), this.p(), this.mass());
 	}
 }

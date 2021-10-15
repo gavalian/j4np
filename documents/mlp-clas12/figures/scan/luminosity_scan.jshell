@@ -1,0 +1,221 @@
+//import org.jlab.groot.ui.*;
+//import org.jlab.groot.data.*;
+//import org.jlab.groot.math.*;
+//import org.jlab.groot.fitter.*;
+//import org.jlab.jnp.groot.graphics.*;
+//import org.jlab.jnp.groot.settings.*;
+import java.awt.Font;
+
+
+int marker_size = 12;
+
+GraphErrors convOut = new GraphErrors("conv",
+                  new double[] {5.0,20,40,40,50,70},
+                  new double[]{0.9787,0.9249,0.8352,0.8410,0.7961,0.7249},
+                  new double[]{0.0009,0.0007,0.0004,0.0005,0.0004,0.0008}
+                  );
+
+GraphErrors  aiOut = new GraphErrors("ai",
+                  new double[] {5.0,20,40,40,50,70},
+                  new double[]{0.9815,0.9575,0.9075,0.9129,0.8864,0.8383},
+                  new double[]{0.0009,0.0006,0.0004,0.0004,0.0004,0.0007}
+                  );
+
+GraphErrors  gainOut = new GraphErrors("gain",
+                  new double[] {5.0,20,40,40,50,70},
+                  new double[]{1.0029,1.0353,1.0866,1.0855,1.1135,1.1564},
+                  new double[]{0.0009,0.0006,0.0004,0.0004,0.0004,0.0007}
+                  );
+
+TStyle.getInstance().getPalette().setColorScheme("gold10");
+
+TGCanvas c = new TGCanvas("figure_8",600,540);
+c.view().divide(1,1);
+
+setStyle1x1(c,10,10);
+convOut.attr().setTitleX("Beam Current (nA)");
+convOut.attr().setTitleY("Tracking Efficiency");
+
+convOut.attr().setMarkerColor(7);
+convOut.attr().setLineColor(7);
+convOut.attr().setLineStyle(1);
+convOut.attr().setMarkerSize(marker_size);
+convOut.attr().setMarkerStyle(3);
+
+aiOut.attr().setMarkerColor(11);
+aiOut.attr().setLineColor(11);
+
+aiOut.attr().setMarkerSize(marker_size);
+
+gainOut.attr().setMarkerSize(marker_size);
+gainOut.attr().setMarkerColor(5);
+gainOut.attr().setLineColor(5);
+gainOut.attr().setMarkerStyle(5);
+
+c.view().region().draw(convOut).draw(aiOut,"same").draw(gainOut,"same");
+
+F1D line = new F1D("line","[a]",0.0,75);
+line.setParameter(0,1.0);
+line.attr().setLineColor(7);
+line.attr().setLineStyle(0);
+
+F1D convF1 = new F1D("conv","[a]+[b]*x",1.0,72);
+convF1.setParameter(0,1.0);
+convF1.setParameter(1,-0.005);
+convF1.attr().setLineColor(7);
+convF1.attr().setLineWidth(2);
+convF1.attr().setLineStyle(0);
+
+F1D aiF1 = new F1D("ai","[a]+[b]*x",1.0,72);
+aiF1.setParameter(0,1.0);
+aiF1.setParameter(1,-0.005);
+aiF1.attr().setLineColor(11);
+aiF1.attr().setLineWidth(2);
+aiF1.attr().setLineStyle(0);
+
+F1D gainF1 = new F1D("gain","[a]+[b]*x",1.0,72);
+gainF1.setParameter(0,1.0);
+gainF1.setParameter(1,-0.005);
+gainF1.attr().setLineColor(5);
+gainF1.attr().setLineWidth(2);
+
+DataFitter.fit(convF1,convOut,"N");
+DataFitter.fit(aiF1,aiOut,"N");
+DataFitter.fit(gainF1,gainOut,"N");
+
+c.view().cd(0).region().draw(line,"same").draw(convF1,"same").draw(gainF1,"same").draw(aiF1,"same");
+
+c.view().cd(0).region().getAxisFrame().getAxisX().setFixedLimits(0.0,72.0);
+c.view().cd(0).region().getAxisFrame().getAxisY().setFixedLimits(0.6,1.21);
+
+String text1 = String.format("f_c=%.2f%.4fx",convF1.getParameter(0),convF1.getParameter(1));
+String text2 = String.format("f_a=%.2f%.4fx",aiF1.getParameter(0),aiF1.getParameter(1));
+String text3 = String.format("f_g=%.2f+%.4fx",gainF1.getParameter(0),gainF1.getParameter(1));
+
+PaveText t1 = new PaveText(text1,0.05,0.2);
+t1.setNDF(true);
+t1.setTextColor(TStyle.getInstance().getPalette().getColor(7));
+t1.setDrawBox(false);
+t1.setFillBox(false);
+t1.setFont(new Font("Avenir",Font.PLAIN,20));
+
+PaveText t2 = new PaveText(text2,0.05,0.28);
+t2.setNDF(true);
+t2.setTextColor(TStyle.getInstance().getPalette().getColor(11));
+t2.setDrawBox(false);
+t2.setFillBox(false);
+t2.setFont(new Font("Avenir",Font.PLAIN,20));
+
+PaveText t3 = new PaveText(text3,0.6,0.75);
+t3.setNDF(true);
+t3.setTextColor(TStyle.getInstance().getPalette().getColor(5));
+t3.setDrawBox(false);
+t3.setFillBox(false);
+t3.setFont(new Font("Avenir",Font.PLAIN,20));
+
+c.view().cd(0).region().draw(t1).draw(t2).draw(t3);
+
+c.repaint();
+
+
+
+
+c.view().export("figure_lscan.pdf","pdf");
+
+
+
+/*
+convOut.setTitleX("Beam Current (nA)");
+convOut.setTitleY("Tracking Efficiency");
+
+convOut.setMarkerColor(7);
+convOut.setLineColor(7);
+convOut.setMarkerSize(marker_size);
+convOut.setMarkerStyle(3);
+
+aiOut.setMarkerColor(11);
+aiOut.setLineColor(11);
+aiOut.setMarkerSize(marker_size);
+
+gainOut.setMarkerSize(marker_size);
+gainOut.setMarkerColor(5);
+gainOut.setLineColor(5);
+gainOut.setMarkerStyle(5);
+
+F1D line = new F1D("line","[a]",0.0,75);
+line.setParameter(0,1.0);
+line.setLineColor(7);
+//line.setLinesStyle(8);
+
+F1D convF1 = new F1D("conv","[a]+[b]*x",1.0,72);
+convF1.setParameter(0,1.0);
+convF1.setParameter(1,-0.005);
+convF1.setLineColor(7);
+convF1.setLineWidth(2);
+
+F1D aiF1 = new F1D("ai","[a]+[b]*x",1.0,72);
+aiF1.setParameter(0,1.0);
+aiF1.setParameter(1,-0.005);
+aiF1.setLineColor(11);
+aiF1.setLineWidth(2);
+
+F1D gainF1 = new F1D("gain","[a]+[b]*x",1.0,72);
+gainF1.setParameter(0,1.0);
+gainF1.setParameter(1,-0.005);
+gainF1.setLineColor(5);
+gainF1.setLineWidth(2);
+
+DataFitter.fit(convF1,convOut,"N");
+DataFitter.fit(aiF1,aiOut,"N");
+DataFitter.fit(gainF1,gainOut,"N");
+
+Legend legend = new Legend(80,30);
+
+legend.setFont(new Font("Avenir",Font.PLAIN,24));
+
+org.jlab.jnp.groot.graphics.PaveText text =
+new org.jlab.jnp.groot.graphics.PaveText(90,480,false);
+
+org.jlab.jnp.groot.graphics.PaveText text2 =
+new org.jlab.jnp.groot.graphics.PaveText(90,450,false);
+
+org.jlab.jnp.groot.graphics.PaveText text3 =
+new org.jlab.jnp.groot.graphics.PaveText(170,200,false);
+
+text.addLine(String.format("f=%3.2f+%.4fx",convF1.getParameter(0),convF1.getParameter(1)));
+text.setTextColor(GRootColorPalette.getInstance().getColor(7));
+text.setFont(new Font("Avenir",Font.PLAIN,24));
+
+text2.addLine(String.format("f=%3.2f+%.4fx",aiF1.getParameter(0),aiF1.getParameter(1)));
+text2.setTextColor(GRootColorPalette.getInstance().getColor(11));
+text2.setFont(new Font("Avenir",Font.PLAIN,24));
+
+text3.addLine(String.format("f=%3.2f+%.4fx",gainF1.getParameter(0),gainF1.getParameter(1)));
+text3.setTextColor(GRootColorPalette.getInstance().getColor(5));
+text3.setFont(new Font("Avenir",Font.PLAIN,24));
+
+
+legend.setFont(new Font("Avenir",Font.PLAIN,14));
+legend.add(convOut,"Conventional Tracking");
+legend.add(aiOut,"AI assisted Tracking");
+legend.add(gainOut,"Ratio of efficiencies");
+
+TDataCanvas c = new TDataCanvas(400,700);
+c.getDataCanvas().getRegion(0).setAxisFont("Avenir",24,Font.PLAIN);
+c.getDataCanvas().getRegion(0).setAxisTitleFont("Avenir",24,Font.PLAIN);
+c.getDataCanvas().left(70).bottom(70);
+c.draw(convOut);
+c.draw(convF1,"same");
+c.draw(aiOut,"same");
+c.draw(aiF1,"same");
+c.draw(gainOut,"same");
+c.draw(gainF1,"same");
+c.draw(line,"same");
+c.addLegend(legend);
+
+c.getDataCanvas().getRegion(0).addPaveText(text);
+c.getDataCanvas().getRegion(0).addPaveText(text2);
+c.getDataCanvas().getRegion(0).addPaveText(text3);
+c.setAxisLimits(0.0,75.0,0.6,1.25);
+c.repaint();
+*/

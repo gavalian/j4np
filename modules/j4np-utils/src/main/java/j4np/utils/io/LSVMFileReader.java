@@ -19,6 +19,7 @@ public class LSVMFileReader {
     private String          dataFileName = "input.lsvm";
     private String             outFormat = "%.5f";
     private double             threshold = 0.0000000001;
+    private int                  classes = 2;
     
     public LSVMFileReader(){ }
     public LSVMFileReader(String filename){
@@ -31,6 +32,7 @@ public class LSVMFileReader {
         setArrayLength(arrayLength);
         open(dataFileName);
     }
+    
     public final LSVMFileReader open(String filename){
         dataFileName = filename;
         reader = new TextFileReader(filename);
@@ -39,6 +41,10 @@ public class LSVMFileReader {
     
     public final LSVMFileReader setArrayLength(int len){ 
         nArrayLength = len; return this;
+    }
+    
+    public final LSVMFileReader setClasses(int nc){
+        this.classes = nc; return this;
     }
     
     public double[] toDouble(String line, int arrayLength){
@@ -80,13 +86,38 @@ public class LSVMFileReader {
        return str.toString();
     }
     
+    public DataPair toData(String line){
+        double[] dataDouble = this.toDouble(line, nArrayLength);
+        String[] tokens     = line.split("\\s+");
+        
+        int lineClass = Integer.parseInt(tokens[0]);
+        double[] output = new double[classes];
+        for(int i = 0; i < output.length; i++) output[i] = 0.0;
+        if(lineClass<classes){
+            output[lineClass] = 1.0;
+        } else {
+            System.out.println("lsvm::error >> class " + lineClass + " is invalid");
+        }
+        return new DataPair(dataDouble,output);    
+    }
+    
     public DataPair nextData(){
         boolean status = reader.readNext();
         if(status==false) return new DataPair(null,null);
         String line = reader.getString();
         //System.out.println("line : " + line);
         double[] dataDouble = this.toDouble(line, nArrayLength);
-        return new DataPair(dataDouble,null);
+        String[] tokens     = line.split("\\s+");
+        
+        int lineClass = Integer.parseInt(tokens[0]);
+        double[] output = new double[classes];
+        for(int i = 0; i < output.length; i++) output[i] = 0.0;
+        if(lineClass<classes){
+            output[lineClass] = 1.0;
+        } else {
+            System.out.println("lsvm::error >> class " + lineClass + " is invalid");
+        }
+        return new DataPair(dataDouble,output);
     }
     
     public double[] nextDouble(){

@@ -45,31 +45,41 @@ public class ExtractTestingLSVM extends ExtractModule {
             
             List<Track>  tSector = this.forSector(tracks, s);
             
-            if(tSector.size()>1){
-                
+            if(tSector.size()==1){
                 //System.out.println("sector - " + s);
-                //for(Track t : tSector) System.out.println(t);
+                //for(Track t : tSector) System.out.println(t);                
+                
                 List<Track> tc = Track.getComplete(tSector);
                 List<Track> tv = Track.getValid(tc);
+                /*System.out.println(" sector size = " + tSector.size() 
+                        + "  complete " + tc.size() + " valid " + tv.size() );*/
                 Bank bank = store.getMap().get("TimeBasedTrkg::TBClusters");
                 //for(Track t : tv) System.out.println(t);
                 if(tv.size()==1){
+                    
+                    bank.show();
                     cstore.reset();
-                    int nrows = bank.getRows()/2;
+                    int nrows = bank.getRows();
                     for(int r = 0; r < nrows; r++){
-                        int cid    = bank.getInt("id",r);
-                        int sector = bank.getInt("sector",r);
-                        int slayer = bank.getInt("superlayer",r);
+                        int cid     = bank.getInt("id",r);
+                        int sector  = bank.getInt("sector",r);
+                        int slayer  = bank.getInt("superlayer",r);
                         double wire = bank.getFloat("avgWire",r);
                         //System.out.printf("%3d %3d %3d %8.3f\n",cid,sector,slayer,wire);
-                        if(sector==s){                            
+                        if(sector==s){
+                            System.out.printf("-- adding %d %d %d %8.4f\n",sector,cid,slayer,wire);
                             cstore.add(slayer-1, cid, wire);
                         }
                     }
+                    
+                    System.out.println("**************************");
+                    System.out.println(cstore);
+                    
                     int status = 1;
                     if(tv.get(0).charge<0) status = 2;
                     combi.reset();
-                    cstore.getCombinationsFullNoCut(combi);
+                    //cstore.getCombinationsFullNoCut(combi);
+                    cstore.getCombinationsFull(combi);
                     int index = combi.find(tv.get(0).clusters);
                     if(index>=0) combi.setRow(index).setStatus(status);
                     //System.out.println( cstore.toString());

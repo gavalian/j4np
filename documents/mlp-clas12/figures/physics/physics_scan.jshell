@@ -1,0 +1,163 @@
+//import org.jlab.groot.ui.*;
+
+import java.awt.Font;
+import j4np.utils.io.*;
+
+TStyle.getInstance().getPalette().setColorScheme("gold10");
+
+TGCanvas c = new TGCanvas("figure_8",600,540);
+c.view().divide(new double[][]{ {0.6,0.4},{0.6,0.4}});
+c.repaint();
+
+setStyle2x2(c,10,10);
+
+H1F h = new H1F("h",100,0.0,3.0);
+List<String> lines = TextFileReader.readFile("rga_inbending_histos.data",1,100);
+System.out.println("lines = " + lines.size());
+for(int i = 0; i < lines.size();i++){
+   String[] tokens = lines.get(i).split("\\s+");
+   h.setBinContent(i,Double.parseDouble(tokens[1]));
+   h.setBinError(i,Double.parseDouble(tokens[2]));
+}
+h.attr().setLineWidth(1);
+h.attr().setFillColor(6);
+
+
+H1F h2 = new H1F("h",100,0.0,3.0);
+lines = TextFileReader.readFile("rga_inbending_histos.data",102,100);
+System.out.println("lines = " + lines.size());
+for(int i = 0; i < lines.size();i++){
+   String[] tokens = lines.get(i).split("\\s+");
+   h2.setBinContent(i,Double.parseDouble(tokens[1]));
+   h2.setBinError(i,Double.parseDouble(tokens[2]));
+}
+h2.attr().setLineWidth(1);
+//h2.attr().setFillColor(7);
+
+H1F h11 = new H1F("h",100,0.0,3.0);
+lines = TextFileReader.readFile("rga_inbending_histos.data",203,100);
+System.out.println("lines = " + lines.size());
+for(int i = 0; i < lines.size();i++){
+   String[] tokens = lines.get(i).split("\\s+");
+   h11.setBinContent(i,Double.parseDouble(tokens[1]));
+   h11.setBinError(i,Double.parseDouble(tokens[2]));
+}
+
+h11.attr().setFillColor(6);
+//h11.setFillColor(0);
+
+H1F h12 = new H1F("h",100,0.0,3.0);
+lines = TextFileReader.readFile("rga_inbending_histos.data",304,100);
+System.out.println("lines = " + lines.size());
+for(int i = 0; i < lines.size();i++){
+   String[] tokens = lines.get(i).split("\\s+");
+   h12.setBinContent(i,Double.parseDouble(tokens[1]));
+   h12.setBinError(i,Double.parseDouble(tokens[2]));
+}
+//h12.attr().setFillColor(7);
+
+H1F h3 = H1F.divide(h2,h);
+h3.attr().setFillColor(0);
+
+H1F h13 = H1F.divide(h12,h11);
+h3.attr().setFillColor(0);
+
+F1D line = new F1D("line","[a]",0.0,3.0);
+line.setParameter(0,1.0);
+line.attr().setLineColor(1);
+
+
+h2.setTitleX("Mx(e#rarrowe'#pi^+X) [GeV]");
+h12.setTitleX("Mx(e#rarrowe'#pi^+#pi^-X) [GeV]");
+
+
+GraphErrors graph = h3.getGraph();
+graph.attr().setMarkerSize(4);
+graph.attr().setLineColor(2);
+graph.attr().setMarkerColor(2);
+
+GraphErrors graph2 = h13.getGraph();
+graph2.attr().setMarkerSize(4);
+graph2.attr().setLineColor(2);
+graph2.attr().setMarkerColor(2);
+
+h2.setTitleX("Mx(e#rarrowe'#pi^+X) [GeV]");
+h12.setTitleX("Mx(e#rarrowe'#pi^+#pi^-X) [GeV]");
+
+graph.attr().setTitleX("Mx(e#rarrow e'#pi^+X) [GeV]");
+graph.attr().setTitleY("Ratio");
+
+graph2.attr().setTitleX("Mx(e#rarrow e'#pi^+#pi^-X) [GeV]");
+graph2.attr().setTitleY("Ratio");
+
+c.view().cd(0).region().draw(h2).draw(h,"same");
+c.view().cd(2).region().draw(h12).draw(h11,"same");
+
+c.view().cd(1).region().draw(graph);
+c.view().cd(3).region().draw(graph2);
+
+c.view().cd(1).region().getAxisFrame().getAxisX().setFixedLimits(0.0,3.0);
+c.view().cd(1).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
+
+c.view().cd(3).region().getAxisFrame().getAxisX().setFixedLimits(0.0,3.0);
+c.view().cd(3).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
+
+c.repaint();
+
+c.view().export("physics_scan.pdf","pdf");
+
+/*
+Legend legend = new Legend(60,30);
+
+GraphErrors graph = h3.getGraph();
+graph.setMarkerSize(4);
+graph.setLineColor(2);
+graph.setMarkerColor(2);
+
+GraphErrors graph2 = h13.getGraph();
+graph2.setMarkerSize(4);
+graph2.setLineColor(2);
+graph2.setMarkerColor(2);
+
+h2.setTitleX("Mx(e#rarrowe'#pi^+X) [GeV]");
+h12.setTitleX("Mx(e#rarrowe'#pi^+#pi^-X) [GeV]");
+
+graph.setTitleX("Mx(e#rarrow e'#pi^+X) [GeV]");
+graph.setTitleY("Ratio");
+
+graph2.setTitleX("Mx(e#rarrow e'#pi^+#pi^-X) [GeV]");
+graph2.setTitleY("Ratio");
+
+Legend  legend = new Legend(90,15);
+GraphErrors gL1 = new GraphErrors();
+GraphErrors gL2 = new GraphErrors();
+gL1.setMarkerColor(6);
+gL1.setLineColor(1);
+gL1.setMarkerStyle(2);
+
+gL2.setMarkerColor(7);
+gL2.setLineColor(1);
+gL2.setMarkerStyle(2);
+
+legend.add(gL1,"Conventional Tracking");
+legend.add(gL2,"AI Assisted Tracking");
+
+TDataCanvas c = new TDataCanvas(1110,600);
+c.divide(new double[][]{ {0.6,0.4},{0.6,0.4}});
+//c.getDataCanvas().setAxisFont("Avenir",Font.PLAIN,24);
+for(int i = 0; i < 4; i++){
+c.getDataCanvas().getRegion(i).setAxisFont("Avenir",24,Font.PLAIN);
+c.getDataCanvas().getRegion(i).setAxisTitleFont("Avenir",24,Font.PLAIN);
+}
+c.getDataCanvas().left(80).bottom(80).top(5);
+//c.divide(1,2);
+
+
+c.cd(0).draw(h2).draw(h,"same").addLegend(legend);
+c.cd(1).draw(graph,"PLS").draw(line,"same").setAxisLimits(0.0,3.0,0.8,1.6);
+
+c.cd(2).draw(h12).draw(h11,"same");//.addLegend(legend);
+c.cd(3).draw(graph2,"PLS").draw(line,"same").setAxisLimits(0.0,3.0,0.8,1.6);
+
+c.repaint();
+*/

@@ -20,6 +20,13 @@ public class UserParameters {
         
     }
     
+    public int contains(String name){
+        for(int i = 0; i < parameters.size(); i++){
+            if(parameters.get(i).name().compareTo(name)==0)
+                return i;
+        }
+        return -1;
+    }
     public UserParameter  getParameter(int index){
         return parameters.get(index);
     }

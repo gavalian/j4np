@@ -22,15 +22,22 @@ public class TStyle {
     public static List<float[]> dashPatterns = Arrays.asList(
             new float[]{10.0f,0.0f},
             new float[]{10.0f,5.0f},
+            new float[]{5.0f,1.0f}, 
+            new float[]{5.0f,5.0f},
+            new float[]{5.0f,10.0f},
+             
             new float[]{10.0f,5.0f,2.0f,5.0f},
-            new float[]{2.0f,5.0f,2.0f,5.0f},
+            new float[]{14.0f,4.0f,3.0f,5.0f},
+            
+            new float[]{3.0f,5.0f,3.0f,5.0f},
+            
+            new float[]{3.0f,3.0f,3.0f,3.0f},
+            
             new float[]{2.0f,8.0f,2.0f,4.0f},
             new float[]{2.0f,6.0f,2.0f,2.0f},
             new float[]{1.0f,10.0f},
-            new float[]{1.0f,1.0f},
-            new float[]{5.0f,10.0f},
-            new float[]{5.0f,5.0f},
-            new float[]{5.0f,1.0f},            
+            new float[]{1.0f,1.0f},                   
+           
             new float[]{3.0f,10.0f,1.0f,10.0f},
             new float[]{3.0f,5.0f,1.0f,5.0f},
             new float[]{3.0f,10.0f,1.0f,10.0f,1.0f,10.0f},
@@ -47,7 +54,7 @@ public class TStyle {
     
     public BasicStroke getLineStroke(int style, int width){
         
-        if(style<2) return new BasicStroke(width);
+        if(style<1) return new BasicStroke(width);
         int strokeStyle = style;
         if(style>=dashPatterns.size())
             strokeStyle= style%dashPatterns.size();

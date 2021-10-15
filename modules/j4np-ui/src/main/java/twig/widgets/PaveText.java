@@ -116,6 +116,10 @@ public class PaveText implements Widget {
         this.drawBox = flag; return this;
     }
     
+    public PaveText setFillBox(boolean flag){
+        this.fillBox = flag; return this;
+    }
+    
     public PaveText addLines(String[] lines){
         for(String line : lines)
             this.addLine(line);
@@ -177,9 +181,14 @@ public class PaveText implements Widget {
         double textHeight = getTextHeightWithSpacing(g2d, textSpacing);
         double textWidth  = getTextWidthMax(g2d);
         
+
         
         double xPos = tr.getX(positionX,r);
-        double yPos = r.getY() + r.getHeight() - tr.getY(positionY,r);
+        double yPos = r.getY() + r.getHeight() - tr.relativeY(positionY, r);//r.getY() + r.getHeight() - tr.getY(positionY,r);
+        
+        //System.out.printf("X pos = %d, Y pos = %d\n",(int) xPos, (int) yPos);
+        //System.out.println(r);
+        //tr.show();
         
         if(this.fillBox==true){
             g2d.setColor(this.headerBackground);

@@ -1,0 +1,56 @@
+
+
+H1F ha5 = (H1F) DataSetSerializer.load("trResults.twig","classifier/results/p5SL_aineg");
+H1F ht5 = (H1F) DataSetSerializer.load("trResults.twig","classifier/results/p5SL_trneg");
+
+H1F ha6 = (H1F) DataSetSerializer.load("trResults.twig","classifier/results/p6SL_aineg");
+H1F ht6 = (H1F) DataSetSerializer.load("trResults.twig","classifier/results/p6SL_trneg");
+
+H1F ha  = (H1F) DataSetSerializer.load("trResults.twig","classifier/results/p_aineg");
+H1F ht  = (H1F) DataSetSerializer.load("trResults.twig","classifier/results/p_trneg");
+
+TGCanvas c = new TGCanvas("figure_8",600,540);
+c.view().divide(3,1);
+
+setStyle3x1(c,8,10);
+ht5.attr().setTitleX("P [GeV]");
+ht6.attr().setTitleX("P [GeV]");
+ht.attr().setTitleX("P [GeV]");
+
+
+ht5.attr().setFillColor(57);
+ht6.attr().setFillColor(57);
+ht.attr().setFillColor(57);
+
+c.view().cd(0).region().draw(ht5,"").draw(ha5,"same");
+c.view().cd(1).region().draw(ht6,"").draw(ha6,"same");
+c.view().cd(2).region().draw(ht,"").draw(ha,"same");
+
+double X = 0.85;
+double Y = 0.99;
+
+PaveText t1 = new PaveText("5SL",X,Y);
+t1.setNDF(true);
+t1.setDrawBox(false);
+t1.setFillBox(false);
+t1.setFont(new Font("Avenir",Font.PLAIN,20));
+
+
+PaveText t2 = new PaveText("6SL",X,Y);
+t2.setNDF(true);
+t2.setDrawBox(false);
+t2.setFillBox(false);
+t2.setFont(new Font("Avenir",Font.PLAIN,20));
+
+PaveText t3 = new PaveText("ALL",X,Y);
+t3.setNDF(true);
+t3.setDrawBox(false);
+t3.setFillBox(false);
+t3.setFont(new Font("Avenir",Font.PLAIN,20));
+
+c.view().cd(0).region().draw(t1);
+c.view().cd(1).region().draw(t2);
+c.view().cd(2).region().draw(t3);
+
+c.repaint();
+c.view().export("figure_p.pdf","pdf");

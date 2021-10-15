@@ -45,6 +45,38 @@ public class DataPairList {
         }
         
     }
+    public void  turnClassifier(int nclasses){
+        for(int i = 0; i < getList().size(); i++){
+            DataPair p = getList().get(i);
+            double[] second = p.getSecond();
+            double[] first  = p.getFirst();
+            
+            double[] output = new double[nclasses];
+            for(int k = 0; k < output.length; k++) output[k] =0.0;
+            output[(int) (first[0]-1)] = 1.0;
+            p.set(output,second);
+        }
+    }
+    
+    public DataPairList getNormalized(double[] min, double[] max){
+        DataPairList dList = new DataPairList();
+        
+        for(int i = 0; i < this.getList().size(); i++){
+            DataPair p = getList().get(i);
+            boolean  preserve = true;
+            double[]  first = new double[p.getFirst().length];
+            double[] second = new double[p.getSecond().length];
+            for(int f = 0; f < first.length; f++) first[f] = p.getFirst()[f];
+            for(int c = 0; c < min.length; c++){
+                double value = p.getSecond()[c];
+                double normalized = (value-min[c])/(max[c]-min[c]);
+                second[c] = normalized;
+                if(value<min[c]||value>max[c]) preserve = false;
+            }
+            if(preserve==true) dList.add(new DataPair(first,second));
+        }
+        return dList;
+    }
     
     public static DataPairList compare(DataPairList aList, DataPairList bList){
         return DataPairList.compare(aList, bList, false);

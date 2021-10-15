@@ -97,8 +97,8 @@ public class ClusterStore {
                                     double m2 = (means[2]+means[3])/2.0;
                                     double m3 = (means[4]+means[5])/2.0;
                                     if(this.trackWidthRejection==true){
-                                        if(Math.abs(m1-m2)<25.&&Math.abs(m2-m3)<65.&&
-                                                Math.abs(m3-m1)<65.){
+                                        if(Math.abs(m1-m2)<25.&&Math.abs(m2-m3)<35.&&
+                                                Math.abs(m3-m1)<35.){
                                             comb.add(ids, means,slopes);
                                         }
                                     } else {

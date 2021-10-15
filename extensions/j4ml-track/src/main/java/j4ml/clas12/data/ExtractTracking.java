@@ -56,14 +56,23 @@ public class ExtractTracking {
         
         List<String> inputs = new ArrayList<>();
         /*inputs.addAll(Arrays.asList(
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00050-00054.hipo",
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00055-00059.hipo",
-                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00025-00029.hipo",
-                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00055-00059.hipo"
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00060-00064.hipo",
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00065-00069.hipo",
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00070-00074.hipo",
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00075-00079.hipo",
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00080-00084.hipo",
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00085-00089.hipo"
         ));*/
+        inputs.addAll(Arrays.asList(
+                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00050-00054.hipo"
+        ));
         
+        /*
         inputs.addAll(Arrays.asList(               
                 "/Users/gavalian/Work/DataSpace/ml/exclusive_epiX_005038.hipo"
-        ));
+        ));*/
         
         if(args.length>0){
             inputs.clear();
@@ -72,9 +81,10 @@ public class ExtractTracking {
         }
         
         ExtractTracking extract = new ExtractTracking();
-        extract.addModule(new ExtractPhysicsCSV(
+        /*extract.addModule(new ExtractPhysicsCSV(
                 "dc_physics_features_36.csv"));
-        /*
+        */
+        
         extract.addModule(new ExtractTestingLSVM(
                 "dc_classifier_testing_06_pos.lsvm",
                 "dc_classifier_testing_06_neg.lsvm",
@@ -84,7 +94,7 @@ public class ExtractTracking {
                 "dc_classifier_testing_36_neg.lsvm",
                 "dc_classifier_testing_cnn_pos.lsvm",
                 "dc_classifier_testing_cnn_neg.lsvm"
-        ));*/
+        ));
         
         /*
         extract.addModule(new ExtractFeaturesLSVM(
