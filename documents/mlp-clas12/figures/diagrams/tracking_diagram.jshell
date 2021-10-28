@@ -1,0 +1,72 @@
+//import org.jlab.groot.ui.*;
+
+import java.awt.Font;
+import j4np.utils.io.*;
+
+//TStyle.getInstance().getPalette().setColorScheme("gold10");
+
+TGCanvas c = new TGCanvas("dc_diagram",600,480);
+
+GraphErrors graph = new GraphErrors();
+double[] layers = new double[]{0.0,0.5, 2.0,2.5,4.0,4.5};
+
+for(int i = 0; i < 6; i++){
+   for(int j = 0; j < 10; j++){
+      graph.addPoint(layers[i],j);
+   }
+}
+
+GraphErrors hits = new GraphErrors("hits",new double[]{0,0.5,2.0,2.5,4,4.5},
+new double[]{2,3,6,7,8,8});
+
+
+graph.attr().setMarkerColor(26);
+graph.attr().setLineColor(1);
+graph.attr().setMarkerOutlineWidth(1);
+graph.attr().setMarkerOutlineColor(1);
+
+graph.attr().setMarkerSize(25);
+graph.attr().setMarkerStyle(2);
+
+hits.attr().setMarkerColor(5);
+hits.attr().setMarkerSize(26);
+hits.attr().setMarkerStyle(2);
+hits.attr().setMarkerOutlineWidth(1);
+hits.attr().setMarkerOutlineColor(1);
+
+c.view().region().getInsets().left(20).right(20);
+c.view().region().drawFrame(false);
+
+c.view().region().draw(graph).draw(hits,"same");
+
+
+Arc arc = new Arc(-0.3,0.84,2.5,2.5,85,55);
+//Arc arc = new Arc(-0.3,0.82,.8,.8,90,45);
+arc.setLineWidth(3);
+//arc.setNDF(true);
+
+c.view().region().draw(arc);
+
+double x = -0.2;
+double y = -0.5;
+PaveText t1 = new PaveText("Region 1",0.0+x,y,false,18);
+
+PaveText t2 = new PaveText("Region 2",2.0+x,y,false,18);
+PaveText t3 = new PaveText("Region 3",4.0+x,y,false,18);
+
+t1.setNDF(false);
+t2.setNDF(false);
+t3.setNDF(false);
+//t1.setFont(new Font("Avenir",Font.PLAIN,24));
+c.view().region().draw(t1).draw(t2).draw(t3);
+double[] xc = new double[]{-0.5,0.55,1.5,2.55,3.5,4.55};
+double[] yc = new double[]{5.6,5.6,0.,0.,0.,0.};
+
+for(int k =0; k < 6; k++){
+  int order = k+1;
+  PaveText sl = new PaveText("Super-Layer " + order,xc[k],yc[k],false,18);
+  sl.setRotate(TextRotate.LEFT);
+  sl.setNDF(false);
+  c.view().region().draw(sl);
+}
+c.repaint();

@@ -1,0 +1,65 @@
+import java.awt.Font;
+
+void setStyle4x1(TGCanvas c, int xdiv, int ydiv){
+
+   c.setSize(1200,380);
+   int regions = c.view().count();
+
+   for(int i = 0; i < regions; i++){
+    c.view().cd(i);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkCount(xdiv);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkCount(ydiv);
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkSize(8);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkSize(8);
+
+    c.view().region().setAxisTicksY(new double[]{6,12,18,24,30},
+         new String[]{"6","12","18","24","30"});
+
+    if(i!=0){
+      c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLabelsDraw(false);
+      c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitlesDraw(false);
+
+    }
+    c.view().region().getAxisFrame().getAxisY().setFixedLimits(0,36.4);
+    c.view().region().getAxisFrame().getAxisX().setFixedLimits(0,112);
+   }
+}
+
+
+void setStyle3x1(TGCanvas c, int xdiv, int ydiv){
+
+   c.setSize(1200,400);
+   int regions = c.view().count();
+
+   for(int i = 0; i < regions; i++){
+   System.out.println("setting regio # " + i);
+    c.view().cd(i);
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(new Font("Avenir",Font.BOLD,18));
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(new Font("Avenir",Font.BOLD,20));
+
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkCount(xdiv);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkCount(ydiv);
+    c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTickMarkSize(8);
+    c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTickMarkSize(8);
+
+    c.view().region().setAxisTicksY(new double[]{6,12,18,24,30},
+         new String[]{"6","12","18","24","30"});
+
+    if(i!=0){
+      c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisLabelsDraw(false);
+      c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitlesDraw(false);
+
+    }
+    c.view().region().getAxisFrame().getAxisY().setFixedLimits(0,36.4);
+    c.view().region().getAxisFrame().getAxisX().setFixedLimits(0,112);
+   }
+}
