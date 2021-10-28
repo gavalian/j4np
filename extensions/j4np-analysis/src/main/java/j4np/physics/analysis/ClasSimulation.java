@@ -41,12 +41,12 @@ public class ClasSimulation {
         reaction.addVector("[11]");
         reaction.addVector("[211]");
         reaction.addVector("[-211]");
-        reaction.addEntry("mxepipi", 0, VectorOperator.OperatorType.MASS, 0.5, 1.4);
+        reaction.addEntry("mxepipi", 0, VectorOperator.OperatorType.MASS, 0.5, 2.0);
         
         HipoChain chain = new HipoChain();
         chain.addFiles(inputs);
         chain.open();
-                
+        
         H1F h = new H1F("h100",120,0.4,1.5);
         
         ClasEvent clas = ClasEvent.with(chain, new String[]{"REC::Particle"});

@@ -88,9 +88,9 @@ c.view().cd(0).region().draw(line,"same").draw(convF1,"same").draw(gainF1,"same"
 c.view().cd(0).region().getAxisFrame().getAxisX().setFixedLimits(0.0,72.0);
 c.view().cd(0).region().getAxisFrame().getAxisY().setFixedLimits(0.6,1.21);
 
-String text1 = String.format("f_c=%.2f%.4fx",convF1.getParameter(0),convF1.getParameter(1));
-String text2 = String.format("f_a=%.2f%.4fx",aiF1.getParameter(0),aiF1.getParameter(1));
-String text3 = String.format("f_g=%.2f+%.4fx",gainF1.getParameter(0),gainF1.getParameter(1));
+String text1 = String.format("f_c=%.2f%.6fx",convF1.getParameter(0),convF1.getParameter(1));
+String text2 = String.format("f_a=%.2f%.6fx",aiF1.getParameter(0),aiF1.getParameter(1));
+String text3 = String.format("f_g=%.2f+%.6fx",gainF1.getParameter(0),gainF1.getParameter(1));
 
 PaveText t1 = new PaveText(text1,0.05,0.2);
 t1.setNDF(true);

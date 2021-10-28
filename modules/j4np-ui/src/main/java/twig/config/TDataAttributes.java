@@ -11,6 +11,22 @@ package twig.config;
  */
 public class TDataAttributes {
 
+    public int getMarkerOutlineColor() {
+        return markerOutlineColor;
+    }
+
+    public void setMarkerOutlineColor(int markerOutlineColor) {
+        this.markerOutlineColor = markerOutlineColor;
+    }
+
+    public int getMarkerOutlineWidth() {
+        return markerOutlineWidth;
+    }
+
+    public void setMarkerOutlineWidth(int markerOutlineWidth) {
+        this.markerOutlineWidth = markerOutlineWidth;
+    }
+
     public String getDrawOptions() {
         return drawOptions;
     }
@@ -134,6 +150,10 @@ public class TDataAttributes {
     private int  markerColor = 1;
     private int   markerSize = 1;
     private int  markerStyle = 1;
+    
+    private int  markerOutlineColor = 0;
+    private int  markerOutlineWidth = 0;
+    
     
     private int    fillColor = -1;
     private int    fillStyle = -1;

@@ -8,9 +8,12 @@ package twig.data;
 
 
 import j4np.graphics.settings.DataAttributes;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 import twig.config.TDataAttributes;
 
 /**
@@ -94,6 +97,7 @@ public class GraphErrors implements DataSet {
         
     }
 
+    
     public final void addPoint(double x, double y) {
         addPoint(x,y,0.0,0.0);
     }

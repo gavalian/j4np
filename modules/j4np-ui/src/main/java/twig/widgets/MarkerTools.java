@@ -16,7 +16,7 @@ import java.awt.Graphics2D;
 public class MarkerTools {
     
     public static void drawMarker(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
-        int markerType = type;        
+        int markerType = type;
         switch(type){
             case 1: MarkerTools.drawMarkerCyrcle(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type); break;
             case 2: MarkerTools.drawMarkerRectangle(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type); break;
@@ -25,6 +25,8 @@ public class MarkerTools {
             case 5: MarkerTools.drawMarkerTriangleUpsideDown(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type); break;
             case 6: MarkerTools.drawMarkerTriangleLeft(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type); break;
             case 7: MarkerTools.drawMarkerTriangleRight(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type); break;
+            case 8: MarkerTools.drawMarkerHexagon(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type); break;
+            case 9: MarkerTools.drawMarkerHexagonUp(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type); break;
             default: MarkerTools.drawMarkerCyrcle(g2d, x, y, fillColor, lineColor, fillSize, lineSize, type);
         }
     }
@@ -52,10 +54,10 @@ public class MarkerTools {
     public static void drawMarkerDiamond(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
         g2d.setColor(fillColor);
         //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
-
+        
         int[] xPoints = new int[5];
-        int[] yPoints = new int[5]
-                ;
+        int[] yPoints = new int[5];
+        
         yPoints[0] = (int) (y-fillSize/2);
         xPoints[0] = (int) (x);
         
@@ -82,10 +84,141 @@ public class MarkerTools {
         }
     }
     
+    public static void drawMarkerHexagon(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
+        g2d.setColor(fillColor);
+        //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
+        
+        int[] xPoints = new int[7];
+        int[] yPoints = new int[7];
+        
+        
+        double x1 = fillSize*0.5*Math.cos(Math.toRadians(60));
+        double y1 = fillSize*0.5*Math.sin(Math.toRadians(60));
+        double x2 = fillSize*0.5;
+        
+
+        xPoints[0] = (int) (x-x1);
+        yPoints[0] = (int) (y-y1);
+        
+        xPoints[1] = (int) (x+x1);
+        yPoints[1] = (int) (y-y1);
+        
+        xPoints[2] = (int) (x+x2);
+        yPoints[2] = (int) (y);
+        
+        xPoints[3] = (int) (x+x1);
+        yPoints[3] = (int) (y+y1);
+        
+        xPoints[4] = (int) (x-x1);
+        yPoints[4] = (int) (y+y1);
+        
+        xPoints[5] = (int) (x-x2);
+        yPoints[5] = (int) (y);
+        
+        xPoints[6] = (int) (x-x1);
+        yPoints[6] = (int) (y-y1);
+        
+        g2d.fillPolygon(xPoints, yPoints, 7);
+        
+        if(lineColor!=null&&lineSize>0){
+            g2d.setColor(lineColor);
+            g2d.setStroke(new BasicStroke(lineSize));
+            g2d.drawPolygon(xPoints, yPoints, 7);
+            //g2d.drawRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
+        }
+    }
+    
+    public static void drawMarkerHexagonUp(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
+        g2d.setColor(fillColor);
+        //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
+        
+        int[] xPoints = new int[7];
+        int[] yPoints = new int[7];
+        
+        
+        double x1 = fillSize*0.5*Math.cos(Math.toRadians(60));
+        double y1 = fillSize*0.5*Math.sin(Math.toRadians(60));
+        double x2 = fillSize*0.5;
+        
+
+        xPoints[0] = (int) (x);
+        yPoints[0] = (int) (y-x2);
+        
+        xPoints[1] = (int) (x+y1);
+        yPoints[1] = (int) (y-x1);
+        
+        xPoints[2] = (int) (x+y1);
+        yPoints[2] = (int) (y+x1);
+        
+        xPoints[3] = (int) (x);
+        yPoints[3] = (int) (y+x2);
+        
+        xPoints[4] = (int) (x-y1);
+        yPoints[4] = (int) (y+x1);
+        
+        xPoints[5] = (int) (x-y1);
+        yPoints[5] = (int) (y-x1);
+        
+        xPoints[6] = (int) (x);
+        yPoints[6] = (int) (y-x2);
+        
+        g2d.fillPolygon(xPoints, yPoints, 7);
+        
+        if(lineColor!=null&&lineSize>0){
+            g2d.setColor(lineColor);
+            g2d.setStroke(new BasicStroke(lineSize));
+            g2d.drawPolygon(xPoints, yPoints, 7);
+            //g2d.drawRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
+        }
+    }
+    
+    public static void drawMarkerFish(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
+        g2d.setColor(fillColor);
+        //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
+        
+        int[] xPoints = new int[7];
+        int[] yPoints = new int[7];
+        
+        
+        double x1 = fillSize*0.5*Math.cos(Math.toRadians(60));
+        double y1 = fillSize*0.5*Math.sin(Math.toRadians(60));
+        double x2 = fillSize*0.5;
+        
+
+        xPoints[0] = (int) (x);
+        yPoints[0] = (int) (y-x2);
+        
+        xPoints[1] = (int) (x+y1);
+        yPoints[1] = (int) (y-x1);
+        
+        xPoints[2] = (int) (x+y1);
+        yPoints[2] = (int) (y+x1);
+        
+        xPoints[3] = (int) (x);
+        yPoints[3] = (int) (y+x2);
+        
+        xPoints[4] = (int) (x-y1);
+        yPoints[4] = (int) (y-x1);
+        
+        xPoints[5] = (int) (x-y1);
+        yPoints[5] = (int) (y+x1);
+        
+        xPoints[6] = (int) (x);
+        yPoints[6] = (int) (y-x2);
+        
+        g2d.fillPolygon(xPoints, yPoints, 7);
+        
+        if(lineColor!=null&&lineSize>0){
+            g2d.setColor(lineColor);
+            g2d.setStroke(new BasicStroke(lineSize));
+            g2d.drawPolygon(xPoints, yPoints, 7);
+            //g2d.drawRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
+        }
+    }
     public static void drawMarkerTriangle(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
         g2d.setColor(fillColor);
         //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
-
+        
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
         yPoints[0] = (int) (y-fillSize/2);
@@ -113,7 +246,7 @@ public class MarkerTools {
     public static void drawMarkerTriangleUpsideDown(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
         g2d.setColor(fillColor);
         //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
-
+        
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
         yPoints[0] = (int) (y+fillSize/2);
@@ -138,10 +271,10 @@ public class MarkerTools {
         }
     }
     
-        public static void drawMarkerTriangleLeft(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
+    public static void drawMarkerTriangleLeft(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
         g2d.setColor(fillColor);
         //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
-
+        
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
         
@@ -168,10 +301,10 @@ public class MarkerTools {
         }
     }
     
-        public static void drawMarkerTriangleRight(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
+    public static void drawMarkerTriangleRight(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
         g2d.setColor(fillColor);
         //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
-
+        
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
         
@@ -197,4 +330,6 @@ public class MarkerTools {
             //g2d.drawRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
         }
     }
+    
+    
 }

@@ -30,6 +30,8 @@ public class TGDataCanvas extends Canvas2D {
         divide(1,1);
     }
     
+    
+    
     public void divide(double[][] fractions){
         int ncolumns = fractions.length;
         int size = 0;
@@ -38,6 +40,18 @@ public class TGDataCanvas extends Canvas2D {
         this.getGraphicsComponents().clear();
         for(int i = 0; i < size; i++)  addNode(new TGRegion());
         arrange(fractions);
+    }
+    
+
+    public void divide(double left, double bottom,int cols, int rows){
+        this.getGraphicsComponents().clear();
+        for(int i = 0; i < cols*rows; i++){
+            TGRegion pad = new TGRegion();
+            this.addNode(pad);
+        }
+        this.arrangeWithGap(left, bottom, cols, rows);
+        this.repaint();
+        this.activeRegion = 0;
     }
     
     @Override

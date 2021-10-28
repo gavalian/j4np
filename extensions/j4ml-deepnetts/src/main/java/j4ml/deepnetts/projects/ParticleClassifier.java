@@ -24,19 +24,19 @@ public class ParticleClassifier {
     
     
     private double[] minimum = new double[28];
-    private double[] maximum = new double[]{
+    private double[] maximumSF = new double[]{
         10,
         0.65,0.65,0.65,450,450,450,650,650,650,
         0.75,0.75,0.75,450,450,450,650,650,650,
         0.3,0.3,0.3,450,450,450,650,650,650
     };
     
-    /*private double[] maximum = new double[]{
+    private double[] maximum = new double[]{
         10,
         1,1,1,450,450,450,650,650,650,
         1,1,1,450,450,450,650,650,650,
         1,1,1,450,450,450,650,650,650
-    };*/
+    };
     
     public ParticleClassifier(String filename){
         trainingData = filename;
@@ -103,8 +103,7 @@ public class ParticleClassifier {
         }
         data.scan();
         
-        
-        DataPairList norm = data.getNormalized(minimum, maximum);
+        DataPairList norm = data.getNormalized(minimum, maximumSF);
         
         norm.scan();
         
@@ -131,33 +130,37 @@ public class ParticleClassifier {
     
     public void train(){
         DeepNettsClassifier network = new DeepNettsClassifier();
-        network.init(new int[]{28,28,28,28,2});
+        network.init(new int[]{28,28,28,14,14,2});
         DataPairList dataList = this.loadData();
         DataSet dataSet = convert(dataList);
         dataSet.shuffle();
         DataSet[] sets = dataSet.split(0.7,0.3);        
-        network.train(sets[0], 2000);
+        network.train(sets[0], 450);
         network.evaluate(sets[1]);
+        
+        network.save("network/clas12pid.network");
     }
     
     public void trainSF(){
         DeepNettsClassifier network = new DeepNettsClassifier();
-        network.init(new int[]{28,28*4,28*4,28*2,2});
+        network.init(new int[]{28,28,28,2});
         DataPairList dataList = this.loadDataSF();
         
         DataSet dataSet = convert(dataList);
         dataSet.shuffle();
         DataSet[] sets = dataSet.split(0.7,0.3);        
-        network.train(sets[0], 1200);
+        network.train(sets[0], 250);
         network.evaluate(sets[1]);
+        
+        network.save("network/clas12pidSF.network");
     }
     
     public static void main(String[] args){
         String file = "/Users/gavalian/Work/Software/project-10.0/data/pid_features_all.csv";
         ParticleClassifier classifier = new ParticleClassifier(file);
         //classifier.loadData();
-        //classifier.train();        
-        classifier.trainSF();
+        classifier.train();        
+        //classifier.trainSF();
         //classifier.loadDataSF();
     }
 }

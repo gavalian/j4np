@@ -1,6 +1,8 @@
 import twig.data.*;
 import twig.math.*;
 import twig.widgets.*;
+import twig.widgets.LatexText.TextRotate;
+import twig.widgets.LatexText.TextAlign;
 import twig.graphics.*;
 import twig.config.*;
 import java.io.*

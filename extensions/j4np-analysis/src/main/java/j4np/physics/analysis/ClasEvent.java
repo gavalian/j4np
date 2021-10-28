@@ -20,8 +20,6 @@ import org.jlab.jnp.hipo4.operations.BankIterator;
  * @author gavalian
  */
 public class ClasEvent extends PhysicsEvent {
-
-
     
     public enum EventType {
         FWD_TRIGGER,TAG_TRIGGER, UNKNOWN_TRIGGER, SIMULATION, LUND
@@ -38,7 +36,7 @@ public class ClasEvent extends PhysicsEvent {
     private int index_pid = -1;
     private int index_charge = -1;
     private int index_status = -1;
-        
+    
     BankStore store = new BankStore();
     
     private EventType clasEventType = EventType.UNKNOWN_TRIGGER;
@@ -86,6 +84,7 @@ public class ClasEvent extends PhysicsEvent {
             if(item.compareTo("charge")==0 ) index_charge  = row;
         }
     }
+    
     public void read(Event event){        
         store.read(event);
         

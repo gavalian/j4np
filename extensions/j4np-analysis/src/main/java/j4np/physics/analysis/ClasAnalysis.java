@@ -31,7 +31,6 @@ public class ClasAnalysis {
     }
     
     
-    
     public static void filter(String file){
         HipoChain chain = new HipoChain();
         chain.addFile(file);

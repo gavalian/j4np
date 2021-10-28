@@ -6,6 +6,7 @@
 package twig.widgets;
 
 import j4np.graphics.Translation2D;
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
@@ -14,12 +15,22 @@ import java.awt.geom.Rectangle2D;
  * @author gavalian
  */
 public class Arc implements Widget {
+
+    public int getLineWidth() {
+        return lineWidth;
+    }
+
+    public void setLineWidth(int lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+    
     private double  xPosition = 0;
     private double  yPosition = 0;
     private double     width = 0.5;
     private double    height = 0.5;
     private double startTheta = 0;
     private double   endTheta = 0;
+    private int      lineWidth = 2;
     
     public Arc(double x, double y, double w, double h, double sta, double eda){
         xPosition = x; yPosition = y; width = w; height = h;
@@ -33,12 +44,13 @@ public class Arc implements Widget {
         
         int w = (int) tr.getLengthX(width, r);
         int h = (int) tr.getLengthX(height, r);
+        g2d.setStroke(new BasicStroke(lineWidth));
         g2d.drawArc(x, y, (int) w, (int) h, (int) startTheta, (int) endTheta);
     }
 
     @Override
     public boolean isNDF() {
-        return false;
+        return true;
     }
     
 }

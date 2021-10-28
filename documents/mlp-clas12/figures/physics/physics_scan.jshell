@@ -56,6 +56,16 @@ for(int i = 0; i < lines.size();i++){
 }
 //h12.attr().setFillColor(7);
 
+
+h.normalize(h2.getMax());
+h2.normalize(h2.getMax());
+h11.normalize(h12.getMax());
+h12.normalize(h12.getMax());
+
+
+//h11.unit();
+//h12.unit();
+
 H1F h3 = H1F.divide(h2,h);
 h3.attr().setFillColor(0);
 

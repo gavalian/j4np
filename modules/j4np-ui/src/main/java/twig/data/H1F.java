@@ -459,9 +459,15 @@ public class H1F  implements DataSet {
      * @param number		the value to normalize the data to
      */
     public void normalize(double number) {
+        StatNumber  der = new StatNumber(number,0);
+        StatNumber binc = new StatNumber();
+        
         for(int i = 0; i < histogramData.length; i++)
         {
-            histogramData[i] /= number;
+            binc.set(histogramData[i], histogramDataError[i]);
+            binc.divide(der);
+            histogramData[i] = binc.number();
+            histogramDataError[i] = binc.error();
         }
     }
     

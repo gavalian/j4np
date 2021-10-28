@@ -23,7 +23,7 @@ The Machine Learning approach was to teach the neural network to recognize good 
  \begin{figure}[!ht]
 \begin{center}
 % \includegraphics[width=3.5in]{images/Multilayer-Perceptron.jpg}
-  \includegraphics[width=5.0in]{images/mlp_diagram.pdf}
+  \includegraphics[width=4.5in]{images/mlp_diagram.pdf}
 % \includegraphics[width=2.5in]{images/image-29.jpg}
 \caption {Architecture of Multi-Layer Perceptron used for track classification. Network has 6 input nodes, corresponding to average wire position of the segment in each super-layer, three hidden layers with 12 nodes in each and 3 output nodes.}
  \label{mlp:architecture}
@@ -42,21 +42,22 @@ inefficiencies of drift chambers. This network will be used to identify track ca
 missing. We used auto-encoder type of neural network to implement feature fixing neural network \cite{Gavalian:2020xmc}. 
 The structure of the network can be seen on Figure~\ref{autoencoder:architecture}, with 6 input nodes and six output nodes.
 
+To train the network good track candidates reconstructed by conventional tracking algorithm are used (same sample 
+as for track classifier network training). The output for the network was set to the good track parameters (where all 6 
+segments have non-zero values) and the input was modified by setting one of the nodes (randomly) to zero. The network
+learns to fix the node containing zero by assigning it a value based on the other 5 segment values. 
+
  \begin{figure}[!ht]
 \begin{center}
  %\includegraphics[width=2.0in]{images/auto_encoder.png}
 %\includegraphics[width=2.0in]{images/auto_encoder_result_2d.pdf}
 %\includegraphics[width=2.0in]{images/auto_encoder_result_1d.pdf}
-\includegraphics[width=5.0in]{images/aue_diagram.pdf}
+\includegraphics[width=4.5in]{images/aue_diagram.pdf}
 \caption {Corruption recovery auto-encoder architecture with 6 input nodes representing track segments mean wire values with one of the values is set to 0, and 6 output nodes with the correct value for the node that has 0 in the input. }
  \label{autoencoder:architecture}
  \end{center}
 \end{figure}
 
-To train the network good track candidates reconstructed by conventional tracking algorithm are used (same sample 
-as for track classifier network training). The output for the network was set to the good track parameters (where all 6 
-segments have non-zero values) and the input was modified by setting one of the nodes (randomly) to zero. The network
-learns to fix the node containing zero by assigning it a value based on the other 5 segment values. 
  \begin{figure}[!ht]
 \begin{center}
  %\includegraphics[width=2.0in]{images/auto_encoder.png}

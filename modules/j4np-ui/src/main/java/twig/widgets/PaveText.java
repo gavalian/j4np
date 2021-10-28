@@ -15,6 +15,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import twig.widgets.LatexText.TextAlign;
+import twig.widgets.LatexText.TextRotate;
 
 
 /**
@@ -54,6 +56,25 @@ public class PaveText implements Widget {
     public boolean            drawBox = true;
     public boolean            fillBox = true;
     
+    
+    private TextAlign       xAlignment = TextAlign.LEFT;
+    private TextAlign       yAlignment = TextAlign.TOP;
+    private TextRotate        rotation = TextRotate.NONE;
+    
+    public PaveText(String text, double x, double y, Boolean boxDraw, int fontSize){
+        //super(x,y);
+        //setBackgroundColor(240,240,240);
+        this.positionX = x;
+        this.positionY = y;
+        this.drawBox = boxDraw;
+        this.fillBox = boxDraw;
+        textFont = new Font("Avenir", Font.PLAIN, fontSize);
+        this.latexText.setFont(textFont);
+        //setName("pave_text");
+        textStrings.add(text);
+        textPositions.add(new Point2D.Double(0.0,0.0));
+    }
+    
     public PaveText(String text, double x, double y){
         //super(x,y);
         //setBackgroundColor(240,240,240);
@@ -92,6 +113,7 @@ public class PaveText implements Widget {
         //setName("pave_text");
         latexText.setFont(textFont);
         this.drawBox = boxDraw;
+        this.fillBox = boxDraw;
     }
     
     public PaveText setStyle(PaveTextStyle style){
@@ -112,6 +134,15 @@ public class PaveText implements Widget {
         return this;
     }
     
+    public PaveText setAlign(TextAlign xal, TextAlign yal){
+        this.xAlignment = xal; this.yAlignment = yal;
+        return this;
+    }
+    
+    public PaveText setRotate(TextRotate rot){
+        rotation = rot;
+        return this;
+    }
     public PaveText setDrawBox(boolean flag){
         this.drawBox = flag; return this;
     }
@@ -126,7 +157,7 @@ public class PaveText implements Widget {
         return this;
     }
     
-    public void setNDF(boolean flag){ paveNDF = flag;}
+    public PaveText setNDF(boolean flag){ paveNDF = flag;return this;}
     
     public int left(){ return paddingLeft;}
     public int right(){ return paddingRight;}
@@ -166,9 +197,11 @@ public class PaveText implements Widget {
     
     @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
-        if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLine(g2d,r,tr);
-       if(paveStyle == PaveTextStyle.ONELINE) 
-           this.drawLayerOneLine(g2d, r, tr);
+        //if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLine(g2d,r,tr);
+        if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLineNuevo(g2d,r,tr);
+        
+        if(paveStyle == PaveTextStyle.ONELINE) 
+            this.drawLayerOneLine(g2d, r, tr);
     }
     
     protected void drawLayerMultiLine(Graphics2D g2d, Rectangle2D r, Translation2D tr){
@@ -222,6 +255,62 @@ public class PaveText implements Widget {
             this.textPositions.get(i).y = yPos + (tb.getHeight() + textSpacing*tb.getHeight())*0.5;
             latexText.drawString(g2d, (int) xPos, (int) yPos,  LatexText.ALIGN_LEFT,
                     LatexText.ALIGN_TOP);
+            yPos += tb.getHeight() + textSpacing*tb.getHeight();
+        }
+    }
+    
+    protected void drawLayerMultiLineNuevo(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        
+        //NodeRegion2D bounds = getParent().getBounds();
+        //System.out.println("[Pave Text] ---> " + bounds);
+        
+        FontMetrics metrics = g2d.getFontMetrics(textFont);        
+        double textHeight = getTextHeightWithSpacing(g2d, textSpacing);
+        double textWidth  = getTextWidthMax(g2d);        
+
+        
+        double xPos = tr.getX(positionX,r);
+        double yPos = r.getY() + r.getHeight() - tr.relativeY(positionY, r);//r.getY() + r.getHeight() - tr.getY(positionY,r);
+        
+        //System.out.printf("X pos = %d, Y pos = %d\n",(int) xPos, (int) yPos);
+        //System.out.println(r);
+        //tr.show();
+        
+        if(this.fillBox==true){
+            g2d.setColor(this.headerBackground);
+             g2d.fillRoundRect((int) (xPos), 
+                    (int) (yPos-paddingTop), 
+                    (int) (textWidth + paddingLeft + paddingRight), 
+                    (int) (textHeight + paddingTop + paddingBottom), 
+                    roundRadius,roundRadius);
+        }
+        
+        if(this.drawBox==true){
+            g2d.setColor(this.borderColor);
+        
+            g2d.drawRoundRect((int) (xPos), 
+                    (int) (yPos-paddingTop), 
+                    (int) (textWidth + paddingLeft + paddingRight), 
+                    (int) (textHeight + paddingTop + paddingBottom), 
+                    roundRadius,roundRadius);
+        }
+        
+        xPos += paddingLeft;
+        yPos += paddingTop;
+        
+        for(int i = 0; i < textStrings.size(); i++){
+            latexText.setText(textStrings.get(i));
+            Rectangle2D tb = latexText.getBounds(g2d);
+            g2d.setColor(textColor);
+            latexText.setColor(textColor);
+            double xPosMarker = xPos - ((double)paddingLeft)/2.0;
+            this.textPositions.get(i).x = xPosMarker;
+            this.textPositions.get(i).y = yPos + (tb.getHeight() + textSpacing*tb.getHeight())*0.5;
+            if(this.rotation==TextRotate.NONE){
+                latexText.drawString(g2d, (int) xPos, (int) yPos, this.xAlignment,this.yAlignment,0);
+            } else {
+                latexText.drawString(textStrings.get(i),g2d, (int) xPos, (int) yPos, this.xAlignment,this.yAlignment,rotation);
+            }
             yPos += tb.getHeight() + textSpacing*tb.getHeight();
         }
     }

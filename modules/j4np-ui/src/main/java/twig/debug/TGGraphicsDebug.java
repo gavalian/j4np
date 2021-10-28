@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package twig.graphics;
+package twig.debug;
 
 import j4np.graphics.Canvas2D;
 import java.awt.Color;
@@ -14,6 +14,11 @@ import twig.config.TStyle;
 import twig.data.GraphErrors;
 import twig.data.H1F;
 import twig.data.TDataFactory;
+import twig.graphics.TGDataCanvas;
+import twig.graphics.TGENode2D;
+import twig.graphics.TGF1D;
+import twig.graphics.TGH1F;
+import twig.graphics.TGRegion;
 import twig.math.DataFitter;
 import twig.math.F1D;
 import twig.widgets.Arc;

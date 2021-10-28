@@ -157,6 +157,23 @@ public class TGRegion extends Node2D implements StyleNode {
         return this;
     }
     
+    public TGRegion drawFrame(boolean flag){
+        
+        this.axisFrame.getAxisX().getAttributes().setAxisLineDraw(flag);
+        this.axisFrame.getAxisX().getAttributes().setAxisTicksDraw(flag);
+        this.axisFrame.getAxisX().getAttributes().setAxisLabelsDraw(flag);
+        this.axisFrame.getAxisX().getAttributes().setAxisTitlesDraw(flag);
+        this.axisFrame.getAxisX().getAttributes().setAxisBoxDraw(flag);
+        
+        this.axisFrame.getAxisY().getAttributes().setAxisLineDraw(flag);
+        this.axisFrame.getAxisY().getAttributes().setAxisTicksDraw(flag);
+        this.axisFrame.getAxisY().getAttributes().setAxisLabelsDraw(flag);
+        this.axisFrame.getAxisY().getAttributes().setAxisTitlesDraw(flag);
+        this.axisFrame.getAxisY().getAttributes().setAxisBoxDraw(flag);
+        
+        return this;
+    }
+    
     public TGRegion draw(DataSet ds){
         draw(ds,"*"); return this;
     }

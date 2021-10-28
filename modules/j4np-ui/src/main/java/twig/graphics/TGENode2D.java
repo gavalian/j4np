@@ -132,6 +132,11 @@ public class TGENode2D extends TDataNode2D {
         //g2d.setColor(style.getPalette().getColor(lineColor));
         //g2d.setStroke(new BasicStroke(lineWidth));
         BasicStroke lineStroke = new BasicStroke(lineWidth);
+        int markerOutlineColor = this.dataSet.attr().getMarkerOutlineColor();
+        int markerOutlineWidth = this.dataSet.attr().getMarkerOutlineWidth();
+        
+        Color markerDecorColor = style.getPalette().getColor(markerOutlineColor);
+        
         int nPoints = dataSet.getSize(0);        
         
         for(int i = 0; i < nPoints; i++){
@@ -155,7 +160,9 @@ public class TGENode2D extends TDataNode2D {
             g2d.drawLine(coordX, coordY-errorBarY, coordX, coordY+errorBarY);
             g2d.drawLine(coordX-errorBarX, coordY, coordX+errorBarX, coordY);
             
-            MarkerTools.drawMarker(g2d, coordX, coordY, mColor, lColor, markerSize, 0, markerStyle);
+            MarkerTools.drawMarker(g2d, coordX, coordY, 
+                    mColor, markerDecorColor, markerSize, markerOutlineWidth,
+                    markerStyle);
         }
        /* Node2D parent = this.getParent();
         Rectangle2D r = parent.getBounds().getBounds();

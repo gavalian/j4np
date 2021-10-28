@@ -58,6 +58,28 @@ public class DataPairList {
         }
     }
     
+    
+    public DataPairList getNormalizedFirst(double[] min, double[] max){
+        DataPairList dList = new DataPairList();
+        
+        for(int i = 0; i < this.getList().size(); i++){
+            DataPair p = getList().get(i);
+            boolean  preserve = true;
+            double[]  first = new double[p.getFirst().length];
+            double[] second = new double[p.getSecond().length];
+            for(int f = 0; f < second.length; f++) second[f] = p.getSecond()[f];
+            
+            for(int c = 0; c < min.length; c++){
+                double value = p.getFirst()[c];
+                double normalized = (value-min[c])/(max[c]-min[c]);
+                first[c] = normalized;
+                if(value<min[c]||value>max[c]) preserve = false;
+            }
+            if(preserve==true) dList.add(new DataPair(first,second));
+        }
+        return dList;
+    }
+    
     public DataPairList getNormalized(double[] min, double[] max){
         DataPairList dList = new DataPairList();
         
