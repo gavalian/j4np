@@ -1,0 +1,32 @@
+//--------------------------------------------------//
+// Example script for manipulating LorentzVectors   //
+//--------------------------------------------------//
+import j4np.physics.*;
+
+//----- set vector with momentum and mass
+//----- coincidentally this is Lambda
+
+for(int i = 0; i < 10; i++){
+
+LorentzVector elec = LorentzVector.withPxPyPzM(0.5,0.5,7,0.0005);
+LorentzVector beam = LorentzVector.withPxPyPzM(0.0,0.0,10.5,0.0005);
+beam.add(0.0,0.0,0.0,0.938);
+beam.sub(elec);
+
+System.out.println(beam);
+
+List<LorentzVector> decayProducts =
+          DecayKinematics.decay(vec,new double[]{0.938,0.135},
+          Math.toRadians(25.0), Math.toRadians(-35.0),
+          DecayKinematics.Frame.LAB);
+//---- print decay results
+System.out.println("----> decay products");
+decayProducts.stream().forEach(System.out::println);
+//---- now combine decay results into new LorentzVector
+//---- sanity check
+LorentzVector vLambda = new LorentzVector();
+vLambda.add(decayProducts.get(0)).add(decayProducts.get(1));
+
+System.out.println("-----> print combined vector\n" + vLambda);
+
+}
