@@ -10,6 +10,7 @@ import org.jlab.groot.ui.TCanvas;
 import org.jlab.jnp.hipo4.data.DataType;
 import org.jlab.jnp.hipo4.data.Event;
 import org.jlab.jnp.hipo4.data.Node;
+import org.jlab.jnp.hipo4.io.HipoChain;
 import org.jlab.jnp.hipo4.io.HipoReader;
 
 /*
@@ -31,17 +32,20 @@ public class PartClassifierTest {
     public static void main(String[] args){
         
         EJMLModelEvaluator model = new EJMLModelEvaluator("network/clas12pid.network");
-        H1F h = new H1F("h",60,0.5,1.5);
-        H1F ha = new H1F("h",60,0.5,1.5);
-        H1F ht = new H1F("h",60,0.5,1.5);
-        H1F h1 = new H1F("h",60,0.5,1.5);
-        H1F h2 = new H1F("h",60,0.5,1.5);
+        H1F h = new H1F("h",60,0.5,1.1);
+        H1F ha = new H1F("h",60,0.5,1.1);
+        H1F ht = new H1F("h",60,0.5,1.1);
+        H1F h1 = new H1F("h",60,0.5,1.1);
+        H1F h2 = new H1F("h",60,0.5,1.1);
         
         H2F dr = new H2F("dr",100,-500,500,100,-500,500);
         H2F dp = new H2F("dr",100,-500,500,100,-500,500);
         
-        HipoReader reader = new HipoReader();
-        reader.open("pid_output_3.hipo");
+        HipoChain reader = new HipoChain();
+        //reader.addDir("/Users/gavalian/Work/DataSpace/pid/mcprocessed/", "*redu*.hipo");
+        reader.addFile("pid_reduced_output.hipo");
+        reader.open();
+        
         
         Event event = new Event();
 
@@ -76,72 +80,73 @@ public class PartClassifierTest {
             
             
             if(pids[0]==11){
+                
                 Node vn1 = event.read(100, 1);
-                    Node vn2 = event.read(100, 2);
-                    Node vn3 = event.read(100, 3);
+                Node vn2 = event.read(100, 2);
+                Node vn3 = event.read(100, 3);
+                
+                float[] vn1c = vn1.getFloat();
+                float[] vn2c = vn2.getFloat();
+                float[] vn3c = vn3.getFloat();
+                
+                LorentzVector beam = LorentzVector.withPxPyPzM(0.0, 0.0, 10.6, 0.0005);
+                LorentzVector targ = LorentzVector.withPxPyPzM(0.0, 0.0,  0.0, 0.938);
+                
+                LorentzVector vL1 = LorentzVector.withPxPyPzM(vn1c[0],vn1c[1],vn1c[2], 0.0005);
+                LorentzVector vL2 = LorentzVector.withPxPyPzM(vn2c[0],vn2c[1],vn2c[2], 0.139);
+                LorentzVector vL3 = LorentzVector.withPxPyPzM(vn3c[0],vn3c[1],vn3c[2], 0.139);
+                
+                beam.add(targ).sub(vL1).sub(vL2).sub(vL3);
+                //System.out.printf("%8.5f\n",beam.mass());
+                h.fill(beam.mass());
+                ht.fill(beam.mass());
+                if(output[1]>output[0]){ ha.fill(beam.mass()); }
+                else { 
                     
-                    float[] vn1c = vn1.getFloat();
-                    float[] vn2c = vn2.getFloat();
-                    float[] vn3c = vn3.getFloat();
+                    Node pn1 = event.read(300, 1);
                     
-                    LorentzVector beam = LorentzVector.withPxPyPzM(0.0, 0.0, 10.6, 0.0005);
-                    LorentzVector targ = LorentzVector.withPxPyPzM(0.0, 0.0,  0.0, 0.938);
+                    float[] pn1f = pn1.getFloat();
                     
-                    LorentzVector vL1 = LorentzVector.withPxPyPzM(vn1c[0],vn1c[1],vn1c[2], 0.0005);
-                    LorentzVector vL2 = LorentzVector.withPxPyPzM(vn2c[0],vn2c[1],vn2c[2], 0.139);
-                    LorentzVector vL3 = LorentzVector.withPxPyPzM(vn3c[0],vn3c[1],vn3c[2], 0.139);
-                    
-                    beam.add(targ).sub(vL1).sub(vL2).sub(vL3);
-                    //System.out.printf("%8.5f\n",beam.mass());
-                    h.fill(beam.mass());
-                    ht.fill(beam.mass());
-                    if(output[1]>output[0]){ ha.fill(beam.mass()); }
-                    else { 
-                        
-                        Node pn1 = event.read(300, 1);
-                        
-                        float[] pn1f = pn1.getFloat();
-                        
-                        /*if(beam.mass()>0.95&&beam.mass()<1.05)
-                            dp.fill(pn1f[0], pn1f[1]);*/
-                        System.out.printf("%8.5f %8.5f %8.5f\n",vL1.p(),vL1.theta()*57.29,
-                                vL1.phi()*57.29);
-                        System.out.println(Arrays.toString(output) + " ==> " +Arrays.toString(fn1.getFloat()) ); 
-                    }
+                    /*if(beam.mass()>0.95&&beam.mass()<1.05)
+                    dp.fill(pn1f[0], pn1f[1]);*/
+                    System.out.printf("%8.5f %8.5f %8.5f\n",vL1.p(),vL1.theta()*57.29,
+                            vL1.phi()*57.29);
+                    System.out.println(Arrays.toString(output) + " ==> " +Arrays.toString(fn1.getFloat()) ); 
+                }
             }
             
             if(pids[1]==11){
                 Node vn1 = event.read(100, 1);
-                    Node vn2 = event.read(100, 2);
-                    Node vn3 = event.read(100, 3);
-                    
-                    float[] vn1c = vn1.getFloat();
-                    float[] vn2c = vn2.getFloat();
-                    float[] vn3c = vn3.getFloat();
-                    
-                    LorentzVector beam = LorentzVector.withPxPyPzM(0.0, 0.0, 10.6, 0.0005);
-                    LorentzVector targ = LorentzVector.withPxPyPzM(0.0, 0.0,  0.0, 0.938);
-                    
-                    LorentzVector vL1 = LorentzVector.withPxPyPzM(vn1c[0],vn1c[1],vn1c[2], 0.139);
-                    LorentzVector vL2 = LorentzVector.withPxPyPzM(vn2c[0],vn2c[1],vn2c[2], 0.0005);
-                    LorentzVector vL3 = LorentzVector.withPxPyPzM(vn3c[0],vn3c[1],vn3c[2], 0.139);
-                    
-                    beam.add(targ).sub(vL1).sub(vL2).sub(vL3);
-                    //System.out.printf("%8.5f\n",beam.mass());
-                    h.fill(beam.mass());
-                    ht.fill(beam.mass());
-                    if(output[1]>output[0]){ ha.fill(beam.mass()); }
-                    else { 
-                        System.out.printf("%8.5f %8.5f %8.5f\n",vL1.p(),vL1.theta()*57.29,
-                                vL1.phi()*57.29);
-                        //System.out.println(Arrays.toString(output) + " ==> " +Arrays.toString(fn1.getFloat()) ); 
-                    }
+                Node vn2 = event.read(100, 2);
+                Node vn3 = event.read(100, 3);
+                
+                float[] vn1c = vn1.getFloat();
+                float[] vn2c = vn2.getFloat();
+                float[] vn3c = vn3.getFloat();
+                
+                LorentzVector beam = LorentzVector.withPxPyPzM(0.0, 0.0, 10.6, 0.0005);
+                LorentzVector targ = LorentzVector.withPxPyPzM(0.0, 0.0,  0.0, 0.938);
+                
+                LorentzVector vL1 = LorentzVector.withPxPyPzM(vn1c[0],vn1c[1],vn1c[2], 0.139);
+                LorentzVector vL2 = LorentzVector.withPxPyPzM(vn2c[0],vn2c[1],vn2c[2], 0.0005);
+                LorentzVector vL3 = LorentzVector.withPxPyPzM(vn3c[0],vn3c[1],vn3c[2], 0.139);
+                
+                beam.add(targ).sub(vL1).sub(vL2).sub(vL3);
+                //System.out.printf("%8.5f\n",beam.mass());
+                h.fill(beam.mass());
+                ht.fill(beam.mass());
+                if(output[1]>output[0]){ ha.fill(beam.mass()); }
+                else { 
+                    System.out.printf("%8.5f %8.5f %8.5f\n",vL1.p(),vL1.theta()*57.29,
+                            vL1.phi()*57.29);
+                    //System.out.println(Arrays.toString(output) + " ==> " +Arrays.toString(fn1.getFloat()) ); 
+                }
             }
             double prob1 = output[1];
-                double prob2 = output2[1];
-                double en1   = PartClassifierTest.energy(fn1.getFloat());
-                double en2   = PartClassifierTest.energy(fn2.getFloat());
-                
+            double prob2 = output2[1];
+            double en1   = PartClassifierTest.energy(fn1.getFloat());
+            double en2   = PartClassifierTest.energy(fn2.getFloat());
+            
             if(pids[0]!=11){                 
                 if(prob1>0.5&&en1>0.0001){
                     
@@ -166,7 +171,7 @@ public class PartClassifierTest {
                     
                     beam.add(targ).sub(vL1).sub(vL2).sub(vL3);
                     //System.out.printf("%8.5f\n",beam.mass());
-                    h1.fill(beam.mass()); ht.fill(beam.mass());
+                    h1.fill(beam.mass());// ht.fill(beam.mass());
                     
                     if(beam.mass()>0.95&&beam.mass()<1.05){
                         dr.fill(pn1f[0], pn1f[1]);
@@ -205,7 +210,8 @@ public class PartClassifierTest {
                     
                     beam.add(targ).sub(vL1).sub(vL2).sub(vL3);
                     //System.out.printf("%8.5f\n",beam.mass());
-                    h2.fill(beam.mass()); ht.fill(beam.mass());
+                    h2.fill(beam.mass()); 
+                    ht.fill(beam.mass());
                     
                     if(beam.mass()>0.95&&beam.mass()<1.05){
                         dr.fill(pn1f[0], pn1f[1]);

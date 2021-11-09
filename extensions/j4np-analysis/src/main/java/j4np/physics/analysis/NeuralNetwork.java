@@ -27,12 +27,14 @@ public class NeuralNetwork {
         
         HipoChain chain = new HipoChain();
         
-        chain.addFile("/Users/gavalian/Work/DataSpace/pid/mc_epipip_0001.hipo");
+        /*chain.addFile("/Users/gavalian/Work/DataSpace/pid/mc_epipip_0001.hipo");
         chain.addFile("/Users/gavalian/Work/DataSpace/pid/mc_epipip_0002.hipo");
         chain.addFile("/Users/gavalian/Work/DataSpace/pid/mc_epipip_0003.hipo");
         chain.addFile("/Users/gavalian/Work/DataSpace/pid/mc_epipip_0004.hipo");
         chain.addFile("/Users/gavalian/Work/DataSpace/pid/mc_epipip_0005.hipo");
+        */
         
+        chain.addDir("/Users/gavalian/Work/DataSpace/pid/mcprocessed/", "*redu*.hipo");
         chain.open();
         
         ClasEvent clas = ClasEvent.with(chain);
@@ -47,7 +49,7 @@ public class NeuralNetwork {
         Vector3 v3 = new Vector3();
         
         HipoWriter writer = new HipoWriter();
-        writer.open("pid_output_3.hipo");
+        writer.open("pid_reduced_output.hipo");
         
         ProgressPrintout progress = new ProgressPrintout();
         
