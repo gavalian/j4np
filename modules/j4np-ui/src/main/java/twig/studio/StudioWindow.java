@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package j4np.ui.flatlaf;
+package twig.studio;
 
+import twig.studio.StudioFrame;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatSolarizedDarkIJTheme;
@@ -106,6 +107,8 @@ public class StudioWindow extends JFrame implements ActionListener {
         
     }
     
+    public StudioFrame getStudioFrame(){ return this.sFrame;}
+    
     public static void changeLook(){
         //com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme.install();
         UIManager.put("Tree.paintLines", Boolean.TRUE);
@@ -117,8 +120,8 @@ public class StudioWindow extends JFrame implements ActionListener {
         }*/
         
         try {
-            //UIManager.setLookAndFeel( new FlatLightLaf() );                
-            UIManager.setLookAndFeel( new  FlatSolarizedLightIJTheme());
+            UIManager.setLookAndFeel( new FlatLightLaf() );                
+            //UIManager.setLookAndFeel( new  FlatSolarizedLightIJTheme());
             //UIManager.setLookAndFeel( new  FlatGradiantoNatureGreenIJTheme());
             //UIManager.setLookAndFeel( new  FlatHiberbeeDarkIJTheme());
             
