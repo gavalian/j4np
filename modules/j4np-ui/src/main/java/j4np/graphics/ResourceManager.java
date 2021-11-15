@@ -5,7 +5,7 @@
  */
 package j4np.graphics;
 
-import j4np.ui.flatlaf.StudioWindow;
+import twig.studio.StudioWindow;
 import java.awt.Image;
 import java.net.URL;
 import java.util.HashMap;
