@@ -65,7 +65,7 @@ public class DataDecoderEvio implements Consumer<DecoderEvent> {
                     DataDecoder.decode_57622(node,crate,tdcData);                    
                 }                
                 if(identification[2]==57638){
-                    System.out.println("--------- decoding event ADC -----");
+                    //System.out.println("--------- decoding event ADC -----");
                     EvioNode node = new EvioNode(2*1024);
                     event.getAt(node, position);
                     int crate = identification[0];

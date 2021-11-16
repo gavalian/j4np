@@ -54,6 +54,7 @@ public class DataTranslator {
                 input[1] = Integer.parseInt(tokens[1]);
                 input[2] = Integer.parseInt(tokens[2]);
                 input[3] = 0;
+                
                 output[0] = Integer.parseInt(tokens[3]);
                 output[1] = Integer.parseInt(tokens[4]);
                 output[2] = Integer.parseInt(tokens[5]);

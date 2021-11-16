@@ -34,6 +34,10 @@ public class BenchmarkTimer {
         return timerName;
     }
     
+    public int  getCounter(){
+        return this.numberOfCalls;
+    }
+    
     public void resume(){
         if(isPaused == true){
             timeAtResume = System.nanoTime();

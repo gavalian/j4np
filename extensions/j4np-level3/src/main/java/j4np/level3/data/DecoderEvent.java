@@ -17,8 +17,24 @@ import java.nio.ByteBuffer;
  */
 public class DecoderEvent implements DataEvent {
     
+    /**
+     * The decoder event contains decoded ADC and TDC values
+     * from the evioEvent that is part of the DecoderEvent in 
+     * data structures described below.
+     * The format is as follows;
+     * b - detector
+     * b - sector
+     * b - layer
+     * s - component
+     * b - order (means left or right)
+     * i - TDC value (or ADC value for ADC data structure)
+     */
+    
     DataStructure   tdcData = new DataStructure("bbbsbi",20000);
     DataStructure   adcData = new DataStructure("bbbsbi",20000);
+    
+    
+    
     EvioEvent       evioEvent = new EvioEvent();
     
     public DecoderEvent(){

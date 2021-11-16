@@ -78,9 +78,9 @@ public class EtDataSource implements DataSource {
             //System.out.println("cue = " + statConfig.getCue());
             statConfig.setCue(etChunkSize);
             
-            EtStation station = sys.createStation(statConfig, this.etStation);            
+            EtStation station = sys.createStation(statConfig, this.etStation);
             
-            myAttachment = sys.attach(station);
+            myAttachment = sys.attach(station);            
             
         } catch (EtException ex) {
             Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,14 +128,15 @@ public class EtDataSource implements DataSource {
         int nEventsMax = frame.getCount();
         int nEventsLoaded = 0;
         if(sys.alive()==true){
-            System.out.printf("et::system >> status = alive , attempting fetch, count = %d\n",
-                    nEventsMax);                
+            //System.out.printf("et::system >> status = alive , attempting fetch, count = %d\n",
+             //       nEventsMax);                
             try {
                 //EtEvent[] events = sys.getEvents(myAttachment, Mode.SLEEP, null, 0, nEventsMax);
-                EtEvent[] events = sys.getEvents(myAttachment, Mode.ASYNC, null, 0, nEventsMax);
-                if(events!=null){
-                    System.out.println("et::info >> loaded events count = " + events.length);
-                }
+                EtEvent[] events = sys.getEvents(myAttachment, Mode.SLEEP, null, 0, nEventsMax);
+                
+                //if(events!=null){
+                //    System.out.println("et::info >> loaded events count = " + events.length);
+                //}
                 for(int ev = 0; ev < events.length; ev++){
                     int length = events[ev].getDataBuffer().capacity();
                     DataEvent event = frame.getEvent(ev);
@@ -153,21 +154,21 @@ public class EtDataSource implements DataSource {
                 event.scan();
                 */
             } catch (EtException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (EtDeadException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (EtClosedException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (EtEmptyException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (EtBusyException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (EtTimeoutException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (EtWakeUpException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(EtDataSource.class.getName()).log(Level.SEVERE, null, ex);
             }
             
         }
