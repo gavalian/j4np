@@ -31,8 +31,7 @@ public class HipoWriter implements AutoCloseable {
     private Writer               writer = null;
     private int       maximumRecordSize = 8*1024*1024;
     private int     maximumRecordEvents = 1000000;
-    private int         compressionType = 2;
-    
+    private int         compressionType = 1;
     
     private final SchemaFactory schemaFactory = new SchemaFactory();
     

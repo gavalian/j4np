@@ -41,7 +41,7 @@ public class HipoBenchmark {
         double timePerByte = timeMS/bytes;
         int    bytesPerSec = (int) (bytes/timeSEC);
         return String.format("%18s : bytes %14d, time %12.5f , %12d bytes/sec", 
-                name,(int) bytes,timeSEC,bytesPerSec);
+                name, bytes,timeSEC,bytesPerSec);
     }
     
     public static void main(String[] args){
@@ -50,7 +50,7 @@ public class HipoBenchmark {
         
         for(int i = 0; i < 4; i++){
             HipoWriter w = HipoBenchmark.benchmarkWriter(
-                    "/Users/gavalian/Work/dataspace/mc/sidis_sample_14.hipo", 3,i);
+                    "/Users/gavalian/Downloads/sidis_sample_14.hipo", 4,i);
             stats.add(HipoBenchmark.makeSummary(algo[i], w.getWriterTime(), w.getBytesWritten()));
         }
         

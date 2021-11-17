@@ -47,7 +47,12 @@ public class Compressor {
     static {
         factory = LZ4Factory.fastestInstance();
         lz4_compressor = factory.fastCompressor();
-        lz4_compressor_best = factory.highCompressor();
+        // The high compression has levels, and it affects the speed
+        // significantly, the optimal one is 5-6, where you get twice
+        // the speed og GZIP and sort of same compression ratio.
+        // The defualt is 3 to have good performance. Later
+        // API will be extended to allow tweaking this. - GG.
+        lz4_compressor_best = factory.highCompressor(3);   
         lz4_decompressor = factory.safeDecompressor();
     }
 
