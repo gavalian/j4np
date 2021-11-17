@@ -42,8 +42,7 @@ public class StudioDebug {
 
         dir.add("/rec/b",  StudioDebug.create("h5"));
         dir.add("/rec/b",  StudioDebug.create("h6"));
-        dir.add("/rec/a",  StudioDebug.create("h4"));
-        
+        dir.add("/rec/a",  StudioDebug.create("h4"));        
         dir.add("/mc/gen/t/b", StudioDebug.create("h1"));
         dir.add("/mc/gen/t/c", StudioDebug.create("h2"));
         dir.add("/mc/gen/y/z/v", StudioDebug.create("h3"));

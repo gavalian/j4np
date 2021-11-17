@@ -17,7 +17,7 @@
     <dependencies>
       <dependency>
         <groupId>j4np</groupId>
-        <artifactId>j4np-utils</artifactId>
+        <artifactId>j4np-data</artifactId>
         <version>${revision}</version>
       </dependency>
       <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf -->
@@ -34,7 +34,6 @@
 	<version>2.9.9.3</version>
       </dependency>
 -->
-
       <dependency>
         <groupId>net.objecthunter</groupId>
         <artifactId>exp4j</artifactId>

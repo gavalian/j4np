@@ -1,5 +1,6 @@
 import twig.data.*;
 import twig.math.*;
+import twig.tree.*;
 import twig.widgets.*;
 import twig.widgets.LatexText.TextRotate;
 import twig.widgets.LatexText.TextAlign;
@@ -15,4 +16,4 @@ import java.util.function.*
 import java.util.prefs.*
 import java.util.regex.*
 import java.util.stream.*
-System.out.println("J4NP: imports loaded....");
+System.out.println("\n>>> J4NP: imports loaded....\n");

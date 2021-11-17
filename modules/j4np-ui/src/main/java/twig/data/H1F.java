@@ -789,14 +789,19 @@ public class H1F  implements DataSet {
      */
     @Override
     public String toString() {
+        
         StringBuilder buffer = new StringBuilder();
+        /*
         for(int i = 0; i < xAxis.getNBins(); i++) {
             buffer.append(String.format("%12.6f %12.6f %12.6f\n",
                     xAxis.getBinCenter(i),this.getBinContent(i),
                     this.getBinError(i)));
-        }
+        }*/
+        buffer.append(String.format("id %12d ** [%6d,%12.5f,%12.5f], entries = %9d", 
+                this.getUniqueID(),xAxis.getNBins(),xAxis.min(),xAxis.max(),
+                this.getEntries()));
         return buffer.toString();
-    }       
+    } 
     
     /**
      * Retrieves a graph of the histogram
