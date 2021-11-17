@@ -30,8 +30,8 @@ public class EvioDataSource implements DataSource {
 
     @Override
     public boolean next(DataEvent event) {
-        if(hasNext()==false) return false;
-        evioReader.next(event);
+        if(hasNext()==false) return false;        
+        evioReader.next(((DecoderEvent) event).getEvioEvent());
         return true;
     }
 

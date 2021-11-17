@@ -161,7 +161,7 @@ public class Level3Decoder implements InputDataStream {
 
     @Override
     public boolean hasNext() {
-        return true;
+        return dataSource.hasNext();
     }
 
     @Override
@@ -215,14 +215,13 @@ public class Level3Decoder implements InputDataStream {
         }
         return null;
     }
-
+    
     @Override
     public void apply(INDArray result) {
         long size = result.size(0);
         int  positive = 0;
         int  negative = 0;
-        
-        
+                
         for(int i = 0; i < size; i++){
             double prob = result.getDouble(i,1);
             if(prob>0.5){

@@ -55,8 +55,7 @@ public class Evio2Et {
     public void setEvioFile(String filename){
         this.evioFile = filename;
     }
-    
-    
+        
     public void setDelay(int td){
         delay = td;
     }
