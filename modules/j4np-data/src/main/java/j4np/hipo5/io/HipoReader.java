@@ -70,6 +70,11 @@ public class HipoReader {
     public HipoReader(){
         
     }
+    
+    public HipoReader(String file){
+        this.open(file);
+    }
+    
     public void setDebugMode(int mode){
         this.debugMode = mode;
     }
@@ -91,7 +96,7 @@ public class HipoReader {
     }*/
 
     
-    public final void open(String filename) throws HipoException{
+    public final void open(String filename) {
         try { 
             inStreamRandom = new RandomAccessFile(filename,"r");
             
@@ -206,6 +211,7 @@ public class HipoReader {
         //eventIndex.show();
     }
     
+    public void rewind(){ eventIndex.rewind(); }
     public boolean hasNext(){
         return eventIndex.canAdvance();
     }
