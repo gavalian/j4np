@@ -45,12 +45,13 @@ public class HipoBenchmark {
     }
     
     public static void main(String[] args){
+        
         String[] algo = new String[]{"no-compression","lz4-fast","lz4-best","gzip"};
         List<String> stats = new ArrayList<>();
         
         for(int i = 0; i < 4; i++){
             HipoWriter w = HipoBenchmark.benchmarkWriter(
-                    "/Users/gavalian/Downloads/sidis_sample_14.hipo", 4,i);
+                    "/Users/gavalian/Work/dataspace/mc/sidis_sample_14.hipo", 4,i);
             stats.add(HipoBenchmark.makeSummary(algo[i], w.getWriterTime(), w.getBytesWritten()));
         }
         
