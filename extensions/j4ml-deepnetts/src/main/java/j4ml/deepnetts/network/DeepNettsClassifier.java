@@ -64,7 +64,7 @@ public class DeepNettsClassifier {
                 .randomSeed(456);
         
         neuralNet = b.build();
-         
+        
         System.out.println(neuralNet);
         
         trainer = neuralNet.getTrainer();
@@ -119,11 +119,11 @@ public class DeepNettsClassifier {
                 //        k*width, width,","));
                 //neuralNet.getLayers().get(i).getWeights().getValues()
                 //DataArrayUtils.floatToString();
-                stream.add(this.getString(neuralNet.getLayers().get(i).getWeights().getValues(),
+                stream.add(DeepNettsClassifier.getString(neuralNet.getLayers().get(i).getWeights().getValues(),
                         k*width, width,","));
             }
             //System.out.println(DataSetReader.getString(neuralNet.getLayers().get(i).getBiases(),","));
-            stream.add(this.getString(neuralNet.getLayers().get(i).getBiases(),","));
+            stream.add(DeepNettsClassifier.getString(neuralNet.getLayers().get(i).getBiases(),","));
         }
         return stream;
     }
