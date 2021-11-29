@@ -73,7 +73,7 @@ public class HttpDataGroup extends TimerTask {
         String requestBody = this.createRequestBody();
         System.out.println(requestBody);
         
-       /* String uriString = String.format("http://%s:%d", httpHost,httpPort);
+        String uriString = String.format("http://%s:%d", httpHost,httpPort);
         try {            
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(uriString))
@@ -81,9 +81,12 @@ public class HttpDataGroup extends TimerTask {
                     .build();
             HttpResponse<String> response = httpClient.send(request,
                     HttpResponse.BodyHandlers.ofString());
+            
+            System.out
+        System.out.println();
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(HttpDataGroup.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
     }
     
     public static void main(String[] args){
