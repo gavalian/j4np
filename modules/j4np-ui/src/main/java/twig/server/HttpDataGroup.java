@@ -82,8 +82,8 @@ public class HttpDataGroup extends TimerTask {
             HttpResponse<String> response = httpClient.send(request,
                     HttpResponse.BodyHandlers.ofString());
             
-            System.out
-        System.out.println();
+            //System.out
+        System.out.println("HERE : " + response.body());
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(HttpDataGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
