@@ -68,4 +68,10 @@ public class DecayKinematics {
         return List.of(results[0],results[1]);
     }
     
+    /*public static LorentzVector electron(){
+        LorentzVector e = new LorentzVector();
+        
+        return e;
+        
+    }*/
 }

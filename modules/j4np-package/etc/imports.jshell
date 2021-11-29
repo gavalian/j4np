@@ -1,3 +1,7 @@
+//--------------------------------------
+// Imports for TWIG data visualization and
+// analysis package
+//--------------------------------------
 import twig.data.*;
 import twig.math.*;
 import twig.tree.*;
@@ -6,6 +10,16 @@ import twig.widgets.LatexText.TextRotate;
 import twig.widgets.LatexText.TextAlign;
 import twig.graphics.*;
 import twig.config.*;
+//--------------------------------------
+// Imports for Physics libraries
+//--------------------------------------
+import j4np.physics.*;
+import j4np.physics.data.*;
+import j4np.hipo5.data.*;
+import j4np.hipo5.io.*;
+//--------------------------------------
+// Imports for JAVA standard libraries
+//--------------------------------------
 import java.io.*
 import java.math.*
 import java.net.*
@@ -17,3 +31,4 @@ import java.util.prefs.*
 import java.util.regex.*
 import java.util.stream.*
 System.out.println("\n>>> J4NP: imports loaded....\n");
+System.out.println(">>> J4NP: twig,physics,h5....\n");

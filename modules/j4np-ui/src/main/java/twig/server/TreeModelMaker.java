@@ -59,7 +59,7 @@ public class TreeModelMaker {
     
     public void printTree(DefaultMutableTreeNode node, List<String> list, String name, int num){        
         List<String> r = getSubs(list,name,num);        
-        if(r.size()==0) return;        
+        if(r.isEmpty()) return;
         for(int i = 0; i < r.size(); i++){
             String item = r.get(i);
             DefaultMutableTreeNode nNode = new DefaultMutableTreeNode(item);

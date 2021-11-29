@@ -55,10 +55,12 @@ public class PhysicsReaction {
         vecOprators.add(new VectorOperator(vec,oper));
         return this;
     }
+    
     public PhysicsReaction addVector(String oper){
         vecOprators.add(new VectorOperator(LorentzVector.withPxPyPzM(0.0, 0.0, 0.0, 0.0),oper));
         return this;
     }
+    
     public List<VectorOperator> operators(){ return this.vecOprators;}
     
     public boolean isValid(PhysicsEvent event){ 

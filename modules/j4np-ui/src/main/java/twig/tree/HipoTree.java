@@ -32,16 +32,12 @@ public class HipoTree extends Tree {
     
 
     public HipoTree(String file, String bank){
-        try {
             reader.open(file);
             treeBank  = reader.getBank(bank);
             treeBank.getSchema().show();
             bankGroup = treeBank.getSchema().getGroup();
             bankItem  = treeBank.getSchema().getItem();
             init();
-        } catch (HipoException ex) {
-            Logger.getLogger(HipoTree.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
     

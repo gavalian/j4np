@@ -8,7 +8,10 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import j4np.utils.json.Json;
+import j4np.utils.json.JsonArray;
 import j4np.utils.json.JsonObject;
+import j4np.utils.json.JsonValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,8 +20,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import twig.data.DataSet;
+import twig.data.DataSetSerializer;
+import twig.data.H1F;
+import twig.data.TDirectory;
 
 /**
  *
@@ -26,9 +36,18 @@ import java.util.logging.Logger;
  */
 public class HttpDataServer {
     
-    private static HttpDataServer dataServer = null;
-    private HttpServer httpServer = null;
-    private HttpContext context = null;
+    /**
+     * Data Server Instance
+     */
+    private static HttpDataServer  dataServer = null;
+    
+    
+    private HttpServer             httpServer = null;
+    private HttpContext               context = null;    
+    private TDirectory        serverDirectory = new TDirectory();
+    
+    private Timer timer = new Timer();
+    private Random rand = new Random();
     
     public HttpDataServer(int port){
         try {
@@ -61,7 +80,7 @@ public class HttpDataServer {
       LocalDateTime now = LocalDateTime.now();
       System.out.printf("[server] : recieved a request @ %s\n",dtf.format(now) );
       
-      //JsonObject json = 
+      //JsonObject json =
       StringBuilder sb = new StringBuilder();
       InputStream ios = exchange.getRequestBody();
       int i;
@@ -70,11 +89,50 @@ public class HttpDataServer {
       }
       System.out.println("exchange : >>> " + sb.toString());
       
+      JsonObject json = (JsonObject) Json.parse(sb.toString());
+      JsonValue  jvalue = json.get("request");
       
-      exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
-      OutputStream os = exchange.getResponseBody();
-      os.write(response.getBytes());
-      os.close();
+      String what = jvalue.asString();
+      if(what.compareTo("list")==0){
+          String listResponse = HttpDataServer.getInstance().serverDirectory.jsonList();      
+          exchange.sendResponseHeaders(200, listResponse.getBytes().length);//response code and length
+          OutputStream os = exchange.getResponseBody();
+          os.write(listResponse.getBytes());
+          os.close(); return;
+      }
+      
+      if(what.startsWith("data")==true){
+          System.out.println("suppose to give him some data.");
+          JsonArray dataList = json.get("list").asArray();
+          //List<String> dataPath = new ArrayList<>();
+          StringBuilder str = new StringBuilder();
+          str.append("[");
+          for(JsonValue item : dataList.values()){
+              System.out.printf("\t--> %s\n",item.asString());
+              DataSet  ds = HttpDataServer.getInstance().serverDirectory.get(item.asString());
+              str.append(DataSetSerializer.toJson(ds));
+          }
+          str.append("]");
+          String dataJson = str.toString();
+          exchange.sendResponseHeaders(200, dataJson.getBytes().length);//response code and length
+          OutputStream os = exchange.getResponseBody();
+          os.write(dataJson.getBytes());
+          os.close(); return;
+      }
+      
+      if(what.startsWith("data:")==true){
+          
+          String data = what.substring(5, what.length());
+          H1F h = (H1F) HttpDataServer.getInstance().serverDirectory.get(data);
+          String dataJson = DataSetSerializer.toJson(h);
+          System.out.println("[server::debug] what = " + what);
+          System.out.println("[server::debug] data = " + data);
+          System.out.println("[server::debug] json = " + dataJson);
+          exchange.sendResponseHeaders(200, dataJson.getBytes().length);//response code and length
+          OutputStream os = exchange.getResponseBody();
+          os.write(dataJson.getBytes());
+          os.close(); return;
+      }
     }
     
     public void start(){
@@ -82,12 +140,38 @@ public class HttpDataServer {
         this.httpServer.start();
     }
     
+    public void initDefault(){
+        for(int i = 0; i < 5; i++){
+            int id = 1001 + i;            
+            H1F h = new H1F("h"+id,"",120,-2.,2.0);
+            this.serverDirectory.add("/server/default", h);
+        }
+        
+        timer.schedule(new TimerTask(){
+            private long counter = 0;
+            @Override
+            public void run() {
+                for(int i = 0 ; i< 5; i++){
+                    String name = String.format("h%d", 1001+i);
+                    H1F h = (H1F) serverDirectory.get("/server/default", name);
+                    
+                    for(int k = 0; k < 250; k++){
+                        double value = rand.nextGaussian()+0.1*i;                        
+                        h.fill(value);
+                    }
+                }
+                counter++;
+                System.out.printf("execution counter = %8d\n",counter);
+            }
+        }, 100,5000);
+    }
+    
     public static void main(String[] args){
         HttpServerConfig config = new HttpServerConfig();
         config.serverPort = 8020;
         
         HttpDataServer.create(config);
-        
+        HttpDataServer.getInstance().initDefault();
         HttpDataServer.getInstance().start();
         
         System.out.println("-- headers --");

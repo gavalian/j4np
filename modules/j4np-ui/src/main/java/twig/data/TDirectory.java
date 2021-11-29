@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -26,7 +28,7 @@ import twig.studio.TreeProvider;
  */
 public class TDirectory implements TreeProvider {
     
-    private final Map<String,Directory> dirList = new HashMap<>();
+    private final ConcurrentMap<String,Directory> dirList = new ConcurrentHashMap<>();
     
     public TDirectory(){
         
