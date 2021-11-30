@@ -1,0 +1,7 @@
+[
+    {"group":"Detector/DC/adc","data":["/server/default/h1001","/server/default/h1002"]},
+    {"group":"Detector/DC/tdc","data":["/server/default/h1003","/server/default/h1004"]},
+    {"group":"Detector/EC/tdc","data":["/server/default/h1003","/server/default/h1004"]},
+    {"group":"Reconstruction/EC/clusters",
+     "data": ["/server/default/h1001","/server/default/h1002","/server/default/h1003","/server/default/h1004"]}
+]
