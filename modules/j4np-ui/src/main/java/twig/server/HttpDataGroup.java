@@ -5,6 +5,8 @@
  */
 package twig.server;
 
+import j4np.utils.json.Json;
+import j4np.utils.json.JsonArray;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -18,6 +20,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import twig.data.DataSet;
+import twig.data.DataSetSerializer;
+import twig.graphics.TGCanvas;
 import twig.graphics.TGDataCanvas;
 
 /**
@@ -27,6 +32,8 @@ import twig.graphics.TGDataCanvas;
 public class HttpDataGroup extends TimerTask {
     
     private List<String>    dataList = new ArrayList<>();
+    private List<DataSet>   dataSets = new ArrayList<>();
+    
     private TGDataCanvas  dataCanvas = null;    
     private Timer              timer = new Timer();
     public  long      updateInterval = 5000;
@@ -81,9 +88,19 @@ public class HttpDataGroup extends TimerTask {
                     .build();
             HttpResponse<String> response = httpClient.send(request,
                     HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("HERE : " + response.body());
+            JsonArray  array = (JsonArray) Json.parse(response.body());
+            List<DataSet> dslist = DataSetSerializer.deserialize(array);
             
             //System.out
-        System.out.println("HERE : " + response.body());
+            if(dataCanvas!=null){
+               dataCanvas.divide(2, 2);
+               int pad = 0;
+               for(DataSet d : dslist) {
+                   dataCanvas.region(pad).draw(d); pad++;
+               }
+            }
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(HttpDataGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -93,8 +110,10 @@ public class HttpDataGroup extends TimerTask {
         List<String> histos = Arrays.asList("/server/default/h1001","/server/default/h1002",
                 "/server/default/h1003","/server/default/h1004");
         
+        TGCanvas c = new TGCanvas();
         HttpDataGroup group = new HttpDataGroup();
         group.setDataList(histos);
+        group.setCanvas(c.view());
         group.startTimer();
     }
     

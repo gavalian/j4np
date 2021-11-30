@@ -107,9 +107,12 @@ public class HttpDataServer {
           //List<String> dataPath = new ArrayList<>();
           StringBuilder str = new StringBuilder();
           str.append("[");
+          int counter = 0;
           for(JsonValue item : dataList.values()){
               System.out.printf("\t--> %s\n",item.asString());
               DataSet  ds = HttpDataServer.getInstance().serverDirectory.get(item.asString());
+              if(counter!=0) str.append(",");
+              counter++;
               str.append(DataSetSerializer.toJson(ds));
           }
           str.append("]");
@@ -144,6 +147,7 @@ public class HttpDataServer {
         for(int i = 0; i < 5; i++){
             int id = 1001 + i;            
             H1F h = new H1F("h"+id,"",120,-2.,2.0);
+            h.attr().setFillColor(i+2);;
             this.serverDirectory.add("/server/default", h);
         }
         

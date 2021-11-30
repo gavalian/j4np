@@ -10,6 +10,7 @@ import j4np.utils.io.TextFileReader;
 import j4np.utils.json.Json;
 import j4np.utils.json.JsonArray;
 import j4np.utils.json.JsonObject;
+import j4np.utils.json.JsonValue;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,6 +57,33 @@ public class DataSetSerializer {
     public static List<DataSet>  importDir(String archive, String directory){
         List<DataSet> dataList = new ArrayList<>();
         return dataList;
+    }
+    
+    public static List<DataSet> deserialize(JsonArray array){
+        List<DataSet> dslist = new ArrayList<>();
+        for(JsonValue item : array.values()){
+            DataSet ds = DataSetSerializer.deserialize(item.toString());
+            if(ds!=null){
+                dslist.add(ds);
+            } else {
+                dslist.add(new H1F("",10,0.0,1.0));
+            }
+        }
+        return dslist;
+    }
+    
+    public static DataSet deserialize(String jsonString){
+        JsonObject jsonObject = (JsonObject) Json.parse(jsonString);
+        String           type = jsonObject.get("class").asString();
+        if(type.contains("H1F")==true){
+            H1F h1f = DataSetSerializer.deserialize_H1F(jsonString);
+            return h1f;
+        }        
+        if(type.contains("GraphErrors")==true){
+            GraphErrors gre = DataSetSerializer.deserialize_GraphErrors_JSON(jsonString);
+            return gre;
+        }
+        return null;
     }
     
     public static DataSet load(String archive, String directory){
