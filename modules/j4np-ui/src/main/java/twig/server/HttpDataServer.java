@@ -148,6 +148,8 @@ public class HttpDataServer {
             int id = 1001 + i;            
             H1F h = new H1F("h"+id,"",120,-2.,2.0);
             h.attr().setFillColor(i+2);;
+            h.attr().setTitleX(String.format("gaussian (#mu = %.2f)",0.1*i));
+            h.attr().setTitleY("counts");
             this.serverDirectory.add("/server/default", h);
         }
         
@@ -163,6 +165,8 @@ public class HttpDataServer {
                         double value = rand.nextGaussian()+0.1*i;                        
                         h.fill(value);
                     }
+                    h.attr().setTitleX(String.format("gaussian (#mu = %.2f, stats = %d)",
+                            0.1*i,h.getEntries()));
                 }
                 counter++;
                 System.out.printf("execution counter = %8d\n",counter);

@@ -29,7 +29,7 @@ import twig.graphics.TGDataCanvas;
  *
  * @author gavalian
  */
-public class HttpDataGroup extends TimerTask {
+public class HttpDataGroup {
     
     private List<String>    dataList = new ArrayList<>();
     private List<DataSet>   dataSets = new ArrayList<>();
@@ -40,6 +40,9 @@ public class HttpDataGroup extends TimerTask {
     private HttpClient           httpClient = null;
     private String                 httpHost = "localhost";
     private int                    httpPort = 8020;
+    private String                groupName = "/default/generic";
+    private int                  layoutCols = 1;
+    private int                  layoutRows = 1;
     
     public HttpDataGroup(String host, int port){
         httpClient = HttpClient.newHttpClient();
@@ -49,19 +52,75 @@ public class HttpDataGroup extends TimerTask {
         httpClient = HttpClient.newHttpClient();
     }
     
+    public HttpDataGroup setName(String name){
+        this.groupName = name; return this;
+    }
+    
+    public void   setLayout(int cols, int rows){
+        layoutCols = cols; layoutRows = rows;
+    }
+    
+    public String getName(){ return this.groupName;}
+    
     public HttpDataGroup setCanvas(TGDataCanvas c){ dataCanvas = c; return this;}
     public HttpDataGroup setDataList(List<String> list){ 
         dataList.clear();
         dataList.addAll(list); 
         return this;
     }
-
+    
     public void startTimer(){
-        timer.schedule(this, 500, updateInterval);
+        try {
+            TimerTask task = new TimerTask()
+            { 
+                @Override
+                public void run() {
+                    String requestBody = createRequestBody();
+                    System.out.println(requestBody);
+                    
+                    String uriString = String.format("http://%s:%d", httpHost,httpPort);
+                    try {
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(uriString))
+                                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                                .build();
+                        HttpResponse<String> response = httpClient.send(request,
+                                HttpResponse.BodyHandlers.ofString());
+                        
+                        System.out.println("HERE : " + response.body());
+                        JsonArray  array = (JsonArray) Json.parse(response.body());
+                        List<DataSet> dslist = DataSetSerializer.deserialize(array);
+                        
+                        //System.out
+                        if(dataCanvas!=null){
+                            dataCanvas.divide(layoutCols, layoutRows);
+                            int pad = 0;
+                            for(DataSet d : dslist) {
+                                dataCanvas.region(pad).draw(d); pad++;
+                            }
+                            dataCanvas.repaint();
+                        }
+                    } catch (IOException | InterruptedException ex) {
+                        Logger.getLogger(HttpDataGroup.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            };
+            timer = new Timer();
+            timer.schedule(task, 500, updateInterval);
+        } catch (Exception e){
+            System.out.println(" exception in group : " + groupName);
+            e.printStackTrace();
+        }
     }
     
     public void stopTimer(){
-        timer.cancel();
+        try {
+            timer.cancel();
+            timer = null;
+            //timer = new Timer();
+        } catch (Exception e){
+            System.out.printf("\noh no.... this timer was already stopped.\n");
+        }
     }
     
     private String createRequestBody(){
@@ -74,38 +133,7 @@ public class HttpDataGroup extends TimerTask {
         str.append("]}");
         return str.toString();
     }
-    
-    @Override
-    public void run() {
-        String requestBody = this.createRequestBody();
-        System.out.println(requestBody);
-        
-        String uriString = String.format("http://%s:%d", httpHost,httpPort);
-        try {            
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(uriString))
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
-            HttpResponse<String> response = httpClient.send(request,
-                    HttpResponse.BodyHandlers.ofString());
-
-            System.out.println("HERE : " + response.body());
-            JsonArray  array = (JsonArray) Json.parse(response.body());
-            List<DataSet> dslist = DataSetSerializer.deserialize(array);
-            
-            //System.out
-            if(dataCanvas!=null){
-               dataCanvas.divide(2, 2);
-               int pad = 0;
-               for(DataSet d : dslist) {
-                   dataCanvas.region(pad).draw(d); pad++;
-               }
-            }
-        } catch (IOException | InterruptedException ex) {
-            Logger.getLogger(HttpDataGroup.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+          
     public static void main(String[] args){
         List<String> histos = Arrays.asList("/server/default/h1001","/server/default/h1002",
                 "/server/default/h1003","/server/default/h1004");

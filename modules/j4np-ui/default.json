@@ -1,7 +1,27 @@
 [
-    {"group":"Detector/DC/adc","data":["/server/default/h1001","/server/default/h1002"]},
-    {"group":"Detector/DC/tdc","data":["/server/default/h1003","/server/default/h1004"]},
-    {"group":"Detector/EC/tdc","data":["/server/default/h1003","/server/default/h1004"]},
-    {"group":"Reconstruction/EC/clusters",
-     "data": ["/server/default/h1001","/server/default/h1002","/server/default/h1003","/server/default/h1004"]}
+    {
+	"group":"/Detector/DC/adc",
+	"cols":3,
+	"rows":1,
+	"data":["/server/default/h1001","/server/default/h1002","/server/default/h1003"]
+    },
+    {
+	"group":"/Detector/DC/tdc",
+	"cols":1,
+	"rows":2,
+	"data":["/server/default/h1003","/server/default/h1004"]
+    },
+    {
+	"group":"/Detector/EC/tdc",
+	"cols":1,
+        "rows":2,
+	"data":["/server/default/h1001","/server/default/h1004"]
+    },
+    {
+	"group":"/Reconstruction/ECAL/clusters",
+	"cols":2,
+	"rows":2,
+	"data": ["/server/default/h1001","/server/default/h1002",
+		 "/server/default/h1003","/server/default/h1004"]
+    }
 ]
