@@ -1,7 +1,7 @@
 \section{Machine Learning}
 
 The Machine Learning approach was to teach the neural network to recognize good tracks
- from a large list of candidates. 
+ from a large list of candidates constructed by using one cluster from each super-layer.
  Two neural networks were developed: a classifier network that can identify good track from  6 segment
  track candidates  and an auto-encoder that can take a list of 5 segment tracks and make them into 6 segment 
  track candidates by adding a pseudo-segment. The composed 6 super-layer track candidates (with pseudo-cluster)
@@ -14,8 +14,8 @@ The Machine Learning approach was to teach the neural network to recognize good 
  \subsection{Track Classifier}
  
  To determine what type of architecture works best with CLAS12 drift chamber data we investigated different 
- types of neural network including Convolutional Neural Network (CNN) , Extremely Randomized Trees (ERT) and 
- Multi-Layer Perceptron (MLP) \cite{Gavalian:2020oxg}. The study showed that Multi-Layer Perceptron was best suited for 
+ types of neural networks  \cite{Gavalian:2020oxg} including Convolutional Neural Network (CNN) , Extremely Randomized Trees (ERT) \cite{scikitlearn-extratreesclassifier} and 
+ Multi-Layer Perceptron (MLP) \cite{scikitlearn-mlpclassifier}. The study showed that Multi-Layer Perceptron was best suited for 
  CLAS12 reconstruction needs (based on inference speed and accuracy). The implemented architecture is shown on 
  Figure~\ref{mlp:architecture}, where an input layer with 6 nodes is used (each node representing average wire position 
  of the segment in super-layer) and 3 output nodes for classes "positive track", " negative track" and "false track".

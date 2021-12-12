@@ -11,14 +11,20 @@ import j4np.utils.json.Json;
 import j4np.utils.json.JsonArray;
 import j4np.utils.json.JsonObject;
 import j4np.utils.json.JsonValue;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 import twig.config.TDataAttributes;
 
 /**
@@ -28,6 +34,8 @@ import twig.config.TDataAttributes;
 public class DataSetSerializer {
     
     private static String emptyJsonDataSet = "{ \"name\": \"unknown\", \"type\": \"unknown\"}";
+    private static Deflater     compresser = new Deflater(); 
+    
     
     public static String toJson(DataSet ds){
         if(ds instanceof H1F){
@@ -59,7 +67,7 @@ public class DataSetSerializer {
         return dataList;
     }
     
-    public static List<DataSet> deserialize(JsonArray array){
+    public static List<DataSet> deserializeJsonArray(JsonArray array){
         List<DataSet> dslist = new ArrayList<>();
         for(JsonValue item : array.values()){
             DataSet ds = DataSetSerializer.deserialize(item.toString());
@@ -109,6 +117,20 @@ public class DataSetSerializer {
         return null;
     }
     
+    public static String serialize(DataSet ds){ 
+        return DataSetSerializer.serialize(ds, false);
+    }
+    
+    public static String serialize(DataSet ds, boolean compact){
+        if(ds instanceof H1F){
+            return DataSetSerializer.serialize_H1F_JSON((H1F) ds, compact); 
+        }
+        if(ds instanceof GraphErrors){
+            return DataSetSerializer.serialize_GraphErrors_JSON((GraphErrors) ds);
+        }
+        return null;
+    }
+    
     public static String serialize_GraphErrors_JSON(GraphErrors gr){
         
         StringBuilder str = new StringBuilder();
@@ -152,9 +174,13 @@ public class DataSetSerializer {
         for(int i = 0; i < vecData.size(); i++) vec.add(vecData.get(i).asDouble());
     }
     
-    public static String serialize_H1F_JSON(H1F h){
-        StringBuilder str = new StringBuilder();
+    private static String serialize_H1F_JSON(H1F h){
+        return DataSetSerializer.serialize_H1F_JSON(h, false);
+    }
+    
+    private static String serialize_H1F_JSON(H1F h, boolean compact){
         
+        StringBuilder str = new StringBuilder();        
         String binContent = DataSetSerializer.jsonArray(h.histogramData);
         String binErrors  = DataSetSerializer.jsonArray(h.histogramDataError);
         
@@ -164,10 +190,20 @@ public class DataSetSerializer {
         str.append(String.format("\"stats\": [%d,%d,%d],\n",
                 h.getEntries(),h.getUnderflow(),h.getOverflow()));        
         String attributes = DataSetSerializer.attributesToJson(h.attr());
+        
         str.append(attributes).append(",\n");
-        str.append(String.format("\"axis\": %s,\n", DataSetSerializer.jsonArray(h.getAxis().axisMargins)));        
-        str.append("\"data\": ").append(binContent)
-                .append(",\n").append("\"error\":").append(binErrors).append("\n}\n");
+        
+        str.append(String.format("\"axis\": %s,\n", 
+                DataSetSerializer.jsonArray(h.getAxis().axisMargins)));        
+        
+        str.append("\"data\": ").append(binContent);
+                //.append(",\n");
+                
+        if(compact==false){
+            str.append(",\n").append("\"error\":")
+                    .append(binErrors);
+        }                        
+        str.append("\n}\n");
         return str.toString();
     }
     
@@ -264,7 +300,10 @@ public class DataSetSerializer {
         
         JsonObject jsonObject = (JsonObject) Json.parse(json);
         String           name = jsonObject.get("name").asString();
+        
         JsonArray  axisLimits = jsonObject.get("axis").asArray();
+        
+        
         int nBins = axisLimits.values().size();
         
         double[] axisBins = new double[nBins];
@@ -275,12 +314,20 @@ public class DataSetSerializer {
         H1F h = new H1F(name,axisBins);
         
         JsonArray  data  = jsonObject.get("data").asArray();
-        JsonArray  error = jsonObject.get("error").asArray();
         
+        JsonValue errorObj = jsonObject.get("error");
+        JsonArray    error = null;
+        if(errorObj!=null) error = jsonObject.get("error").asArray();
+        //if(errorObj==null) System.out.println("[deserialize] ::: oh no, no error data");
         int nData = data.size();
         for(int bin = 0; bin < nData; bin++){
-            h.setBinContent(bin, data.get(bin).asDouble());
-            h.setBinError(bin, error.get(bin).asDouble());
+            double value = data.get(bin).asDouble();
+            h.setBinContent(bin, value);
+            if(error!=null){
+                h.setBinError(bin, error.get(bin).asDouble());
+            } else {
+                h.setBinError(bin,Math.sqrt(Math.abs(value)));
+            }
         }
         
         DataSetSerializer.attributesFromJson(h.attr(), jsonObject);
@@ -322,9 +369,136 @@ public class DataSetSerializer {
         return str.toString();
     } 
     
+    public static String serializeDirectory(TDirectory dir, List<String> dataList){
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for(int i = 0; i < dataList.size(); i++){
+            String  dataName = dataList.get(i);
+            DataSet  dataSet = dir.get(dataName);
+            if(dataSet==null) dataSet = new H1F("h100000",42,0.0,1.0);
+            String jsonString = DataSetSerializer.serialize(dataSet);
+            if(i!=0) str.append(",");
+            str.append(jsonString);
+        }
+        str.append("]");
+        return str.toString();
+    }
+    
+    public static byte[] serializeDirectoryDeflate(TDirectory dir, List<String> dataList){
+        String json = DataSetSerializer.serializeDirectory(dir, dataList);
+        byte[]  input = json.getBytes();
+        byte[] output = new byte[input.length];
+        Deflater     deflater = new Deflater(); 
+        deflater.setInput(input);
+        deflater.finish();
+        int deflatedSize = deflater.deflate(output);
+        deflater.end();
+        byte[] result = new byte[deflatedSize];
+        System.arraycopy(output, 0, result, 0, deflatedSize);
+        return result;
+    }
+    
+    public static String serializeDirectoryDeflateBase64(TDirectory dir, List<String> dataList){
+        byte[] deflated = DataSetSerializer.serializeDirectoryDeflate(dir, dataList);
+        String   base64 = Base64.getEncoder().encodeToString(deflated);
+        return base64;
+    }
+    
+    public static String deserializeDeflatedBase64(String base64) {
+         try {
+             byte[] data64 = Base64.getDecoder().decode(base64);
+             Inflater inflater = new Inflater();
+             inflater.setInput(data64);
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data64.length);  
+             byte[] buffer = new byte[1024];
+             while (!inflater.finished()) {  
+                 int count = inflater.inflate(buffer);  
+                 outputStream.write(buffer, 0, count);                 
+             }  
+             outputStream.close();  
+             byte[] output = outputStream.toByteArray();
+             String dataString = new String(output);
+             return dataString;
+         } catch (DataFormatException ex) {
+             Logger.getLogger(DataSetSerializer.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (IOException ex) {
+            Logger.getLogger(DataSetSerializer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         return null;
+    }
+    
+    public static List<DataSet> deserializeDeflatedDataList(String base64) {
+        String dataString = DataSetSerializer.deserializeDeflatedBase64(base64);
+        if(dataString!=null){
+            JsonArray jsonArray = (JsonArray) Json.parse(dataString);
+            List<DataSet> dataList = DataSetSerializer.deserializeJsonArray(jsonArray);
+            return dataList;
+        }
+        return new ArrayList<DataSet>();
+    }
+    //public static void deserializeDirectory(TDirectory dir, String jsonString){
+    //    List<DataSet> dataSet = 
+    //}
     
     public static void main(String[] argas){
         
+        TDirectory dir = new TDirectory();
+        
+        dir.add("/server/dc", new H1F("h100",120,0.0,1.0));
+        dir.add("/server/dc", new H1F("h200",120,0.0,1.0));
+        dir.add("/server/dc", new H1F("h300",120,0.0,1.0));
+        
+        dir.add("/server/ec", new H1F("e101",120,0.0,1.0));
+        dir.add("/server/ec", new H1F("e102",120,0.0,1.0));
+        
+        dir.show();
+        List<String> list = Arrays.asList(
+                "/server/dc/h100","/server/ec/e101");
+        
+        String json = DataSetSerializer.serializeDirectory(dir, list);
+        System.out.println(json);
+        
+        String base64 = DataSetSerializer.serializeDirectoryDeflateBase64(dir, list);
+        System.out.println(base64);
+     
+        System.out.printf("\n\n raw length = %d, base64 length = %d\n\n",
+                json.length(),base64.length());
+
+        String inflatedString = DataSetSerializer.deserializeDeflatedBase64(base64);
+        
+        System.out.println(inflatedString);
+        
+        List<DataSet>  dataSetList = DataSetSerializer.deserializeDeflatedDataList(base64);
+        
+        for(DataSet ds : dataSetList){
+            System.out.printf("\t%s : %s\n\n",ds.getName(),ds.getClass().getName());
+        }
+        
+       /* JsonObject obj = (JsonObject) Json.parse("{\"x\":3,\"y\":[4,5,6,7]}");
+        
+        int x = obj.get("x").asInt();
+        System.out.println("x = " + x);
+        JsonArray y = (JsonArray) obj.get("y").asArray();
+        System.out.println("y = ");
+        
+        for(JsonValue v : y.values()){
+            System.out.printf("\t %d\n",v.asInt());
+        }
+        
+        JsonValue z =  obj.get("z");
+        boolean flag = (z instanceof JsonArray);
+        System.out.println(" does exist ? " + (z!=null) + " is array ? " + flag);
+        
+        H1F h = new H1F("h100",120,0.0,1.0);
+        
+        String hs = DataSetSerializer.serialize_H1F_JSON(h, true);
+        
+        System.out.println(hs);
+        
+        H1F hd = DataSetSerializer.deserialize_H1F(hs);*/
+       
+       
+        /*
         H1F h = TDataFactory.createH1F(2500);
         GraphErrors gr = new GraphErrors("graphData",new double[]{1,2,3},new double[]{0.5,0.6,0.9});        
         h.attr().setTitle("first serialization of h1f");
@@ -354,5 +528,6 @@ public class DataSetSerializer {
         DataSetSerializer.export(ht, 
                 "/Users/gavalian/Work/Software/project-10.0/temp/thetaDataset.twig",
                 "experiment/g11");
+        */
     }
 }

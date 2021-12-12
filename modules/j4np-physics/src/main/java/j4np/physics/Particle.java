@@ -11,6 +11,31 @@ package j4np.physics;
  */
 public class Particle {
     
+    private LorentzVector vector = new LorentzVector();
+    private       Vector3 vertex = new Vector3();
+    private           int    pid = 0;
+    
+    public Particle(){
+    }
+    
+    public LorentzVector vector(){ return this.vector;}
+    public Vector3       vertex(){ return this.vertex;}
+    public int              pid(){ return pid; }
+    
+    public static Particle withPid(int __p, double px, double py, double pz){
+        Particle  p = new Particle(); p.pid = __p;
+        double mass = PDGDatabase.getParticleMass(p.pid);        
+        p.vector.setPxPyPzM(px, py, pz, mass);
+        return p;
+    }
+    
+    public static Particle withMass(double px, double py, double pz, double mass){
+        Particle  p = new Particle();
+        p.vector.setPxPyPzM(px, py, pz, mass);
+        return p;
+    }
+    
+    /*
     private String name = "default";
     
     private LorentzVector       pVector = new LorentzVector();
@@ -19,7 +44,8 @@ public class Particle {
     private int[] particleIDs   = null;
     private int[] particleOrder = null;
     private int[] particleSign  = null;
-    private double[] particleMass = null;   
+    private double[] particleMass = null; 
+    
     public Particle(){
         
     }
@@ -58,6 +84,6 @@ public class Particle {
     }
     
     public LorentzVector vector(){ return pVector;}
-    
+    */
     
 }

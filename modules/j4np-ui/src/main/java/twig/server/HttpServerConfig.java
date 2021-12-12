@@ -9,6 +9,6 @@ package twig.server;
  * @author gavalian
  */
 public class HttpServerConfig {
-    public  int     serverPort = 8520;
+    public  int     serverPort = 8525;
     public  String  serverHost = "localhost";
 }

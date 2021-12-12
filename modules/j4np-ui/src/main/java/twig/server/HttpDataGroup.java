@@ -14,12 +14,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.Deflater;
 import twig.data.DataSet;
 import twig.data.DataSetSerializer;
 import twig.graphics.TGCanvas;
@@ -86,10 +88,28 @@ public class HttpDataGroup {
                                 .build();
                         HttpResponse<String> response = httpClient.send(request,
                                 HttpResponse.BodyHandlers.ofString());
+                        byte[] dataBytes = response.body().getBytes();
+                        byte[] output    = new byte[dataBytes.length];
+                        Deflater compresser = new Deflater();
+                        long then = System.nanoTime();
+                        compresser.setInput(dataBytes);
+                        compresser.finish();
+                        int compressedDataLength = compresser.deflate(output);
+                        compresser.end();
+                        long now = System.nanoTime();
                         
-                        System.out.println("HERE : " + response.body());
+                        long then2 = System.nanoTime();
+                        
                         JsonArray  array = (JsonArray) Json.parse(response.body());
-                        List<DataSet> dslist = DataSetSerializer.deserialize(array);
+                        List<DataSet> dslist = DataSetSerializer.deserializeJsonArray(array);
+                        
+                        long now2 = System.nanoTime();
+                        byte[] originalInput = new byte[compressedDataLength];
+                        System.arraycopy(output, 0, originalInput, 0, compressedDataLength);
+                        String base64 = Base64.getEncoder().encodeToString(originalInput);
+                        //System.out.println(base64);
+                        System.out.printf("HERE : length = %9d, compressed = %9d, base 64 = %9d, time = %d ns serialize = %d ns\n",
+                                dataBytes.length,compressedDataLength,base64.length(),now-then,now2-then2);
                         
                         //System.out
                         if(dataCanvas!=null){

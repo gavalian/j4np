@@ -10,6 +10,7 @@ package twig.data;
  * @author gavalian
  */
 public class Range {
+    
     private double rangeMin = 0.0; 
     private double rangeMax = 1.0;
     

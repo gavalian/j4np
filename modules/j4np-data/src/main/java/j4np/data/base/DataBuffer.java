@@ -11,11 +11,10 @@ import java.nio.ByteBuffer;
  *
  * @author gavalian
  */
-public interface DataBuffer {
-    
-    public ByteBuffer getBuffer();
-    public int        bufferLength();
-    public boolean    allocate(int size); // size is given in bytes
-    public int        identifier();
-    public boolean    verify();
+public interface DataBuffer {    
+    public ByteBuffer  getBuffer();
+    public int         bufferLength();
+    public boolean     allocate(int size); // size is given in bytes
+    public int         identifier();
+    public boolean     verify();
 }

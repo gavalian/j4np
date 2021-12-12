@@ -9,6 +9,7 @@ import twig.studio.StudioFrame;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatSolarizedDarkIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatGradiantoNatureGreenIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatHiberbeeDarkIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatHighContrastIJTheme;
@@ -20,6 +21,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -32,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -108,6 +112,29 @@ public class StudioWindow extends JFrame implements ActionListener {
     }
     
     public StudioFrame getStudioFrame(){ return this.sFrame;}
+    
+    
+    public static void changeLook(String name){
+        if(name.compareTo("Flat Light")==0){
+            UIManager.put("Tree.paintLines", Boolean.TRUE);
+            try {
+                UIManager.setLookAndFeel( new FlatLightLaf() );
+                //SwingUtilities.updateComponentTreeUI(this);
+            } catch (UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(StudioWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if(name.compareTo("Arc Dark")==0){
+            UIManager.put("Tree.paintLines", Boolean.TRUE);
+            try {
+                UIManager.setLookAndFeel( new FlatArcDarkOrangeIJTheme() );
+                //SwingUtilities.updateComponentTreeUI(this);
+            } catch (UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(StudioWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     
     public static void changeLook(){
         //com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme.install();

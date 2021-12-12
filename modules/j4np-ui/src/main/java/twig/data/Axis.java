@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * Defines the attributes for creating a basic axis template with
  * a number of bins, a minimum value, and a maximum value
- * 
+ * @author  Gagik Gavalian
  * @author Erin Kirby
  * @version 062514
  */
@@ -56,15 +56,17 @@ public class Axis implements Serializable {
 	 * 
 	 * @param limits	the desired limits for the bins on the axis
 	 */
-	public final void set(double[] limits) {
-		axisMargins = new double[limits.length];
-        for (int i=0; i<limits.length; i++) {
-        	axisMargins[i] = limits[i];
-        }        
-        numBins = axisMargins.length - 1;
-        minVal = axisMargins[0];
-        maxVal = axisMargins[numBins];
-	}
+        public final void set(double[] limits) {
+            axisMargins = new double[limits.length];
+            
+            for (int i=0; i<limits.length; i++) {
+                axisMargins[i] = limits[i];
+            }
+            
+            numBins = axisMargins.length - 1;
+            minVal = axisMargins[0];
+            maxVal = axisMargins[numBins];
+        }
 	
 	/**
 	 * Sets the number of bins, the min, and the max to the axis

@@ -161,7 +161,7 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     
     public void arrange(double[][] fractions){
         int    nColumns = fractions.length;
-        System.out.println("COLUMNS:: ARRANGE = " + nColumns);
+        //System.out.println("COLUMNS:: ARRANGE = " + nColumns);
         double xStep    = 1.0/nColumns;
         int    counter  = 0;
         for(int x = 0; x < nColumns; x++){
@@ -290,13 +290,18 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("mouse clicked : for popup ? = " 
-                + e.isPopupTrigger() + " button = " + e.getButton());
+        //System.out.println("mouse clicked : for popup ? = " 
+        //        + e.isPopupTrigger() + " button = " + e.getButton());
         if(e.getButton()==3){
+            int xc = e.getX();
+            int yc = e.getY();
+            int objectOrder = this.getObjectByPosition(xc, yc);
+            //System.out.printf("clicked object is %d out of %d obejcts \n", objectOrder,
+             //       this.graphicsComponents.size());
             if(this.popupProvider!=null){
                 JPopupMenu menu = popupProvider.createMenu(null);
                 menu.show(this, e.getX(), e.getY());
-                System.out.println(">>>> showing popup");
+                //System.out.println(">>>> showing popup");
             }
         }
         if(e.getClickCount()==2){
@@ -359,9 +364,9 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.println("dragging detected");
+        //System.out.println("dragging detected");
         if(this.activeNode!=null){
-            System.out.println("dragging component " + activeNode.getName());
+            //System.out.println("dragging component " + activeNode.getName());
             this.activeNode.applyMouseDrag(e.getX(), e.getY(), e.getX(), e.getY());
             this.repaint();
         }

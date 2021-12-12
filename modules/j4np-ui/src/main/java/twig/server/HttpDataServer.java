@@ -64,7 +64,11 @@ public class HttpDataServer {
     public static void create(HttpServerConfig config){
         HttpDataServer.dataServer = new HttpDataServer(config.serverPort);
         HttpDataServer.dataServer.context = HttpDataServer.dataServer.httpServer.createContext("/");
-        HttpDataServer.dataServer.context.setHandler(HttpDataServer::handleRequest);
+        HttpDataServer.dataServer.context.setHandler(HttpDataServer::handleDataRequest);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+        LocalDateTime now = LocalDateTime.now();
+
+        System.out.printf("[HTTP::DATA] (%s) started server at port = %d\n",dtf.format(now),config.serverPort);
     }
     
     public static List<String>  parseJsonRequest(){
@@ -72,7 +76,69 @@ public class HttpDataServer {
         
         return data;
     }
+    private static void sendMessage(HttpExchange exchange, String message){
+        try {
+            exchange.sendResponseHeaders(200, message.getBytes().length);//response code and length
+            OutputStream os = exchange.getResponseBody();
+            os.write(message.getBytes());
+            os.close();
+        } catch (IOException ex) {
+            Logger.getLogger(HttpDataServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
+    private static String extractMessage(HttpExchange exchange){
+        StringBuilder sb = new StringBuilder();
+        try {
+            
+            InputStream ios = exchange.getRequestBody();
+            int i;
+            while ((i = ios.read()) != -1) {
+                sb.append((char) i);
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(HttpDataServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return sb.toString();
+    }
+    
+    private static void handleDataRequest(HttpExchange exchange) throws IOException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+        LocalDateTime now = LocalDateTime.now();
+        System.out.printf("[server] : recieved a request @ %s\n",dtf.format(now) );
+        
+        String request = HttpDataServer.extractMessage(exchange);
+        //System.out.println("request was : " + request + "  " + DataRequestProtocol.isRequestData(request) );
+        if(DataRequestProtocol.isRequestList(request)==true){
+            String listResponse = HttpDataServer.getInstance().serverDirectory.jsonList();
+            //System.out.println("[sending data] ----> " + listResponse);
+            HttpDataServer.sendMessage(exchange, listResponse);
+            return;
+        }
+        //System.out.println("request is before : " + request + "  " + DataRequestProtocol.isRequestData(request) );
+        //if(DataRequestProtocol.isRequestData(request)==true){
+        if(DataRequestProtocol.isRequestData(request)){
+            //System.out.printf("---------> I'm Inside the if sattement\n");
+            List<String>   dataList = DataRequestProtocol.getRequestDataList(request);
+            
+            String dataStringBase64 = DataSetSerializer.serializeDirectoryDeflateBase64(HttpDataServer.getInstance().serverDirectory, dataList);
+            //System.out.println("base 64 = " + dataStringBase64);
+            String dataStringJson   = DataRequestProtocol.createSendData(dataStringBase64);
+            
+            //System.out.println("[sending data] ----> " + dataStringJson);
+            HttpDataServer.sendMessage(exchange, dataStringJson);
+            //System.out.println("[sending data] ----> " + "blah-blah-blah");
+            //HttpDataServer.sendMessage(exchange, "blah-blah-blah");
+        }
+        
+    }
+    
+    /**
+     * this method is depricated
+     * @param exchange
+     * @throws IOException 
+     */
     private static void handleRequest(HttpExchange exchange) throws IOException {
         
       String response = "Hi there!";
@@ -93,6 +159,8 @@ public class HttpDataServer {
       JsonValue  jvalue = json.get("request");
       
       String what = jvalue.asString();
+      
+      
       if(what.compareTo("list")==0){
           String listResponse = HttpDataServer.getInstance().serverDirectory.jsonList();      
           exchange.sendResponseHeaders(200, listResponse.getBytes().length);//response code and length
@@ -169,14 +237,16 @@ public class HttpDataServer {
                             0.1*i,h.getEntries()));
                 }
                 counter++;
-                System.out.printf("execution counter = %8d\n",counter);
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+                LocalDateTime now = LocalDateTime.now();
+                //System.out.printf("[HTTP:data:server] (%s) execution counter = %8d\n",dtf.format(now),counter);
             }
         }, 100,5000);
     }
     
     public static void main(String[] args){
         HttpServerConfig config = new HttpServerConfig();
-        config.serverPort = 8020;
+        config.serverPort = 8525;
         
         HttpDataServer.create(config);
         HttpDataServer.getInstance().initDefault();

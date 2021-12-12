@@ -11,8 +11,14 @@ package j4np.data.base;
  */
 public interface DataNode extends DataBuffer {
     
-    public int getType();
-    public int count();
-    public String format();
+    public int     getType();
+    public int     count();
+    public String  format();
     
+    public double  getDouble( int index);
+    public int     getInt(    int index);
+    
+    public double  getDouble( int order, int index);
+    public int     getInt(    int order, int index);
+        
 }

@@ -14,6 +14,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
+
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-utils</artifactId>
@@ -22,7 +23,7 @@
 
       <dependency>
         <groupId>j4np</groupId>
-        <artifactId>j4np-data</artifactId>
+        <artifactId>j4np-ui</artifactId>
         <version>${revision}</version>
       </dependency>
       

@@ -5,24 +5,34 @@
  */
 package j4np.physics;
 
+import j4np.hipo5.data.Event;
+import j4np.hipo5.io.HipoReader;
 import j4np.physics.VectorOperator.OperatorType;
+import j4np.physics.data.PhysDataEvent;
 import java.util.ArrayList;
 import java.util.List;
+import twig.data.H1F;
+import twig.graphics.TGCanvas;
+import twig.tree.Tree;
 
 /**
- *
+ * 
  * @author gavalian
  */
-public class PhysicsReaction {
+public class PhysicsReaction extends Tree {
     
     protected List<VectorOperator> vecOprators = new ArrayList<>();
     protected EventFilter          eventFilter = new EventFilter("X+:X-:Xn");
     protected LorentzVector         beamVector = new LorentzVector();
     protected LorentzVector       targetVector = new LorentzVector();
+    protected PhysDataEvent       physicsEvent = null;
+    protected HipoReader                reader = null;
     protected String        dataPrintoutFormat = "%8.5f";
     protected List<ReactionEntry>  operEntries = new ArrayList<>();
     protected long                counterCalls = 0L;
     protected long               counterFilter = 0L;
+    protected Event              reactionEvent = new Event();
+    protected List<EventModifier>    modifiers = new ArrayList<>();
     
     public  PhysicsReaction(String filter){
         eventFilter = new EventFilter(filter);
@@ -34,12 +44,30 @@ public class PhysicsReaction {
         targetVector.setPxPyPzM(0.0, 0.0, 0.0, 0.938);
     }
     
+    public PhysicsReaction setDataSource(HipoReader r){
+        return setDataSource(r,"mc::event");
+    }
+    
+    public PhysicsReaction addModifier(EventModifier m){
+        this.modifiers.add(m); return this;
+    }
+    
+    public PhysicsReaction setDataSource(HipoReader r, String bank){
+        reader = r; 
+        physicsEvent = new PhysDataEvent(reader.getBank(bank));
+        return this;
+    }
+    
     public PhysicsReaction setFilter(String filter){ 
         eventFilter = new EventFilter(filter); return this;
     }
     
     public PhysicsReaction addEntry(String name, int order, OperatorType type){
         this.operEntries.add(new ReactionEntry(name,order,type)); return this;
+    }
+    
+    protected PhysicsReaction addEntry(ReactionEntry entry){
+        this.operEntries.add(entry); return this;
     }
     
     public PhysicsReaction addEntry(String name, int order, OperatorType type, double min, double max){
@@ -70,6 +98,8 @@ public class PhysicsReaction {
         return status;
     }
     
+    public PhysicsEvent getPhysicsEvent(){ return this.physicsEvent;}
+    
     public boolean checkCuts(){
         for(ReactionEntry entry : operEntries){
             double value = this.vecOprators.get(entry.entryOrder).getValue(entry.entryType);
@@ -79,6 +109,7 @@ public class PhysicsReaction {
     }
     
     public void    apply(PhysicsEvent event){
+        
         for(VectorOperator op : vecOprators){
             op.apply(event);
         }
@@ -117,6 +148,55 @@ public class PhysicsReaction {
         }
         return str.toString();
     }    
+
+    @Override
+    public double getValue(int order) {        
+        if(this.isValid(physicsEvent)==false) return -100000.0;        
+        ReactionEntry re = operEntries.get(order);
+        int index = re.entryOrder;
+        return this.vecOprators.get(index).getValue(re.entryType);
+    }
+
+    @Override
+    public double getValue(String branch) {
+        int order = this.getBranchOrder(branch);
+        return getValue(order);
+    }
+
+    @Override
+    public List<String> getBranches() {
+        List<String> list = new ArrayList<>();
+        for(int i = 0; i < this.operEntries.size();i++){
+            list.add(operEntries.get(i).entryName);
+        }
+        return list;
+    }
+
+    @Override
+    public int getBranchOrder(String name) {
+        for(int i = 0; i < this.operEntries.size();i++){
+            if(operEntries.get(i).entryName.compareTo(name)==0) return i;
+        }
+        return -1;        
+    }
+
+    @Override
+    public void reset() {
+        reader.rewind();
+    }
+
+    @Override
+    public boolean next() {
+        if(reader.hasNext()==false) return false;
+        reader.nextEvent(reactionEvent);
+        physicsEvent.read(reactionEvent);
+        
+        for(EventModifier m : modifiers) m.modify(physicsEvent);
+        
+        apply(physicsEvent);
+        
+        return true;
+    }
     
     public static class ReactionEntry {
         
@@ -153,5 +233,22 @@ public class PhysicsReaction {
         }
     }
     
-    
+    public static void main(String[] args){
+        
+        // This is a documentation on how to use PhysicsReaction class
+        
+        //LorentzVector vcm = LorentzVector.withPxPyPzM(0, 0, 10.6, 0.0005).add(0, 0, 0, 0.938);
+        
+        HipoReader r = new HipoReader("/Users/gavalian/Work/temp/dis_fmc_1.hipo");        
+        PhysicsReaction react = new PhysicsReaction("11:211:-211",10.6);
+        
+        react.addVector(react.getVector(), "-[11]-[211]-[-211]")
+                .addEntry("mxepipi", 0, OperatorType.MASS);
+        
+        react.setDataSource(r, "rec::event");        
+        H1F h = react.geth("mxepipi", "", 120, 0., 3.2);
+        
+        TGCanvas c = new TGCanvas();
+        c.view().region().draw(h);
+    }
 }

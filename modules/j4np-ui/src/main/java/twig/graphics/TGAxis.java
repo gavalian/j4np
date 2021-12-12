@@ -47,8 +47,7 @@ public class TGAxis implements StyleNode {
         if(this.fixedAxisRange==null)
             this.axisRange.set(min,max);
     }
-    
-    
+        
     public void drawAxisX(Graphics2D g2d, Rectangle2D r, Translation2D tr){
         TStyle style = getStyle();
         int x1 = ( int ) r.getX();

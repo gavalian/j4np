@@ -123,7 +123,14 @@ public class TDirectory implements TreeProvider {
         str.append("]");
         return str.toString();
     }
-
+    
+    public void show(){
+        for(Map.Entry<String,Directory> entry : this.dirList.entrySet()){
+            System.out.printf("%s:\n",entry.getKey());
+            entry.getValue().show();
+        }
+    }
+    
     @Override
     public TreeModel getTreeModel() {
         List<String> list = this.getObjects();
@@ -166,6 +173,12 @@ public class TDirectory implements TreeProvider {
                 obj.add(String.format("%s/%s", directory,item.getName()));                
             }
             return obj;
+        }
+        
+        public void show(){
+            for(DataSet ds : this.data){
+                System.out.printf("\t%12s : %s\n",ds.getName(),ds.getClass().getName());
+            }
         }
         
         public String jsonList(){

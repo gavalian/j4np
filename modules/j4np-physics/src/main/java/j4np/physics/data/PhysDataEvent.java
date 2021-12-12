@@ -18,8 +18,7 @@ import j4np.physics.Vector3;
 public class PhysDataEvent extends PhysicsEvent {
 
     private Bank dataBank = null;
-    
-    
+        
     public PhysDataEvent(Bank b){
         Schema sc = b.getSchema().copy();
         dataBank  = new Bank(sc);
@@ -32,6 +31,7 @@ public class PhysDataEvent extends PhysicsEvent {
 
     public void read(Event event){
         event.read(dataBank);
+        //System.out.printf(" bank ");
     }
     
     @Override
@@ -51,7 +51,7 @@ public class PhysDataEvent extends PhysicsEvent {
 
     @Override
     public void status(int index, int value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        dataBank.putShort("status", index,(short) value);        
     }
 
     @Override
