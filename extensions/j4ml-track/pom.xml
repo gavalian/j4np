@@ -52,6 +52,11 @@
             <descriptorRefs>
               <descriptorRef>jar-with-dependencies</descriptorRef>
             </descriptorRefs>
+	    <archive>
+              <manifest>
+                <mainClass>j4ml.clas12.classifier.ClassifierDataExtract</mainClass>
+              </manifest>              
+            </archive>
           </configuration>
           <executions>
             <execution>

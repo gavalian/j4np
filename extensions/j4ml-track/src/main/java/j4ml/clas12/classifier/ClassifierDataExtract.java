@@ -265,24 +265,31 @@ public class ClassifierDataExtract {
     }
     
     public static void main(String[] args){
-        
-        //String filename = "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00050-00054.hipo";
-        //ClassifierDataExtract.processFiles(Arrays.asList(filename));                
-        
-        /*ClassifierDataExtract.processFiles(Arrays.asList(
-        "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00050-00054.hipo",
-                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00055-00059.hipo",
-                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00060-00064.hipo",
-                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00065-00069.hipo",
-                "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00070-00074.hipo"
-        ));*/
-        
-        ClassifierDataExtract.processFiles(Arrays.asList(
+        List<String> files = Arrays.asList(
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00075-00079.hipo",
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00080-00084.hipo",
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00085-00089.hipo"
-        ));
+        );
+        if(args.length>0){
+            files.clear();
+            for(int k = 0; k < args.length; k++){
+                files.add(args[k]);
+            }
+            //String filename = "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00050-00054.hipo";
+            //ClassifierDataExtract.processFiles(Arrays.asList(filename));                
+            
+            /*ClassifierDataExtract.processFiles(Arrays.asList(
+            "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00050-00054.hipo",
+            "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00055-00059.hipo",
+            "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00060-00064.hipo",
+            "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00065-00069.hipo",
+            "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00070-00074.hipo"
+            ));*/
+            ClassifierDataExtract.processFiles(files);
+        }
 
+        System.out.println("\n AI tracking data extraction...\n");
+        System.out.println("\n Please provide file names\n\n");
         
         /*
         OptionStore storeParser = new OptionStore("run-extract.sh");
