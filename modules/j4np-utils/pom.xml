@@ -53,6 +53,11 @@
             <descriptorRefs>
               <descriptorRef>jar-with-dependencies</descriptorRef>
             </descriptorRefs>
+	    <archive>
+              <manifest>
+                <mainClass>j4np.utils.base.ArchiveUtils</mainClass>
+              </manifest>
+            </archive>
           </configuration>
           <executions>
             <execution>

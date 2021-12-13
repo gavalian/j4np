@@ -5,6 +5,10 @@
  */
 package j4np.utils.base;
 
+import j4np.utils.io.OptionParser;
+import j4np.utils.io.OptionStore;
+import j4np.utils.io.TextFileReader;
+import j4np.utils.io.TextFileWriter;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -156,9 +160,60 @@ public class ArchiveUtils {
         }
         return str.toString();
     }
+       
     
     public static void main(String[] args){
         
+        OptionStore parser = new OptionStore("archive");
+        
+        parser.addCommand("-extract", "extract file from archive");
+        parser.addCommand("-list", "list the files in the archive");
+        parser.addCommand("-import", "import a file into archie");
+        
+        parser.getOptionParser("-extract").addRequired("-f", "file name to extract");
+        parser.getOptionParser("-extract").addOption("-r", "false","remove the file from archive");
+        
+        parser.getOptionParser("-import").addRequired("-f", "file name to import");
+        parser.getOptionParser("-import").addRequired("-d", "directory in the archive");
+        
+        parser.parse(args);
+        
+        if(parser.getCommand().compareTo("-list")==0){
+            List<String> inputs = parser.getOptionParser("-list").getInputList();
+            ArchiveUtils.list(inputs.get(0), "*");            
+        }
+        
+        if(parser.getCommand().compareTo("-extract")==0){
+            List<String> inputs = parser.getOptionParser("-extract").getInputList();
+            String         file = parser.getOptionParser("-extract").getOption("-f").stringValue();
+            String       delete = parser.getOptionParser("-extract").getOption("-r").stringValue();
+            int           index = file.lastIndexOf("/");
+            String     diskFile = file.substring(index+1);
+            //ArchiveUtils.list(inputs.get(0), "*");    
+            System.out.println("exporting file : " + file);
+            System.out.println("     into file : " + diskFile);
+            
+            List<String> content = ArchiveUtils.getFileAsList(inputs.get(0), file);
+            TextFileWriter w = new TextFileWriter();
+            w.open(diskFile);
+            for(String line : content)
+                w.writeString(line);
+            w.close();
+            
+            if(delete.compareTo("true")==0){
+                ArchiveUtils.removeFile(inputs.get(0), file);
+            }
+        }
+        
+        if(parser.getCommand().compareTo("-import")==0){
+            List<String>  inputs = parser.getOptionParser("-import").getInputList();
+            String          file = parser.getOptionParser("-import").getOption("-f").stringValue();
+            String           dir = parser.getOptionParser("-import").getOption("-d").stringValue();
+            List<String> content = TextFileReader.readFile(file);
+            String   archiveName = dir + "/" + file;
+            ArchiveUtils.addInputStream(inputs.get(0), archiveName, content);
+        }
+        /*
         List<String> data = Arrays.asList("first line","second line","and finally the third line");
         ArchiveUtils.addInputStream("archive.twig", "data.txt", data);
         ArchiveUtils.addInputStream("archive.twig", "directory/data.txt", data);
@@ -171,5 +226,6 @@ public class ArchiveUtils {
         
         String content = ArchiveUtils.getFile("archive.twig", "directory/hist/data.txt");
         System.out.println(content);
+        */
     }
 }

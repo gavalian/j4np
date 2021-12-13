@@ -40,8 +40,7 @@ public class ClassifierDataExtract {
     public ClassifierDataExtract(){
         for(int i = 0; i < occupancy.length; i++) occupancy[i] = 0;
     }
-    
-    
+        
     public void init(HipoChain chain){
         writer.open(this.outputFileName);
         tbTR = chain.getBank("TimeBasedTrkg::TBTracks");
@@ -265,11 +264,13 @@ public class ClassifierDataExtract {
     }
     
     public static void main(String[] args){
-        List<String> files = Arrays.asList(
+        List<String> files = new ArrayList<>();
+        /*Arrays.asList(
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00075-00079.hipo",
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00080-00084.hipo",
                 "/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00085-00089.hipo"
-        );
+        );*/
+        
         if(args.length>0){
             files.clear();
             for(int k = 0; k < args.length; k++){
