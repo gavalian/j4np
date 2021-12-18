@@ -119,14 +119,14 @@ public class TDataFactory {
         double  s1 = 0.35;//r.nextDouble()*0.2+0.2;
         double  s2 = 0.2;//r.nextDouble()*0.2+0.1;
         for(int i = 0; i < count; i++){
-            double x = r.nextGaussian(xc1, s1);
-            double y = r.nextGaussian(yc1, s1);
+            double x = r.nextGaussian()*s1+xc1;
+            double y = r.nextGaussian()*s1+yc1;
             rh.fill(x, y);
         }
         
         for(int i = 0; i < count/2; i++){
-            double x = r.nextGaussian(xc2, s2);
-            double y = r.nextGaussian(yc2, s2);
+            double x = r.nextGaussian()*s2+xc2;
+            double y = r.nextGaussian()*s2+yc2;
             rh.fill(x, y);
         }
         
