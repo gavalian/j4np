@@ -51,7 +51,7 @@
   <repositories>
     <repository>
       <id>j4np-maven</id>
-      <url>https://clasweb.jlab.org/j4np/maven</url>
+      <url>https://clasweb.jlab.org/jhep/j4np/maven</url>
     </repository>
     <repository>
       <id>clas12-maven</id>
