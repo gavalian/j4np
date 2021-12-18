@@ -2,53 +2,49 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-      <groupId>j4np</groupId>
-      <artifactId>j4np-parent</artifactId>
-      <version>${revision}</version>
-      <relativePath>../../parent/pom.xml</relativePath>
-    </parent>
-    
-    <groupId>j4np</groupId>
-    <artifactId>j4np-package</artifactId>
-    <version>${revision}</version>
+    <groupId>j4ml</groupId>
+    <artifactId>j4ml-networks</artifactId>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
+
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-utils</artifactId>
-        <version>${revision}</version>
+        <version>1.0.2-SNAPSHOT</version>
       </dependency>
 
       <dependency>
-        <groupId>j4np</groupId>
-        <artifactId>j4np-ui</artifactId>
-        <version>${revision}</version>
+	<groupId>j4np</groupId>
+	<artifactId>j4np-ui</artifactId>
+	<version>1.0.2-SNAPSHOT</version>
       </dependency>
-
+     
       <dependency>
-        <groupId>j4np</groupId>
-        <artifactId>j4np-data</artifactId>
-        <version>${revision}</version>
+        <groupId>com.deepnetts</groupId>
+        <artifactId>deepnetts-core</artifactId>
+<!--        <version>1.12</version> -->
+        <version>1.13.2</version> 
       </dependency>
       
       <dependency>
-        <groupId>org.jline</groupId>
-        <artifactId>jline</artifactId>
-        <version>3.1.2</version>
+	<groupId>org.ejml</groupId>
+	<artifactId>ejml-simple</artifactId>
+	<version>0.40</version>
       </dependency>
+ 
 
-      <!-- https://mvnrepository.com/artifact/org.fusesource.jansi/jansi -->
-      <dependency>
-	<groupId>org.fusesource.jansi</groupId>
-	<artifactId>jansi</artifactId>
-	<version>2.4.0</version>
-      </dependency>
       
-
     </dependencies>
-    
+
+    <repositories>
+      <repository>
+	<id>jhep-maven</id>
+	<url>https://clasweb.jlab.org/jhep/maven</url>
+      </repository>
+    </repositories>
+
     <build>
       <extensions>
         <extension>
@@ -65,11 +61,6 @@
             <descriptorRefs>
               <descriptorRef>jar-with-dependencies</descriptorRef>
             </descriptorRefs>
-	    <archive>
-              <manifest>
-		<mainClass>j4np.core.J4npModuleMain</mainClass>
-              </manifest>
-          </archive>
           </configuration>
           <executions>
             <execution>
@@ -83,5 +74,17 @@
         </plugin>
       </plugins>
     </build>
+    
+    <distributionManagement>
+      <repository>
+	<id>ssh-clasweb</id>
+	<url>scpexe://clas12@jlabl1.jlab.org/group/clas/www/clasweb/html/jhep/maven</url>
+      </repository>
+    </distributionManagement>    
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
 </project>

@@ -8,14 +8,18 @@ package j4ml.clas12.classifier;
 import j4ml.clas12.track.ClusterCombinations;
 import j4ml.clas12.track.ClusterStore;
 import j4ml.clas12.track.Track;
+
+import j4np.utils.io.OptionExecutor;
+import j4np.utils.io.OptionParser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.jlab.jnp.hipo4.data.Bank;
 import org.jlab.jnp.hipo4.data.Event;
 import org.jlab.jnp.hipo4.data.Node;
+
 import org.jlab.jnp.hipo4.io.HipoChain;
-import org.jlab.jnp.hipo4.io.HipoWriter;
+
 import org.jlab.jnp.hipo4.io.HipoWriterSorted;
 import org.jlab.jnp.utils.benchmark.ProgressPrintout;
 import org.jlab.jnp.utils.options.OptionStore;
@@ -24,7 +28,7 @@ import org.jlab.jnp.utils.options.OptionStore;
  *
  * @author gavalian
  */
-public class ClassifierDataExtract {
+public class ClassifierDataExtract implements OptionExecutor {
 
     HipoWriterSorted writer = new HipoWriterSorted();
     
@@ -33,9 +37,13 @@ public class ClassifierDataExtract {
     Bank    tbTR = null;
 
     String  outputFileName = "data_extract_classifier.hipo";
-    int     binMaxWrite    = 25000;
+    public int     binMaxWrite    = 75000;
     int[]   occupancy = new int[40];
     int     activeEventTag = 0;
+    
+    
+    public double pMinimum = 0.0;
+    public double pMaximum = 0.0;
     
     public ClassifierDataExtract(){
         for(int i = 0; i < occupancy.length; i++) occupancy[i] = 0;
@@ -96,8 +104,7 @@ public class ClassifierDataExtract {
         
         nodeList.add(new Node(1001,6, new float[]{ (float) trk.vector.x(), (float)trk.vector.y(), (float)trk.vector.z()}));
         nodeList.add(new Node(1001,7, new float[]{ (float) trk.vertex.x(),(float) trk.vertex.y(),(float) trk.vertex.z()}));
-                
-        
+                        
         return nodeList;
     }
     
@@ -111,10 +118,21 @@ public class ClassifierDataExtract {
     }
     
     public static int getTrackBin(Track t){
+        
         double p = t.vector.mag();
         int bin = -1;
         if(p>0.0&&p<10.0){
             bin = (int) (p/0.5);
+        }
+        return bin;
+    }
+    
+    public static int getTrackBin(Track t, double min, double max){
+        double binSize = (max-min)/20.0;
+        double p = t.vector.mag();
+        int bin = -1;
+        if(p>=min&&p<=max){
+            bin = (int) ((p-min)/binSize);
         }
         return bin;
     }
@@ -201,7 +219,7 @@ public class ClassifierDataExtract {
             if(trkSelect.size()==1){
                 int  charge = trkSelect.get(0).charge;
                 double  mom = trkSelect.get(0).vector.mag();
-                int bin = ClassifierDataExtract.getTrackBin(trkSelect.get(0));
+                int bin = ClassifierDataExtract.getTrackBin(trkSelect.get(0),this.pMinimum,this.pMaximum);
                 int chargeBin = bin+1;                                  
                 if(charge<0) chargeBin += 20;
                 if(chargeBin>=1&&chargeBin<=40){
@@ -227,6 +245,43 @@ public class ClassifierDataExtract {
     
     public void close(){
         writer.close();
+    }
+    
+    public static void processFiles(List<String> files, double min, double max, int nevents){
+        HipoChain chain = new HipoChain();
+        chain.addFiles(files);
+        chain.open();
+        
+        ClassifierDataExtract ce = new ClassifierDataExtract();
+        ce.binMaxWrite = nevents;
+        ce.pMinimum = min;
+        ce.pMaximum = max;
+        ce.init(chain);
+        Event    event = new Event();
+        Event outEvent = new Event();
+        int counter = 0;
+        int counterWrite = 0;
+        ProgressPrintout progress = new ProgressPrintout();
+        
+        while(chain.hasNext()==true){
+            
+            progress.updateStatus();
+            chain.nextEvent(event);
+            for(int s = 1; s <= 6; s++){
+                List<Node> nodes =  ce.processEvent(event, s);
+                if(nodes.size()>0){
+                    outEvent.reset();
+                    for(Node node : nodes)
+                        outEvent.write(node);                    
+                    ce.write(outEvent, ce.getActiveTag());
+                    
+                    counterWrite++;
+                }
+            }
+            counter++;            
+        }
+        ce.close();
+        System.out.printf("extracted %d / %d (%.2f ) \n",counterWrite,counter,( (double) counterWrite*100)/counter);
     }
     
     public static void processFiles(List<String> files){
@@ -261,6 +316,27 @@ public class ClassifierDataExtract {
         }
         ce.close();
         System.out.printf("extracted %d / %d (%.2f ) \n",counterWrite,counter,( (double) counterWrite*100)/counter);
+    }
+    
+    @Override
+    public void execute(String[] args) {
+        
+        OptionParser parser = new OptionParser("exctract-data");
+        parser.addOption("-pmin", "0.0", "minimum momentum for the particles");
+        parser.addOption("-pmax", "10.0", "maximum momentum for the particles");
+        parser.addOption("-n", "25000","maximum number of events per momentum bin");
+        
+        if(args.length<1) {
+            parser.printUsage(); System.exit(0);
+        }
+        parser.parse(args);
+        
+        List<String>  inputs = parser.getInputList();
+        double pmin = parser.getOption("-pmin").doubleValue();
+        double pmax = parser.getOption("-pmax").doubleValue();
+        int nevents = parser.getOption("-n").intValue();
+        
+        ClassifierDataExtract.processFiles(inputs, pmin,  pmax, nevents);
     }
     
     public static void main(String[] args){
@@ -401,4 +477,6 @@ public class ClassifierDataExtract {
         }
 */
     }
+
+    
 }

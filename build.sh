@@ -31,6 +31,7 @@ cp -r modules/j4np-package/bin j4np-${version}/.
 cp -r modules/j4np-package/etc j4np-${version}/.
 cp modules/j4np-package/target/*with-dependencies.jar j4np-${version}/lib/core/j4np-${version}.jar
 cp extensions/j4ml-track/target/*with-dependencies.jar j4np-${version}/lib/ext/.
+cp extensions/j4ml-classifier/target/*with-depend*.jar j4np-${version}/lib/ext/.
 cp extensions/j4ml-display/target/*with-dependencies.jar j4np-${version}/lib/ext/.
 #----------------------------------------------------
 # package it, and distribute it if the flag is set
@@ -43,5 +44,6 @@ gzip j4np-${version}.tar
 echo 'copying local distribution to : ' ${PROJECT}
 cp -r j4np-${version} $PROJECT/.
 echo 'done....'
-
+jput -r j4np-${version}.tar.gz
+echo 'done copying to jlab'
 

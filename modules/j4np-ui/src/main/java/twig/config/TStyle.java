@@ -6,8 +6,15 @@
 package twig.config;
 
 import java.awt.BasicStroke;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -61,5 +68,35 @@ public class TStyle {
             return new BasicStroke(width, BasicStroke.CAP_BUTT,
                         BasicStroke.JOIN_MITER, 20.0f, dashPatterns.get(strokeStyle), 0.0f);
             
+    }
+    
+    public static Font createFont(String resource){
+        try {
+            InputStream is = TStyle.class.getResourceAsStream(resource);
+            //Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            return font;
+        } catch (FontFormatException ex) {
+            Logger.getLogger(TStyle.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TStyle.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static Font createFont(){
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            InputStream is = TStyle.class.getResourceAsStream("fonts/Brushed.ttf");
+            //Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            ge.registerFont(font);
+            return font;
+        } catch (FontFormatException ex) {
+            Logger.getLogger(TStyle.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TStyle.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

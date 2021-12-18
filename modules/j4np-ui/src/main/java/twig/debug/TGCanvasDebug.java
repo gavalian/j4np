@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 import twig.data.H1F;
+import twig.data.H2F;
 import twig.data.TDataFactory;
 import twig.graphics.TGCanvas;
 import twig.graphics.TGF1D;
@@ -142,7 +143,24 @@ public class TGCanvasDebug {
         c.repaint();
         
     }
+     
+     public static void debugH2F(){
+         H2F rh = TDataFactory.createH2F(250000,60);
+         //H2F rh = new H2F("",3,-1.0,1.0,3,-1.0,1.0);
+         rh.setBinContent(0, 0, 2);
+         rh.setBinContent(0, 1, 4);
+         rh.setBinContent(1, 1, 6);
+         
+         TGCanvas c = new TGCanvas(600,900);
+         c.view().divide(2, 2);
+         c.view().region(0).draw(rh);
+         c.view().region(1).draw(rh.projectionX());
+         c.view().region(2).draw(rh.projectionY());
+         
+     }
+     
     public static void main(String[] args){
-        TGCanvasDebug.example2();
+        //TGCanvasDebug.example2();
+        TGCanvasDebug.debugH2F();
     }
 }

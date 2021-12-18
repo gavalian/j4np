@@ -8,24 +8,31 @@ package j4ml.classifier.mlp;
 import deepnetts.data.TabularDataSet;
 import j4ml.classifier.data.Combinatorics;
 import j4ml.classifier.data.DataLoader;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.io.HipoReader;
+import j4np.hipo5.io.HipoWriter;
 import j4np.utils.io.DataPair;
 import j4np.utils.io.DataPairList;
+import j4np.utils.io.OptionExecutor;
+import j4np.utils.io.OptionStore;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javax.visrec.ml.data.DataSet;
-import org.jlab.jnp.hipo4.data.Event;
-import org.jlab.jnp.hipo4.io.HipoReader;
+
 
 /**
  *
  * @author gavalian
  */
-public class ClassifierMLP {
+public class ClassifierMLP implements OptionExecutor {
     
     
     ClassifierNetwork classifier = new ClassifierNetwork();
     int nEpochs = 125;
     DataPairList   previous = new DataPairList();
     String outputFileName = "trackClassifier.network";
+    List<String>  summary = new ArrayList<>();
     
     public ClassifierMLP(){
         
@@ -237,11 +244,23 @@ public class ClassifierMLP {
             misID[1] += result[1];
         }
         System.out.println("********************************");
+        summary.add(String.format("false track selected %d, true track selected %d",
+                misID[0],misID[1]));
         System.out.printf("false track selected %d, true track selected %d\n",
                 misID[0],misID[1]);
         System.out.println("********************************");
     }
     
+    public void printSummary(){
+        System.out.println("\n\n");
+        System.out.println("********************************");
+        System.out.println("*       TRAINING SUMMARY       *");
+        System.out.println("********************************");
+        for(int i = 0; i < summary.size(); i++){
+            System.out.printf(" stage %4d : %s\n",i+1,summary.get(i));
+        }
+        System.out.println("********************************");
+    }
     
     public DataPairList further(String filename, int tag, int max){
         HipoReader reader = new HipoReader();
@@ -365,22 +384,68 @@ public class ClassifierMLP {
         classifier.save(this.outputFileName);
     }
     
+    @Override
+    public void execute(String[] args) {
+        OptionStore store = new OptionStore("track-classifier");
+        store.addCommand("-train", "train clas12 track classifier");
+        store.getOptionParser("-train").addRequired("-t", "training file name");
+        store.getOptionParser("-train").addRequired("-v", "validation file name file name");
+        store.getOptionParser("-train").addOption("-o", "trackClassifier.network", "network file name");
+        store.getOptionParser("-train").addOption("-n", "25000", "maximum number of samples to use");
+        store.getOptionParser("-train").addOption("-e", "25", "number of epochs to use");
+        
+        store.parse(args);
+        
+        if(store.getCommand().compareTo("-train")==0){
+            ClassifierMLP mlp = new ClassifierMLP();
+            String filet = store.getOptionParser("-train").getOption("-t").stringValue();
+            String filev = store.getOptionParser("-train").getOption("-v").stringValue();
+            
+            int    ntrain = store.getOptionParser("-train").getOption("-n").intValue();
+            int nvalidate = store.getOptionParser("-train").getOption("-n").intValue();
+            
+            int  nfurther = store.getOptionParser("-train").getOption("-n").intValue();
+            int   nEpochs = store.getOptionParser("-train").getOption("-e").intValue();
+            String  output = store.getOptionParser("-train").getOption("-o").stringValue();
+            
+            mlp.outputFileName = output;
+            mlp.nEpochs = nEpochs;
+            mlp.train(filet, ntrain);            
+            mlp.analyze(filev, nvalidate);
+            
+            mlp.outputFileName = output + ".1";
+            mlp.trainFurther(filet, nfurther);
+            mlp.analyze(filev, nvalidate);
+            
+            mlp.printSummary();
+                        
+            //return;
+        }
+        
+        //store.printUsage();
+    }
+   
     public static void main(String[] args){
         
         ClassifierMLP mlp = new ClassifierMLP();  
+        
+        String filet = "data_extracted_4029_full_1.hipo";
+        String filev = "data_extracted_4029_full_2.hipo";
         
         int ntrain    = 35000;
         int nvalidate = 25000;
         int ntrainfurther = 35000;
         
         mlp.nEpochs = 125;
-        mlp.train("data_extract_classifier.hipo", ntrain); 
-        mlp.analyze("data_validate_classifier.hipo", nvalidate);
+        
+        mlp.train(filet, ntrain);
+        
+        mlp.analyze(filev, nvalidate);
         
         for(int i = 0; i < 8; i++){
             mlp.outputFileName = String.format("trackClassifier_%d.network", i+1);
-            mlp.trainFurther("data_extract_classifier.hipo", ntrainfurther);
-            mlp.analyze("data_validate_classifier.hipo", nvalidate);
+            mlp.trainFurther(filet, ntrainfurther);
+            mlp.analyze(filev, nvalidate);
         }
         
         /*for(int i = 0; i < 8; i++){
@@ -399,4 +464,5 @@ public class ClassifierMLP {
         */
         //list.show();
     }
+   
 }

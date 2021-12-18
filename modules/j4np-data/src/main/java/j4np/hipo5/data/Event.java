@@ -59,6 +59,7 @@ public class Event {
         //System.out.println("creating event");
         eventBuffer.order(ByteOrder.LITTLE_ENDIAN);
         eventBuffer.putInt(EVENT_LENGTH_OFFSET, 16);
+        eventBuffer.putInt(this.EVENT_TAG_OFFSET, 0);
     }
     
     public int getEventTag(){

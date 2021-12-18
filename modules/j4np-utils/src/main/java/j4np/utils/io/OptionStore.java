@@ -5,10 +5,16 @@
  */
 package j4np.utils.io;
 
+import j4np.utils.dsl.DSLSystem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 
 /**
  *
@@ -123,7 +129,57 @@ public class OptionStore {
         }
     }
     
+    public static List<String> scanClasses(){
+       
+        List<String> clazzList = new ArrayList<>();
+        
+        Reflections reflections = new Reflections("j4np", new SubTypesScanner(false));
+        
+        Set<String> clazzSet = reflections.getAllTypes();
+        
+        for(String clazz : clazzSet){
+            System.out.println("---> " + clazz);
+            
+            try {
+                Class instance = Class.forName(clazz);
+                System.out.println("---> " + clazz + " is intance = " + instance.isInstance(OptionExecutor.class));
+                
+                if(instance.isInstance(OptionExecutor.class)){                    
+                    clazzList.add(clazz);
+                }
+                //classList.add(clazz.getName());
+                //System.out.printf(" :: %s\n",clazz.getName());
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(OptionStore.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        Reflections reflectionsML = new Reflections("j4ml", new SubTypesScanner(false));
+        
+        Set<String> clazzSetML = reflectionsML.getAllTypes();
+        
+        for(String clazz : clazzSetML){
+            
+
+            try {
+                Class instance = Class.forName(clazz);
+                System.out.println("---> " + clazz + " is intance = " + instance.isInstance(OptionExecutor.class));
+                if(instance.isInstance(OptionExecutor.class)){                    
+                    clazzList.add(clazz);
+                }
+                //classList.add(clazz.getName());
+                //System.out.printf(" :: %s\n",clazz.getName());
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(OptionStore.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return clazzList;
+    }
+    
     public static void main(String args[]){
+        
+        List<String> clazzList = OptionStore.scanClasses();
         
         OptionStore options = new OptionStore("hipoutils");
         options.addCommand("-compress", "compresses given file to compression level provided");

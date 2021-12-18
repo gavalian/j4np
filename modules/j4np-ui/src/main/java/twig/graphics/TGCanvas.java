@@ -24,7 +24,7 @@ public class TGCanvas extends JFrame implements ActionListener {
     protected TGDataCanvas dataCanvas = null;
     
     private int CANVAS_DEFAULT_WIDTH  = 600;
-    private int CANVAS_DEFAULT_HEIGHT = 400;
+    private int CANVAS_DEFAULT_HEIGHT = 500;
     
     private JPanel     canvasPane = null;
 

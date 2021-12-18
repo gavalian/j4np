@@ -85,10 +85,21 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     
     public TGDataCanvas cd(int index){
         if(index < 0) { activeRegion = 0; return this;}
+        
         if(index >= this.getGraphicsComponents().size()){
             activeRegion = this.getGraphicsComponents().size() - 1;
+            return this;
         } 
         activeRegion = index;
+        return this;
+    }
+    
+    public TGDataCanvas next(){
+        activeRegion++;
+        if(activeRegion>=getGraphicsComponents().size()){
+            activeRegion = 0;
+        }
+
         return this;
     }
     

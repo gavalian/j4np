@@ -18,6 +18,7 @@ public class TPalette {
     
     private List<Color> colorPalette3D = new ArrayList<Color>();
     private List<Color> colorPalette   = new ArrayList<Color>();
+    private TPalette2D  colorPalette2D = new TPalette2D();
     /**
      * Specialty color palette is used for colors of data regions and 
      * axis colors.
@@ -155,7 +156,8 @@ public class TPalette {
         }
     }
 
-        /**
+    public TPalette2D palette2d(){ return this.colorPalette2D;}
+    /**
      * returns color from color pallette. There are some reserved colors.
      * colors above 30000 are used for the data regions and axis coloring.
      * This is mainly used to change the style of the colors for different

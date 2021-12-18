@@ -6,6 +6,10 @@
 package j4ml.classifier.data;
 
 import deepnetts.data.TabularDataSet;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Node;
+import j4np.hipo5.io.HipoReader;
+import j4np.hipo5.io.HipoWriter;
 import j4np.utils.io.DataArrayUtils;
 import j4np.utils.io.DataPair;
 import j4np.utils.io.DataPairList;
@@ -13,9 +17,6 @@ import java.util.List;
 import java.util.Random;
 import javax.visrec.ml.data.DataSet;
 
-import org.jlab.jnp.hipo4.data.Event;
-import org.jlab.jnp.hipo4.data.Node;
-import org.jlab.jnp.hipo4.io.HipoReader;
 
 /**
  *
@@ -253,8 +254,40 @@ public class DataLoader {
         return result;
     }
     
+     public static void split(double fraction, String file){
+        HipoWriter w1 = new HipoWriter();
+        HipoWriter w2 = new HipoWriter();
+        w1.open("data_extracted_1.hipo");
+        w2.open("data_extracted_2.hipo");
+        for(int i = 1; i <= 40; i++){
+            Event event = new Event();
+            HipoReader r = new HipoReader();
+            r.setTags(i);
+            r.open(file);
+            int   total = r.getEventCount();
+            int counter = 0;
+            
+            System.out.printf("[TAG] %8d, event count = %9d\n",i,total);
+            while(r.hasNext()){
+                r.nextEvent(event);
+                counter++;
+                double ratio = ((double) counter)/total;
+                if(ratio>fraction){
+                    w2.addEvent(event, i);
+                } else {
+                    w1.addEvent(event, i);
+                }
+            }
+        }
+        
+        w1.close();w2.close();
+    }
     
     public static void main(String[] args){
+        
+        DataLoader.split(0.6, "/Users/gavalian/Work/software/project-10a.0.0/data/data_extract_classifier_4209_full.hipo");
+        
+        /*
         HipoReader reader = new HipoReader();
         reader.open("data_extract_classifier.hipo");
         
@@ -267,6 +300,6 @@ public class DataLoader {
             for(DataPair pair : list.getList()){
                 //pair.show();
             }
-        }
+        }*/
     }
 }

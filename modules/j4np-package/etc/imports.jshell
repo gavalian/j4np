@@ -5,6 +5,7 @@
 import twig.data.*;
 import twig.math.*;
 import twig.tree.*;
+import twig.studio.*;
 import twig.widgets.*;
 import twig.widgets.LatexText.TextRotate;
 import twig.widgets.LatexText.TextAlign;

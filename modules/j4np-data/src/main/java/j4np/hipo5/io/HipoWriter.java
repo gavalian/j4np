@@ -30,13 +30,13 @@ public class HipoWriter implements AutoCloseable {
     
     private Writer               writer = null;
     private int       maximumRecordSize = 8*1024*1024;
-    private int     maximumRecordEvents = 1000000;
+    private int     maximumRecordEvents = 100000;
     private int         compressionType = 1;
     
     private final SchemaFactory schemaFactory = new SchemaFactory();
     
-    private final Map<Long,RecordOutputStream> outputStreams = new HashMap<>();
-    private       RecordOutputStream     defaultOutputStream = new RecordOutputStream();
+    private final  Map<Long,RecordOutputStream> outputStreams = new HashMap<>();
+    private final  RecordOutputStream     defaultOutputStream = new RecordOutputStream();
             
 //    private List<HipoDataSorter>           sorterList = new ArrayList<HipoDataSorter>();
     private String          rewriteMode = "RECREATE";
@@ -124,8 +124,10 @@ public class HipoWriter implements AutoCloseable {
     }
     
     private void addOutputStream(long id){
-        RecordOutputStream outStream = new RecordOutputStream(ByteOrder.LITTLE_ENDIAN,maximumRecordSize,
-                maximumRecordEvents,compressionType);
+        //RecordOutputStream outStream = new RecordOutputStream(ByteOrder.LITTLE_ENDIAN,
+         //       maximumRecordSize,maximumRecordEvents,compressionType);
+        RecordOutputStream outStream = new RecordOutputStream(ByteOrder.LITTLE_ENDIAN,
+                maximumRecordEvents,maximumRecordSize,compressionType);
         outStream.getHeader().setUserRegisterFirst(id);
         outputStreams.put(id, outStream);
     }
@@ -146,30 +148,31 @@ public class HipoWriter implements AutoCloseable {
                 this.statsTimeCompression += now-then;
                 this.statsBytesCompressed += bytesWritten;
             }
-            return;
-        }
-        
-        if(outputStreams.containsKey(eventTag)==false){
-            System.out.println("[sorted-writer] ---->>>> adding output stream with tag = " + eventTag);
-            addOutputStream(eventTag);
-        }
-        
-        int tag = (int) eventTag;
-        
-        event.setEventTag(tag);
-        
-        RecordOutputStream stream = outputStreams.get(eventTag);
-        long streamTag = stream.getHeader().getUserRegisterFirst();
-        int size = event.getEventBufferSize();
-        boolean status = stream.addEvent(event.getEventBuffer().array(), 0, size);
-        if(status==false){
-            long then = System.nanoTime();
-            writer.writeRecord(stream);
-            stream.reset();
-            stream.getHeader().setUserRegisterFirst(streamTag);
-            stream.addEvent(event.getEventBuffer().array(), 0, size);
-            long now  = System.nanoTime();
-            this.statsTimeCompression += now-then;
+            //return;
+        } else {
+            
+            if(outputStreams.containsKey(eventTag)==false){
+                System.out.println("[sorted-writer] ---->>>> adding output stream with tag = " + eventTag);
+                addOutputStream(eventTag);
+            }
+            
+            int tag = (int) eventTag;
+            
+            event.setEventTag(tag);
+            
+            RecordOutputStream stream = outputStreams.get(eventTag);
+            long streamTag = stream.getHeader().getUserRegisterFirst();
+            int size = event.getEventBufferSize();
+            boolean status = stream.addEvent(event.getEventBuffer().array(), 0, size);
+            if(status==false){
+                long then = System.nanoTime();
+                writer.writeRecord(stream);
+                stream.reset();
+                stream.getHeader().setUserRegisterFirst(streamTag);
+                stream.addEvent(event.getEventBuffer().array(), 0, size);
+                long now  = System.nanoTime();
+                this.statsTimeCompression += now-then;
+            }
         }
     }
     
@@ -181,6 +184,10 @@ public class HipoWriter implements AutoCloseable {
     
     @Override
     public void close(){
+        
+        if(this.defaultOutputStream.getEventCount()>0){
+            writer.writeRecord(this.defaultOutputStream);
+        }
         
         System.out.println("[sorted-writer] --->>>> closing file.");
         for(Map.Entry<Long,RecordOutputStream> entry : outputStreams.entrySet()){

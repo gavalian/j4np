@@ -46,8 +46,7 @@ public class J4npCliMain {
         }
         
         File file = new File(directory+"/etc/modules.list");
-        if(file.exists()==false) {
-            
+        if(file.exists()==false) {            
             return new ArrayList<String>();
         }
         return TextFileReader.readFile(directory+"/etc/modules.list");

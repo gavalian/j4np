@@ -188,6 +188,7 @@ public class MLArchitecture implements Widget {
     }
     
     public static void main(String[] args){
+        
         TGCanvas c = new TGCanvas("network_arch",900,500);
         
         c.view().region().drawFrame(false);

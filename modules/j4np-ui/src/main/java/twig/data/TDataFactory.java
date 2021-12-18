@@ -106,5 +106,35 @@ public class TDataFactory {
         return TDataFactory.createH1F(count, 100, 0.0, 1.0, 0.4, 0.2);
     }
     
-    
+    public static H2F createH2F(int count, int bins){
+        
+        //int bins =240;
+        Random r = new Random();
+        H2F   rh = new H2F("rh",bins,-1.0,1.0,bins,-1.0,1.0);
+        
+        double xc1 = 0.4;//r.nextDouble()*2.0-1.0;
+        double xc2 = -0.5;//r.nextDouble()*2.0-1.0;
+        double yc1 = 0.6;//r.nextDouble()*2.0-1.0;
+        double yc2 = -0.6;//r.nextDouble()*2.0-1.0;
+        double  s1 = 0.35;//r.nextDouble()*0.2+0.2;
+        double  s2 = 0.2;//r.nextDouble()*0.2+0.1;
+        for(int i = 0; i < count; i++){
+            double x = r.nextGaussian(xc1, s1);
+            double y = r.nextGaussian(yc1, s1);
+            rh.fill(x, y);
+        }
+        
+        for(int i = 0; i < count/2; i++){
+            double x = r.nextGaussian(xc2, s2);
+            double y = r.nextGaussian(yc2, s2);
+            rh.fill(x, y);
+        }
+        
+        for(int i = 0; i < count/4; i++){
+            double x = r.nextDouble()*2.0-1.0;
+            double y = r.nextDouble()*2.0-1.0;
+            rh.fill(x, y);   
+        }
+        return rh;
+    }
 }

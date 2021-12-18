@@ -16,6 +16,7 @@ import twig.config.TStyle;
 import twig.data.DataSet;
 import twig.data.GraphErrors;
 import twig.data.H1F;
+import twig.data.H2F;
 import twig.math.Func1D;
 import twig.widgets.StyleNode;
 import twig.widgets.Widget;
@@ -202,17 +203,23 @@ public class TGRegion extends Node2D implements StyleNode {
         if(options.contains("same")==false){
             this.axisFrame.clear();
         }
+        
         if(ds instanceof H1F){
-            axisFrame.addDataNode(new TGH1F((H1F) ds,options));
+            axisFrame.addDataNode(new TGH1F((H1F) ds,options)); return this;
+        }
+        
+        if(ds instanceof H2F){
+            axisFrame.addDataNode(new TGH2F( (H2F) ds,options)); return this;
         }
         
         if(ds instanceof GraphErrors){
-            axisFrame.addDataNode(new TGENode2D((GraphErrors) ds,options));
+            axisFrame.addDataNode(new TGENode2D((GraphErrors) ds,options)); return this;
         }
         
         if(ds instanceof Func1D){
-            axisFrame.addDataNode(new TGF1D((Func1D) ds,options));
+            axisFrame.addDataNode(new TGF1D((Func1D) ds,options)); return this;
         }
+        System.out.println(" unknown type of data set : " + ds.getClass().getName());
         return this;
     }
     

@@ -14,6 +14,8 @@ import java.awt.geom.Rectangle2D;
 public class DataRange {
     
     Rectangle2D.Double rect = new Rectangle2D.Double();
+    double z = 0.0;
+    double dept = 0.0;
     
     public DataRange(){
         rect.x = 0.0; rect.width  = 1.0;                 
