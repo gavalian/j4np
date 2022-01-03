@@ -114,6 +114,11 @@ public class HipoTree extends Tree {
         return tree;
     }
     
+    public static HipoTree withFile(String file,String bank){
+        HipoTree tree = new HipoTree(file,bank);
+        return tree;
+    }
+    
     public static void fromCsv(String expression, String csvFile){
         
         String hipoFile = csvFile.replaceAll(".csv", ".h5");

@@ -13,6 +13,7 @@ import twig.config.TDataAttributes;
 import twig.data.DataPoint;
 import twig.data.DataRange;
 import twig.data.DataSet;
+import twig.data.H1F;
 
 /**
  *
@@ -141,7 +142,14 @@ public class Func1D implements DataSet {
         return str.toString();
     }
     
+    public void fit(DataSet ds, String options){
+        DataFitter.fit(this, ds, options);
+    }
 
+    public void fit(DataSet ds){
+        DataFitter.fit(this, ds, "N");
+    }
+    
     public double getChiSquare(){
         return this.funcChi2;
     }
@@ -236,7 +244,7 @@ public class Func1D implements DataSet {
     public TDataAttributes attr() {
         return funcAttr;
     }
-
+    
     @Override
     public List<String> getStats(String options) {
         List<String> stats = new ArrayList<>();

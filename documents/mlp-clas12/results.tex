@@ -1,15 +1,14 @@
 \section{Analysis of Track Reconstruction with AI}
 
-After the implementation of track identification service in CLAS12 reconstruction software the outputs
-from conventional tracking algorithm and artificial intelligence assisted tracking algorithm were analyzed
+After the implementation of the track identification service in CLAS12 reconstruction software, the outputs
+from the conventional tracking algorithm and AI-assisted tracking algorithm were analyzed
 event by event to ascertain improvements of tracking. 
  
  \subsection{Particle Reconstruction efficiency}
  
  The Neural Network for track classification was trained on experimental data after it was processed with conventional tracking 
- reconstruction. Track that have "good" fit quality and were tracked back to the target were used as a training sample for both 
- MLP classifier and Auto-Encoder corruption fixing network. For detailer analysis of tracking reconstruction performance with and without 
- assistance from artificial intelligence we processed one run at nominal luminosity (45 nA) compare performances.
+ reconstruction. Tracks that have "good" fit quality and were tracked back to the target were used as training samples for both 
+ the MLP classifier and Auto-Encoder corruption-recovery network. For more detailed analysis of tracking reconstruction performance with and without assistance from artificial intelligence we processed one run at nominal luminosity (45 nA) to compare performances.
  
  %The efficiency of track reconstruction was obtained for separate track topologies (6 super-layer and 5 super-layer).
  \begin{figure}[!ht]
@@ -18,7 +17,7 @@ event by event to ascertain improvements of tracking.
   \includegraphics[width=6.5in]{images/figure_p.pdf}
   \includegraphics[width=6.5in]{images/figure_theta.pdf}
     \includegraphics[width=6.5in]{images/figure_vz.pdf}
-\caption { Comparison of number of tracks reconstructed with conventional algorithm vs AI assisted tracking code as a function of momentum, polar angle and particle interaction vertex. The comparison is shown for 5 super-layer, 6 super-layer tracks (left two columns) and the total number (right column).}
+\caption { Comparison of number of tracks reconstructed with the conventional algorithm vs AI-assisted tracking code as a function of momentum, polar angle and particle interaction vertex. The comparison is shown for 5 super-layer, 6 super-layer tracks (left two columns), and the total number (right column).}
  \label{track:efficiency}
  \end{center}
 \end{figure}
@@ -26,11 +25,11 @@ event by event to ascertain improvements of tracking.
 The results are shown on Figure~\ref{track:efficiency}, where dependence of number of reconstructed negatively charged 
  tracks are shown as a function of particle momentum (top row), polar angle in laboratory frame (bottom row) and interaction
  vertex (middle row). The reconstructed distributions from conventional tracking are plotted with filled histograms and the
- tracks reconstructed by using assistance from AI are plotted with solid lines. As can be seen from the figure there is very big gain 
- in number of reconstructed tracks with 5 super-layer configuration compared to full 6 super-layer tracks. Typically for nominal 
- 45 nA experimental data increase track efficiency for 6 super-layers tracks averages about $3\%-6\%$, while for 5 super-layer
- tracks the increase is in the order of $70\%-120\%$. In normal data reconstruction tracks that are identified with 5 super-layers
- usually comprise about $10\%$ of all reconstructed tracks, and significant increase in identification of such tracks leads to 
+ tracks reconstructed using assistance from AI are plotted with solid lines. As can be seen from the figure, there is a large gain 
+ in the number of reconstructed tracks with the 5 super-layer configuration compared to full 6 super-layer tracks. Typically for nominal 
+ 45 nA experimental data increase in track efficiency for 6 super-layers tracks averages about $3\%-6\%$, while for 5 super-layer
+ tracks the increase is in the order of $70\%-120\%$. In normal data reconstruction, tracks that are identified with 5 super-layers
+ usually comprise about $10\%$ of all reconstructed tracks, and a significant increase in identification of such tracks leads to 
  overall tracking efficiency increase of $12\%-15\%$. 
  
  \begin{table}[!h]
@@ -54,18 +53,18 @@ The comparison of 5 super-layer and 6 super-layer track statistics and their rel
 As can be seen from the table the gain in only 6 super-layer tracks is about $5.7\%$ but with significant gain in 5 super-layer tracks 
 the overall gain in reconstructed tracks elevates to $>15\%$. These results are intuitive since track candidates composed of 5
 super-layers with the same number of clusters in each super-layer are significantly higher than 6 super-layer track candidates, and 
-it our tests AI performs better in choosing right combination with increasing combinatorics.
+in our tests AI performs better in choosing the right combination with increasing combinatorics.
  
 \subsection{Luminosity Dependence}
 
-Track reconstruction efficiency increased with AI assisted tracking, since AI can better identify tracks
-from pool of candidates. One would expect that if the number of combinations decrease efficiency 
-of conventional track selection algorithm should approach efficiency of AI assisted track identification,
-similarly, when number of combination increases the advantage of AI over the conventional algorithm should
-increase. Based on this we expect AI to perform better in higher background settings. To evaluate AI assisted
+Track reconstruction efficiency increased with AI-assisted tracking, since AI can better identify tracks
+from a pool of candidates. One would expect that if the number of combinations decrease the efficiency 
+of the conventional track selection algorithm should approach the efficiency of AI-assisted track identification.
+Similarly, when the number of combinations increases the advantage of AI over the conventional algorithm should
+increase. Based on this we expect AI to perform better in higher background settings. To evaluate AI-assisted
 tracking efficiency dependence on background we analyzed several different runs that were taken in different 
 conditions (i.e. beam current) ranging from $5~nA$ to $70~nA$. To measure tracking efficiency we first calculated
-number of electrons ($N_e$) detected in the data sample analyzed (typically one run) and then number of positive and negative
+the number of electrons ($N_e$) detected in the data sample analyzed (typically one run) and then the number of positive and negative
  hadrons that were detected with the electron inclusively ($N_{h^+e}$ and $N_{h^-e}$ respectively).
 
 Then the efficiency for the data set was calculated as:
@@ -95,25 +94,25 @@ with $b=\frac{c}{a}$. The slope parameter b is the rate of the reconstruction in
  \includegraphics[width=3.0in]{images/figure_lscan_pos.pdf}
  \includegraphics[width=3.0in]{images/figure_lscan_neg.pdf}
 \caption {Tracking efficiency for positively and negatively charged particles as a function of beam current (luminosity).  Conventional algorithm 
-track reconstruction efficiency (diamonds) is compared to AI assisted track reconstruction efficiency (circles). }
+track reconstruction efficiency (diamonds) is compared to AI-assisted track reconstruction efficiency (circles). }
  \label{lumi:scan}
  \end{center}
 \end{figure}
 
-The comparison of tracking efficiency as a function of beam current (luminosity) can be seen on Figure~\ref{lumi:scan} where $E^{+/-}$ are shown for positively and negatively charged particles separately. As can be seen from the figure AI assisted tracking performs significantly better for any given luminosity (beam current) and the decrease of efficiency is much slower as function of luminosity, $0.22\%$ per nA versus $0.40\%$ per nA for conventional tracking. This is expected and consistent with assumption that with increased combinatorial background (increased number of track candidates to consider) , AI performs better in choosing best track candidate. We established that AI assisted
-tracking leads to more tracks reconstructed for any given beam current setting, next thing to check is what is the impact of increase track reconstruction
-efficiency on physics analysis, and if there is increase in physics outcome for the CLAS12 experimental setup.
+The comparison of tracking efficiency as a function of beam current (luminosity) can be seen on Figure~\ref{lumi:scan} where $E^{+/-}$ are shown for positively and negatively charged particles separately. As can be seen from the figure, AI-assisted tracking performs significantly better for any given luminosity (beam current) and the decrease of efficiency is much slower as a function of luminosity, $0.22\%$ per nA versus $0.40\%$ per nA for conventional tracking. This is expected and consistent with the assumption that with increased combinatorial background (increased number of track candidates to consider), AI performs better in choosing the best track candidate. We established that AI-assisted
+tracking leads to more tracks reconstructed for any given beam current setting. The next thing to check is what is the impact of increased track reconstruction efficiency on physics analysis.
+% and if there is increase in physics outcome for the CLAS12 experimental setup.
 
 \subsection{Physics Impact}
 
 To measure practical implications of track reconstruction efficiency improvement on physics outcome we analyzed 
 two event topologies with two particle and three particles in the final state respectively. The data for analysis were 
-taken with $10.5~GeV$ electron beam incident on $20~cm$ liquid hydrogen target, with the beam current of $45~nA$
-(typical for CLAS12 experimental running). We selected events where an electron was detected in the forward detector 
-then isolated events where there was an additional negatively charge pion ($\pi^-$) along with electron and no other 
-charged particle, and the second topology required two pions along with electron, one positively charged and one 
+taken with $10.5~GeV$ electron beam incident on $20~cm$ liquid hydrogen target, with a beam current of $45~nA$
+(typical for CLAS12 experimental running). We selected events where an electron was detected in the forward detector, and 
+then isolated events where there was an additional negatively charged pion ($\pi^-$) along with an electron and no other 
+charged particle. The second topology required two pions along with electron, one positively charged and one 
 negatively charged. The two chosen topologies are denoted by $H(e,e'\pi^-X)$ and $H(e,e'\pi^+\pi^-X)$. In both cases 
-there is a visible peak of a missing proton that we can use to measure impact of efficiency on physics outcome. 
+there is a visible peak of a missing proton that we can use to measure the impact of efficiency on physics outcome. 
 
  \begin{figure}[!ht]
 \begin{center}
@@ -123,35 +122,35 @@ there is a visible peak of a missing proton that we can use to measure impact of
  \end{center}
 \end{figure}
 
-The distributions of missing mass for both final state topologies are shown on Figure~\ref{physics:outcome}, the plots 
+The distributions of missing mass for both final state topologies are shown on Figure~\ref{physics:outcome}, where the plots 
 on the top row are missing mass of $H(e,e'\pi^-X)$ and $H(e,e'\pi^+\pi^-X)$, where the filled histogram is calculated from 
-particles reconstructed by conventional tracking algorithm, and the histogram with black outline are same distributions 
-calculated from particles that were reconstructed using suggestion from Artificial Intelligence. As can be seen from the figure 
-there is significant increase in number of events under the missing proton peak (at mass value $0.938~MeV$) for AI assisted
-tracking. The ratios of two histograms (AI assisted divided by Conventional) can be seen on the bottom row of 
+particles reconstructed by the conventional tracking algorithm, and the histogram with black outline are the same distributions 
+calculated from particles that were reconstructed using suggestion from Artificial Intelligence. As can be seen from the figure, 
+there is significant increase in the number of events under the missing proton peak (at mass value $0.938~MeV$) for AI assisted
+tracking. The ratios of the two histograms (AI-assisted divided by conventional) can be seen on the bottom row of 
 Figure~\ref{physics:outcome}. As can be seen from the figure the increase in statistics is uniform over the whole range of the 
-missing mass indicating no systematic abnormalities for AI assisted tracking. The ratio also indicates that there is an increase 
-for number of event under the peak for proton, about $15\%$ for $H(e,e'\pi^-X)$ final state and $30-35\%$ for the $H(e,e'\pi^+\pi^-X)$
-final state. Further studies show that increase in statistics for different final states increase with increase of beam current (luminosity) 
-which is consistent with our studies of increased efficiency of single particle reconstruction. 
+missing mass indicating no systematic abnormalities for AI-assisted tracking. The ratio also indicates that there is an increase 
+for the number of events under the peak for proton, about $15\%$ for $H(e,e'\pi^-X)$ final state and $30-35\%$ for the $H(e,e'\pi^+\pi^-X)$
+final state. Further studies show that improvements in statistics are larger for higher luminosity (incident beam current), which is consistent with our studies of increased efficiency of single particle reconstruction.
+%Further studies show that increase in statistics for different final states increase with increase of beam current (luminosity) 
+%which is consistent with our studies of increased efficiency of single particle reconstruction. 
 
 
 \section{Summary}
 
 In this paper we investigated results of analysis of experimental data from CLAS12 detector reconstructed with assistance of Artificial Intelligence
-to identify tracks from the hits in Drift Chambers. This work is based on two Neural Networks developed to classify track candidates from
-given cluster combinations \cite{Gavalian:2020oxg} and to identify missing cluster positions in tracks that do not have complete 6 cluster configuration \cite{Gavalian:2020xmc}. After implementing these networks into CLAS12 reconstruction workflow, the AI was able to identify "good" track candidates 
-and pass them to tracking code to be analyzed parallel to conventional algorithm that chooses "good" track candidates iteratively considering all possible combinations. 
-Our studies showed that AI assisted tracking performs better than conventional track identification algorithm, and leads to track reconstruction efficiency increase of $15\%$ for nominal experimental running conditions (beam current 45 nA). The AI also performs better with increasing background (i.e. with increased incident beam current) and improves the efficiency loss from $0.44\%$ per nA to $0.24\%$ per nA.
+to identify tracks from the hits in drift chambers. This work is based on two neural networks developed to classify track candidates from
+given cluster combinations \cite{Gavalian:2020oxg} and to identify missing cluster positions in tracks that do not have complete 6 cluster configuration \cite{Gavalian:2020xmc}. After implementing these networks into the CLAS12 reconstruction workflow, the AI was able to identify "good" track candidates 
+and pass them to the tracking code to be analyzed parallel to conventional algorithm that chooses "good" track candidates iteratively considering all possible combinations. 
+Our studies showed that AI-assisted tracking performs better than conventional track identification algorithm, and leads to track reconstruction efficiency increase of $15\%$ for nominal experimental running conditions (beam current 45 nA). The AI also performs better with increasing background (i.e. with increased incident beam current) and improves the efficiency loss from $0.44\%$ per nA to $0.24\%$ per nA.
 This increased track reconstruction (identification) efficiency directly impacts the outcome of physics analysis where it increases statistics 
-for physics reactions for $15\%-35\%$ depending on how many particles are detected in the final state and the topology of the reaction. This has big implication on experimental running conditions, since with increased efficiency required statistical significance of the experiment can be reached in shorter time by running at higher beam current (luminosity). Already collected experimental data be re-processed with the AI assisted tracking
-code which can increase the statistics for analyzed data up to $35\%$. Both, future experiments and already completed experiment will benefit 
+for physics reactions for $15\%-35\%$ depending on how many particles are detected in the final state and the topology of the reaction. This has big implication on experimental running conditions, since with increased efficiency the required statistical significance of the experiment can be reached in a shorter time by running at higher beam current (luminosity). Already collected experimental data can be re-processed with the AI-assisted tracking
+code which can increase the statistics for analyzed data up to $35\%$. Both, future experiments and already completed ones will benefit 
 from this novel development.
 
-Another important outcome of this development was reduction in data processing times, since track candidates were identified by Artificial Intelligence 
-there were fewer marginal quality tracks picked to be analyzed and then later dropped due to non convergence of Kalman-Filter, and this leads to tracking code speed-up of $35\%$.
+Another important outcome of this development was a reduction in data processing times. Since track candidates were identified by AI, there were fewer marginal quality tracks picked to be analyzed and then later dropped due to non-convergence of Kalman filter, leading to tracking code speedup  of $35\%$.
 
-Overall we identified that Artificial Intelligence approach to assisting tracking codes is a good approach, it leads to improvements in code speed and 
-efficiency of track reconstruction. Another important aspect of using Artificial Intelligence is that is leads to very small and simple code base, comprised of composing track candidates and feeding them to neural network, and what's also important it keeps improving with constant training with new data.
+Overall we identified that AI assistance in tracking codes is a good approach, and leads to improvements in code speed and 
+efficiency of track reconstruction. Another important aspect of using AI is that is leads to a very small and simple codebase, comprised of composing track candidates and feeding them the the neural networks, and what's also important is that it keeps improving with constant training on new data.
 We intend to continue this development in extending the approach to other tracking detectors of CLAS12, and possibly try to adopt  our approach for other experimental detector setups at Jefferson Lab.
 

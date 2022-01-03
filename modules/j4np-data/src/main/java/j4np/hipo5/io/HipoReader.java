@@ -46,7 +46,6 @@ public class HipoReader {
             new ArrayList<>();
     
     private int readerErrorCode = HipoReader.NO_ERROR;
-    
     protected RandomAccessFile inStreamRandom;
     protected final RecordInputStream inputRecordStream = new RecordInputStream();
     /** File header. */
@@ -279,7 +278,19 @@ public class HipoReader {
         
         while(hasNext()==true){
             nextEvent(event);
-            if(event.scan(_group, _item)>0) return event;
+            try {
+                if(event.scan(_group, _item)>0) return event;
+            } catch (Exception e){
+                 int   eventNumber = eventIndex.getEventNumber();
+                int  recordNumber = eventIndex.getRecordNumber();
+                System.out.printf("(corruption error) : oh no. cant scan the event (%8d, %8d) with length = %d (%X,%d,%d) \n",
+                        recordNumber, eventNumber, event.getEventBufferSize(), 
+                                event.getEventBuffer().getInt(0),
+                                event.getEventBuffer().getInt(0),
+                                event.getEventBuffer().getInt(4)
+                        
+                        );                                
+            }
         }
         event.reset();
         return event;

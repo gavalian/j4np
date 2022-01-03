@@ -14,6 +14,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import twig.config.TStyle;
+import twig.studio.StudioWindow;
 
 /**
  *
@@ -32,16 +33,19 @@ public class TGCanvas extends JFrame implements ActionListener {
     private String     dataCanvasTitle = "canvas";
 
     public TGCanvas(){
+        StudioWindow.changeLook();
         initUI(true);
     }
 
     public TGCanvas(int xsize, int ysize){
+        StudioWindow.changeLook();
         CANVAS_DEFAULT_WIDTH  = xsize;
         CANVAS_DEFAULT_HEIGHT = ysize;
         initUI(true);
     }
     
     public TGCanvas(String name, int xsize, int ysize){
+        StudioWindow.changeLook();
         CANVAS_DEFAULT_WIDTH  = xsize;
         CANVAS_DEFAULT_HEIGHT = ysize;  
         dataCanvasTitle = name;
@@ -49,6 +53,7 @@ public class TGCanvas extends JFrame implements ActionListener {
     }
     
     public TGCanvas(String name, int xsize, int ysize, boolean exitOnClose){
+        StudioWindow.changeLook();
         CANVAS_DEFAULT_WIDTH  = xsize;
         CANVAS_DEFAULT_HEIGHT = ysize;  
         dataCanvasTitle = name;

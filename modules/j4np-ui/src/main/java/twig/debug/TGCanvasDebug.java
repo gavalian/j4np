@@ -19,6 +19,7 @@ import twig.math.DataFitter;
 import twig.math.F1D;
 import twig.math.PDF1D;
 import twig.widgets.PaveText;
+import twig.widgets.PaveText.PaveTextStyle;
 
 /**
  *
@@ -81,7 +82,7 @@ public class TGCanvasDebug {
         text.setTextColor(Color.orange);
         text.addLine("third line in the text - 1.2345");
         text.setFont(new Font("Helvetica",Font.BOLD,20));
-        text.setNDF(true);        
+        text.setNDF(true);
         c.view().region(1).getAxisFrame().addWidget(text);
         
         DataFitter.fit(func, h, "N");
@@ -96,12 +97,12 @@ public class TGCanvasDebug {
         statsPave.setFont(new Font("Helvetica",Font.PLAIN,18));
         statsPave.setTextColor(Color.MAGENTA);
         c.view().region(0).getAxisFrame().addWidget(statsPave);
-        c.view().region().setAxisTicksX(new double[]{0.15,0.35,0.75} , 
+        c.view().region().setAxisTicksX(new double[]{0.15,0.35,0.75} ,
                 new String[]{"0.15","0.35","0.75"});
     }
     
     
-     public static void example3(){
+    public static void example3(){
         
         TGCanvas c = new TGCanvas(500,500);
         
@@ -143,24 +144,65 @@ public class TGCanvasDebug {
         c.repaint();
         
     }
-     
-     public static void debugH2F(){
-         H2F rh = TDataFactory.createH2F(250000,60);
-         //H2F rh = new H2F("",3,-1.0,1.0,3,-1.0,1.0);
-         rh.setBinContent(0, 0, 2);
-         rh.setBinContent(0, 1, 4);
-         rh.setBinContent(1, 1, 6);
-         
-         TGCanvas c = new TGCanvas(600,900);
-         c.view().divide(2, 2);
-         c.view().region(0).draw(rh);
-         c.view().region(1).draw(rh.projectionX());
-         c.view().region(2).draw(rh.projectionY());
-         
-     }
-     
+    
+    public static void debugH2F(){
+        H2F rh = TDataFactory.createH2F(250000,60);
+        //H2F rh = new H2F("",3,-1.0,1.0,3,-1.0,1.0);
+        rh.setBinContent(0, 0, 2);
+        rh.setBinContent(0, 1, 4);
+        rh.setBinContent(1, 1, 6);
+        
+        TGCanvas c = new TGCanvas(600,900);
+        c.view().divide(2, 2);
+        c.view().region(0).draw(rh);
+        c.view().region(1).draw(rh.projectionX());
+        c.view().region(2).draw(rh.projectionY());
+        
+    }
+    
+    
+    public static void fitExample(){
+        
+        
+        TGCanvas c = new TGCanvas(600,550);
+        H1F h = TDataFactory.createH1F(25000, 120, 0, 1, 0.6, 0.05);
+        
+        
+        F1D func = new F1D("func","[p0]+[p1]*x+[amp]*gaus(x,[mean],[sigma])",0.1,0.9);
+        func.setParameters(new double[]{1.,1.,1500,0.5,0.04});
+        
+        func.attr().setLineWidth(3);
+        func.attr().setLineColor(5);
+        //h.attr().setLineColor(3);
+        h.attr().setLineWidth(3);
+        h.attr().setTitleX("Pulse Time (ns)");
+        h.attr().setTitleY("Charge");
+        
+        DataFitter.fit(func, h, "");
+        
+        c.view().region(0).draw(h);
+        c.view().region(0).draw(func,"same");
+        
+        //List<String> stats = func.getStats("M");
+        PaveText    paveStats = new PaveText(func.getStats("M"),0.02,0.68, false,18);
+        paveStats.setNDF(true).setMultiLine(true);
+
+
+        //paveStats.paveStyle = PaveTextStyle.MULTILINE;
+        
+        PaveText   histStats = new PaveText(h.getStats("M"),0.02,0.98,false,18);
+      
+        
+        c.view().region(0).draw(paveStats).draw(histStats);
+        c.repaint();
+    }
+    
     public static void main(String[] args){
         //TGCanvasDebug.example2();
-        TGCanvasDebug.debugH2F();
+        //TGCanvasDebug.debugH2F();
+        
+        TGCanvasDebug.fitExample();
+        
+        
     }
 }

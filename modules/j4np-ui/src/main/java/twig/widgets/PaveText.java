@@ -34,7 +34,9 @@ public class PaveText implements Widget {
     private Color         borderColor = new Color(150,150,150);
     private Color    headerBackground = new Color(250,255,250);
     private String         textHeader = "Info";
-    private List<String>  textStrings = new ArrayList<>();
+    
+    
+    private List<String>            textStrings = new ArrayList<>();
     private List<Point2D.Double>  textPositions = new ArrayList<>();
     
     private LatexText       latexText = new LatexText("a",0,0);
@@ -72,6 +74,19 @@ public class PaveText implements Widget {
         this.latexText.setFont(textFont);
         //setName("pave_text");
         textStrings.add(text);
+        textPositions.add(new Point2D.Double(0.0,0.0));
+    }
+    public PaveText(List<String> text, double x, double y, Boolean boxDraw, int fontSize){
+        //super(x,y);
+        //setBackgroundColor(240,240,240);
+        this.positionX = x;
+        this.positionY = y;
+        this.drawBox = boxDraw;
+        this.fillBox = boxDraw;
+        textFont = new Font("Avenir", Font.PLAIN, fontSize);
+        this.latexText.setFont(textFont);
+        //setName("pave_text");
+        this.addLines(text);
         textPositions.add(new Point2D.Double(0.0,0.0));
     }
     
@@ -120,6 +135,14 @@ public class PaveText implements Widget {
         paveStyle = style; return this;
     }
     
+    public void setMultiLine(boolean flag){
+        if(flag==true){
+            this.paveStyle = PaveTextStyle.MULTILINE;
+        } else {
+            this.paveStyle = PaveTextStyle.ONELINE;
+        }
+    }
+    
     public PaveTextStyle getStyle(){
         return paveStyle;
     }
@@ -132,6 +155,10 @@ public class PaveText implements Widget {
         textStrings.add(line); 
         textPositions.add(new Point2D.Double(0.0,0.0));
         return this;
+    }
+    public void show(){
+        System.out.println("number of lines = " + textStrings.size());
+        for(String line : textStrings) System.out.println("\t--> " + line);
     }
     
     public PaveText setAlign(TextAlign xal, TextAlign yal){
@@ -152,6 +179,12 @@ public class PaveText implements Widget {
     }
     
     public PaveText addLines(String[] lines){
+        for(String line : lines)
+            this.addLine(line);
+        return this;
+    }
+    
+    public PaveText addLines(List<String> lines){
         for(String line : lines)
             this.addLine(line);
         return this;
@@ -197,6 +230,7 @@ public class PaveText implements Widget {
     
     @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
+        //System.out.println("style = " + paveStyle);
         //if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLine(g2d,r,tr);
         if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLineNuevo(g2d,r,tr);
         
@@ -260,7 +294,7 @@ public class PaveText implements Widget {
     }
     
     protected void drawLayerMultiLineNuevo(Graphics2D g2d, Rectangle2D r, Translation2D tr){
-        
+        //System.out.println(" PLOTTING MULTILINE NUEVO");
         //NodeRegion2D bounds = getParent().getBounds();
         //System.out.println("[Pave Text] ---> " + bounds);
         
@@ -307,9 +341,11 @@ public class PaveText implements Widget {
             this.textPositions.get(i).x = xPosMarker;
             this.textPositions.get(i).y = yPos + (tb.getHeight() + textSpacing*tb.getHeight())*0.5;
             if(this.rotation==TextRotate.NONE){
-                latexText.drawString(g2d, (int) xPos, (int) yPos, this.xAlignment,this.yAlignment,0);
+                //System.out.printf("x = %8.1f y = %8.1f\n",xPos,yPos);
+                latexText.drawString(g2d, (int) xPos, (int) (yPos), this.xAlignment,this.yAlignment,0);
             } else {
-                latexText.drawString(textStrings.get(i),g2d, (int) xPos, (int) yPos, this.xAlignment,this.yAlignment,rotation);
+                latexText.drawString(textStrings.get(i),g2d, (int) xPos, (int) yPos, 
+                        this.xAlignment,this.yAlignment,rotation);
             }
             yPos += tb.getHeight() + textSpacing*tb.getHeight();
         }

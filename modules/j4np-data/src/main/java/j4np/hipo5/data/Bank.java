@@ -191,8 +191,7 @@ public class Bank {
     }
     
     public void  reset(){
-        nodeBuffer.putInt(   4, 0);
-        
+        nodeBuffer.putInt(   4, 0);        
     }
         
     public Map<Integer,Integer> getMap(String column){

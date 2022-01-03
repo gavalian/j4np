@@ -2,6 +2,7 @@ package twig.data;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import twig.config.TDataAttributes;
 
@@ -999,8 +1000,12 @@ public class H1F  implements DataSet {
     }
 
     @Override
-    public List<String> getStats(String options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<String> getStats(String options){
+        List<String> stats = new ArrayList<>();
+        stats.add(String.format("entries : %d", this.getEntries()));
+        stats.add(String.format("mean : %.3f", this.getMean()));
+        stats.add(String.format("rms : %.3f", this.getRMS()));
+        return stats;
     }
     
 }

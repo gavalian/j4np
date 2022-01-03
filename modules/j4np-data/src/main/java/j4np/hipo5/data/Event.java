@@ -245,10 +245,16 @@ public class Event {
     public Bank read(Bank node){
         int   group  = node.getSchema().getGroup();
         int    item  = node.getSchema().getItem();
-        int position = this.scan(group, item);
-        if(position>0){
-            read(node,position);
-        } else {
+        try{
+            int position = this.scan(group, item);
+            if(position>0){
+                read(node,position);
+            } else {
+                node.reset();
+            }
+        } catch (Exception e){
+            System.out.printf("(corruption error) : failure to scan event size = %d\n",
+                    this.getEventBufferSize());
             node.reset();
         }
         /*
@@ -318,8 +324,8 @@ public class Event {
         int eventLength = this.eventBuffer.getInt(EVENT_LENGTH_OFFSET);
         //this.eventNodesMap.reset();
         
-        while(position + NODE_HEADER_LENGTH <eventLength){
-            short group = eventBuffer.getShort( position    );
+        while(position + NODE_HEADER_LENGTH < eventLength){
+            short group = eventBuffer.getShort( position  );
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
