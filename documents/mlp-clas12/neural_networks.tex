@@ -1,11 +1,11 @@
 \section{Machine Learning}
 
-The Machine Learning approach was to teach a neural network to recognize good tracks
- from a large list of candidates constructed using one cluster from each super-layer.
- Two neural networks were developed: a classifier that can identify a good track from  6 segment
- track candidates  and an auto-encoder that can take a list of 5 segment tracks and turn them into 6 segment 
+The Machine Learning approach was to train a neural network to recognize good tracks
+ from a large list of candidates, constructed using one cluster from each super-layer.
+ Two neural networks were developed: a classifier that can identify a good track from  6-segment
+ track candidates  and an auto-encoder that can take a list of 5-segment tracks and turn them into 6-segment 
  track candidates by adding a pseudo-segment. The composed 6 super-layer track candidates 
- can be processed with the classifier network to identify and isolate "good" track candidates.
+ can be processed with the classifier network to identify and isolate``good'' track candidates.
 
  %The implementation consisted of two neural networks: a classifier network
  %that can identify good track from  6 segment track candidates  and a auto-encoder that can take a list of
@@ -18,7 +18,7 @@ The Machine Learning approach was to teach a neural network to recognize good tr
  Multi-Layer Perceptron (MLP) \cite{scikitlearn-mlpclassifier}. The study showed that Multi-Layer Perceptron was best suited for 
  CLAS12 reconstruction needs (based on inference speed and accuracy). The implemented architecture is shown on 
  Figure~\ref{mlp:architecture}, where an input layer with 6 nodes is used (each node representing average wire position 
- of the segment in super-layer) and 3 output nodes for the classes "positive track", " negative track" and "false track".
+ of the segment in super-layer) and 3 output nodes for the classes ``positive track'', ``negative track'' and ``false track''.
  
  \begin{figure}[!ht]
 \begin{center}
@@ -33,7 +33,7 @@ The Machine Learning approach was to teach a neural network to recognize good tr
 The network is trained using results from processed data where the conventional algorithm has already 
 identified good tracks (with a cut on $\chi^2$ to select very good quality tracks), which are fed to the network with
 their respective labels (i.e. positive or negative tracks). For false tracks, a combination 
-of segments (6 segments forming a track candidate) that was not identified as a track by the conventional algorithm is chosen.
+of segments (6-segments forming a track candidate) that was not identified as a track by the conventional algorithm is chosen.
 %of segments (6 segments forming a track candidate) is chosen that was not identified as a track by conventional algorithm.
  
  \subsection{Corruption Auto-Encoder}

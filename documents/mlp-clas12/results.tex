@@ -1,13 +1,13 @@
 \section{Analysis of Track Reconstruction with AI}
 
-After the implementation of the track identification service in CLAS12 reconstruction software, the outputs
+After implementing the track identification service in the CLAS12 reconstruction software, the outputs
 from the conventional tracking algorithm and AI-assisted tracking algorithm were analyzed
 event by event to ascertain improvements of tracking. 
  
  \subsection{Particle Reconstruction efficiency}
  
  The Neural Network for track classification was trained on experimental data after it was processed with conventional tracking 
- reconstruction. Tracks that have "good" fit quality and were tracked back to the target were used as training samples for both 
+ reconstruction. Tracks that have ``good'' fit quality and were tracked back to the target were used as training samples for both 
  the MLP classifier and Auto-Encoder corruption-recovery network. For more detailed analysis of tracking reconstruction performance with and without assistance from artificial intelligence we processed one run at nominal luminosity (45 nA) to compare performances.
  
  %The efficiency of track reconstruction was obtained for separate track topologies (6 super-layer and 5 super-layer).
@@ -17,7 +17,7 @@ event by event to ascertain improvements of tracking.
   \includegraphics[width=6.5in]{images/figure_p.pdf}
   \includegraphics[width=6.5in]{images/figure_theta.pdf}
     \includegraphics[width=6.5in]{images/figure_vz.pdf}
-\caption { Comparison of number of tracks reconstructed with the conventional algorithm vs AI-assisted tracking code as a function of momentum, polar angle and particle interaction vertex. The comparison is shown for 5 super-layer, 6 super-layer tracks (left two columns), and the total number (right column).}
+\caption { Comparison of number of tracks reconstructed with the conventional algorithm (filled histograms) vs AI-assisted tracking code (open black outline histograms) as a function of momentum, polar angle and particle interaction vertex. The comparison is shown for 5 super-layer, 6 super-layer tracks (left two columns), and the total number (right column).}
  \label{track:efficiency}
  \end{center}
 \end{figure}
@@ -49,8 +49,8 @@ The results are shown on Figure~\ref{track:efficiency}, where dependence of numb
  \label{tbl:summary}
  \end{table}
  
-The comparison of 5 super-layer and 6 super-layer track statistics and their relative gain is summarized in Table~\ref{tbl:summary}.
-As can be seen from the table the gain in only 6 super-layer tracks is about $5.7\%$ but with significant gain in 5 super-layer tracks 
+The comparison of 5 and 6-segment track statistics and their relative gain is summarized in Table~\ref{tbl:summary}.
+As can be seen from the table the gain in only 6-segment tracks is about $5.7\%$ but with significant gain in 5 super-layer tracks 
 the overall gain in reconstructed tracks elevates to $>15\%$. These results are intuitive since track candidates composed of 5
 super-layers with the same number of clusters in each super-layer are significantly higher than 6 super-layer track candidates, and 
 in our tests AI performs better in choosing the right combination with increasing combinatorics.
@@ -117,7 +117,7 @@ there is a visible peak of a missing proton that we can use to measure the impac
  \begin{figure}[!ht]
 \begin{center}
  \includegraphics[width=6.0in]{images/physics_scan.pdf}
-\caption {Architecture of corruption fixing Auto-Encoder.}
+\caption {Reconstructed missing mass distribution for $H(e,e'\pi^-X)$ and $H(e,e'\pi^+\pi^-X)$ reactions (top row) using the conventional track reconstruction algorithm (filled histogram) and  AI-assisted track reconstruction (black line histogram). The ratios of the two histograms are shown on the bottom row. }
  \label{physics:outcome}
  \end{center}
 \end{figure}
@@ -140,17 +140,17 @@ final state. Further studies show that improvements in statistics are larger for
 
 In this paper we investigated results of analysis of experimental data from CLAS12 detector reconstructed with assistance of Artificial Intelligence
 to identify tracks from the hits in drift chambers. This work is based on two neural networks developed to classify track candidates from
-given cluster combinations \cite{Gavalian:2020oxg} and to identify missing cluster positions in tracks that do not have complete 6 cluster configuration \cite{Gavalian:2020xmc}. After implementing these networks into the CLAS12 reconstruction workflow, the AI was able to identify "good" track candidates 
-and pass them to the tracking code to be analyzed parallel to conventional algorithm that chooses "good" track candidates iteratively considering all possible combinations. 
+given cluster combinations \cite{Gavalian:2020oxg} and to identify missing cluster positions in tracks that do not have complete 6 cluster configuration \cite{Gavalian:2020xmc}. After implementing these networks into the CLAS12 reconstruction workflow, the AI was able to identify ``good'' track candidates 
+and pass them to the tracking code to be analyzed parallel to conventional algorithm that chooses``good'' track candidates iteratively considering all possible combinations. 
 Our studies showed that AI-assisted tracking performs better than conventional track identification algorithm, and leads to track reconstruction efficiency increase of $15\%$ for nominal experimental running conditions (beam current 45 nA). The AI also performs better with increasing background (i.e. with increased incident beam current) and improves the efficiency loss from $0.44\%$ per nA to $0.24\%$ per nA.
 This increased track reconstruction (identification) efficiency directly impacts the outcome of physics analysis where it increases statistics 
-for physics reactions for $15\%-35\%$ depending on how many particles are detected in the final state and the topology of the reaction. This has big implication on experimental running conditions, since with increased efficiency the required statistical significance of the experiment can be reached in a shorter time by running at higher beam current (luminosity). Already collected experimental data can be re-processed with the AI-assisted tracking
+for physics reactions for $15\%-35\%$ depending on how many particles are detected in the final state and the topology of the reaction. This has significant implication on experimental running conditions since with increased efficiency the required statistical significance of the experiment can be reached in a shorter time by running at higher beam current (luminosity). Already collected experimental data can be re-processed with the AI-assisted tracking
 code which can increase the statistics for analyzed data up to $35\%$. Both, future experiments and already completed ones will benefit 
 from this novel development.
 
 Another important outcome of this development was a reduction in data processing times. Since track candidates were identified by AI, there were fewer marginal quality tracks picked to be analyzed and then later dropped due to non-convergence of Kalman filter, leading to tracking code speedup  of $35\%$.
 
 Overall we identified that AI assistance in tracking codes is a good approach, and leads to improvements in code speed and 
-efficiency of track reconstruction. Another important aspect of using AI is that is leads to a very small and simple codebase, comprised of composing track candidates and feeding them the the neural networks, and what's also important is that it keeps improving with constant training on new data.
-We intend to continue this development in extending the approach to other tracking detectors of CLAS12, and possibly try to adopt  our approach for other experimental detector setups at Jefferson Lab.
+efficiency of track reconstruction. Another important aspect of using AI is that is leads to a very small and simple codebase, comprised of composing track candidates and feeding them the neural networks, and what's also important is that it keeps improving with constant training on new data.
+We intend to continue this development in extending the approach to other tracking detectors of the CLAS12, and possibly try to adapt  our approach for other experimental detector setups at Jefferson Lab.
 
