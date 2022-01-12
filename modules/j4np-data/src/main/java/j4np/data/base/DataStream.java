@@ -112,7 +112,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
             int nframe = source.nextFrame(frame);
             long now = System.nanoTime();            
             timeReadFrame += (now-then);
-            
+            progress.updateStatus();
             if(nframe!=frameSize) keepGoing = false;
             Stream<T> stream = frame.getParallelStream();
             
