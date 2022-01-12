@@ -5,6 +5,8 @@
  */
 package j4np.hipo5.data;
 
+import j4np.data.base.DataEvent;
+import j4np.data.base.DataNode;
 import j4np.hipo5.data.Schema.SchemaBuilder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,7 +19,7 @@ import java.util.Map;
  *
  * @author gavalian
  */
-public class Event {
+public class Event implements DataEvent {
     
     private ByteBuffer             eventBuffer = null;
     
@@ -487,6 +489,37 @@ public class Event {
            int position = eventNodesMap.getPosition(keys[i]);
            System.out.println(String.format("\t%8d %4d : position = %8d", group,item,position));
         }
+    }
+
+    @Override
+    public void getAt(DataNode node, int position) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ByteBuffer getBuffer() {
+        return this.eventBuffer;
+    }
+
+    @Override
+    public int bufferLength() {
+        return this.bufferLength();
+    }
+
+    @Override
+    public boolean allocate(int size) {
+        this.require(size); return true;
+    }
+
+    @Override
+    public int identifier() {
+        return this.eventBuffer.getInt(0);
+    }
+
+    @Override
+    public boolean verify() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
     
     public static class EventNodes {

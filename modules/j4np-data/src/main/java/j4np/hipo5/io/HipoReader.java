@@ -5,6 +5,9 @@
  */
 package j4np.hipo5.io;
 
+import j4np.data.base.DataEvent;
+import j4np.data.base.DataFrame;
+import j4np.data.base.DataSource;
 import j4np.hipo5.base.Reader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,7 +40,7 @@ import j4np.hipo5.utils.HipoLogos;
  *
  * @author gavalian
  */
-public class HipoReader {
+public class HipoReader implements DataSource {
     
     public static int      NO_ERROR = 1;
     public static int ERROR_NOINDEX = 2;
@@ -680,4 +683,46 @@ public class HipoReader {
         System.out.println("events processed = " + nevents + " operations = " + nops);
         System.out.println(bench.toString());*/
     }
+
+    @Override
+    public boolean next(DataEvent event) {
+        if(this.hasNext()==true){
+            this.nextEvent((Event) event); return true;
+        } 
+        return false;
+    }
+
+    @Override
+    public int position() {
+        return this.eventIndex.getEventNumber();
+    }
+
+    @Override
+    public boolean position(int pos) {
+        this.eventIndex.setEvent(pos); return true;
+    }
+
+    @Override
+    public int entries() {
+        return this.getEventCount();
+    }
+
+    @Override
+    public int nextFrame(DataFrame frame) {
+
+        int frameSize = frame.getCount();
+        int   counter = 0;
+        
+        for(int i = 0; i < frameSize; i++){
+            Event event = (Event) frame.getEvent(i);        
+            if(this.hasNext()==true){
+                this.nextEvent(event);
+                counter++;
+            } else {
+                event.reset();
+            }
+        }
+        return counter;        
+    }
+    
 }

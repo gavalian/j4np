@@ -414,6 +414,18 @@ public class H1F  implements DataSet {
         }
         return integral;
     }
+    
+    public double area(double min, double max){
+        double integral = 0.0;
+        for(int loop = 0; loop < xAxis.getNBins(); loop++){
+            double center = xAxis.getBinCenter(loop);
+            if(center>=min&&center<=max){
+                integral += this.getBinContent(loop);
+                //integral += this.histogramData[loop];
+            }
+        }
+        return integral;
+    }
     /**
      * Initializes the double arrays for the histogram data and data errors.
      * 

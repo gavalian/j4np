@@ -33,8 +33,6 @@ public class EvioEvent extends BaseStructure implements DataEvent {
         BUFFERSIZE_POSITION = 0;
     }
 
-
-
     
     public void setCallback(DataNodeCallback cb){
         this.callback = cb;

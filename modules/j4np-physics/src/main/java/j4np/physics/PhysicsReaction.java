@@ -108,8 +108,7 @@ public class PhysicsReaction extends Tree {
         return true;
     }
     
-    public void    apply(PhysicsEvent event){
-        
+    public void    apply(PhysicsEvent event){        
         for(VectorOperator op : vecOprators){
             op.apply(event);
         }
@@ -239,14 +238,31 @@ public class PhysicsReaction extends Tree {
         
         //LorentzVector vcm = LorentzVector.withPxPyPzM(0, 0, 10.6, 0.0005).add(0, 0, 0, 0.938);
         
-        HipoReader r = new HipoReader("/Users/gavalian/Work/temp/dis_fmc_1.hipo");        
+        //HipoReader r = new HipoReader("/Users/gavalian/Work/temp/dis_fmc_1.hipo");  
+        //HipoReader r = new HipoReader("/Users/gavalian/Work/dataspace/denoise/out.ev.hipo_rec.hipo"); 
+        HipoReader r = new HipoReader("/Users/gavalian/Work/dataspace/denoise/rec_output_filtered.hipo");
         PhysicsReaction react = new PhysicsReaction("11:211:-211",10.6);
         
         react.addVector(react.getVector(), "-[11]-[211]-[-211]")
                 .addEntry("mxepipi", 0, OperatorType.MASS);
         
-        react.setDataSource(r, "rec::event");        
-        H1F h = react.geth("mxepipi", "", 120, 0., 3.2);
+        //react.setDataSource(r, "rec::event");        
+        react.setDataSource(r, "REC::Particle");
+        
+        react.addModifier(new EventModifier(){
+            @Override
+            public void modify(PhysicsEvent event) {
+                int counter = event.count();
+                for(int i = 0; i < counter ; i++){
+                    int status = event.status(i);
+                    if(Math.abs(status)>=2000&&Math.abs(status)<3000){
+                        event.status(i, 1);
+                    } else { event.status(i, -1);}
+                }
+            }
+        });
+        
+        H1F h = react.geth("mxepipi", "", 80, 0.6, 1.8);
         
         TGCanvas c = new TGCanvas();
         c.view().region().draw(h);

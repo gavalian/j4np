@@ -5,6 +5,8 @@
  */
 package j4np.hipo5.io;
 
+import j4np.data.base.DataEvent;
+import j4np.data.base.DataSync;
 import j4np.hipo5.base.HeaderType;
 import j4np.hipo5.base.Reader;
 import j4np.hipo5.base.RecordOutputStream;
@@ -26,7 +28,7 @@ import java.util.Map;
  *
  * @author gavalian
  */
-public class HipoWriter implements AutoCloseable {
+public class HipoWriter implements DataSync {
     
     private Writer               writer = null;
     private int       maximumRecordSize = 8*1024*1024;
@@ -86,7 +88,7 @@ public class HipoWriter implements AutoCloseable {
         return flag;
     }
     
-    public final void open(String filename){
+    public final boolean open(String filename){
         
         writer = new Writer( HeaderType.HIPO_FILE, // this write HIPO in the 
                 // first bytes of the file
@@ -120,7 +122,7 @@ public class HipoWriter implements AutoCloseable {
         if(this.rewriteMode.compareToIgnoreCase("recreate")==0){
             writer.setRewriteMode(true);
         }
-        writer.open(filename,userHeader);
+        writer.open(filename,userHeader); return true;
     }
     
     private void addOutputStream(long id){
@@ -244,6 +246,11 @@ public class HipoWriter implements AutoCloseable {
         System.out.printf("Writer<5>: time event copy   (sec): %14.3f\n",timeCopy);
         System.out.printf("Writer<5>: time compression  (sec): %14.3f\n",timeComp);        
         System.out.println("***");
+    }
+
+    @Override
+    public boolean add(DataEvent event) {
+        this.addEvent((Event) event); return true;
     }
     
     public static class WriterBucketConfiguration {

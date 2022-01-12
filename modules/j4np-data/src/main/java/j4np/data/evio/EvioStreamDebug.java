@@ -6,6 +6,7 @@
 package j4np.data.evio;
 
 import j4np.data.base.DataFrame;
+import j4np.data.base.DataSourceFrame;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -60,18 +61,18 @@ public class EvioStreamDebug {
         
     }
     
-    public static void run(DataFrame frame, Consumer consumer){
+    public static void run(DataSourceFrame frame, Consumer consumer){
         Stream<EvioEvent>  stream = frame.getStream();
         stream.forEach(consumer);
     }
     
-    public static void runParallel(DataFrame frame, Consumer consumer){
+    public static void runParallel(DataSourceFrame frame, Consumer consumer){
         Stream<EvioEvent>  stream = frame.getParallelStream();
         stream.forEach(consumer);
     }
     
     public static void benchmarkEvioStream(String filename, Consumer consumer, int nframe, int threads){
-        DataFrame<EvioFile,EvioEvent> frame = new DataFrame();
+        DataFrame<EvioEvent> frame = new DataFrame();
         for(int i = 0; i < nframe; i++) frame.addEvent(new EvioEvent(128));
         
         EvioFile  reader = new EvioFile();

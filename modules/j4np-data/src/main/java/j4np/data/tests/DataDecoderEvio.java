@@ -7,6 +7,7 @@ package j4np.data.tests;
 
 import j4np.data.base.DataEvent;
 import j4np.data.base.DataFrame;
+import j4np.data.base.DataSourceFrame;
 import j4np.data.base.DataNodeCallback;
 import j4np.data.base.DataUtils;
 import j4np.data.evio.EvioEvent;
@@ -150,7 +151,7 @@ public class DataDecoderEvio implements DataNodeCallback,Consumer<EvioEvent> {
     public static void benchmark(String filename, int nframe, int nthreads){
         
         //String filename = "/Users/gavalian/Work/DataSpace/evio/clas_003852.evio.981";
-        DataFrame<EvioFile,EvioEvent> frame = new DataFrame();
+        DataFrame<EvioEvent> frame = new DataFrame();
         
         for(int i = 0; i < nframe; i++) frame.addEvent(new EvioEvent(128));
         

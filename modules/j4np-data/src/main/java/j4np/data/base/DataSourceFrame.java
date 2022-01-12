@@ -13,14 +13,14 @@ import java.util.stream.Stream;
  *
  * @author gavalian
  */
-public class DataFrame<T extends DataEvent> {
+public class DataSourceFrame<R extends DataSource,T extends DataEvent> {
     
     private int     numberOfThreads = 1;
     private int       numberOfCores = 1;
     private List<T>       eventList = new ArrayList<>();
     
     
-    public DataFrame(){
+    public DataSourceFrame(){
         initThreading();
     }
     
