@@ -62,7 +62,7 @@
   <distributionManagement>
     <repository>
       <id>ssh-clasweb</id>
-      <url>scpexe://clas12@jlabl1.jlab.org/group/clas/www/clasweb/html/j4np/maven</url>
+      <url>scpexe://jlabl1.jlab.org/group/clas/www/clasweb/html/clas12maven/j4np/maven</url>
     </repository>
   </distributionManagement>
 
