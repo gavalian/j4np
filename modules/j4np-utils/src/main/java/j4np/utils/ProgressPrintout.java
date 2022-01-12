@@ -74,6 +74,18 @@ public class ProgressPrintout {
         }
     }
     
+    public void updateStatus(int increment){
+        this.numberOfCalls += increment;
+        Long currentTime   = System.currentTimeMillis();
+        Double elapsedTime = (currentTime - this.previousPrintoutTime)*1e-3;
+        //System.out.println("elapsed = " + elapsedTime);
+        if(elapsedTime>=this.printoutIntervalSeconds){
+            this.previousPrintoutTime = System.currentTimeMillis();
+            //System.out.println(" passed time ");
+            System.out.println(this.getUpdateString());
+        }
+    }
+    
     public static String timeStringFromNano(long nsec){
         double msec = (nsec)*1e-6;
         if(msec<1000) return String.format("%d msec", (int) msec);
