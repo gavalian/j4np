@@ -98,6 +98,9 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
     public void run(){
         
         int frameSize = frame.getCount();
+        System.out.printf("\n\n****************************\n");
+        System.out.printf("* Initialize Thread POOL # %d\n",numberOfThreads);
+        System.out.printf("****************************\n");
         streamPool = new ForkJoinPool(numberOfThreads);
         
         boolean keepGoing = true;
@@ -156,7 +159,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
             public final AtomicInteger counter = new AtomicInteger(0);
             private Schema  schema = null;
             @Override
-            public void execute(Event e) {
+            public void execute(Event e) {                
                 Bank b = new Bank(schema);
                 e.read(b);
                 int pid = b.getInt("pid", 0);
@@ -165,6 +168,13 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
                     int howMany = counter.intValue();
                     counter.set(howMany+1);
                 }
+                
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DataStream.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
             }           
 
             @Override
@@ -180,7 +190,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
         };
         
         for(int i = 0; i < 8; i++){ frame.addEvent(new Event());}
-        str.threads(1);
+        str.threads(4);
         str.withSource(source).withFrame(frame).consumer(worker).run();
         
         str.show();
