@@ -17,7 +17,7 @@
 \author[2]{Angelos Angelopoulos}
 \author[2]{Nikos Chrisochoides}
 \author[3]{Raffaella De Vita}
-\author[1]{Veronique Ziegler}
+%\author[1]{Veronique Ziegler}
 
 % \affiliation[1]{organization={CRTC, Department of Computer Science, Old Dominion University}, city={Norfolk, VA}, country={USA}}
 \address[1]{Jefferson Lab, Newport News, VA, USA}
@@ -32,10 +32,8 @@
 %\begin{titlepage}
 \begin{abstract}
 
-  In this article we describe the implementation of Artificial Intelligence models in track reconstruction software for the CLAS12 detector at Jefferson Lab.
- The Artificial Intelligence based approach resulted in improved track reconstruction efficiency in high luminosity experimental conditions.  The track
- reconstruction efficiency increased by $15\%$ for single particle, and statistics in multi-particle physics reactions increased by $15\%-35\%$ depending 
- on the number of particles in the reaction. The implementation of artificial intelligence in the workflow also resulted in code speedup of $35\%$.
+In this article we present results of using Artificial Intelligence in CLAS12 tracking software. Several neural networks are used to aid tracking algorithms: drift chamber de-noising for background reduction, track candidate classification based on clusters in drift chamber regions and inefficiency recovery auto encoder. The implementation of neural networks in the data reconstruction workflow increased outcome of experimental measured quantities by $15-35\%$ for standard running conditions. This saves \$5M USD annually.
+
 \end{abstract}
 %\end{titlepage}
 \maketitle
@@ -43,9 +41,11 @@
 
 \input{introduction}
 
-\input{datanalysis}
+\input{data_description}
 
-\input{datanalysis_ai}
+\input{data_analysis_dn}
+
+\input{data_analysis_dn_ai}
 %\input{results}
 
 \newpage
