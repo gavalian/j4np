@@ -6,32 +6,36 @@
 //import org.jlab.jnp.groot.settings.*;
 import java.awt.Font;
 
+
 int marker_size = 12;
 
-GraphErrors convOut = new GraphErrors("conv",
+GraphErrors convOutP = new GraphErrors("conv",
                   new double[] {1.0,45.0,95.0,150.0},
-                  new double[]{1.0,0.593,0.347,0.047},
+                  new double[]{1.0970,0.9626,0.8182,0.7169},
                   new double[]{0.0009,0.0007,0.0004,0.0005}
                   );
 
-GraphErrors  dnOut = new GraphErrors("dn",
+GraphErrors  dnOutP = new GraphErrors("dn",
                   new double[] {1.0,45.0,95.0,150.0},
-                  new double[]{1.0,0.813,0.604,0.351},
+                  new double[]{1.0970,1.0106,0.9127,0.7982},
                   new double[]{0.0009,0.0006,0.0004,0.0004}
                   );
 
-GraphErrors  aiOut = new GraphErrors("ai",
+GraphErrors  aiOutP = new GraphErrors("ai",
                   new double[] {1.0,45.0,95.0,150.0},
-                  new double[]{1.0,0.857,0.677,0.476},
+                  new double[]{1.0970,1.0595,0.9871,0.8942},
                   new double[]{0.0009,0.0006,0.0004,0.0004}
                   );
 
 TStyle.getInstance().getPalette().setColorScheme("gold10");
 
 
-TGCanvas c = new TGCanvas("figure_2",400,650);
+GraphErrors convOut = convOutP.divide(1.0970);
+GraphErrors   dnOut = dnOutP.divide(1.0970);
+GraphErrors   aiOut = aiOutP.divide(1.0970);
+
+TGCanvas c = new TGCanvas("figure_2",600,540);
 c.view().divide(1,1);
-c.view().left(60).right(20).top(10).bottom(50);
 
 setStyle1x1(c,10,10);
 convOut.attr().setTitleX("Beam Current (nA)");
@@ -52,7 +56,7 @@ aiOut.attr().setLineColor(12);
 aiOut.attr().setMarkerStyle(4);
 aiOut.attr().setMarkerSize(marker_size);
 
-c.view().region().draw(convOut,"PL").draw(dnOut,"samePL");//.draw(aiOut,"samePL");
+c.view().region().draw(convOut).draw(dnOut,"same").draw(aiOut,"same");
 
 F1D line = new F1D("line","[a]",0.0,160);
 line.setParameter(0,1.0);
@@ -84,10 +88,10 @@ DataFitter.fit(convF1,convOut,"N");
 DataFitter.fit(dnF1,dnOut,"N");
 DataFitter.fit(aiF1,aiOut,"N");
 
-//c.view().cd(0).region().draw(line,"same").draw(convF1,"samePL").draw(dnF1,"samePL").draw(aiF1,"same");
+c.view().cd(0).region().draw(line,"same").draw(convF1,"same").draw(dnF1,"same").draw(aiF1,"same");
 
 c.view().cd(0).region().getAxisFrame().getAxisX().setFixedLimits(0.0,160.0);
-c.view().cd(0).region().getAxisFrame().getAxisY().setFixedLimits(0.0,1.11);
+c.view().cd(0).region().getAxisFrame().getAxisY().setFixedLimits(0.5,1.11);
 
 String text1 = String.format("f_c=%.2f%.6fx",convF1.getParameter(0),convF1.getParameter(1));
 String text2 = String.format("f_d=%.2f%.6fx",dnF1.getParameter(0),dnF1.getParameter(1));
@@ -114,14 +118,14 @@ t3.setDrawBox(false);
 t3.setFillBox(false);
 t3.setFont(new Font("Avenir",Font.PLAIN,20));
 
-PaveText ta = new PaveText("a)",0.9,1.0);
+PaveText ta = new PaveText("a)",0.92,1.0);
 ta.setNDF(true);
 ta.setDrawBox(false);
 ta.setFillBox(false);
 ta.setFont(new Font("Avenir",Font.PLAIN,20));
-c.view().cd(0).region().draw(ta);
-//c.view().cd(0).region().draw(t1).draw(t2).draw(t3).draw(ta);
+
+c.view().cd(0).region().draw(t1).draw(t2).draw(t3).draw(ta);
 
 c.repaint();
 
-c.view().export("figure_phys_scan.pdf","pdf");
+c.view().export("figure_lscan_pos_with_ai.pdf","pdf");

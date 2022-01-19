@@ -29,8 +29,10 @@ GraphErrors  aiOut = new GraphErrors("ai",
 TStyle.getInstance().getPalette().setColorScheme("gold10");
 
 
-TGCanvas c = new TGCanvas("figure_2",600,540);
+TGCanvas c = new TGCanvas("figure_2",400,650);
+
 c.view().divide(1,1);
+c.view().left(60).right(20).top(10).bottom(50);
 
 setStyle1x1(c,10,10);
 convOut.attr().setTitleX("Beam Current (nA)");
@@ -113,14 +115,14 @@ t3.setDrawBox(false);
 t3.setFillBox(false);
 t3.setFont(new Font("Avenir",Font.PLAIN,20));
 
-PaveText ta = new PaveText("a)",0.92,1.0);
+PaveText ta = new PaveText("a)",0.9,1.0);
 ta.setNDF(true);
 ta.setDrawBox(false);
 ta.setFillBox(false);
 ta.setFont(new Font("Avenir",Font.PLAIN,20));
 
-c.view().cd(0).region().draw(t1).draw(t2).draw(t3).draw(ta);
-
+//c.view().cd(0).region().draw(t1).draw(t2).draw(t3).draw(ta);
+c.view().cd(0).region().draw(ta);
 c.repaint();
 
 c.view().export("figure_phys_scan_ai.pdf","pdf");
