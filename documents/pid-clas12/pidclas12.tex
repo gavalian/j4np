@@ -1,0 +1,57 @@
+\documentclass[preprint,12pt]{elsarticle}
+\usepackage{graphicx}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{color, colortbl}
+\usepackage{hyperref}
+\usepackage{float}
+% \usepackage[affil-it]{authblk}
+\usepackage{subcaption}
+\newcommand{\note}[1]{\textcolor{blue}{#1}}
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\definecolor{LightRose}{rgb}{1,0.88,0.88}
+\definecolor{LightGreen}{rgb}{0.88,1,0.88}
+
+\title{Particle Identification in CLAS12 using Artificial Intelligence}
+\author[1]{Gagik Gavalian}
+%\author[2]{Polykarpos Thomadakis }
+%\author[2]{Angelos Angelopoulos}
+%\author[1]{Veronique Ziegler}
+%\author[1]{Raffella De Vita}
+%\author[2]{Nikos Chrisochoides}
+
+% \affiliation[1]{organization={CRTC, Department of Computer Science, Old Dominion University}, city={Norfolk, VA}, country={USA}}
+\address[1]{Jefferson Lab, Newport News, VA, USA}
+\address[2]{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
+%Authored by Jefferson Science Associates, LLC under U.S. DOE Contract No. DE-AC05-06OR23177. The U.S. Government retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or reproduce this manuscript for U.S. Government purposes.
+
+%\fntext[fn1]{Authors contributed equally.}
+%\fntext[fn2]{Correspoding author, \textit{gavalian@jlab.org}}
+
+
+\begin{document}
+
+%\begin{titlepage}
+
+\begin{abstract}
+
+  In this article we describe implementation of Artificial Intelligence models in track reconstruction software for CLAS12 detector at Jefferson Lab.
+ The Artificial Intelligence based approach resulted in improved track reconstruction efficiency in high luminosity experimental conditions.  The track
+ reconstruction efficiency increased by $15\%$ for single particle, and statistics in multi-particle physics reactions increased by $15\%-35\%$ depending 
+ on number of particles in the reaction. Implementation of artificial intelligence in workflow also resulted in code speedup of $35\%$.
+\end{abstract}
+%\end{titlepage}
+\maketitle
+
+
+%\input{introduction}
+\input{calorimeter}
+
+
+\section{Acknowledgments}
+This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Nuclear Physics under contract DE-AC05-06OR23177, and NSF grant no. CCF-1439079 and the Richard T. Cheng Endowment. 
+ 
+\newpage
+\bibliography{references}
+\bibliographystyle{ieeetr}
+
+\end{document}
