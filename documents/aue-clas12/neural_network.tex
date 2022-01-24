@@ -1,0 +1,13 @@
+\section{Neural Network}
+
+The Convolutional Auto-Encoder was used to de-noise raw data from CLAS12 drift chambers~\cite{Thomadakis:2022zcd}. The input and output for the network are matrices of size 36x112. The training data was extracted from experimental data. The raw hits (converted into a matrix) were used as an input for the neural network and a matrix constructed only from hits that belong to reconstructed tracks an output. In training data set multiple track hits were allowed in the output matrix. The structure of neural network can be seen on Figure~\ref{network:cnn_encoder}.
+
+\begin{figure}[!h]
+\begin{center}
+ \includegraphics[width=5.1in]{images/convolutional-autoencoder.png}
+\caption {De-noising neural network architecture.}
+ \label{network:cnn_encoder}
+ \end{center}
+\end{figure}
+
+For out implementation we used TensorFlow/Keras~\cite{keras-website} to train and evaluate the network. The resulting network parameters (weights) were saved in HDF5 file. The de-noiser implementation for CLAS12 reconstruction software is done using DeepLearning4J~\cite{dl4j-website} which supports model imports through HDF5 files. 

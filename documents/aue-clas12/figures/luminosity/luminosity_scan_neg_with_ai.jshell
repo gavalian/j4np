@@ -128,4 +128,4 @@ c.view().cd(0).region().draw(t1).draw(t2).draw(t3).draw(ta);
 
 c.repaint();
 
-c.view().export("figure_lscan_neg_with_ai.pdf","pdf");
+c.view().export("figure_lscan_neg_ai.pdf","pdf");
