@@ -108,7 +108,7 @@ public class PhysicsReaction extends Tree {
         return true;
     }
     
-    public void    apply(PhysicsEvent event){        
+    public void    apply(PhysicsEvent event){
         for(VectorOperator op : vecOprators){
             op.apply(event);
         }
@@ -184,6 +184,12 @@ public class PhysicsReaction extends Tree {
         reader.rewind();
     }
 
+    public void read(Event event){
+        physicsEvent.read(event);
+        for(EventModifier m : modifiers) m.modify(physicsEvent);        
+        apply(physicsEvent);        
+    }
+    
     @Override
     public boolean next() {
         if(reader.hasNext()==false) return false;

@@ -7,6 +7,8 @@ package j4np.utils.io;
 
 import j4np.utils.dsl.DSLSystem;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,42 +131,26 @@ public class OptionStore {
         }
     }
     
-    public static List<String> scanClasses(){
+    public static List<String> scanClasses(String pack){
        
         List<String> clazzList = new ArrayList<>();
         
-        Reflections reflections = new Reflections("j4np", new SubTypesScanner(false));
+        Reflections reflections = new Reflections(pack, new SubTypesScanner(false));
         
         Set<String> clazzSet = reflections.getAllTypes();
         
-        for(String clazz : clazzSet){
-            System.out.println("---> " + clazz);
-            
-            try {
-                Class instance = Class.forName(clazz);
-                System.out.println("---> " + clazz + " is intance = " + instance.isInstance(OptionExecutor.class));
-                
-                if(instance.isInstance(OptionExecutor.class)){                    
-                    clazzList.add(clazz);
-                }
-                //classList.add(clazz.getName());
-                //System.out.printf(" :: %s\n",clazz.getName());
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(OptionStore.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        Reflections reflectionsML = new Reflections("j4ml", new SubTypesScanner(false));
-        
-        Set<String> clazzSetML = reflectionsML.getAllTypes();
-        
-        for(String clazz : clazzSetML){
-            
+        List<String>  clazzSetList = new ArrayList<>();
+        for(String item : clazzSet) clazzSetList.add(item);
 
+        Collections.sort(clazzSetList);
+        
+        for(String clazz : clazzSetList){
+            //System.out.println("---> " + clazz);            
             try {
                 Class instance = Class.forName(clazz);
-                System.out.println("---> " + clazz + " is intance = " + instance.isInstance(OptionExecutor.class));
-                if(instance.isInstance(OptionExecutor.class)){                    
+                System.out.println("---> " + clazz + " is intance = " + instance.isInstance(OptionApplication.class));
+                
+                if(instance.isInstance(OptionApplication.class)){                    
                     clazzList.add(clazz);
                 }
                 //classList.add(clazz.getName());
@@ -173,8 +159,11 @@ public class OptionStore {
                 Logger.getLogger(OptionStore.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
         return clazzList;
+    }
+    
+    public static List<String> scanClasses(){
+        return OptionStore.scanClasses("j4np");
     }
     
     public static void main(String args[]){

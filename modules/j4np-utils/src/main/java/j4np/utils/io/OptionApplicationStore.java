@@ -22,14 +22,14 @@ public class OptionApplicationStore {
     }
     
     public OptionApplicationStore addApplication(OptionApplication app){
-        optionsApps.put(app.getKey(), app); return this;
+        optionsApps.put(app.getAppName(), app); return this;
     }
     
     public void init(){
         for(Map.Entry<String,OptionApplication> entry : optionsApps.entrySet()){
-            optionsStore.addCommand(entry.getValue().getKey(), entry.getValue().getDescription());
+            optionsStore.addCommand(entry.getValue().getAppName(), entry.getValue().getDescription());
             OptionParser parser = optionsStore.getOptionParser(entry.getKey());
-            entry.getValue().init(parser);
+            //entry.getValue().init(parser);
         }
     }
     
@@ -38,7 +38,7 @@ public class OptionApplicationStore {
         String command = optionsStore.getCommand();
         if(optionsApps.containsKey(command)==true){
             OptionApplication app = optionsApps.get(command);
-            app.run(optionsStore.getOptionParser(command));
+            //app.run(optionsStore.getOptionParser(command));
         } else {
             System.out.println("\n>>> application error : unknown command ["+command+"]");
         }

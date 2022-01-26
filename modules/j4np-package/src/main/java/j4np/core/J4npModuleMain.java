@@ -130,8 +130,8 @@ public class J4npModuleMain {
     }
     public static void main(String[] args){
         if(args.length<1){
-            //J4npModuleMain.scan(); return;
-            J4npModuleMain.test();return;            
+            J4npModuleMain.scan(); return;
+            //J4npModuleMain.test();return;            
         } 
         
         J4npModuleMain.execute(args);

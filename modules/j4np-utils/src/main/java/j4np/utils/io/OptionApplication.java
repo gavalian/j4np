@@ -9,9 +9,21 @@ package j4np.utils.io;
  *
  * @author gavalian
  */
-public interface OptionApplication {
-    public String getKey();
-    public String getDescription();
-    public void   init(OptionParser parser);
-    public void   run(OptionParser parser);
+public abstract class OptionApplication {
+    
+    private OptionStore store = new OptionStore();
+    private String    appName = "unknown";
+    
+    public OptionApplication(String name){
+        appName = name;        
+    }
+    
+    public String      getAppName(){
+        return appName;
+    }
+    
+    public OptionStore getOptionStore(){ return store;}
+    
+    public abstract String   getDescription();
+    public abstract boolean  execute(String[] args);
 }
