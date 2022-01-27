@@ -4,6 +4,10 @@
 V.~Burkert {\em et~al.}, ``{The CLAS12 Spectrometer at Jefferson Laboratory},''
   {\em Nucl. Instrum. Meth. A}, vol.~959, p.~163419, 2020.
 
+\bibitem{Mestayer:2020saf}
+M.~Mestayer {\em et~al.}, ``{The CLAS12 drift chamber system},'' {\em Nucl.
+  Instrum. Meth. A}, vol.~959, p.~163518, 2020.
+
 \bibitem{Gavalian:2020oxg}
 G.~Gavalian, P.~Thomadakis, A.~Angelopoulos, V.~Ziegler, and N.~Chrisochoides,
   ``{Using Artificial Intelligence for Particle Track Identification in CLAS12
@@ -31,12 +35,25 @@ V.~Gyurjyan, D.~Abbott, J.~Carbonneau, G.~Gilfoyle, D.~Heddle, G.~Heyes,
 V.~Ziegler {\em et~al.}, ``{The CLAS12 software framework and event
   reconstruction},'' {\em Nucl. Instrum. Meth. A}, vol.~959, p.~163472, 2020.
 
+\bibitem{keras-website}
+``Keras library.'' \url{https://keras.io/}.
+\newblock Accessed: 2020-07-14.
+
 \bibitem{Sevarac.Z}
 Sevarac.Z, ``{Deep Netts - Deep Learning in Java}.''
   \url{http://www.deepnetts.com}.
 
 \bibitem{ejml:2021}
 ``{Efficient Java Matrix Library (EJML)}.'' \url{http://ejml.org}.
+
+\bibitem{groot-github}
+``Groot data visualization library.'' \url{https://github.com/gavalian/groot}.
+\newblock Accessed: 2022-01-26.
+
+\bibitem{Chekanov:2020bja}
+S.~V. Chekanov, G.~Gavalian, and N.~A. Graf, ``{Jas4pp \textemdash{} A
+  data-analysis framework for physics and detector studies},'' {\em Comput.
+  Phys. Commun.}, vol.~262, p.~107857, 2021.
 
 \bibitem{Stepanyan:2020bg}
 S.~Stepanyan {\em et~al.}, ``{CLAS12 FD charge particle reconstruction

@@ -1,0 +1,69 @@
+\documentclass[aps,prl,preprint,12pt]{revtex4}
+\usepackage{CJK}
+\usepackage{graphicx}
+%\usepackage{authblk}
+
+\begin{document}
+
+\begin{CJK*}{GB}{}
+\title{CLAS12 Track Reconstruction with Artificial Intelligence}
+
+\author{Gagik Gavalian}
+\affiliation{Jefferson Lab, Newport News, VA, USA}
+\author{Polykarpos Thomadakis}
+\author{Angelos Angelopoulos}
+\affiliation{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
+\author{Raffaella De Vita}
+\author{Veronique Ziegler}
+\affiliation{Jefferson Lab, Newport News, VA, USA}
+\author{Nikos Chrisochoides}
+\affiliation{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
+
+\begin{abstract}
+  In this article we describe the implementation of Artificial Intelligence models in track reconstruction
+  software for the CLAS12 detector at Jefferson Lab. The Artificial Intelligence based approach resulted 
+  in improved track reconstruction efficiency in high luminosity experimental conditions.  The track
+ reconstruction efficiency increased by $10-15\%$ for single particle, and statistics in multi-particle physics 
+ reactions increased by $15\%-35\%$ depending on the number of particles in the reaction. The implementation 
+ of artificial intelligence in the workflow also resulted in a speedup of the tracking by $35\%$, we estimated these 
+ improvements are equivalent of more than $\$4$M  annual savings for realization of the CLAS12 physics program.
+\end{abstract}
+
+\maketitle
+\end{CJK*}
+
+\section{Introduction}
+\indent
+
+Nuclear Physics experiments have become increasingly complex over the past decades, with more complex detector 
+systems and higher luminosities. In emerging experiments where data collection rates are higher, there is a need for 
+new approaches for data processing that can improve data reconstruction accuracy and speed. New developments in 
+the Artificial Intelligence (AI) field present promising alternatives to conventional algorithms for data processing. 
+Machine Learning (ML) algorithms are being employed in various stages of experimental data processing, such as: 
+the detector data reconstruction, particle identification, detector simulations and physics analysis. 
+
+In this paper we present the implementation of machine learning models into the CLAS12 charged-particle track 
+reconstruction software. Detailed analysis of the reconstruction performance are presented, comparing track 
+reconstruction efficiency and speed improvements to conventional algorithms.
+
+%************************************
+%-------- Included Chapters
+\input{particle_tracking}
+\input{neural_networks}
+\input{implementation}
+\input{results}
+
+\section{Acknowledgments}
+
+This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Nuclear 
+Physics under contract DE-AC05-06OR23177, and NSF grant no. CCF-1439079 and the Richard T. Cheng Endowment. 
+The authors would like to thank Raffaella De Vita for help in processing data with CLAS12 reconstruction software. 
+This  work  was  performed  using  the  Turing  and  Wahab computing clusters at Old Dominion University.
+ 
+\newpage
+\bibliography{references}
+\bibliographystyle{ieeetr}
+
+
+
+\end{document}
