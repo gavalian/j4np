@@ -1,21 +1,24 @@
-\section{Implementation of Neural Network in CLAS12 software}
+\section{Implementation of the Neural Network in CLAS12 software}
 
-The models described in earlier stages were implemented in the tracking code of CLAS12 
-software. 
+The models described in the previous sections were implemented in the CLAS12 tracking software. 
 
 \subsection{Track Identification Workflow}
 
- Track identification consists of two parts programmed to be done in two passes.
-First, all clusters reconstructed by the clustering algorithm are grouped into sectors and super-layers.
+ Track identification consists of two phases, programmed to be done in two passes.
+%First, all clusters reconstructed by the clustering algorithm are grouped into sectors and super-layers.
 In the first pass over the data, signals from each sector of drift chambers are analyzed to create a track 
-candidate list consisting of 6 segments.
-The resulting track candidates are evaluated by the classifier neural network and are assigned a probability to each 
-of the candidate being either positive or negative track. The list of track candidates is sorted by probability and passed
+candidate list, each consisting of 6 segments.
+The resulting track candidates are evaluated by the classifier neural network and are assigned a probability for 
+being either positive or negative track. The list of track candidates is sorted by probability and passed
 to another algorithm that is responsible for removing tracks that have lower probability of being a "good" track and have
-clusters that they share with a "good" track candidate with higher probability. 
+clusters that are shared with a higher-probability candidate. 
 
-In this procedure the algorithm iterates over the track candidates (which already has the highest probability of being a ``good'' track since list is sorted) and then the program iterates over the track candidates starting from position number 2 and to the end of the list and removes all tracks that share a 
-cluster with the track at position 1. Then track candidate at position 1 is moved from the track candidate list into the identified
+In this procedure the algorithm iterates over track candidates sorted according to the probability of being a good track.
+%(which already has the highest probability of being a ``good'' track since list is sorted) and then 
+%The program iterates over the track candidates starting from 
+Iteration starts at position number 2 and to the end of the list and candidates that share a cluster with 
+candidate at position number 1 are removed from the list.
+Track candidate at position 1 is moved from the track candidate list into the identified
 track list. This procedure is repeated until there are no track candidates left in the candidate list.
 
  \begin{figure}[!h]
@@ -36,12 +39,12 @@ for further fitting with Kalman-Filter.}
 \end{figure}
 
 The second stage of track identification starts by constructing a list of track candidates with combinations of 5 clusters 
-out of 6 from all existing clusters (one per super-layer). Then all track candidates that have a shared cluster with tracks
-identified at the first stage of classification are removed from the list. After this, for each track candidate with a missing cluster
+out of 6 from all existing clusters (one per super-layer). The candidates that share a cluster with tracks
+identified at the first stage of classification are removed from the list. For each track candidate with a missing cluster
 in one of the super-layers, a pseudo-cluster is generated using the Corruption Auto-Encoder Network and the missing super-layer 
-cluster is assigned the inferred value, hence turning all track candidates to 6 cluster track candidates. Then, the 
-cured (or fixed) track candidate list is passed to the track classifier module described above, which evaluates the list with
-the classifier neural network and isolates tracks with the highest probability of being good track. 
+cluster is assigned the inferred value, hence turning all track candidates to 6 cluster track candidates. The 
+cured (or fixed) track candidate list is finally passed to the track classifier module described above, which evaluates the list 
+isolating candidates with the highest probability of being a good track. 
 
 \subsection{Implementation in reconstruction software}
 
@@ -51,28 +54,35 @@ detector \cite{Ziegler:2020gsr}. The reconstruction procedure for some of the de
 be broken down into smaller logical microservices to add some flexibility in changing the implementation of the small parts, 
 and provide alternative reconstruction procedures for some of the components.
 Reconstruction of tracks in drift chambers is a complex task and consists of several parts.
-The first stage of the process is to isolate clusters
-from the hits in drift chambers (called clustering service). Once the clusters are isolated, track candidates are formed from all combinations 
-of 6 segments. The track candidates are analyzed to determine which good candidates from remaining segment 
-combinations of 5 segment tracks are constructed which are also fitted to determine which ones are potential good tracks.
-The later module (hit based tracking) determines good track candidates based only on hit positions of the track candidates (no timing
-informations is used at this level). At the later stages of the tracking code (time-based tracking), chosen good track candidates are further refined with the Kalman filter by using timing information from each of the sensors (drift chamber wires). By the time the reconstruction code reaches the time based tracking stage, the track candidates have already been defined. 
+
+The first stage of the process, called clustering service, is to isolate clusters
+from the hits in drift chambers. Once the clusters are isolated, track candidates are formed from all combinations 
+of 6 segments. Once 6 segment tracks have been identified, the remaining segments are then used to form 5 segments combinations. These two steps are known as track-finding or seeding.
+Both 6 and 5 segments candidates are fitted defining the hit positions from the wire coordinates (hit based tracking), resulting in a first list of reconstructed tracks.
+%The track candidates are analyzed to determine which good candidates from remaining segment 
+%combinations of 5 segment tracks are constructed which are also fitted to determine which ones are potential good tracks.
+%The later module (hit based tracking) determines good track candidates based only on hit positions of the track candidates (no timing
+%informations is used at this level). 
+
+In a second stage of the tracking code (time-based tracking), 
+the tracks identified at the previous stage are refitted with a Kalman Filter algorithm, which uses drift time information to refine the hit positions.
+This produces the final track list.
+%chosen good track candidates are further refined with the Kalman filter by using timing information from each of the sensors (drift chamber wires). By the time the reconstruction code reaches the time based tracking stage, the track candidates have already been defined. 
 
 \begin{figure}[!ht]
 \begin{center}
  \includegraphics[width=6.0in]{images/recon_diagram.png}
-\caption {Diagram of reconstruction workflow with Artificial Intelligence included. Tracking software splits into two parallel branches : one where reconstruction is done by the conventional algorithm, and one where only AI-isolated tracks are fitted by Kalman filter.}
+\caption {Diagram of the tracking workflow with Artificial Intelligence included. The Workflow is split into two parallel branches, one where track-finding is done by the conventional algorithm, and one where only AI-isolated tracks are fed to the following stages.}
  \label{recon:diagram}
  \end{center}
 \end{figure}
 
-In order to implement our neural network into the reconstruction workflow we designed two parallel branches in the reconstruction code where we run 
-two algorithms to identify good tracks from track candidate lists, one based on the conventional algorithm and another based on the neural network.
-Both algorithms store their track suggestions in separate data structures, and pass them to the next stage where track parameters are reconstructed by 
-conventional tracking algorithm using Kalman filter. This approach lets us have two parallel outputs from the tracking code in order to compare the performance of
-each method.
+In order to implement our neural network into the reconstruction workflow, we designed two parallel branches in the reconstruction code where we run 
+two algorithms to identify good tracks from the candidate lists, one based on the conventional algorithm and one based on the neural network.
+The two algorithms store their track suggestions in separate data structures, and pass them to the next stage where track parameters are reconstructed by 
+conventional tracking algorithm, first by hit-based fitting and then using the Kalman filter. This approach lets us have two parallel outputs from the tracking code that enables a detailed comparison of the performance of each method.
 
 \subsection{Software Packages}
 
-As mentioned above, CLAS12 reconstruction software is implemented in JAVA, and the final implementation of the the track classifier was implemented in JAVA for easy integration into the reconstruction workflow. The initial tests and prototyping were done using Keras/TenserFlow (python) package. For final implementation we used DeepNetts \cite{Sevarac.Z} community edition library (in native Java) to implement training code for the track candidate classifier and corruption-recovery auto-encoder. DeepNetts is a light weight library with minimal dependencies, which makes it ideal for providing portable code that can be used on variety of platforms without the need of installing large number of platform dependent packages (like in the case of keras/tensorflow).
-The inference procedure was implemented using Efficient Java Matrix Library (EJML) \cite{ejml:2021}, which is optimized for speed and is thread safe, matching the requirements of the CLAS12 data reconstruction software.
+As mentioned above, CLAS12 reconstruction is implemented in Java. The final implementation of the the track classifier was therefore in Java for easy integration into the reconstruction workflow. The initial tests and prototyping were done using the Keras/TensorFlow (python) package. The final implementation was based on the DeepNetts \cite{Sevarac.Z} community edition library (in native Java) used for both the track candidate classifier and corruption-recovery auto-encoder. DeepNetts is a light weight library with minimal dependencies, which makes it ideal for providing portable code that can be used on variety of platforms without the need of installing large number of platform-dependent packages (like in the case of keras/tensorflow).
+The inference procedure was implemented using Efficient Java Matrix Library (EJML) \cite{ejml:2021}, which is optimized for speed and is thread safe, matching the requirements of the CLAS12 reconstruction software.

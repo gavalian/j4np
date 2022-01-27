@@ -34,8 +34,9 @@
 
   In this article we describe the implementation of Artificial Intelligence models in track reconstruction software for the CLAS12 detector at Jefferson Lab.
  The Artificial Intelligence based approach resulted in improved track reconstruction efficiency in high luminosity experimental conditions.  The track
- reconstruction efficiency increased by $15\%$ for single particle, and statistics in multi-particle physics reactions increased by $15\%-35\%$ depending 
- on the number of particles in the reaction. The implementation of artificial intelligence in the workflow also resulted in code speedup of $35\%$, also resulting in $\$4.2$M  annual saving for the physics program of CLAS12.
+ reconstruction efficiency increased by $10-15\%$ for single particle, and statistics in multi-particle physics reactions increased by $15\%-35\%$ depending 
+ on the number of particles in the reaction. The implementation of artificial intelligence in the workflow also resulted in a speedup of the tracking by $35\%$, 
+ we estimated these improvements are equivalent of more than $\$4$M  annual savings for realization of the CLAS12 physics program.
 \end{abstract}
 %\end{titlepage}
 \maketitle
@@ -44,10 +45,10 @@
 \section{Introduction}
 \indent
 
-Nuclear Physics experiments have become increasingly complex over the past decades, using higher beam energies and higher beam currents. In emerging experiments where data collection rates are higher, there is a need for new approaches for data processing that can improve data reconstruction accuracy and speed. New developments in the Artificial Intelligence (AI) field present promising alternatives to conventional algorithms for data processing. Machine Learning (ML) algorithms are being employed in various stages of experimental data processing, such as: the detector data reconstruction, particle identification, detector simulations and physics data analysis. 
+Nuclear Physics experiments have become increasingly complex over the past decades, with more complex detector systems and higher luminosities. In emerging experiments where data collection rates are higher, there is a need for new approaches for data processing that can improve data reconstruction accuracy and speed. New developments in the Artificial Intelligence (AI) field present promising alternatives to conventional algorithms for data processing. Machine Learning (ML) algorithms are being employed in various stages of experimental data processing, such as: the detector data reconstruction, particle identification, detector simulations and physics analysis. 
 
-In this paper we present the implementation of previously developed machine learning models into the CLAS12 track reconstruction software. Detailed analysis 
-of the reconstruction performance presented comparing track reconstruction efficiency and speed improvements to conventional algorithms.
+In this paper we present the implementation of machine learning models into the CLAS12 charged-particle track reconstruction software. Detailed analysis 
+of the reconstruction performance are presented, comparing track reconstruction efficiency and speed improvements to conventional algorithms.
 
 
 \input{particle_tracking}

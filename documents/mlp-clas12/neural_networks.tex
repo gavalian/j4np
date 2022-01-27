@@ -13,11 +13,11 @@ The Machine Learning approach was to train a neural network to recognize good tr
  
  \subsection{Track Classifier}
  
- To determine what type of machine learning model works best with CLAS12 drift chamber data we investigated different 
+ To determine what type of machine learning model works best with the CLAS12 drift chamber data, we investigated different 
  types of models  \cite{Gavalian:2020oxg} including Convolutional Neural Network (CNN) , Extremely Randomized Trees (ERT) \cite{scikitlearn-extratreesclassifier} and 
  Multi-Layer Perceptron (MLP) \cite{scikitlearn-mlpclassifier}. The study showed that Multi-Layer Perceptron was best suited for 
- CLAS12 reconstruction needs (based on inference speed and accuracy). The implemented architecture is shown on 
- Figure~\ref{mlp:architecture}, where an input layer with 6 nodes is used (each node representing average wire position 
+ the CLAS12 reconstruction needs (based on inference speed and accuracy). The implemented architecture is shown in 
+ Figure~\ref{mlp:architecture}, where an input layer with 6 nodes is used (each node representing the average wire position 
  of the segment in super-layer) and 3 output nodes for the classes ``positive track'', ``negative track'' and ``false track''.
  
  \begin{figure}[!ht]
@@ -25,13 +25,15 @@ The Machine Learning approach was to train a neural network to recognize good tr
 % \includegraphics[width=3.5in]{images/Multilayer-Perceptron.jpg}
   \includegraphics[width=4.5in]{images/mlp_diagram.pdf}
 % \includegraphics[width=2.5in]{images/image-29.jpg}
-\caption {Architecture of Multi-Layer Perceptron used for track classification. Network has 6 input nodes, corresponding to average wire position of the segment in each super-layer, three hidden layers with 12 nodes in each and 3 output nodes.}
+\caption {Architecture of Multi-Layer Perceptron used for track classification. Network has 6 input nodes, corresponding to average wire positions of the segment in each super-layer, three hidden layers with 12 nodes in each and 3 output nodes.}
  \label{mlp:architecture}
  \end{center}
 \end{figure}
 
-The network is trained using results from processed data where the conventional algorithm has already 
-identified good tracks (with a cut on $\chi^2$ to select very good quality tracks), which are fed to the network with
+The network is trained using a sample of tracks reconstructed by the conventional algorithm, selected with $\chi^2$ cuts to retain the highest quality ones,
+%results from processed data where the conventional algorithm has already 
+%identified good tracks (with a cut on $\chi^2$ to select very good quality tracks), 
+which are fed to the network with
 their respective labels (i.e. positive or negative tracks). For false tracks, a combination 
 of segments (6-segments forming a track candidate) that was not identified as a track by the conventional algorithm is chosen.
 %of segments (6 segments forming a track candidate) is chosen that was not identified as a track by conventional algorithm.
@@ -41,12 +43,15 @@ of segments (6-segments forming a track candidate) that was not identified as a 
 A second neural network was developed to fix the corruption in possible track candidates due to 
 inefficiencies of drift chambers. This network was used to identify track candidates which have one of the segments
 missing. We used an auto-encoder architecture to implement the corruption-recovery neural network \cite{Gavalian:2020xmc}. 
-The structure of the network can be seen on Figure~\ref{autoencoder:architecture}, with 6 input nodes and 6 output nodes.
+The structure of the network can be seen in Figure~\ref{autoencoder:architecture}, with 6 input nodes and 6 output nodes.
 
-To train the network, good track candidates reconstructed by the conventional tracking algorithm are used (same sample 
- for track classifier network training). The output for the network was set to the good track parameters (where all 6 
+To train the corruption auto-encoder network the same sample used for the classifier training was used.
+ % good track candidates reconstructed by the conventional tracking algorithm are used (same sample 
+ %for track classifier network training). 
+
+ The output for the network was set to the good track parameters (where all 6 
 segments have non-zero values) and the input was modified by setting one of the nodes (randomly) to zero. The network
-learns to fix the node containing zero by assigning it a value based on the other 5 segment values. 
+learns to fix the node containing zero, by assigning it a value based on the other 5 segment values. 
 
  \begin{figure}[!ht]
 \begin{center}
@@ -70,9 +75,9 @@ is shown for all super-layers. Average accuracy of wire position prediction is  
  \label{autoencoder:performance}
  \end{center}
 \end{figure}
-The test results of the trained network are shown on Figure~\ref{autoencoder:architecture}, where the difference between the true value 
-of the segment position and the one reconstructed by the network is plotted, showing reconstruction accuracy of $0.36$ wires.
-On Figure~\ref{autoencoder:architecture} this difference is shown vs the super-layer number which was corrupted in the input.
+The test results of the trained network are shown in Figure~\ref{autoencoder:architecture}, where the difference between the true value 
+of the segment position and the one reconstructed by the network is plotted, showing a reconstruction accuracy of $0.36$ wires.
+In Figure~\ref{autoencoder:architecture} this difference is shown vs the super-layer number which was corrupted in the input.
 As can be seen, the performance of the network is uniform across all super-layers.
 
 

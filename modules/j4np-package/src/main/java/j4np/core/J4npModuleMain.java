@@ -6,12 +6,15 @@
 package j4np.core;
 
 import j4np.utils.dsl.DSLModuleManager;
+import j4np.utils.io.OptionApplication;
 import j4np.utils.io.OptionExecutor;
 import j4np.utils.io.OptionStore;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.fusesource.jansi.Ansi;
@@ -21,6 +24,10 @@ import org.fusesource.jansi.AnsiConsole;
  * @author gavalian
  */
 public class J4npModuleMain {
+    
+    
+    //private Map<String,OptionApplication>  appMap = new HashMap<>();
+    
     
     public static void runPrompt(String[] args){
         J4npModuleMain.printWelcome();
@@ -70,13 +77,16 @@ public class J4npModuleMain {
             }
         }
     }
-    public static void scan(){
+    
+    public static Map<String,OptionApplication> scan(){
 
         List<String> clazzList = OptionStore.scanClasses();
+        
+        /*
         AnsiConsole.systemInstall();
         Ansi a = new Ansi();
 
-        AnsiConsole.out().print(a.eraseScreen());
+        //AnsiConsole.out().print(a.eraseScreen());
 
         J4npModuleMain.printWelcome();
         System.out.println("*******************");
@@ -84,13 +94,30 @@ public class J4npModuleMain {
         System.out.println(" width = " + AnsiConsole.out().getTerminalWidth());
         System.out.println("  mode = " + AnsiConsole.out().getMode());
         System.out.println("*******************");
+        
         for(String clazz : clazzList){
             AnsiConsole.out().println(a.fg(Ansi.Color.BLUE).a(" -->  ").fg(Ansi.Color.RED).a(clazz).a("\n"));
         }
         AnsiConsole.out().println(a.fgDefault());
-        
-        
-        
+        */
+        Map<String,OptionApplication>  appMap = new HashMap<>();
+        for(String clazzName : clazzList){
+            try {
+                Class clazz = Class.forName(clazzName);
+                OptionApplication app = (OptionApplication) clazz.newInstance();
+                System.out.println("---> " + clazz);
+                System.out.printf("%s : %s \n" , app.getAppName(), app.getDescription());
+                
+                appMap.put(app.getAppName(), app);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return appMap;
     }
     
     public static void show(){
@@ -98,7 +125,12 @@ public class J4npModuleMain {
     }
     
     
-    public static void execute( String[] args){
+    public static void execute(Map<String,OptionApplication> map, String app, String[] args){
+        
+        String[] modified = new String[args.length-1];
+        for(int i = 0; i < modified.length; i++) modified[i] = args[i+1];
+        map.get(app).execute(modified);
+        /*
         String[] p = new String[args.length-1];
         for(int i = 0; i < p.length;i++) p[i] = args[i+1];
         
@@ -125,16 +157,18 @@ public class J4npModuleMain {
             Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
             Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
         
     }
     public static void main(String[] args){
-        if(args.length<1){
-            J4npModuleMain.scan(); return;
-            //J4npModuleMain.test();return;            
+        Map<String,OptionApplication> appMap = J4npModuleMain.scan();
+        
+        if(args.length>0){
+            J4npModuleMain.execute(appMap, args[0], args);
+            //J4npModuleMain.test();return;      
         } 
         
-        J4npModuleMain.execute(args);
+        //J4npModuleMain.execute(args);
         
         /*
         if(args.length<1){

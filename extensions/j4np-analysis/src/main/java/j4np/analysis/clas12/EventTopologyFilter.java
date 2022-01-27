@@ -26,7 +26,7 @@ public class EventTopologyFilter {
     
     public PhysicsReaction getReaction(){ return reaction;}
     
-    public static void filter(String filename){
+    public static void filter(String filename, String bank){
         
         HipoReader r = new HipoReader(filename);
         HipoWriter w = new HipoWriter();
@@ -36,6 +36,7 @@ public class EventTopologyFilter {
         f.getReaction().addVector(f.getReaction().getVector(), "-[11]-[211]-[-211]");
         f.getReaction().addEntry("mxepipi", 0, VectorOperator.OperatorType.MASS);
         
+        /*
         f.getReaction().addModifier(new EventModifier(){
             @Override
             public void modify(PhysicsEvent event) {
@@ -47,17 +48,21 @@ public class EventTopologyFilter {
                     } else { event.status(i, -1);}
                 }
             }
-        });
+        });*/
         
-        Event event = new Event();
-        
-        
-        
-        while(r.hasNext()==true){
-            r.nextEvent(event);
-            
+        f.reaction.setDataSource(r, bank);
+        int counter = 0;
+        int writer  = 0;
+        while(f.reaction.next()==true){
+            counter++;
+            double value = f.getReaction().getValue("mxepipi");
+            if(value<1.4&&value>0.5){
+                w.add(f.getReaction().getDataEvent());
+                writer++;
+            }
         }
-        
+        w.close();
+        System.out.printf("filtered %d out of %d events\n",writer,counter);
     }
     public static void main(String[] args){
         String filename = args[0];

@@ -128,6 +128,9 @@ public class PhysicsReaction extends Tree {
         }
     }
     
+    
+    public Event getDataEvent(){ return this.reactionEvent;}
+    
     @Override
     public String toString(){
         

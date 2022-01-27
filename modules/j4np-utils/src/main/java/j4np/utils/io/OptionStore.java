@@ -148,10 +148,13 @@ public class OptionStore {
             //System.out.println("---> " + clazz);            
             try {
                 Class instance = Class.forName(clazz);
-                System.out.println("---> " + clazz + " is intance = " + instance.isInstance(OptionApplication.class));
-                
-                if(instance.isInstance(OptionApplication.class)){                    
-                    clazzList.add(clazz);
+                //System.out.println("---> " + clazz + " is intance assignable = " + 
+                //        OptionApplication.class.isAssignableFrom(instance)
+                //        );
+//                instance.isAssignableFrom(instance)
+                if(OptionApplication.class.isAssignableFrom(instance)){ 
+                    if(clazz.compareTo("j4np.utils.io.OptionApplication")!=0)
+                        clazzList.add(clazz);
                 }
                 //classList.add(clazz.getName());
                 //System.out.printf(" :: %s\n",clazz.getName());
