@@ -31,8 +31,8 @@ and the total number (right column).}
 
 The results are shown in Figure~\ref{track:efficiency}, where the dependence of number 
 of ``good'' reconstructed negatively charged tracks are shown as a function of particle 
-momentum (top row), polar angle in laboratory frame (bottom row) and interaction vertex 
-(middle row). The reconstructed distributions from conventional tracking are plotted with 
+momentum (top row), polar angle in laboratory frame (middle row) and interaction vertex 
+(bottom row). The reconstructed distributions from conventional tracking are plotted with 
 filled histograms and the tracks reconstructed using assistance from AI are plotted with 
 solid lines. As can be seen from the figure, there is a large gain in the number of reconstructed 
 tracks with the 5 super-layer configuration compared to full 6 super-layer tracks. Typically 
@@ -55,7 +55,7 @@ overall tracking efficiency increase of $10\%-15\%$.
  \hline
  \end{tabular}
  \end{center}
- \caption{Summary of reconstructed tracks and gain with assistance from Artificial Intelligence.}
+ \caption{Summary of reconstructed tracks and gain with assistance from Artificial Intelligence algorithm.}
  \label{tbl:summary}
  \end{table}
  
@@ -69,6 +69,7 @@ candidates, and in our tests AI performs better in choosing the right combinatio
 increasing combinatorics.
  
 \subsection{Luminosity Dependence}
+
 As discussed in the previous section, AI is more efficient than the conventional track-finding 
 algorithm in identify good candidates from a large pool. One would expect that, if the number 
 of combinations decreases, the efficiency of the conventional track selection should approach the 
@@ -78,7 +79,7 @@ expect AI to perform better in higher luminosity, higher background settings. To
 AI-assisted tracking efficiency dependence on background we analyzed several different runs 
 that were taken in different conditions (i.e. beam current) ranging from $5~nA$ to $70~nA$. 
 To determine the tracking efficiency we first calculated the number of electrons ($N_e$) detected 
-in the data sample analyzed (typically one run, or $2h$ of data taking) and then the number of 
+in the data sample analyzed (typically one run, or $2~hours$ of data taking) and then the number of 
 positive and negative hadrons that were detected with the electron inclusively ($N_{h^+e}$ and 
 $N_{h^-e}$ respectively).
 
@@ -109,9 +110,9 @@ inefficiency per $nA$~\cite{Stepanyan:2020bg}.
 \begin{center}
  \includegraphics[width=3.0in]{images/figure_lscan_pos.pdf}
  \includegraphics[width=3.0in]{images/figure_lscan_neg.pdf}
-\caption {Tracking efficiency for positively and negatively charged particles as a function 
-of beam current (luminosity).  Conventional algorithm track reconstruction efficiency 
-(diamonds) is compared to AI-assisted track reconstruction efficiency (circles). }
+\caption {Tracking reconstruction efficiency of the conventional algorithm (diamonds)
+is compared to AI-assisted tracking efficiency (circles) for positively and negatively 
+charged particles as a function of beam current (luminosity).   }
  \label{lumi:scan}
  \end{center}
 \end{figure}
@@ -136,8 +137,9 @@ We selected events where an electron was detected in the forward detector, and t
 events where there was an additional positively charged pion ($\pi^+$) along with an electron 
 and no other charged particle. The second topology required two pions along with the electron, 
 one positively charged and one negatively charged. The two chosen topologies are denoted by 
-$H(e,e'\pi^+X)$ and $H(e,e'\pi^+\pi^-X)$. In both cases there is a visible peak of a missing nucleon 
-that we can use to measure the impact of efficiency on physics outcome. 
+$H(e,e'\pi^+X)$ and $H(e,e'\pi^+\pi^-X)$. In both cases there is a visible peak of a missing nucleon
+in the missing mass distribution of detected final state, that we can use to measure the impact 
+of efficiency on physics outcome. 
 
  \begin{figure}[!ht]
 \begin{center}
@@ -150,7 +152,7 @@ on the bottom row. }
  \end{center}
 \end{figure}
 
-The distributions of missing mass for both final state topologies are shown on Figure~\ref{physics:outcome}, where the plots 
+The distributions of missing mass for both final state topologies are shown in Figure~\ref{physics:outcome}, where the plots 
 on the top row are missing mass of $H(e,e'\pi^-X)$ and $H(e,e'\pi^+\pi^-X)$, where the filled histogram is calculated from 
 particles reconstructed by the conventional tracking algorithm, and the histogram with black outline are the same distributions 
 calculated from particles that were reconstructed using suggestion from Artificial Intelligence. As can be seen from the figure, 
@@ -159,7 +161,7 @@ tracking. The ratios of the two histograms (AI-assisted divided by conventional)
 Figure~\ref{physics:outcome}. As can be seen from the figure the increase in statistics is uniform over the whole range of the 
 missing mass indicating no systematic abnormalities for AI-assisted tracking. The ratio also indicates that there is an increase 
 for the number of events of about $15\%$ for $H(e,e'\pi^+X)$ final state and $30-35\%$ for the $H(e,e'\pi^+\pi^-X)$
-final state. Further studies show that improvements in statistics are larger for higher luminosity (incident beam current), 
+final state. Further studies show that improvements in statistics are larger for higher luminosity (higher incident beam current), 
 which is consistent with our studies of increased efficiency of single particle reconstruction.
 
 \section{Summary}

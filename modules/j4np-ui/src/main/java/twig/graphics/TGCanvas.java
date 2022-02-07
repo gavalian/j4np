@@ -86,6 +86,10 @@ public class TGCanvas extends JFrame implements ActionListener {
     
     public TGDataCanvas view(){ return dataCanvas;}
 
+    public TGRegion region(int index) { return dataCanvas.region(index);}
+    
+     
+    
     private JMenu createMenu(String menuName, String[] items){
         JMenu uMenu = new JMenu(menuName);
         for(int i = 0; i < items.length; i++){

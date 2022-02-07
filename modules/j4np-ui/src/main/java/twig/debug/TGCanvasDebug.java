@@ -197,12 +197,27 @@ public class TGCanvasDebug {
         c.repaint();
     }
     
+    
+    public static void example2x2(){
+        TGCanvas c = new TGCanvas(600,600);
+        c.view().divide(new double[][]{{0.4,0.6},{0.6,0.4}});
+        for(int i = 0; i < 4; i++){
+            H1F h = TDataFactory.createH1F(2500);
+            c.view().region(i).draw(h);
+        }
+        c.view().addLabels(0.8, 0.9, 'a');
+        
+        c.view().addLabels(0.1, 0.95,new String[]{"10 nA","45 nA","95 nA", "150 nA"});
+        
+        //TLegend leg = new TLegend();
+    }
+    
     public static void main(String[] args){
         //TGCanvasDebug.example2();
         //TGCanvasDebug.debugH2F();
         
-        TGCanvasDebug.fitExample();
-        
+        //TGCanvasDebug.fitExample();        
+        TGCanvasDebug.example2x2();
         
     }
 }

@@ -427,6 +427,10 @@ public class ClassifierMLP implements OptionExecutor {
    
     public static void main(String[] args){
         
+        ClassifierMLP mlp = new ClassifierMLP();
+        
+        mlp.execute(args);
+        /*
         ClassifierMLP mlp = new ClassifierMLP();  
         
         String filet = "data_extracted_4029_full_1.hipo";
@@ -447,7 +451,7 @@ public class ClassifierMLP implements OptionExecutor {
             mlp.trainFurther(filet, ntrainfurther);
             mlp.analyze(filev, nvalidate);
         }
-        
+        */
         /*for(int i = 0; i < 8; i++){
             mlp.outputFileName = String.format("trackClassifier_%d.network", i+1);
             mlp.evaluate("data_validate_classifier.hipo", nvalidate);

@@ -5,6 +5,8 @@
  */
 package j4np.utils;
 
+import j4np.utils.io.TextFileReader;
+import j4np.utils.io.TextFileWriter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -281,5 +285,47 @@ public class FileUtils {
         } catch (IOException ex) {
             Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
         }*/
+    }
+    
+    public static Map<String,String>  parseMap(String line){
+        String[] tokens = line.split(",");
+        Map<String,String> map = new HashMap<>();
+        
+        for(int i = 0; i < tokens.length; i++){
+            String[] eq = tokens[i].split("=");
+            if(eq.length==2){
+                map.put(eq[0], eq[1]);
+            } else {
+                System.out.printf("error in eq : %s\n",tokens[i]);
+            }
+        }
+        return map;
+    }
+    public static void writeConfig(String file, String output, Map<String,String> replace){
+        
+        TextFileReader r = new TextFileReader();
+        TextFileWriter w = new TextFileWriter();
+        r.getIgnoreLines().clear();        
+        r.open(file);
+        w.open(output);
+        int counter = 0;
+        while(r.readNext()==true){
+            counter++;
+            String line = r.getString();
+            
+            for(Map.Entry<String,String> entry : replace.entrySet()){
+                String var = "${"+entry.getKey()+"}";
+                //System.out.printf("checking [%s]\n",var);
+                //System.out.println(line.contains(var));
+                if(line.contains(var)==true){
+                    //System.out.println(" replacing " +  var + " with " + entry.getValue());
+                    line = line.replace(var, entry.getValue());
+                    //System.out.println("new line : " + line);
+                }
+            }
+            //System.out.println(counter + " : " + line);
+            w.writeString(line);
+        }
+        w.close();
     }
 }

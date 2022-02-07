@@ -10,4 +10,18 @@ The Convolutional Auto-Encoder was used to de-noise raw data from CLAS12 drift c
  \end{center}
 \end{figure}
 
-For out implementation we used TensorFlow/Keras~\cite{keras-website} to train and evaluate the network. The resulting network parameters (weights) were saved in HDF5 file. The de-noiser implementation for CLAS12 reconstruction software is done using DeepLearning4J~\cite{dl4j-website} which supports model imports through HDF5 files. 
+The network was validated on experimental data where number of hits along the track trajectory were compared for de-noised data.
+Example of comparison can be seen in Figure~\ref{network:cnn_results} where raw data (left column) is shown along with data with hits
+belonging to reconstructed track (middle column) and reduced data passing through de-nosing program (right column).
+
+\begin{figure}[!h]
+\begin{center}
+ \includegraphics[width=5.8in]{images/cnn_denoise_results.pdf}
+\caption {De-noising neural network architecture.}
+ \label{network:cnn_results}
+ \end{center}
+\end{figure}
+
+As can be seen from the figure de-noiser removes all background hits not associated with a track. Systematic studies~\cite{Thomadakis:2022zcd} showed that more than $95\%$ of the track related hits are preserved in the output of de-noiser while background hits are significantly suppressed.
+
+For out implementation we used TensorFlow/Keras~\cite{keras-website} to train and evaluate the network. The resulting network parameters (weights) were saved in HDF5 file. The de-noiser implementation for CLAS12 reconstruction software is done using DeepLearning4J~\cite{dl4j-website} which supports model imports through HDF5 files. The de-noising is not yet implemented as a part of CLAS12 reconstruction workflow, and works as a standalone package to process raw data before analyzing with reconstruction software.

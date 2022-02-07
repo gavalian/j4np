@@ -4,6 +4,7 @@
  */
 package j4np.analysis.clas12;
 
+import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
@@ -11,6 +12,7 @@ import j4np.physics.EventModifier;
 import j4np.physics.PhysicsEvent;
 import j4np.physics.PhysicsReaction;
 import j4np.physics.VectorOperator;
+import java.util.List;
 
 /**
  *
@@ -25,6 +27,34 @@ public class EventTopologyFilter {
     }
     
     public PhysicsReaction getReaction(){ return reaction;}
+    
+    public static void filterForwardElectron(List<String> files, String output, String bank){
+        HipoReader r = new HipoReader();
+        r.open(files.get(0));
+        HipoWriter  w = new HipoWriter();
+        
+        w.getSchemaFactory().copy(r.getSchemaFactory());
+        
+        w.open(output);
+        Event event = new Event();
+        Bank  part  = r.getBank(bank);
+        
+        for(int k = 0; k < files.size(); k++){
+            HipoReader rk = new HipoReader(files.get(k));
+            while(rk.hasNext()){
+                rk.nextEvent(event);
+                event.read(part);
+                if(part.getRows()>0){
+                    int pid = part.getInt("pid", 0);
+                    int status = part.getInt("status", 0);
+                    if(pid==11&&Math.abs(status)>=2000&&Math.abs(status)<3000){
+                        w.addEvent(event);
+                    }
+                }
+            }
+        }
+        w.close();
+    }
     
     public static void filter(String filename, String bank){
         

@@ -24,15 +24,15 @@ three regions of the drift chamber in a given sector are reconstructed by tracki
 in each super-layer adjacent  with a signal are grouped together into clusters (called segments), 
 shown on Figure~\ref{dc:side_view}. The positions of these segments (clusters) in each super-layer 
 are used to fit the track trajectory to derive initial parameters, such as momentum and direction. 
-After the initial selection, good track candidates are passed through Kalman~\cite{Kalman1960} 
-filter to further refine measured parameters.
+After the initial selection, good track candidates are passed through Kalman filter~\cite{Kalman1960} 
+ to further refine measured parameters.
 
 \begin{figure}[!ht]
 \begin{center}
  \includegraphics[width=6.2in]{images/figure_dc_examples.pdf}
-\caption {Example of signals in drift chambers for few events. Each plot represents one sector with 
-a 36x112 matrix of wires. Background hits (in gray) are shown along with the hits of reconstructed 
-identified tracks (in red). Dashed lines represent boundaries between super-layers.}
+\caption {Example of signals in drift chambers for four events. Each plot represents one sector (from 
+different events) with a 36x112 matrix of wires. Background hits (in gray) are shown along with the 
+hits of reconstructed identified tracks (in red). Dashed lines represent boundaries between super-layers.}
  \label{dc:events_sector}
  \end{center}
 \end{figure}
@@ -49,7 +49,7 @@ track is shown on Figure~\ref{dc:events_sector} c), where super-layer 3 does not
 For these types of tracks, candidates have to be identified from a large number of combinatorics consisting 
 of all combinations of clusters that form a  5-segment candidates. 
 
-Tracking is computationally extensive and makes up $80\%-90\%$ (depending on background conditions 
+Tracking is computationally intensive and makes up $80\%-90\%$ (depending on background conditions 
 and track multiplicity) of the total CLAS12 event processing time. The procedure of finding tracks from a 
 list of track candidates is where we found AI can provide real benefits. Such benefits include: improved 
 accuracy in identifying good tracks, and improved data processing speed by significantly reducing the 

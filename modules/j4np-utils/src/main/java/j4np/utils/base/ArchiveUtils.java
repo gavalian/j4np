@@ -88,7 +88,9 @@ public class ArchiveUtils {
         }
         return false;
     }
-        public static void list(String zipfile, String pattern){
+    
+    public static List<String> getList(String zipfile, String pattern){
+        
         List<String>  files = new ArrayList<>();
         try {
             ZipFile zip = new ZipFile(zipfile);
@@ -101,6 +103,32 @@ public class ArchiveUtils {
             
         } catch (ZipException ex) {
             Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        Collections.sort(files);
+
+        /*System.out.println("- LIST OF THE FILES IN THE ARCHIVE");
+        System.out.println("-------------");
+        for(int i = 0; i < files.size(); i++){
+            System.out.printf(": %s\n",files.get(i));
+        }
+        System.out.println("-------------\n\n");*/
+        return files;
+    }
+    
+    public static void list(String zipfile, String pattern){
+            List<String>  files = new ArrayList<>();
+            try {
+                ZipFile zip = new ZipFile(zipfile);
+                List<FileHeader> headers = zip.getFileHeaders();
+                for(int i = 0; i < headers.size(); i++){
+                    String name = headers.get(i).getFileName();
+                    files.add(name);
+                    //System.out.println("name : " + name + " has = " + name.compareTo(file));
+                }
+                
+            } catch (ZipException ex) {
+                Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         Collections.sort(files);

@@ -13,7 +13,7 @@ The models described in the previous sections were implemented in the CLAS12 tra
  higher-probability candidate. 
 
 In this procedure the algorithm iterates over track candidates sorted according to the probability of 
-being a good track. Iteration starts at position number 2 and to the end of the list and candidates that 
+being a good track. Iteration starts at position number 2 and runs to the end of the list. Candidates that 
 share a cluster with candidate at position number 1 are removed from the list. Track candidate at position 
 1 is moved from the track candidate list into the identified track list. This procedure is repeated until 
 there are no track candidates left in the candidate list.
@@ -25,6 +25,7 @@ there are no track candidates left in the candidate list.
     \includegraphics[angle=90,width=1.1in]{images/iden_5_sl_b.pdf}
       \includegraphics[angle=90,width=1.1in]{images/iden_5_sl_c.pdf}
             \includegraphics[angle=90,width=1.1in]{images/iden_5_sl_d.pdf}
+            
 \caption {Stages of Neural Network track identification procedure. 1) identifying 6 super-layer tracks. 2) 
 removing all hits belonging to a identified track and constructing 5 super-layer track candidates. 
 3) generating pseudo-clusters for 5 super-layer track candidates using corruption fixing auto-encoder. 

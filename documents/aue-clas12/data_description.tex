@@ -18,7 +18,22 @@ L_t^+ = \frac{N_{h^+e}}{N_e} , L_t^- = \frac{N_{h^-e}}{N_e}
 \label{eq::eff}
 \end{equation}
 
-Track reconstruction efficiencies were compared for regular and de-noised data samples for different luminosity settings.
+where $L_t^+$ is the efficiency of positive particles and $L_t^-$ is the efficiency of negatively
+charged particles respectively. In order to estimate the charged particle reconstruction efficiency
+as a function of the beam current, the multiplicity, $L_t^{+/-}$, is fitted with a linear function:
+\begin{equation}
+L_t^{+/-} = a + b\times I
+\end{equation}
+
+Here $a$ and $c$ are the fit parameters and $I$ is the beam current. Then it was assumed that the
+reconstruction efficiency, $E=1$ at $I=0$ nA:
+
+\begin{equation}
+E^{+/-} = 1 + c \times I
+\end{equation}
+
+with $c=\frac{b}{a}$. The slope parameter $c$ represents the variation of the reconstruction
+inefficiency per $nA$~\cite{Stepanyan:2020bg}.
 
 \subsection{Artificial Intelligence Assisted Tracking}
 

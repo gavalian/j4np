@@ -29,6 +29,7 @@ public class TGRegion extends Node2D implements StyleNode {
     
     protected TGAxisFrame  axisFrame = new TGAxisFrame();
     protected TStyle          tStyle = null;
+    protected boolean  isInDebugMode = false;
     
     public TGRegion(int x, int y, int w, int h){
         super(x,y,w,h);
@@ -46,7 +47,13 @@ public class TGRegion extends Node2D implements StyleNode {
     
     @Override
     public void drawLayer(Graphics2D g2d, int layer){ 
-        axisFrame.drawLayer(g2d, layer);        
+        if(this.isInDebugMode==false){
+            if(axisFrame.dataNodes.size()>0){
+                axisFrame.drawLayer(g2d, layer);
+            }
+        } else {
+            axisFrame.drawLayer(g2d, layer);
+        }
     }
     
         
@@ -55,14 +62,70 @@ public class TGRegion extends Node2D implements StyleNode {
         this.tStyle = style;
         this.axisFrame.setStyle(style);
     }
-
+    
     @Override
     public TStyle getStyle() {
         return tStyle;
     }
     
+    public void setDebugMode(boolean flag){
+        this.isInDebugMode = flag;
+    }
+    
+    public void setBlank(){
+       axisFrame.getAxisX().getAttributes().setAxisLabelsDraw(Boolean.FALSE);
+       axisFrame.getAxisX().getAttributes().setAxisLineDraw(Boolean.FALSE);
+       axisFrame.getAxisX().getAttributes().setAxisTicksDraw(Boolean.FALSE);
+       axisFrame.getAxisX().getAttributes().setAxisTitlesDraw(Boolean.FALSE);
+       axisFrame.getAxisX().getAttributes().setAxisBoxDraw(Boolean.FALSE);
+       
+       axisFrame.getAxisY().getAttributes().setAxisLabelsDraw(Boolean.FALSE);
+       axisFrame.getAxisY().getAttributes().setAxisLineDraw(Boolean.FALSE);
+       axisFrame.getAxisY().getAttributes().setAxisTicksDraw(Boolean.FALSE);
+       axisFrame.getAxisY().getAttributes().setAxisTitlesDraw(Boolean.FALSE);
+       axisFrame.getAxisY().getAttributes().setAxisBoxDraw(Boolean.FALSE);
+    }
+    
+    public TGRegion wrapX(){
+        getInsets().top(0);
+        getInsets().bottom(0);
+        return this;
+    }
+    
+    public TGRegion wrapY(){
+        getInsets().left(0);
+        getInsets().right(0);
+        return this;
+    }
+    
+    public TGRegion joinX(){
+       axisFrame.getAxisX().getAttributes().setAxisLabelsDraw(Boolean.FALSE);
+       axisFrame.getAxisX().getAttributes().setAxisTitlesDraw(Boolean.FALSE);       
+       return this;       
+    }
+    
+    public TGRegion joinY(){
+       axisFrame.getAxisY().getAttributes().setAxisLabelsDraw(Boolean.FALSE);
+       axisFrame.getAxisY().getAttributes().setAxisTitlesDraw(Boolean.FALSE);
+       return this; 
+    }
+    
+    
+    
     public TGAxisFrame getAxisFrame(){return this.axisFrame;}
     
+    public TGRegion axisLimitsX(double min, double max){  
+        this.axisFrame.getAxisX().setFixedLimits(min, max);
+        return this;
+    }
+    
+    public TGRegion axisLimitsY(double min, double max){  
+        this.axisFrame.getAxisY().setFixedLimits(min, max);
+        return this;
+    }
+    
+    public TGAxis axisX(){ return this.axisFrame.getAxisX();}
+    public TGAxis axisY(){ return this.axisFrame.getAxisY();}
     
     public TGRegion setAxisLabelSize(int size){
         Font fx = getAxisFrame().getAxisX().getAttributes().getAxisLabelFont();

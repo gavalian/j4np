@@ -8,14 +8,17 @@ V.~Burkert {\em et~al.}, ``{The CLAS12 Spectrometer at Jefferson Laboratory},''
 M.~Mestayer {\em et~al.}, ``{The CLAS12 drift chamber system},'' {\em Nucl.
   Instrum. Meth. A}, vol.~959, p.~163518, 2020.
 
+\bibitem{Kalman1960}
+R.~E. Kalman, ``{A New Approach to Linear Filtering and Prediction Problems},''
+  {\em Journal of Basic Engineering}, vol.~82, pp.~35--45, 03 1960.
+
 \bibitem{Gavalian:2020oxg}
 G.~Gavalian, P.~Thomadakis, A.~Angelopoulos, V.~Ziegler, and N.~Chrisochoides,
   ``{Using Artificial Intelligence for Particle Track Identification in CLAS12
   Detector},'' 8 2020.
 
 \bibitem{scikitlearn-extratreesclassifier}
-P.~Geurts, D.~Ernst, and L.~Wehenkel, ``Extremely randomized trees,'' {\em
-  Mach. Learn.}, vol.~63, p.~3–42, Apr. 2006.
+
 
 \bibitem{scikitlearn-mlpclassifier}
 F.~Murtagh, ``Multilayer perceptrons for classification and regression,'' {\em

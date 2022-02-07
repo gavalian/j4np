@@ -64,7 +64,7 @@ public class HipoWriter implements DataSync {
     
     public final HipoWriter setCompressionType(int compression){
         this.compressionType = compression; 
-        writer.setCompressionType(compression);       
+        //writer.setCompressionType(compression);       
         return this;
     }
     

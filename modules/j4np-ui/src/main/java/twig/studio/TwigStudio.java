@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFrame;
 import twig.data.DataSet;
 import twig.data.TDirectory;
 import twig.graphics.TGCanvas;
@@ -27,6 +28,8 @@ public class TwigStudio {
     private List<TGCanvas>       studioCanvas = new ArrayList<>();    
     private TDirectory       defaultDirectory = new TDirectory();
     
+    private List<DataSet>       copiedDataset = new ArrayList<>();
+    
     public TwigStudio(){
         
     }
@@ -43,6 +46,10 @@ public class TwigStudio {
         dataSetStore.put(uid, ds);
     }
     
+    public List<DataSet>  getCopyBuffer(){
+        return this.copiedDataset;
+    }
+    
     public TDirectory dir(){ return this.defaultDirectory;}
     
     public TGCanvas getCanvas(){
@@ -53,7 +60,23 @@ public class TwigStudio {
     public DataSet getDataSet(long uid){
         return dataSetStore.get(uid);
     }
-            
+    
+    public static void browser(String filename){
+        
+        StudioWindow.changeLook();
+        
+        StudioWindow window = new StudioWindow();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        window.setSize(800, 500);
+        window.setVisible(true);
+        
+        TDirectory dir = new TDirectory();
+        dir.read(filename);
+        
+        window.getStudioFrame().setTreeProvider(dir);
+    }
+    
     public static TwigStudio getInstance(){ return TwigStudio.studioInstance;}
     
     

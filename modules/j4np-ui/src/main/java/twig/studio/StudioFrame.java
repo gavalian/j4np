@@ -20,10 +20,12 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -70,6 +72,8 @@ public class StudioFrame extends JPanel {
         JSplitPane pane = new JSplitPane();
         
         objectTree = new JTree();
+        objectTree.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        //objectTree.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
         
         objectTree.addMouseListener(new MouseAdapter() 
         {
@@ -79,6 +83,7 @@ public class StudioFrame extends JPanel {
              }
              
         });
+        
         tabbedPane = new JTabbedPane();
         JComponent panel1 = makeTextPanel("Panel #1");
         this.canvas = new TGDataCanvas();
@@ -99,7 +104,15 @@ public class StudioFrame extends JPanel {
                 "Still does nothing");
         pane.setDividerLocation(0.5);
         objectTree.setPreferredSize(new Dimension(200,600));
-        pane.setLeftComponent(objectTree);
+        
+        
+        //JPanel panel = new JPanel();
+        JScrollPane panel = new JScrollPane(objectTree);
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        //panel.add(objectTree);
+        
+        //pane.setLeftComponent(objectTree);
+        pane.setLeftComponent(panel);
         pane.setRightComponent(tabbedPane);
         
         this.setLayout(new BorderLayout());

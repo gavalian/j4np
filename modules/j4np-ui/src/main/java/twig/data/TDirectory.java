@@ -4,6 +4,7 @@
  */
 package twig.data;
 
+import j4np.utils.base.ArchiveUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -150,6 +151,32 @@ public class TDirectory implements TreeProvider {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public void write(String filename){
+        for(Map.Entry<String,Directory> entry : this.dirList.entrySet() ){
+            List<DataSet> data = entry.getValue().data;                        
+            System.out.println("directory " + entry.getValue().directory);
+            for(DataSet d : data){
+                System.out.println("\t object " + d.getName());
+                DataSetSerializer.export(d, filename, entry.getValue().directory);
+            }
+        }
+    }
+    
+    public void read(String filename){
+        List<String>  items = ArchiveUtils.getList(filename, "*");
+        for(String item : items){
+            int index = item.lastIndexOf("/");
+            String    dir = item.substring(0, index);
+            String dsname = item.substring(index+1, item.length()-1);
+            System.out.println(" item = " + item);
+            System.out.println("\t  dir = " + dir);
+            System.out.println("\t name = " + dsname);
+            DataSet ds = DataSetSerializer.load(filename, item);
+            
+            this.add(dir, ds);
+        }
+    }
+    
     public static class Directory {
         
         public List<DataSet>  data = new ArrayList<>();
@@ -196,6 +223,7 @@ public class TDirectory implements TreeProvider {
     }
     
     
+    
     public static void main(String[] args){
         
         H1F h1 = new H1F("h1",100,0.0,1.0);
@@ -205,16 +233,27 @@ public class TDirectory implements TreeProvider {
         TDirectory dir = new TDirectory();
         
         dir.add("/mc", h1).add("/mc", h2).add("/data", h3);
-        
+        System.out.println("--- printing list");
         System.out.println(dir.list());
         
         H1F h = (H1F) dir.get("/mc/h1");
         
         //System.out.println(h.toString());
-        
+        System.out.println("--- printing json");
         System.out.println(dir.jsonList());
+        System.out.println("--- printing getObjects");
         System.out.println(Arrays.toString(dir.getObjects().toArray()));
                 
         dir.treeModel();
+        
+        System.out.println(" writing file....");
+        dir.write("archive.twig");
+        
+        TDirectory dir2 = new TDirectory();
+        
+        dir2.read("archive.twig");
+        
+        System.out.println("\n\n------------------\n");
+        dir2.show();
     }
 }

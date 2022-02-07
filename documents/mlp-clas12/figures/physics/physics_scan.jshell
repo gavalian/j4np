@@ -112,6 +112,7 @@ c.view().cd(1).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
 c.view().cd(3).region().getAxisFrame().getAxisX().setFixedLimits(0.0,3.0);
 c.view().cd(3).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
 
+//c.view().addLabels(0.9,0.98);
 c.repaint();
 
 c.view().export("physics_scan.pdf","pdf");

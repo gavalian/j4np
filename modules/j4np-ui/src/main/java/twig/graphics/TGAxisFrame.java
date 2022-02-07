@@ -36,8 +36,8 @@ public class TGAxisFrame extends Node2D implements StyleNode {
     private final Translation2D axisFrameRange = new Translation2D(0.0,1.0,0.0,1.0);
     private final Translation2D  ndfFrameRange = new Translation2D(0.0,1.0,0.0,1.0);
     
-    private List<TDataNode2D>       dataNodes = new ArrayList<>();
-    private List<Widget>          widgetNodes = new ArrayList<>();
+    protected List<TDataNode2D>       dataNodes = new ArrayList<>();
+    private   List<Widget>          widgetNodes = new ArrayList<>();
     
     private DataRange             axisDataRange = new DataRange();
     private DataRange             tempDataRange = new DataRange();

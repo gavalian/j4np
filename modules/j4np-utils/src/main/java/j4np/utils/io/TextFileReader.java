@@ -35,7 +35,7 @@ public class TextFileReader {
     public TextFileReader(String filename){
         ignoreLines.add("#");
         open(filename);
-    }
+    }    
     
     public TextFileReader(String filename, String delim){
         ignoreLines.add("#");
@@ -57,6 +57,8 @@ public class TextFileReader {
         return lines;
     }
     
+    public List<String> getIgnoreLines(){ return this.ignoreLines;}
+            
     public static List<String> readFile(String filename,int skip, int length){
         List<String> lines = new ArrayList<>();
         TextFileReader reader = new TextFileReader();

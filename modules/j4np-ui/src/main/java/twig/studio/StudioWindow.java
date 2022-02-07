@@ -96,6 +96,7 @@ public class StudioWindow extends JFrame implements ActionListener {
         menuBar.add(menuTheme);
         this.setJMenuBar(menuBar);
     }
+    
     private void initUI(){
         this.setLayout(new BorderLayout());
         

@@ -28,6 +28,10 @@ public class EventAnalysisApp extends OptionApplication {
         getOptionStore().addCommand("-filter", "filter events according to physics reaction");
         getOptionStore().getOptionParser("-filter").addOption("-r", "e2pi", "filter events e-pi+pi-");
         getOptionStore().getOptionParser("-filter").addOption("-b", "rec::event", "bank with particle information");
+        
+        getOptionStore().addCommand("-electron", "filter events according to physics reaction");
+        getOptionStore().getOptionParser("-electron").addRequired("-o",  "output file name");
+        getOptionStore().getOptionParser("-electron").addOption("-b", "REC::Particle", "bank with particle information");
     }
     
     @Override
@@ -70,6 +74,15 @@ public class EventAnalysisApp extends OptionApplication {
             if(reaction.compareTo("e2pi")==0){
                 EventTopologyFilter.filter(store.getOptionParser("-filter").getInputList().get(0),bank);
             }
+        }
+        
+        if(store.getCommand().compareTo("-electron")==0){
+            String   output = store.getOptionParser("-electron").getOption("-o").stringValue();
+            String     bank = store.getOptionParser("-electron").getOption("-b").stringValue();
+            
+            EventTopologyFilter.filterForwardElectron(
+                    store.getOptionParser("-electron").getInputList(),output,bank);
+            
         }
         
         return true;

@@ -24,6 +24,7 @@ import org.jfree.pdf.PDFGraphics2D;
 import org.jfree.pdf.Page;
 import twig.config.TStyle;
 import twig.editors.DataCanvasEditorDialog;
+import twig.widgets.PaveText;
 
 /**
  *
@@ -82,6 +83,40 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     public TGRegion region(){ 
         return (TGRegion) getGraphicsComponents().get(activeRegion);
     }
+    
+    public TGDataCanvas addLabels(double x, double y){
+        return addLabels(x,y,'a');
+    }
+    
+    public TGDataCanvas addLabels(double x, double y, String[] labels){
+        int nRegions = this.count();        
+        for(int i = 0; i < labels.length; i++){
+            PaveText ta = new PaveText(labels[i],x,y);
+            ta.setNDF(true);
+            ta.setDrawBox(false);
+            ta.setFillBox(false);
+            ta.setFont(region(i).axisX().getAttributes().getAxisLabelFont());
+            region(i).draw(ta);
+        }
+
+        return this;
+    }  
+    
+    public TGDataCanvas addLabels(double x, double y, char start){
+        int nRegions = this.count();
+        char label = start;
+        for(int i = 0; i < nRegions; i++){
+            PaveText ta = new PaveText(label+")",x,y);
+            ta.setNDF(true);
+            ta.setDrawBox(false);
+            ta.setFillBox(false);
+            ta.setFont(region(i).axisX().getAttributes().getAxisLabelFont());
+            region(i).draw(ta);
+            label++;
+        }
+
+        return this;
+    }  
     
     public TGDataCanvas cd(int index){
         if(index < 0) { activeRegion = 0; return this;}

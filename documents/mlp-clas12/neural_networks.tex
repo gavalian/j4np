@@ -1,6 +1,6 @@
 \section{Machine Learning}
 
-The Machine Learning approach was to train a neural network to recognize good tracks
+The Machine Learning is used to train a neural network to recognize good tracks
  from a large list of candidates, constructed using one cluster from each super-layer.
  Two neural networks were developed: a classifier that can identify a good track from  
  6-segment track candidates  and an auto-encoder that can take a list of 5-segment tracks 
@@ -63,13 +63,13 @@ that has 0 in the input. }
  \begin{figure}[!ht]
 \begin{center}
 \includegraphics[width=6.0in]{images/encoder_performance.pdf}
-\caption {Performance of corruption recovery auto-encoder. The difference between predicted and actual 
+\caption {Performance of corruption recovery auto-encoder foe each of six super-layers. The difference between predicted and actual 
 wire position is shown for all super-layers. Average accuracy of wire position prediction is  $0.36$ wire.}
  \label{autoencoder:performance}
  \end{center}
 \end{figure}
 
-The test results of the trained network are shown in Figure~\ref{autoencoder:architecture}, where the 
+The test results of the trained network are shown in Figure~\ref{autoencoder:performance}, where the 
 difference between the true value of the segment position and the one reconstructed by the network is 
 plotted, showing a reconstruction accuracy of $0.36$ wires. In Figure~\ref{autoencoder:architecture} 
 this difference is shown vs the super-layer number which was corrupted in the input. As can be seen, 
