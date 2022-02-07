@@ -39,6 +39,22 @@ chamber data on the bottom row.}
 
 The top row of plots shows missing mass distributions for different backgrounds reconstructed by conventional tracking algorithm. On the bottom row the distributions reconstructed from de-noised data sample are shown, with overlaid histograms (red) of AI assisted reconstruction. On Figure~\ref{physics::conv_dn_ai} a) the summarized analysis of missing mass distributions are shown where number of reconstructed protons are plotted for all three reconstruction scenarios. It is evident that adding AI assistance for track classification further improves physics outcome from data processing. It can be seen that for $95~nA$ data sample, the number of reconstructed protons with de-noising and AI assisted tracking is $14\%$ higher than number of protons from background merged file reconstructed using conventional (no AI involved) code.
 
+\begin{table}
+\begin{tabular}
+Stats & Conventional & De-noised & De-noised + AI assisted \\
+# nucleaons (45 nA)  & 27225 &  30576 & 34277 \\
+# nucleaons (95 nA)  & 17125 & 23845 & 29428 \\
+# nucleaons (150 nA) &  1576 & 17018 & 23601 \\
+\hline
+\hline
+ratio to conventional 45nA & 1.0 & 1.12 & 1.26 \\
+ratio to conventional 95nA & 1.0 & 1.39 & 1.72 \\
+ratio to conventional 95nA & 1.0 & 10.80 & 14.97 \\
+\end{tabular}
+\caption{}
+ \label{table:summary}
+\end{table}
+
 
 
 
