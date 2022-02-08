@@ -337,6 +337,7 @@ public class Bank {
         int offset = this.nodeHeaderSize + nodeSchema.getOffset(element, index, nodeRows);
         return nodeBuffer.getShort(offset);
     }
+    
     public short getShort(String name, int index){
         int type   = nodeSchema.getType(name);
         if(type!=DataType.SHORT.getType()) {
@@ -366,9 +367,36 @@ public class Bank {
         return nodeBuffer.getLong(offset);
     }
     
-    public void putInt(int element, int index, int value){        
+    public void putInt(int element, int index, int value){      
+        
+        int type = this.nodeSchema.getType(element);
         int offset = this.nodeHeaderSize + nodeSchema.getOffset(element, index, nodeRows);
-        nodeBuffer.putInt(offset, value);        
+        if(type==3){
+            nodeBuffer.putInt(offset, value);
+            return;
+        }
+        
+        if(type==1){
+            if(value>Byte.MIN_VALUE&&value<Byte.MAX_VALUE){
+                nodeBuffer.put(offset,(byte) value);
+            } else {
+                System.out.printf("bank::error; value [%d] exceeds bounds for byte\n",value);
+            }
+            return;
+        }
+        
+        if(type==2){
+            if(value>Short.MIN_VALUE&&value<Short.MAX_VALUE){
+                nodeBuffer.putShort(offset,(short) value);
+            } else {
+                System.out.printf("bank::putInt::error; value [%d] exceeds bounds for short\n",value);
+            }
+            return;
+        }
+        
+        System.out.printf("bank::putInt::error; for type = %d, value = %d\n",type,value);
+        //int offset = this.nodeHeaderSize + nodeSchema.getOffset(element, index, nodeRows);
+        //nodeBuffer.putInt(offset, value);        
     }
     
     private void printWrongType(int status, String name, String expected, String passed){
@@ -423,6 +451,10 @@ public class Bank {
     }
     
     public void putInt(String name, int index, int value){
+        
+        int order = nodeSchema.getElementOrder(name);
+        this.putInt(order, index, value);
+        /*
         int type   = nodeSchema.getType(name);
         if(type!=DataType.INT.getType()) {
             printWrongType(1,name,"Int",DataType.getTypeById(type).getName());
@@ -430,7 +462,7 @@ public class Bank {
             //throw new HipoException("The ");
         }
         int offset = this.nodeHeaderSize + nodeSchema.getOffset(name, index, nodeRows);
-        nodeBuffer.putInt(offset, value);
+        nodeBuffer.putInt(offset, value);*/
     }
     
     public void putLong(int element, int index, long value){
