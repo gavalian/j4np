@@ -228,6 +228,12 @@ public class TextFileReader {
     public Integer getAsInt(    int index ){ return Integer.parseInt(this.entryTokens.get(index));};
     public Double  getAsDouble( int index ){ return Double.parseDouble(this.entryTokens.get(index));};    
     
+    public double[] getAsDouble(int[] columns){
+        double[] rows = new double[columns.length];
+        for(int i = 0; i < rows.length; i++)
+            rows[i] = getAsDouble(columns[i]);
+        return rows;
+    }
     
 /*    public List<String> readAsList(int maxEntries){
         List<String> 

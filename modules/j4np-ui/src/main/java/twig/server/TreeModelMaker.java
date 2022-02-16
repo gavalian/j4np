@@ -64,7 +64,7 @@ public class TreeModelMaker {
             String item = r.get(i);
             DefaultMutableTreeNode nNode = new DefaultMutableTreeNode(item);
             node.add(nNode);          
-            System.out.println("adding : " + item + " @ level " + num);
+            //System.out.println("adding : " + item + " @ level " + num);
             this.printTree(nNode, list, item, num+1);
         }
     }

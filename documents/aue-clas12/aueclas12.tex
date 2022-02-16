@@ -4,6 +4,8 @@
 \usepackage{color, colortbl}
 \usepackage{hyperref}
 \usepackage{float}
+\usepackage{lineno}
+\linenumbers
 % \usepackage[affil-it]{authblk}
 \usepackage{subcaption}
 \newcommand{\note}[1]{\textcolor{blue}{#1}}
@@ -11,28 +13,30 @@
 \definecolor{LightRose}{rgb}{1,0.88,0.88}
 \definecolor{LightGreen}{rgb}{0.88,1,0.88}
 
-\title{Convolutionoal Auto-Encoders for Drift Chamber data de-noising for CLAS12}
+\title{Convolutional Auto-Encoders for Drift Chamber data de-noising for CLAS12}
 \author[1]{Gagik Gavalian}
-%\author[2]{Polykarpos Thomadakis}
-%\author[2]{Angelos Angelopoulos}
-%\author[2]{Nikos Chrisochoides}
-%\author[3]{Raffaella De Vita}
+\author[2]{Polykarpos Thomadakis}
+\author[2]{Angelos Angelopoulos}
+\author[3]{Raffaella De Vita}
+\author[2]{Nikos Chrisochoides}
+
 %\author[1]{Veronique Ziegler}
 
 \address[1]{Jefferson Lab, Newport News, VA, USA}
-%\address[2]{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
-%\address[3]{INFN, Sezione di Genova, 16146 Genova, Italy}
+\address[2]{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
+\address[3]{INFN, Sezione di Genova, 16146 Genova, Italy}
 
 \begin{document}
 
 %\begin{titlepage}
 \begin{abstract}
-
-In this article we present results of using Artificial Intelligence in CLAS12 tracking software. Convolutional Auto-Encoder is used to de-noise signals from Drift Chambers by removing hits that are not associated with a track.
-The de-noising neural network used in conjunction with previously developed track classifier neural network~\cite{Gavalian:2020oxg} lead to track reconstruction efficiency increase. The increase in experimentally measured quantities allow running experiments at twice higher luminosity (at 95nA) with same 
-track reconstruction efficiency. The same experimental precession can be reached in half the time when
-using Artificial Intelligence in CLAS12 tracking. The increase in experimental statistics is equivalent of $\$8$M in experimental operation savings.
-
+In this article we present results of using Convolutional Auto-Encoders for de-noising raw data for CLAS12 drift chambers.
+The de-noising neural network provides increased efficiency in track reconstruction, also improved performance for high 
+luminosity experimental data collection. The de-noising neural network used in conjunction with previously developed track 
+classifier neural network~\cite{Gavalian:2022hfa} lead to significant track reconstruction efficiency increase for current luminosity
+(incident beam current $45~nA$). The increase in experimentally measured quantities allow running experiments at more than 
+twice higher luminosity (at $120~nA$) with same track reconstruction efficiency. This will lead to huge saving in accelerator 
+operational costs, and large savings for Jefferson Lab and collaborating institutions.
 \end{abstract}
 %\end{titlepage}
 \maketitle

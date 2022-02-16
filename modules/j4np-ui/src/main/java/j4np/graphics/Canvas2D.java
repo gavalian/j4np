@@ -298,8 +298,17 @@ public class Canvas2D extends JPanel implements MouseInputListener {
             int objectOrder = this.getObjectByPosition(xc, yc);
             //System.out.printf("clicked object is %d out of %d obejcts \n", objectOrder,
              //       this.graphicsComponents.size());
+             
+             //System.out.println(" object Order by click = " + objectOrder);
+             JPopupMenu menu = null;
             if(this.popupProvider!=null){
-                JPopupMenu menu = popupProvider.createMenu(null);
+                if(objectOrder>=0&&objectOrder<this.graphicsComponents.size()){
+                    menu = 
+                            popupProvider.createMenu(graphicsComponents.get(objectOrder));
+                } else {
+                    menu = 
+                            popupProvider.createMenu(null);
+                }
                 menu.show(this, e.getX(), e.getY());
                 //System.out.println(">>>> showing popup");
             }

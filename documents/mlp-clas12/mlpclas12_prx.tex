@@ -15,7 +15,7 @@
 \affiliation{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
 \author{Raffaella De Vita}
 \author{Veronique Ziegler}
-\affiliation{Jefferson Lab, Newport News, VA, USA}
+\affiliation{Jefferson Lab, Newport News, VA 23606, USA}
 \author{Nikos Chrisochoides}
 \affiliation{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
 
@@ -23,10 +23,11 @@
   In this article we describe the implementation of Artificial Intelligence models in track reconstruction
   software for the CLAS12 detector at Jefferson Lab. The Artificial Intelligence based approach resulted 
   in improved track reconstruction efficiency in high luminosity experimental conditions.  The track
- reconstruction efficiency increased by $10-15\%$ for single particle, and statistics in multi-particle physics 
+ reconstruction efficiency increased by $10-12\%$ for single particle, and statistics in multi-particle physics 
  reactions increased by $15\%-35\%$ depending on the number of particles in the reaction. The implementation 
- of artificial intelligence in the workflow also resulted in a speedup of the tracking by $35\%$, we estimated these 
- improvements are equivalent of more than $\$4$M  annual savings for realization of the CLAS12 physics program.
+ of artificial intelligence in the workflow also resulted in a speedup of the tracking by $35\%$. 
+ % we estimated these 
+ %improvements are equivalent of more than $\$4$M  annual savings for realization of the CLAS12 physics program.
 \end{abstract}
 
 \maketitle
@@ -45,6 +46,20 @@ the detector data reconstruction, particle identification, detector simulations 
 In this paper we present the implementation of machine learning models into the CLAS12 charged-particle track 
 reconstruction software. Detailed analysis of the reconstruction performance are presented, comparing track 
 reconstruction efficiency and speed improvements to conventional algorithms.
+
+%\section{CLAS12 experiments}
+
+%To estimate the statistical accuracy of proposed experiments calculation are made to derive 
+%best experimental conditions to achieve physics goals. One of the large experiments running 
+%on CLAS12 detector is Deeply Virtual Compton Scattering (DVCS) rung group (RGA). The 
+%estimations for experimental time were calculated assuming $100\%$ tracking efficiency at 
+%$90~nA$ (equal to $L=2\times10^{35}~cm^{-2}sec^{-1}$) and was estimated that $80$ days
+%of experimental time is needed to achieve the physics goals. However, the conventional tracking 
+%algorithm does not perform as expected and can provide only $90\%$ tracking efficiency at $45~nA$
+%incident beam energy. Currently experiments run at $45~nA$ (equivalent to 
+%$L=1\times 10^{35}~cm^{-2}sec^{-1}$) which will only achieve half of desired statistical requirements
+%of experiment. With use of Artificial Intelligence we intend reduce the discrepancy between experimental
+%time and physics goals.
 
 %************************************
 %-------- Included Chapters

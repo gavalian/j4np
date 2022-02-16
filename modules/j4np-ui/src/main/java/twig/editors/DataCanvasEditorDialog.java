@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import twig.graphics.TGDataCanvas;
+import twig.graphics.TGRegion;
+import twig.studio.StudioWindow;
 
 /**
  *
@@ -33,10 +35,28 @@ public class DataCanvasEditorDialog extends JPanel {
     }
         
     public static JFrame  openOptionsPanel(TGDataCanvas canvas){
+        
+        
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         DataCanvasEditorDialog dialog = new DataCanvasEditorDialog(canvas);
         frame.add(dialog);
+
+        frame.setSize(500, 500);
+        frame.pack();
+        frame.setVisible(true);
+        return frame;
+    }
+    
+    public static JFrame  openOptionsAttributes(TGDataCanvas c,TGRegion r){
+        
+        JFrame frame = new JFrame();
+        frame.setLayout(new BorderLayout());
+        //DataCanvasEditorDialog dialog = new DataCanvasEditorDialog(canvas);
+        DataAttributesEditorPanel p = 
+                new DataAttributesEditorPanel(c,
+                        r.getAxisFrame().getDataNodes().get(0).getDataSet().attr());
+        frame.add(p);
 
         frame.setSize(500, 500);
         frame.pack();

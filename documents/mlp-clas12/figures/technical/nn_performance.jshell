@@ -1,0 +1,74 @@
+//import org.jlab.groot.ui.*;
+
+import java.awt.Font;
+import j4np.utils.io.*;
+
+H1F convert(GraphErrors gr, double min, double max){
+        DataPoint p = new DataPoint();
+        H1F h = new H1F("h",gr.getSize(0),min,max);
+        for(int i = 0; i < h.getxAxis().getNBins(); i++){
+            gr.getPoint(p,i);
+            h.setBinContent(i, p.y);
+        }
+        return h;
+}
+//TStyle.getInstance().getPalette().setColorScheme("gold10");
+
+TGCanvas c = new TGCanvas("figure_data",600,540);
+c.view().divide(new double[][]{ {0.6,0.4},{0.6,0.4}});
+c.repaint();
+
+
+GraphErrors gp = GraphErrors.readFile("mlp_efficiency_p.data",0,20,new int[]{0,3});
+GraphErrors gnp = GraphErrors.readFile("mlp_efficiency_p.data",0,20,new int[]{0,9});
+
+GraphErrors gt = GraphErrors.readFile("mlp_efficiency_th.data",0,20,new int[]{0,4});
+GraphErrors gnt = GraphErrors.readFile("mlp_efficiency_th.data",0,20,new int[]{0,9});
+
+H1F hp = convert(gp,0.0,10.0);
+
+H1F hnp = convert(gnp,0.0,10.0);
+hp.setTitleX("Particle Momentum [GeV]");
+hnp.setTitleX("Particle Momentum [GeV]");
+H1F ht = convert(gt,4.0,45.0);
+H1F hnt = convert(gnt,4.0,45.0);
+
+ht.setTitleX("Particle Polar Angle [deg]");
+hnt.setTitleX("Particle Polar Angle [deg]");
+
+hp.attr().setLegend("all tracks");
+ht.attr().setLegend("all tracks");
+
+hnp.attr().setLegend("unidentified tracks");
+hnt.attr().setLegend("unidentified tracks");
+
+hp.attr().setFillColor(2);
+hp.attr().setFillStyle(1);
+ht.attr().setFillColor(4);
+ht.attr().setFillStyle(1);
+
+hnp.attr().setFillColor(2);
+//hp.attr().setFillStyle(1);
+hnt.attr().setFillColor(4);
+//ht.attr().setFillStyle(1);
+
+
+//TGCanvas c = new TGCanvas(500,500);
+setStyle2x2(c,10,10);
+//c.view().divide(2,2);
+
+c.view().region(0).draw(hp);
+c.view().region(1).draw(hnp);
+
+
+
+c.view().region(2).draw(ht);
+c.view().region(3).draw(hnt);
+
+c.view().region(0).showLegend(0.6,0.95);
+c.view().region(2).showLegend(0.6,0.95);
+c.view().region(1).showLegend(0.4,0.95);
+c.view().region(3).showLegend(0.4,0.95);
+c.repaint();
+
+c.view().export("results_classification.pdf","pdf");

@@ -834,6 +834,25 @@ public class H1F  implements DataSet {
         return graph;
     }
     
+    /**
+     * Retrieves a graph of the histogram
+     * 
+     * @return a DataPoints object of the histogram data
+     */
+    public GraphErrors getGraph(double xmin, double xmax){
+        //GraphErrors  graph = new GraphErrors(this.getAxis().getBinCenters(),
+        //        this.getData());
+        GraphErrors  graph = new GraphErrors();
+        DataPoint point = new DataPoint();
+        int npoints = getSize(0);// this.getDataSize();
+        for(int loop = 0; loop < npoints; loop++){
+            this.getPoint(point, loop);
+            if(point.x>xmin&&point.x<xmax)
+                graph.addPoint(point.x, point.y, 
+                        point.xerror,point.yerror);
+        }
+        return graph;
+    }
     /*
     public DataPoints getGraph() {
         DataPoints graph = new DataPoints(this.histName+"_graph",this.histXTitle,this.histYTitle);

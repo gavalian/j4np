@@ -1,0 +1,91 @@
+import twig.math.*;
+import java.awt.Font;
+import j4np.utils.io.*;
+
+//TStyle.getInstance().getPalette().setColorScheme("gold10");
+
+int pad = 2;
+
+TGCanvas c = new TGCanvas("figure_dc_examples",900,350);
+c.view().divide(0.05,0.08,4,1);
+
+setStyle4x1(c,10,10);
+
+for(int i = 0; i < 4; i++){
+  c.view().cd(i).region().getInsets().left(pad).right(pad).top(pad).bottom(45);
+}
+c.repaint();
+
+String[] noisy = new String[]{
+            "png/intro_noisy0.png","png/intro_noisy1.png",
+            "png/intro_noisy2.png","png/intro_noisy3.png" };
+        String[] correct = new String[]{
+            "png/intro_correct0.png","png/intro_correct1.png",
+            "png/intro_correct2.png","png/intro_correct3.png"
+        };
+
+for(int i =0; i < 4; i++){
+
+  for(int l = 0; l < 5; l++){
+
+     F1D f = new F1D("f","[a]",0.0,112.0);
+     f.setParameter(0,(l+1)*6);
+     f.attr().setLineColor(31);
+
+     f.attr().setTitleX("Wire Number");
+     f.attr().setTitleY("DC Layer");
+
+     c.view().cd(i).region().draw(f,"same");
+  }
+  GraphErrors graph = TDataFactory.fromImage(noisy[i]);
+  graph.attr().setMarkerColor(9);
+  graph.attr().setMarkerSize(8);
+  graph.attr().setTitleX("Wire Number");
+  graph.attr().setTitleY("DC Layer");
+
+  GraphErrors graphc = TDataFactory.fromImage(correct[i]);
+  if(i==2){
+     GraphErrors graphc5 = new GraphErrors();
+     graphc5.attr().setMarkerColor(5);
+     graphc5.attr().setMarkerSize(8);
+     for(int p = 0; p < graphc.getSize(1);p++){
+       double x = graphc.getVectorX().getValue(p);
+       double y = graphc.getVectorY().getValue(p);
+       if(x>40){
+        if(y<12||y>18) graphc5.addPoint(x,y);
+        } else {
+          graphc5.addPoint(x,y);
+        }
+      }
+
+   GraphErrors graph5 = new GraphErrors();
+   graph5.attr().setMarkerColor(9);
+   graph5.attr().setMarkerSize(8);
+   graph5.attr().setTitleX("Wire Number");
+   graph5.attr().setTitleY("DC Layer");
+   for(int p = 0; p < graph.getSize(1);p++){
+     double x = graph.getVectorX().getValue(p);
+     double y = graph.getVectorY().getValue(p);
+     if(x>60&&x<70){
+      if(y<12||y>18) graph5.addPoint(x,y);
+     } else {
+        graph5.addPoint(x,y);
+    }
+   }
+
+     c.view().cd(i).region().draw(graphc5,"same");//.draw(graphc5,"same");
+  } else {
+    graphc.attr().setMarkerColor(5);
+    graphc.attr().setMarkerSize(8);
+    c.view().cd(i).region().draw(graphc,"same");//.draw(graphc,"same");
+    }
+}
+
+for(int i =0;i<4;i++) {
+  c.view().region(i).getAxisFrame().getAxisY().setFixedLimits(0,36);
+  c.view().region(i).getAxisFrame().getAxisX().setFixedLimits(0,112);
+}
+
+//c.view().addLabels(0.9,0.98);
+c.repaint();
+

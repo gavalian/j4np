@@ -19,10 +19,10 @@ of the activated cells in the two super-layers of one region along the track tra
  \end{center}
 \end{figure}
 
-Particles that originate at the interaction vertex travel through magnetic field and pass through all 
-three regions of the drift chamber in a given sector are reconstructed by tracking algorithms. First, 
-in each super-layer adjacent  with a signal are grouped together into clusters (called segments), 
-shown on Figure~\ref{dc:side_view}. The positions of these segments (clusters) in each super-layer 
+Particles that originate at the interaction vertex travel through the magnetic field and pass through all 
+three regions of the drift chambers in a given sector are reconstructed by tracking algorithms. First, 
+in each super-layer adjacent wires with a signal are grouped together into clusters (called segments), 
+shown on Figure~\ref{dc:side_view}. The positions of these clusters (segments) in each super-layer 
 are used to fit the track trajectory to derive initial parameters, such as momentum and direction. 
 After the initial selection, good track candidates are passed through Kalman filter~\cite{Kalman1960} 
  to further refine measured parameters.
@@ -30,15 +30,15 @@ After the initial selection, good track candidates are passed through Kalman fil
 \begin{figure}[!ht]
 \begin{center}
  \includegraphics[width=6.2in]{images/figure_dc_examples.pdf}
-\caption {Example of signals in drift chambers for four events. Each plot represents one sector (from 
-different events) with a 36x112 matrix of wires. Background hits (in gray) are shown along with the 
-hits of reconstructed identified tracks (in red). Dashed lines represent boundaries between super-layers.}
+\caption {Example of signals in drift chambers for four events. Each plot represents one sector with a 
+36x112 matrix of wires. Background hits (in gray) are shown along with the hits of reconstructed 
+identified tracks (in red). Dashed lines represent boundaries between super-layers.}
  \label{dc:events_sector}
  \end{center}
 \end{figure}
 
 For each beam-target interaction or ``event'', drift chambers produce many segments, some belonging 
-to a track and some to background, or partial trajectories of low momentum tracks. In Figure~\ref{dc:events_sector} 
+to a track and some are background, or partial trajectories of low momentum tracks. In Figure~\ref{dc:events_sector} 
 drift chamber signals in one sector are shown for four different  events, in each sector data are hits 
 represented as a 36x112 matrix (36 layers and 112 wires per layer), showing all hits including those that 
 were determined to be part of a track. 
@@ -49,8 +49,8 @@ track is shown on Figure~\ref{dc:events_sector} c), where super-layer 3 does not
 For these types of tracks, candidates have to be identified from a large number of combinatorics consisting 
 of all combinations of clusters that form a  5-segment candidates. 
 
-Tracking is computationally intensive and makes up $80\%-90\%$ (depending on background conditions 
-and track multiplicity) of the total CLAS12 event processing time. The procedure of finding tracks from a 
+Tracking is computationally intensive and makes up $80\%-90\%$ of the total CLAS12 event processing 
+time (depending on background conditions and track multiplicity). The procedure of finding tracks from a 
 list of track candidates is where we found AI can provide real benefits. Such benefits include: improved 
 accuracy in identifying good tracks, and improved data processing speed by significantly reducing the 
 number of candidates that have to go through initial fitting and then through Kalman filter. AI can also 

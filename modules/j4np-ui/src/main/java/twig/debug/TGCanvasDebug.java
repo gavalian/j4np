@@ -162,8 +162,7 @@ public class TGCanvasDebug {
     
     
     public static void fitExample(){
-        
-        
+                
         TGCanvas c = new TGCanvas(600,550);
         H1F h = TDataFactory.createH1F(25000, 120, 0, 1, 0.6, 0.05);
         
@@ -187,36 +186,45 @@ public class TGCanvasDebug {
         PaveText    paveStats = new PaveText(func.getStats("M"),0.02,0.68, false,18);
         paveStats.setNDF(true).setMultiLine(true);
 
-
-        //paveStats.paveStyle = PaveTextStyle.MULTILINE;
-        
+        //paveStats.paveStyle = PaveTextStyle.MULTILINE;        
         PaveText   histStats = new PaveText(h.getStats("M"),0.02,0.98,false,18);
-      
-        
+              
         c.view().region(0).draw(paveStats).draw(histStats);
         c.repaint();
-    }
-    
+    }    
     
     public static void example2x2(){
         TGCanvas c = new TGCanvas(600,600);
+        c.view().setDrawEmptyRegions(true);
         c.view().divide(new double[][]{{0.4,0.6},{0.6,0.4}});
         for(int i = 0; i < 4; i++){
-            H1F h = TDataFactory.createH1F(2500);
-            c.view().region(i).draw(h);
+            H1F h = TDataFactory.createH1F(2500*(i+1));
+            h.setName("hist_"+i);
+            h.attr().setLineColor(i+1);
+            h.attr().setFillColor(40+i+1);
+            h.attr().setFillStyle(i+1);
+            h.attr().setLegend("random data # "+ i);
+            if(i==0||i==2) h.attr().setFillStyle(i+10);
+            if(i==2)
+                c.view().region(i).draw(h,"AEP");
+            if(i==0) { 
+                H1F h2 = H1F.rebin(h, 4);
+                h2.attr().setLineWidth(8);
+                c.view().region(i).draw(h2,"B");
+            }
+            else c.view().region(i).draw(h);
         }
-        c.view().addLabels(0.8, 0.9, 'a');
         
-        c.view().addLabels(0.1, 0.95,new String[]{"10 nA","45 nA","95 nA", "150 nA"});
+        //c.view().addLabels(0.8, 0.9, 'a');        
+        //c.view().addLabels(0.0, 0.95,new String[]{"10 nA","45 nA","95 nA", "150 nA"});
         
         //TLegend leg = new TLegend();
     }
     
     public static void main(String[] args){
-        //TGCanvasDebug.example2();
+        TGCanvasDebug.example2();
         //TGCanvasDebug.debugH2F();
-        
-        //TGCanvasDebug.fitExample();        
+        //TGCanvasDebug.fitExample();
         TGCanvasDebug.example2x2();
         
     }

@@ -11,6 +11,14 @@ package twig.config;
  */
 public class TDataAttributes {
 
+    public String getLegend() {
+        return legend;
+    }
+
+    public void setLegend(String legend) {
+        this.legend = legend;
+    }
+
     public int getMarkerOutlineColor() {
         return markerOutlineColor;
     }
@@ -145,10 +153,10 @@ public class TDataAttributes {
         
     public  int    lineColor = 1;
     private int    lineWidth = 1;
-    private int    lineStyle = 1;
+    private int    lineStyle = 0;
     
     private int  markerColor = 1;
-    private int   markerSize = 1;
+    private int   markerSize = 5;
     private int  markerStyle = 1;
     
     private int  markerOutlineColor = 0;
@@ -156,12 +164,13 @@ public class TDataAttributes {
     
     
     private int    fillColor = -1;
-    private int    fillStyle = -1;
+    private int    fillStyle = 0;
     
     private String  title  = "";
     private String  titleX = "";
     private String  titleY = "";
     private String  titleZ = "";
+    private String  legend = "";
     
     private String  drawOptions = "PE";
     private String  statOptions = "11";

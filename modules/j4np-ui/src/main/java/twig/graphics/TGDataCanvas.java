@@ -15,6 +15,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -23,7 +24,9 @@ import org.jfree.pdf.PDFDocument;
 import org.jfree.pdf.PDFGraphics2D;
 import org.jfree.pdf.Page;
 import twig.config.TStyle;
+import twig.data.DataSet;
 import twig.editors.DataCanvasEditorDialog;
+import twig.studio.TwigStudio;
 import twig.widgets.PaveText;
 
 /**
@@ -34,6 +37,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     
     private int activeRegion = 0;
     private CanvasPopupProvider popupProvider = null;//new CanvasPopupProvider();
+    private boolean drawRegionsEmpty = false;
     
     public TGDataCanvas(){
         Color color = TStyle.getInstance().getPalette().getColor(30004);
@@ -44,7 +48,9 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         divide(1,1);
     }
     
-    
+    public void setDrawEmptyRegions(boolean flag){
+        drawRegionsEmpty = flag;
+    }
     
     public void divide(double[][] fractions){
         int ncolumns = fractions.length;
@@ -52,7 +58,9 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         for(int i = 0; i < ncolumns; i++) size += fractions[i].length;
         System.out.println("DIVIDING CANVAS (cols): " + ncolumns + " TOTAL SIZE = " + size);
         this.getGraphicsComponents().clear();
-        for(int i = 0; i < size; i++)  addNode(new TGRegion());
+        for(int i = 0; i < size; i++) {
+            addNode(new TGRegion(drawRegionsEmpty));
+        }
         arrange(fractions);
     }
     
@@ -60,7 +68,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     public void divide(double left, double bottom,int cols, int rows){
         this.getGraphicsComponents().clear();
         for(int i = 0; i < cols*rows; i++){
-            TGRegion pad = new TGRegion();
+            TGRegion pad = new TGRegion(drawRegionsEmpty);
             this.addNode(pad);
         }
         this.arrangeWithGap(left, bottom, cols, rows);
@@ -72,7 +80,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     public void divide(int cols, int rows){
         this.getGraphicsComponents().clear();
         for(int i = 0; i < cols*rows; i++){
-            TGRegion pad = new TGRegion();
+            TGRegion pad = new TGRegion(drawRegionsEmpty);
             this.addNode(pad);
         }
         this.arrange(cols, rows);
@@ -261,8 +269,57 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         
+        if(e.getActionCommand().compareTo("New Canvas")==0){
+            if(popupProvider.region!=null){
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                //TwigStudio.getInstance().getCopyBuffer().clear();
+                
+                //System.out.println("copy region : size = " + obj.size());
+                TGCanvas c = new TGCanvas("canvas",500,500,false);
+                
+                for( TDataNode2D dn : obj){
+                    c.view().region().draw(dn.getDataSet(),"same");
+                    //TwigStudio.getInstance().getCopyBuffer().add(dn.dataSet);
+                    //System.out.println("copied : name = " + dn.dataSet.getName());
+                }
+            } else {
+                System.out.println("no region was selected....");
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("Copy Region")==0){
+            if(popupProvider.region!=null){
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                TwigStudio.getInstance().getCopyBuffer().clear();
+                
+                //System.out.println("copy region : size = " + obj.size());
+                for( TDataNode2D dn : obj){
+                    TwigStudio.getInstance().getCopyBuffer().add(dn.dataSet);
+                    //System.out.println("copied : name = " + dn.dataSet.getName());
+                }
+            } else {
+                System.out.println("no region was selected....");
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("Paste Region")==0){
+            if(popupProvider.region!=null){
+                
+                TGRegion reg = popupProvider.region;                                
+                //System.out.println("copy region : size = " + obj.size());
+                for( DataSet ds : TwigStudio.getInstance().getCopyBuffer()){
+                    reg.draw(ds,"same");
+                    //TwigStudio.getInstance().getCopyBuffer().add(dn.dataSet);
+                    //System.out.println("pasting : name = " + ds.getName());
+                }
+            } else {
+                System.out.println("no region was selected....");
+            }
+            this.repaint();
+        }
+        
         if(e.getActionCommand().compareTo("save_pdf")==0){
-            this.export(this.getName()+".pdf","PDF");
+            this.export(this.getName()+".pdf","PDF");            
             //this.save(this.getName()+".pdf");
         }
         
@@ -271,6 +328,70 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         }
         if(e.getActionCommand().compareTo("Edit Canvas")==0){
             DataCanvasEditorDialog.openOptionsPanel(this);
+        }
+        
+        if(e.getActionCommand().compareTo("Edit Region")==0){
+            TGRegion reg = popupProvider.region; 
+            DataCanvasEditorDialog.openOptionsAttributes(this,reg);
+        }
+        
+        if(e.getActionCommand().startsWith("divide_c_")==true){
+            String divSize = e.getActionCommand();
+            switch(divSize){
+                case "divide_c_1x1": this.divide(1, 1); break;
+                case "divide_c_1x2": this.divide(1, 2); break;
+                case "divide_c_2x1": this.divide(2, 1); break;
+                case "divide_c_2x2": this.divide(2, 2); break;
+                
+                case "divide_c_1x3": this.divide(1, 3); break;
+                case "divide_c_3x1": this.divide(3, 1); break;
+                case "divide_c_2x3": this.divide(2, 3); break;
+                case "divide_c_3x2": this.divide(3, 2); break;
+                case "divide_c_3x3": this.divide(3, 3); break;
+                default: this.divide(1, 1);
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("show_region_legend")==0){
+            if(popupProvider.region!=null){                
+                TGRegion reg = popupProvider.region;
+                reg.showLegend(0.05, 0.95);
+                this.repaint();
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("hide_region_legend")==0){
+            if(popupProvider.region!=null){                
+                TGRegion reg = popupProvider.region;
+                reg.hideLegend();
+                this.repaint();
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("show_region_stats")==0){
+            if(popupProvider.region!=null){                
+                TGRegion reg = popupProvider.region;
+                reg.showStats(0.05, 0.95);
+                this.repaint();
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("hide_region_stats")==0){
+            if(popupProvider.region!=null){                
+                TGRegion reg = popupProvider.region;
+                reg.hideStats();
+                this.repaint();
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("region_duplicate")==0){
+            if(popupProvider.region!=null){                
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                TGCanvas c = new TGCanvas("canvas",500,500,false);                
+                for( TDataNode2D dn : obj){
+                    c.view().region().draw(dn.getDataSet(),"same");                   
+                }
+            }
         }
     }
     
@@ -317,11 +438,35 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                     new String[]{"export_twig","export_txt", "export_h5"}
             );
             
+            this.addMenu(menu, "Import", 
+                    new String[]{"From twig","From txt", "From h5"}, 
+                    new String[]{"import_twig","import_txt", "import_h5"}
+            );
+            
             this.addMenu(menu, "Save...", 
                     new String[]{"Save PDF","Save PNG", "Save SVG"}, 
                     new String[]{"save_pdf","save_png", "save_svg"}
                     );
 
+            menu.add(new JSeparator());
+            this.addMenu(menu, "Divide", 
+                    new String[]{"1x1","1x2", "2x1","2x2","3x1","1x3","2x3","3x3"}, 
+                    new String[]{"divide_c_1x1","divide_c_1x2", "divide_c_2x1",
+                        "divide_c_2x2","divide_c_3x1","divide_c_1x3",
+                        "divide_c_2x3","divide_c_3x3"}
+                    );
+            
+            menu.add(new JSeparator());
+            
+            //addMenuItem(menu, "New Canvas");
+            
+            this.addMenu(menu, "Region", 
+                    new String[]{"Duplicate" ,"Show Legend","Hide Legend",
+                        "Show Stats","Hide Stats"}, 
+                    new String[]{"region_duplicate", "show_region_legend",
+                        "hide_region_legend","show_region_stats","hide_region_stats"}
+            );
+            
             menu.add(new JSeparator());
             this.addMenuItem(menu, "Edit Region");
             this.addMenuItem(menu, "Edit Canvas");

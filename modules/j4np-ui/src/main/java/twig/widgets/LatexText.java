@@ -68,10 +68,12 @@ public class LatexText {
      
     public final void setText(String text){
     	asciiString = text;
-        String ltx  = LatexTextTools.convertUnicode(text);
-        latexString = LatexTextTools.convertSubAndSuperscript(ltx);
-        //latexString.addAttribute(TextAttribute.FONT,textFont);
-        setAttributedStringFont(textFont);
+        if(asciiString.length()>0){
+            String ltx  = LatexTextTools.convertUnicode(text);
+            latexString = LatexTextTools.convertSubAndSuperscript(ltx);
+            //latexString.addAttribute(TextAttribute.FONT,textFont);
+            setAttributedStringFont(textFont);
+        }
     }
     
     public final String getTextString(){
@@ -103,8 +105,10 @@ public class LatexText {
     public AttributedString getText(){ return latexString;}
     
     protected void setAttributedStringFont(Font font){
-        latexString.addAttribute(TextAttribute.FAMILY, font.getFontName());
-        latexString.addAttribute(TextAttribute.SIZE, font.getSize());
+        if(this.asciiString.length()>0){
+            latexString.addAttribute(TextAttribute.FAMILY, font.getFontName());
+            latexString.addAttribute(TextAttribute.SIZE, font.getSize());
+        }
     }
     /*
     public final void setFont(String fontname){

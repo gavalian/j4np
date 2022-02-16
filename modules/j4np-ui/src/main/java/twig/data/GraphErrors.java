@@ -8,6 +8,7 @@ package twig.data;
 
 
 import j4np.graphics.settings.DataAttributes;
+import j4np.utils.io.TextFileReader;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
@@ -145,9 +146,34 @@ public class GraphErrors implements DataSet {
     
     
 
-
-
-    
+    public static GraphErrors readFile(String filename, int start, int npoints, int[] columns) {
+        
+        TextFileReader reader = new TextFileReader();
+        //reader.openFile(filename);
+        reader.open(filename);
+        
+        GraphErrors gr = new GraphErrors();
+        
+        for(int n = 0; n < start; n++) reader.readNext();
+        
+        int counter = 0;
+        while (reader.readNext() == true&& counter<npoints) {
+            double[] data = reader.getAsDouble(columns);
+            //System.out.println("COLUMNS = " + columns[0] + " " + columns[1]);
+            if(columns.length==2){
+                gr.addPoint(data[0], data[1], 0.0, 0.0);
+                //System.out.println("adding point " + data[0] + " " + data[1]);
+            }
+            if (columns.length==3) {
+                gr.addPoint(data[0],data[1],0.0,data[2]);
+            }
+            if (columns.length>3) {
+                gr.addPoint(data[0],data[1],data[2],data[3]);
+            }
+            counter++;
+        }
+        return gr;
+    }
 
     public GraphErrors divide(double number){        
         StatNumber denom = new StatNumber(number,0.0);

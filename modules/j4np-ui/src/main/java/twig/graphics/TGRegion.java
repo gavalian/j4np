@@ -10,6 +10,7 @@ import j4np.graphics.Canvas2D;
 import j4np.graphics.Node2D;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 import twig.config.TStyle;
@@ -18,6 +19,9 @@ import twig.data.GraphErrors;
 import twig.data.H1F;
 import twig.data.H2F;
 import twig.math.Func1D;
+import twig.widgets.Legend;
+import twig.widgets.PaveText;
+import twig.widgets.PaveText.PaveTextStyle;
 import twig.widgets.StyleNode;
 import twig.widgets.Widget;
 
@@ -45,10 +49,18 @@ public class TGRegion extends Node2D implements StyleNode {
         getInsets().left(60).bottom(60).top(40).right(40);
     }
     
+    public TGRegion(boolean drawEmpty){
+        super(0,0,50,50);
+        this.nodeBackground = null;
+        axisFrame.setParent(this);
+        getInsets().left(60).bottom(60).top(40).right(40);
+        isInDebugMode = drawEmpty;
+    }
+    
     @Override
     public void drawLayer(Graphics2D g2d, int layer){ 
         if(this.isInDebugMode==false){
-            if(axisFrame.dataNodes.size()>0){
+            if(axisFrame.dataNodes.size()>0||axisFrame.widgetNodes.size()>0){
                 axisFrame.drawLayer(g2d, layer);
             }
         } else {
@@ -111,6 +123,14 @@ public class TGRegion extends Node2D implements StyleNode {
     }
     
     
+    public TGRegion addLabel(double x, double y, String label){
+        PaveText ta = new PaveText(label,x,y);
+        ta.setNDF(true);
+        ta.setDrawBox(false);
+        ta.setFillBox(false);
+        ta.setFont(axisX().getAttributes().getAxisLabelFont());
+        draw(ta); return this;
+    }
     
     public TGAxisFrame getAxisFrame(){return this.axisFrame;}
     
@@ -124,6 +144,59 @@ public class TGRegion extends Node2D implements StyleNode {
         return this;
     }
     
+    public TGRegion showLegend(double x, double y){
+        Legend leg = this.getLegend();
+        leg.setPosition(x, y);
+        this.draw(leg);
+        return this;
+    }
+    
+    public TGRegion showStats(double x, double y){
+        PaveText stats = new PaveText(x,y);
+        stats.setStyle(PaveTextStyle.STATS_MULTILINE);
+        stats.setNDF(true);
+        stats.fillBox = false;
+        List<String> statsStrings = new ArrayList<>();
+        for(TDataNode2D dn : axisFrame.dataNodes){
+            statsStrings.addAll(dn.getDataSet().getStats("*"));
+        }
+        stats.addLines(statsStrings);
+        this.draw(stats);
+        return this;
+    }
+    
+    public TGRegion hideStats(){
+        PaveText l = null;
+        for(Widget w : this.axisFrame.widgetNodes){
+            if(w instanceof PaveText) {
+                PaveText pt = (PaveText) w;
+                if(pt.getStyle()==PaveTextStyle.STATS_MULTILINE)
+                    l = pt;
+            }
+        }
+        if(l!=null) axisFrame.widgetNodes.remove(l);
+        return this;
+    }
+    
+    public TGRegion hideLegend(){
+        Legend l = null;
+        for(Widget w : this.axisFrame.widgetNodes){
+            if(w instanceof Legend) l = (Legend) w;
+        }
+        if(l!=null) axisFrame.widgetNodes.remove(l);
+        return this;
+    }
+    
+    public Legend getLegend(){
+        Legend leg = new Legend(0,0);
+        leg.setNDF(true);
+        leg.drawBox = false;
+        leg.fillBox = false;
+        for(TDataNode2D node : this.getAxisFrame().dataNodes){
+            leg.add(node.getDataSet());
+        }
+        return leg;
+    }
     public TGAxis axisX(){ return this.axisFrame.getAxisX();}
     public TGAxis axisY(){ return this.axisFrame.getAxisY();}
     

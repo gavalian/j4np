@@ -5,16 +5,12 @@
  */
 package twig.graphics;
 
-import j4np.graphics.Canvas2D;
 import j4np.graphics.Node2D;
 import j4np.graphics.Translation2D;
-import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFrame;
 import twig.config.TAxisAttributes.AxisType;
 import twig.config.TStyle;
 import twig.data.DataRange;
@@ -36,8 +32,8 @@ public class TGAxisFrame extends Node2D implements StyleNode {
     private final Translation2D axisFrameRange = new Translation2D(0.0,1.0,0.0,1.0);
     private final Translation2D  ndfFrameRange = new Translation2D(0.0,1.0,0.0,1.0);
     
-    protected List<TDataNode2D>       dataNodes = new ArrayList<>();
-    private   List<Widget>          widgetNodes = new ArrayList<>();
+    protected   List<TDataNode2D>       dataNodes = new ArrayList<>();
+    protected   List<Widget>          widgetNodes = new ArrayList<>();
     
     private DataRange             axisDataRange = new DataRange();
     private DataRange             tempDataRange = new DataRange();
@@ -130,6 +126,8 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         
         
     }
+    
+    public  List<TDataNode2D>  getDataNodes(){return this.dataNodes;}
     
     private void updateLimits(){
         //System.out.println(" updating limits");

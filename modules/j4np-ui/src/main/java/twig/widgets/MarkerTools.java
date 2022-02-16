@@ -8,6 +8,13 @@ package twig.widgets;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import twig.config.TStyle;
+import twig.data.DataSet;
+import twig.data.GraphErrors;
+import twig.data.H1F;
 
 /**
  *
@@ -331,5 +338,95 @@ public class MarkerTools {
         }
     }
     
+    public static void drawRectangleFillStyle(Graphics2D g2d, Shape shape, Rectangle2D rect, Color fillcolor, int style){
+        
+        int step = 4;
+        
+        switch(style){
+            case 2: step = 8; break;
+            case 3: step = 12; break;
+            case 4: step = 16; break;
+            case 11: step = 4; break;
+            case 12: step = 8; break;
+            case 13: step = 12; break;
+            case 14: step = 16; break;
+            default: step = 4; break;
+        }
+        
+        g2d.setColor(fillcolor);
+        
+        g2d.setStroke(new BasicStroke(1));
+        
+        g2d.setClip(shape);
+        
+        double h = rect.getHeight();
+        if(style>=10){
+            for(double x = (rect.getX()-h);
+                    x < (rect.getX()+rect.getWidth());
+                    x += step){
+                g2d.drawLine((int) x, (int) (rect.getY() + h), (int) (x+h), (int) rect.getY());
+            } 
+        } else {
+            for(double x = rect.getX();
+                    x < (rect.getX()+rect.getWidth()+rect.getHeight());
+                    x += step){
+                g2d.drawLine((int) x, (int) (rect.getY() + h), (int) (x-h), (int) rect.getY());
+            } 
+        }
+        
+        g2d.setClip(null);
+    }
     
+    public static void drawSymbolAt(Graphics2D g2d, Point2D p, DataSet ds, TStyle style, int height){
+        if(ds instanceof H1F){            
+            Color lc = style.getPalette().getColor(ds.attr().getLineColor());
+                        
+            double width = 1.6*height;
+            
+            Rectangle2D rect = new Rectangle2D.Double(p.getX() - width*0.5,
+                    p.getY()-height*0.5,width,height);
+            
+            if(ds.attr().getFillColor()>=0){
+                int   fs = ds.attr().getFillStyle();
+                int   lw = ds.attr().getLineWidth();
+                
+                Color fc = style.getPalette().getColor(ds.attr().getFillColor());
+                g2d.setColor(fc);
+                
+                if(fs>0){
+                    MarkerTools.drawRectangleFillStyle(g2d,rect, rect, fc, fs);
+                } else {
+                    g2d.fill(rect);
+                }
+                //g2d.fillRect((int) (p.getX() - width*0.5),(int) (p.getY()-height*0.5),
+                //        (int) width,(int)height);
+            }
+            
+            g2d.setColor(lc);
+            g2d.setStroke(new BasicStroke(ds.attr().getLineWidth()));
+            
+            //g2d.drawRect((int) (p.getX() - width*0.5),(int) (p.getY()-height*0.5),
+            //        (int) width,(int)height);
+            g2d.draw(rect);
+        }
+        
+         if(ds instanceof GraphErrors){            
+            Color lc = style.getPalette().getColor(ds.attr().getLineColor());
+            Color oc = style.getPalette().getColor(ds.attr().getMarkerOutlineColor());
+            
+            int   lw = ds.attr().getLineWidth();
+            g2d.setColor(lc);
+            g2d.setStroke(new BasicStroke(lw));
+            double width = 1.6*height*0.5;
+            g2d.drawLine((int) (p.getX()-width), (int) p.getY(),
+                    (int) (p.getX()+width), (int) p.getY());
+            
+            Color mc = style.getPalette().getColor(ds.attr().getMarkerColor());
+            int mstyle = ds.attr().getMarkerStyle();
+            int msize  = ds.attr().getMarkerSize();
+            int ls     = ds.attr().getMarkerOutlineWidth();
+            MarkerTools.drawMarker(g2d, p.getX(), p.getY(), mc, oc, msize, ls, mstyle);
+            
+         }
+    }
 }

@@ -1,10 +1,10 @@
 \section{Data Analysis with De-Noising}
 
-In this section we compare results from analysis of raw background merged data sample with files that were de-noised prior to running through CLAS12 reconstruction software. The comparison was done for files with different background merged (namely $45~nA$, $95~nA$ and $150~nA$). The data for raw sample and de-nosied sample was processed with same settings of CLAS12 reconstruction software.
+In this section we compare results from analysis of background merged data sample with files that were de-noised prior to running through CLAS12 reconstruction software. The comparison is done for data samples with different luminosities (namely $45~nA$, $95~nA$ and $150~nA$). The data for raw sample and de-nosied sample are processed with same settings of CLAS12 reconstruction software and the tracks reconstructed in each sample are analyzed.
 
 \subsection{Luminosity dependence}
 
-The track reconstruction efficiency was calculated according to Eq.~\ref{eq::eff} for positive and negative charged particles. The results are shown on Figure~\ref{lscan::conv_dn}. 
+The track reconstruction efficiency is calculated according to Eq.~\ref{eq::eff} for positive and negative charged particles. The results are shown on Figure~\ref{lscan::conv_dn}. 
 
 \begin{figure}[!h]
 \begin{center}
@@ -16,23 +16,31 @@ conventional algorithm running on background merged files (diamonds), and on fil
  \end{center}
 \end{figure}
 
-As can be seen from the figure the number of reconstructed hadron-electron pairs relative to reconstructed electrons is higher for de-noised data sample compared to the raw data sample. This is due to increased number of clusters reconstructed by conventional clustering algorithm in de-noised data samples. Detailed studies of cluster reconstruction efficiency were performed in our studies of neural network paper. The result show that the slope of efficiency degradation as a function of luminosity is significantly improved in de-noised data sample. It is worth noting that at $90~nA$ the de-noised data sample track reconstruction efficiency is same as for the $45~nA$ when reconstructing raw data sample (without de-noising). This implies that experiment can run at effectively at $90~nA$, collecting data twice faster, while maintaining the same track reconstruction efficiency.
+As can be seen from the figure the number of reconstructed hadron-electron pairs relative to reconstructed electrons is higher for de-noised data sample compared to the raw data sample. This is due to increased number of clusters reconstructed by conventional clustering algorithm in de-noised data samples. Detailed studies of cluster reconstruction efficiency are performed 
+in our studies of neural network paper~\cite{Thomadakis:2022zcd}. 
+The result show that the slope of efficiency degradation as a function of luminosity is significantly improved in de-noised data sample. 
+It is worth noting that at $75~nA$ the de-noised data sample track reconstruction efficiency is same as for the $45~nA$ when reconstructing raw data sample (without de-noising). This implies that experiment can run at effectively at $75~nA$, collecting data twice faster while maintaining the same track reconstruction efficiency, which will lead to higher experimental significance in measured observables.
 
 \subsection{Physics Impact}
 
-The processed data was also evaluated to extract physics observables from both data sample to discern the impact on physics for de-noising algorithm. As mentioned before the data selected from Pythia simulation was for the final state $H(e,e^\prime\pi^+\pi^-pX)$. From this sample the missing mass distribution of $H(e,e^\prime\pi^+\pi^-X)$ is analyzed which should show proton mass where the selected reaction was inclusive $\rho$ meson production and some background (above proton mass) where other reactions (with missing neutral particles)  are selected.
+The processed data was also evaluated to extract physics observables from both data sample to discern the impact on physics for de-noising algorithm. As mentioned before, the data selected from Pythia simulation was for the final state $H(e,e^\prime\pi^+\pi^-p)X$ containing exactly three charged particles. From this sample the missing mass distribution of $H(e,e^\prime\pi^+\pi^-)X$ is analyzed showing a peak around proton mass where the selected reaction is inclusive $\rho$ meson production and some background (above proton mass) where other reactions  are present (with missing neutral particles).
 
 \begin{figure}[!h]
 \begin{center}
-  \includegraphics[height=2.8in]{images/graph_mxepipi_dn.pdf}
- \includegraphics[height=2.8in]{images/plots_mxepipi_dn.pdf}
-\caption {Number of reconstructed protons from missing mass of $H(e \rightarrow e^\prime \pi^+\pi^-)$ for background merged files for  $5~nA$, $45~nA$, $95~nA$ and $150~nA$ respectively. The number of protons reconstructed by conventional algorithm after background merging is shown on the top row, and reconstruction after  de-noising drift 
-chamber data on the bottom row.}
+  \includegraphics[height=3.1in]{images/graph_mxepipi_dn.pdf}
+ \includegraphics[height=3.1in]{images/plots_mxepipi_dn.pdf}
+\caption {a) Number of reconstructed protons from missing mass of $H(e \rightarrow e^\prime \pi^+\pi^-)X$ 
+for background merged data set reconstructed with conventional tracking (squares) compared to de-noised data sample 
+reconstructed with conventional algorithm (diamonds) for $45~nA$, $95~nA$ and $150~nA$. b), c) and d) reconstructed 
+missing mass distributions for background merged data set reconstructed with conventional tracking (filled histogram) and
+de-noised data sample reconstructed with conventional algorithm (solid line histogram). Missing mass distribution for
+data sample before background merging ($0~nA$) is shown (circles) for reference. }
  \label{physics::conv_dn}
  \end{center}
 \end{figure}
 
-On Figure~\ref{physics::conv_dn} the results of analysis are shown, where the missing mass distribution $H(e,e^\prime\pi^+\pi^-)X$ is plotted for both background merged data (top row) and for background merged de-noised data (bottom row) as a function of incident beam current (luminosity).  The scale on all plots is set to the same heigh to visually observe decrease of number of protons reconstructed. 
+In Figure~\ref{physics::conv_dn} the results of analysis are shown, where the missing mass distribution $H(e,e^\prime\pi^+\pi^-)X$ is shown for all different beam currents. In panels b) ,c) and d) the histograms show relative reconstructed distributions. The graph with points shows the missing mass reconstructed by conventional tracking algorithm before any background is mixed in for reference. The filled histogram shows missing mass distribution reconstructed from background merged files with conventional algorithm. The solid line histogram is the missing mass distribution reconstructed by conventional algorithm after the background merged file is processed with de-noising neural network to remove nose hits.
+The summary of number of protons under the missing mass distribution relative to original (no background merged) distribution is presented in Figure~\ref{physics::conv_dn} a). It can be seen from the figure that conventional algorithm reconstructs more tracks after de-noising the data. The number of reconstructed proton final states at $75nA$ from de-noised data is equal to number of reconstructed final states at $45nA$ when using conventional track reconstruction algorithms.  Conducting experiments with higher incident beam current allows to accumulate necessary statistics for proposed experiments in significantly less time, leading to huge savings in operating accelerator.
 
 %\begin{figure}[!ht]
 %\begin{center}
@@ -45,8 +53,8 @@ On Figure~\ref{physics::conv_dn} the results of analysis are shown, where the mi
  %\end{center}
 %\end{figure}
 
-On Figure~\ref{physics::conv_dn} (a) the dependence is plotted for both data samples, where the points represent number of events under the proton peak normalized to the number of protons reconstructed by the tracking algorithm before background merging procedure (shown on Figure~\ref{physics::count_raw_dn} in the first column).
-It is evident from the figure that number of reconstructed protons in the de-noised data at $45~nA$ is $37\%$ larger, and the number of reconstructed protons at $95~nA$ in de-noised data sample is $2\%$ larger than in $45~nA$ background merged files. This result has significant implications on future experiments, since the data can be collected much fasted to reach the required statistical significance for given physics program while saving significant amount of money in accelerator operation costs.
+%On Figure~\ref{physics::conv_dn} (a) the dependence is plotted for both data samples, where the points represent number of events under the proton peak normalized to the number of protons reconstructed by the tracking algorithm before background merging procedure (shown on Figure~\ref{physics::count_raw_dn} in the first column).
+%It is evident from the figure that number of reconstructed protons in the de-noised data at $45~nA$ is $37\%$ larger, and the number of reconstructed protons at $95~nA$ in de-noised data sample is $2\%$ larger than in $45~nA$ background merged files. This result has significant implications on future experiments, since the data can be collected much fasted to reach the required statistical significance for given physics program while saving significant amount of money in accelerator operation costs.
 
 
 

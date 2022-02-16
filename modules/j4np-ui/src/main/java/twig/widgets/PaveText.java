@@ -26,10 +26,10 @@ import twig.widgets.LatexText.TextRotate;
 public class PaveText implements Widget { 
 
      public enum PaveTextStyle {
-        MULTILINE, ONELINE;
+        MULTILINE, ONELINE, STATS_MULTILINE;
     }
      
-    protected Font             textFont = new Font("Avenir", Font.PLAIN, 14);
+    protected Font           textFont = new Font("Avenir", Font.PLAIN, 14);
     private Color           textColor = Color.BLACK;
     private Color         borderColor = new Color(150,150,150);
     private Color    headerBackground = new Color(250,255,250);
@@ -151,11 +151,16 @@ public class PaveText implements Widget {
         this.textColor = col;
     }
     
+    public final void setPosition(double x, double y){
+        positionX = x; positionY = y; 
+    }
+    
     public final PaveText addLine(String line){
         textStrings.add(line); 
         textPositions.add(new Point2D.Double(0.0,0.0));
         return this;
     }
+    
     public void show(){
         System.out.println("number of lines = " + textStrings.size());
         for(String line : textStrings) System.out.println("\t--> " + line);
@@ -200,9 +205,11 @@ public class PaveText implements Widget {
     public final PaveText left(int p){
         paddingLeft = p; return this;
     }
+    
     public final PaveText right(int p){
         paddingRight = p; return this;
     }
+    
     public final PaveText top(int p){
         paddingTop = p; return this;
     }
@@ -232,7 +239,8 @@ public class PaveText implements Widget {
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
         //System.out.println("style = " + paveStyle);
         //if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLine(g2d,r,tr);
-        if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLineNuevo(g2d,r,tr);
+        if(paveStyle == PaveTextStyle.MULTILINE || paveStyle == PaveTextStyle.STATS_MULTILINE) 
+            drawLayerMultiLineNuevo(g2d,r,tr);
         
         if(paveStyle == PaveTextStyle.ONELINE) 
             this.drawLayerOneLine(g2d, r, tr);
@@ -246,9 +254,7 @@ public class PaveText implements Widget {
         FontMetrics metrics = g2d.getFontMetrics(textFont);
         
         double textHeight = getTextHeightWithSpacing(g2d, textSpacing);
-        double textWidth  = getTextWidthMax(g2d);
-        
-
+        double textWidth  = getTextWidthMax(g2d);        
         
         double xPos = tr.getX(positionX,r);
         double yPos = r.getY() + r.getHeight() - tr.relativeY(positionY, r);//r.getY() + r.getHeight() - tr.getY(positionY,r);
@@ -291,6 +297,69 @@ public class PaveText implements Widget {
                     LatexText.ALIGN_TOP);
             yPos += tb.getHeight() + textSpacing*tb.getHeight();
         }
+    }
+    
+    
+    protected List<Point2D> drawLayerMultiLineNuevoCoord(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        //System.out.println(" PLOTTING MULTILINE NUEVO");
+        //NodeRegion2D bounds = getParent().getBounds();
+        //System.out.println("[Pave Text] ---> " + bounds);
+        List<Point2D> points = new ArrayList<>();
+        
+        FontMetrics metrics = g2d.getFontMetrics(textFont);        
+        double textHeight = getTextHeightWithSpacing(g2d, textSpacing);
+        double textWidth  = getTextWidthMax(g2d);        
+
+        
+        double xPos = tr.getX(positionX,r);
+        double yPos = r.getY() + r.getHeight() - tr.relativeY(positionY, r);//r.getY() + r.getHeight() - tr.getY(positionY,r);
+        
+        //System.out.printf("X pos = %d, Y pos = %d\n",(int) xPos, (int) yPos);
+        //System.out.println(r);
+        //tr.show();
+        
+        if(this.fillBox==true){
+            g2d.setColor(this.headerBackground);
+             g2d.fillRoundRect((int) (xPos), 
+                    (int) (yPos-paddingTop), 
+                    (int) (textWidth + paddingLeft + paddingRight), 
+                    (int) (textHeight + paddingTop + paddingBottom), 
+                    roundRadius,roundRadius);
+        }
+        
+        if(this.drawBox==true){
+            g2d.setColor(this.borderColor);
+        
+            g2d.drawRoundRect((int) (xPos), 
+                    (int) (yPos-paddingTop), 
+                    (int) (textWidth + paddingLeft + paddingRight), 
+                    (int) (textHeight + paddingTop + paddingBottom), 
+                    roundRadius,roundRadius);
+        }
+        
+        xPos += paddingLeft;
+        yPos += paddingTop;
+        
+        for(int i = 0; i < textStrings.size(); i++){
+            latexText.setText(textStrings.get(i));
+            Rectangle2D tb = latexText.getBounds(g2d);
+            g2d.setColor(textColor);
+            latexText.setColor(textColor);
+            double xPosMarker = xPos - ((double)paddingLeft)/2.0;
+            this.textPositions.get(i).x = xPosMarker;
+            this.textPositions.get(i).y = yPos + (tb.getHeight() + textSpacing*tb.getHeight())*0.5;
+            if(this.rotation==TextRotate.NONE){
+                //System.out.printf("x = %8.1f y = %8.1f\n",xPos,yPos);
+                latexText.drawString(g2d, (int) xPos, (int) (yPos), this.xAlignment,this.yAlignment,0);
+                points.add(new Point2D.Double(xPos, yPos + tb.getHeight()*0.5));
+            } else {
+                latexText.drawString(textStrings.get(i),g2d, (int) xPos, (int) yPos, 
+                        this.xAlignment,this.yAlignment,rotation);
+                points.add(new Point2D.Double(xPos, yPos + tb.getHeight()*0.5));
+            }
+            yPos += tb.getHeight() + textSpacing*tb.getHeight();
+        }
+        return points;
     }
     
     protected void drawLayerMultiLineNuevo(Graphics2D g2d, Rectangle2D r, Translation2D tr){
@@ -350,6 +419,7 @@ public class PaveText implements Widget {
             yPos += tb.getHeight() + textSpacing*tb.getHeight();
         }
     }
+    
     
     protected List<Point2D.Double> getTextPositions(){
         return this.textPositions;

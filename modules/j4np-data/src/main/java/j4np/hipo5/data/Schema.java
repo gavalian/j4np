@@ -264,6 +264,14 @@ public class Schema {
     }
     
     
+    public int  getEntryOrder(String name){
+        if(schemaEntriesMap.containsKey(name))
+            return schemaEntriesMap.get(name);
+        System.out.printf("%s >>> Error, no entry [%s] found in bank [%s]\n ",
+                this.getClass().getName(),name,name);
+        return -1;
+    }
+    
     public Schema copy(){
         SchemaBuilder schbuilder = new SchemaBuilder(getName(),getGroup(),getItem());
         int nentries = this.schemaEntriesList.size();

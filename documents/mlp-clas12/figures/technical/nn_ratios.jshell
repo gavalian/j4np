@@ -1,0 +1,72 @@
+//import org.jlab.groot.ui.*;
+
+import java.awt.Font;
+import j4np.utils.io.*;
+
+H1F convert(GraphErrors gr, double min, double max){
+        DataPoint p = new DataPoint();
+        H1F h = new H1F("h",gr.getSize(0),min,max);
+        for(int i = 0; i < h.getxAxis().getNBins(); i++){
+            gr.getPoint(p,i);
+            h.setBinContent(i, p.y);
+        }
+        return h;
+}
+//TStyle.getInstance().getPalette().setColorScheme("gold10");
+
+TGCanvas c = new TGCanvas("figure_data",600,540);
+c.view().divide(2,1);
+c.repaint();
+
+
+GraphErrors gp = GraphErrors.readFile("mlp_efficiency_p.data",0,20,new int[]{0,3});
+GraphErrors gnp = GraphErrors.readFile("mlp_efficiency_p.data",0,20,new int[]{0,9});
+
+GraphErrors gt = GraphErrors.readFile("mlp_efficiency_th.data",0,20,new int[]{0,4});
+GraphErrors gnt = GraphErrors.readFile("mlp_efficiency_th.data",0,20,new int[]{0,9});
+
+H1F hptot = convert(gp,0.0,10.0);
+H1F hp = convert(gp,0.0,10.0);
+H1F hnp = convert(gnp,0.0,10.0);
+
+hp.sub(hnp);
+H1F hprat = H1F.divide(hp,hptot);
+
+H1F httot = convert(gt,4.0,45.0);
+H1F ht = convert(gt,4.0,45.0);
+H1F hnt = convert(gnt,4.0,45.0);
+ht.sub(hnt);
+H1F htrat = H1F.divide(ht,httot);
+
+setStyle2x1(c,10,10);
+
+GraphErrors graphp = hprat.getGraph(0.5,9.5);
+graphp.attr().setTitleX("Particle Momentum [GeV]");
+graphp.attr().setTitleY("Prediction Efficiency");
+graphp.attr().setMarkerSize(13);
+graphp.attr().setMarkerColor(2);
+graphp.attr().setMarkerOutlineColor(2);
+graphp.attr().setLineColor(2);
+graphp.attr().setFillColor(32);
+
+GraphErrors grapht = htrat.getGraph(8,42.);
+grapht.attr().setTitleX("Particle Polar Angle [deg]");
+grapht.attr().setTitleY("Prediction Efficiency");
+grapht.attr().setMarkerSize(13);
+grapht.attr().setMarkerColor(4);
+grapht.attr().setMarkerOutlineColor(4);
+grapht.attr().setLineColor(4);
+grapht.attr().setFillColor(34);
+
+c.view().region(0).draw(graphp,"F");
+c.view().region(0).axisLimitsY(0.95,1.05);
+c.view().region(0).axisLimitsX(0.0,10.);
+
+c.view().region(1).draw(grapht,"F");
+c.view().region(1).axisLimitsY(0.95,1.05);
+c.view().region(1).axisLimitsX(4.0,45.);
+
+
+c.repaint();
+
+c.view().export("results_ratios.pdf","pdf");

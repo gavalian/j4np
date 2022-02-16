@@ -136,6 +136,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
                 timeExportSync += (now-then);
             }
         }
+        consumer.finilize();
         if(destination!=null) destination.close();
     }
     

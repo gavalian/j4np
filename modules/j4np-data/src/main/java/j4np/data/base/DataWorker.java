@@ -34,6 +34,10 @@ public  abstract class DataWorker<R extends DataSource,T extends DataEvent> impl
         return true;
     }
     
+    public boolean finilize(){
+        System.out.printf("[%s] finilize empty method called\n",this.getClass().getName());
+        return true;
+    }
     public boolean  parseConfigFile(String file){
         return true;
     }

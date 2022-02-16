@@ -267,10 +267,8 @@ public class TGGraphicsDebug {
         //canvas.addNode(region);
         canvas.repaint();
     }
-      
+
     public static void main(String[] args){
         TGGraphicsDebug.example9();
     }
-    
-    
 }

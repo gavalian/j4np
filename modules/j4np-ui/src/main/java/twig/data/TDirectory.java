@@ -35,6 +35,10 @@ public class TDirectory implements TreeProvider {
         
     }
     
+    public TDirectory(String file){
+        this.read(file);
+    }
+    
     public TDirectory add(String dir, DataSet data){
         if(dirList.containsKey(dir)==false){
             dirList.put(dir, new Directory(dir));
@@ -168,9 +172,9 @@ public class TDirectory implements TreeProvider {
             int index = item.lastIndexOf("/");
             String    dir = item.substring(0, index);
             String dsname = item.substring(index+1, item.length()-1);
-            System.out.println(" item = " + item);
-            System.out.println("\t  dir = " + dir);
-            System.out.println("\t name = " + dsname);
+            //System.out.println(" item = " + item);
+            //System.out.println("\t  dir = " + dir);
+            //System.out.println("\t name = " + dsname);
             DataSet ds = DataSetSerializer.load(filename, item);
             
             this.add(dir, ds);

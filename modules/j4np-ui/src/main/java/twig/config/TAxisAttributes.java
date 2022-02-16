@@ -182,7 +182,7 @@ public class TAxisAttributes {
     public void setAxisLabelsDraw(Boolean axisLabelsDraw) {
         this.axisLabelsDraw = axisLabelsDraw;
     }
-
+    
     public Boolean getAxisTitlesDraw() {
         return axisTitlesDraw;
     }
