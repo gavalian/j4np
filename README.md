@@ -1,5 +1,13 @@
 This repository is for nuclear physics tools in java
 
+# Useful Packages
+
+Graph Neural Networks
+https://github.com/maniospas/JGNN
+
+Etreamly Randomized Trees
+
+
 # Examples
 
 Examples forlder contains simple exmaples designed for each

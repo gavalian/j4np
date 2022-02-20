@@ -147,6 +147,35 @@ public class TDataAttributes {
         this.fillStyle = fillStyle;
     }
     
+    private void set(String params){
+        String[] tokens = params.split(",");
+        for(int i = 0; i < tokens.length; i++)
+            parse(tokens[i].trim());
+    }
+    
+    private void parse(String expr){
+        String[] tokens = expr.split("=");
+        if(tokens.length!=2){
+            System.out.printf("%s:error in line [%s]\n",
+                    this.getClass().getName(),expr);
+            return;
+        }
+        String key = tokens[0].trim();
+        String value = tokens[1].trim();
+        
+        switch(key){
+            case "lc" : setLineColor(Integer.parseInt(value)); break;
+            case "lw" : setLineWidth(Integer.parseInt(value)); break;
+            case "ls" : setLineStyle(Integer.parseInt(value)); break;
+            case "mc" : setMarkerColor(Integer.parseInt(value)); break;
+            case "mt" : setMarkerStyle(Integer.parseInt(value)); break;
+            case "ms" : setMarkerSize(Integer.parseInt(value)); break;
+            case "fc" : setFillColor(Integer.parseInt(value)); break;
+            case "fs" : setFillStyle(Integer.parseInt(value)); break;
+            default: System.out.printf("data attributes >> error : unknown property : %s\n",tokens[0]); break;
+        }
+    }
+    
     public TDataAttributes(){
         
     }
