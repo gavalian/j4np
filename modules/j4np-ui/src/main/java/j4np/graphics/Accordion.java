@@ -1,7 +1,6 @@
 //aa
 package j4np.graphics;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -81,7 +80,7 @@ public class Accordion extends JPanel implements ActionListener
      * Adds the specified component to the JOutlookBar and sets the bar's name
      * 
      * @param  name      The name of the outlook bar
-     * @param  componenet   The component to add to the bar
+     * @param component parent component
      */
     public void addBar( String name, JComponent component )
     {
@@ -96,7 +95,7 @@ public class Accordion extends JPanel implements ActionListener
      * 
      * @param  name      The name of the outlook bar
      * @param  icon      An icon to display in the outlook bar
-     * @param  componenet   The component to add to the bar
+     * @param component parent component
      */
     public void addBar( String name, Icon icon, JComponent component )
     {
@@ -154,8 +153,6 @@ public class Accordion extends JPanel implements ActionListener
         int totalBars = this.bars.size();
         int topBars = this.visibleBar + 1;
         int bottomBars = totalBars - topBars;
-        
-        
         
         int counter = 0;
         //for(Map.Entry<String,JComponent> entry : this.bars.entrySet()){            

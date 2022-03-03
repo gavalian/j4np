@@ -85,6 +85,9 @@ public class PDGDatabase {
 		particleMap.put(130, new PDGParticle("K0L", 130, 10, 0.49761424, 0));
 		particleMap.put(310, new PDGParticle("K0S", 310, 10, 0.49761424, 0));
 		particleMap.put(2212, new PDGParticle("p", 2212, 14, 0.938272046, 1));
+
+                
+                
 		particleMap.put(-2212, new PDGParticle("p-", -2212, 15, 0.938272046, -1));
 		particleMap.put(2112, new PDGParticle("n", 2112, 13, 0.939565379, 0));
 		particleMap.put(-2112, new PDGParticle("nbar", -2112, 13, 0.939565379, 0));
@@ -103,6 +106,12 @@ public class PDGDatabase {
 		particleMap.put(3312, new PDGParticle("Xi-", 3312, 1.321, -1));
 		particleMap.put(-3312, new PDGParticle("antiXi-", -3312, 1.321, 1));
 		particleMap.put(3322, new PDGParticle("Xi0", 3322, 1.315, 0));
+                /**
+                 * This is a hack to make photo production Physics Event to behave properly
+                 */
+                particleMap.put(5000, new PDGParticle("p", 2212, 14, 0.938272046, 1));
+                particleMap.put(5001, new PDGParticle("gamma", 22, 1, 0.000, 0));
+                
 		return particleMap;
 	}
 

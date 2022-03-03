@@ -22,9 +22,9 @@ public class H1F  implements DataSet {
     double[]    histogramData;
     double[]    histogramDataError;
     String     histName   = "";
-    long        histogramUnderFlow = 0L;
-    long        histogramOverFlow  = 0L;
-    long        histogramEntries   = 0L;
+    protected long        histogramUnderFlow = 0L;
+    protected long        histogramOverFlow  = 0L;
+    protected long        histogramEntries   = 0L;
     long       histogramUniqueID  = 0L;
     
     //DatasetAttributes hAttr     = new DatasetAttributes(DatasetAttributes.HISTOGRAM);

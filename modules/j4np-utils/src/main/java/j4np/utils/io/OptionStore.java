@@ -130,6 +130,38 @@ public class OptionStore {
             commands.get(option).printUsage();
         }
     }
+        
+    public static List<String> scanClasses(String pack, Class clazzRef){
+        List<String> clazzList = new ArrayList<>();
+        Reflections reflections = new Reflections(pack, new SubTypesScanner(false));
+        
+        Set<String> clazzSet = reflections.getAllTypes();
+        
+        List<String>  clazzSetList = new ArrayList<>();
+        for(String item : clazzSet) clazzSetList.add(item);
+
+        Collections.sort(clazzSetList);
+        
+        for(String clazz : clazzSetList){
+            //System.out.println("---> " + clazz);            
+            try {
+                Class instance = Class.forName(clazz);
+                //System.out.println("---> " + clazz + " is intance assignable = " + 
+                //        OptionApplication.class.isAssignableFrom(instance)
+                //        );
+//                instance.isAssignableFrom(instance)
+                if(clazzRef.isAssignableFrom(instance)){ 
+                    if(clazz.compareTo("j4np.utils.io.OptionApplication")!=0)
+                        clazzList.add(clazz);
+                }
+                //classList.add(clazz.getName());
+                //System.out.printf(" :: %s\n",clazz.getName());
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(OptionStore.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return clazzList;
+    }
     
     public static List<String> scanClasses(String pack){
        

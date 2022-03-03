@@ -8,17 +8,21 @@ package twig.graphics;
 import j4np.graphics.Background2D;
 import j4np.graphics.Canvas2D;
 import j4np.graphics.Node2D;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import twig.config.TStyle;
 import twig.data.DataSet;
 import twig.data.GraphErrors;
 import twig.data.H1F;
 import twig.data.H2F;
 import twig.math.Func1D;
+import twig.widgets.LatexText;
 import twig.widgets.Legend;
 import twig.widgets.PaveText;
 import twig.widgets.PaveText.PaveTextStyle;
@@ -152,15 +156,67 @@ public class TGRegion extends Node2D implements StyleNode {
     }
     
     public TGRegion showStats(double x, double y){
+       return this.showStats(x, y, "*");
+    }
+    
+    public void editLegendPosition(){
+        /*
+        JTextField posX = new JTextField();
+        JTextField posY = new JTextField();
+        Object[] message = {
+            "Position X:", posX,
+            "Position Y:", posY
+        };
+        
+        int option = JOptionPane.showConfirmDialog(null, 
+                message, "Login", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            double x = Double.parseDouble(posX.getText());
+            double y = Double.parseDouble(posY.getText());
+            Legend l = null;
+            for(Widget w : this.axisFrame.widgetNodes){
+                if(w instanceof Legend) l = (Legend) w;
+            }
+            if(l!=null) l.setPosition(x, y);
+        } else {
+            System.out.println("Login canceled");
+        }*/
+        Legend l = null;
+        for(Widget w : this.axisFrame.widgetNodes){
+            if(w instanceof Legend) l = (Legend) w;
+        }
+        if(l!=null) l.configure();
+    }
+    
+    public PaveText getStats(double x, double y, String options){
         PaveText stats = new PaveText(x,y);
         stats.setStyle(PaveTextStyle.STATS_MULTILINE);
         stats.setNDF(true);
-        stats.fillBox = false;
+        stats.fillBox = true;
+        stats.drawBox = true;
+        stats.setAlign(LatexText.TextAlign.TOP_RIGHT);
+        //stats.setBorderColor(Color.black);
         List<String> statsStrings = new ArrayList<>();
         for(TDataNode2D dn : axisFrame.dataNodes){
-            statsStrings.addAll(dn.getDataSet().getStats("*"));
+            statsStrings.addAll(dn.getDataSet().getStats(options));
         }
         stats.addLines(statsStrings);
+        return stats;
+    }
+    
+    public TGRegion showStats(double x, double y, String options){
+        /*PaveText stats = new PaveText(x,y);
+        stats.setStyle(PaveTextStyle.STATS_MULTILINE);
+        stats.setNDF(true);
+        stats.fillBox = false;
+        stats.drawBox = true;
+        //stats.setBorderColor(Color.black);
+        List<String> statsStrings = new ArrayList<>();
+        for(TDataNode2D dn : axisFrame.dataNodes){
+            statsStrings.addAll(dn.getDataSet().getStats(options));
+        }
+        stats.addLines(statsStrings);*/
+        PaveText stats = this.getStats(x, y, options);
         this.draw(stats);
         return this;
     }

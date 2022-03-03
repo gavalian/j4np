@@ -22,6 +22,10 @@ public class NodeInsets {
         
     }
     
+    public NodeInsets(double top, double left, double bottom, double right){
+        this.set(top, left, bottom, right);
+    }
+    
     public void set(double top, double left, double bottom, double right){
         this.insetTop = top;
         this.insetLeft = left;

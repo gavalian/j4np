@@ -2,28 +2,33 @@
 
 \subsection{Monte-Carlo Simulation}
 
-For these studies we used physics reactions generated using Pythia~\cite{Pythia:2022} event generator and selected events were processed with GEMC~\cite{gemc:2022} (GEANT~\cite{geant4:2022} based detector simulation program) to produce data similar to experimental data. From generic Pythia output only events that contain four charged particle in as decay products in the final state (namely $e^-,\pi^+,\pi^-,p$) and any number of neutral particles. These events were used as an input to GEMC program that emulates CLAS12 detector responses and produces files with raw detector information.
+For these studies we used physics reactions generated using Pythia Monte-Carlo~\cite{Pythia:2022} event generator and generated events were processed with GEMC~\cite{gemc:2022} (GEANT~\cite{geant4:2022} based detector simulation program) to produce data similar to experimental data. The four charged particle final state (namely $e^-,\pi^+,\pi^-,p$) is selected in the output of Pythia for our studies.
+In addition any number of neutral particles are allowed.
 
-Using these generated files new files were generated emulating different luminosity experimental conditions using CLAS12 standard background merging program \cite{Stepanyan:2020bg}. The background merging software uses real experimental data for given luminosity to extract background hits from all detector components that can later be overlayed on top of generated data to emulate high background running conditions. For our studies we used background files corresponding to $45~nA$, $50~nA$ and $55~nA$. Combining them sequentially we generated data corresponding to $45~nA$, $95~nA$ and $150~nA$. The $95~nA$ data sample was produced by merging $45~nA$ background file with the output of GEMC and then merging it with $50~nA$ background data. Similarly by merging $45~nA$, $50~nA$ and $55~nA$ in sequence we obtained data sample corresponding to $150~nA$. In the further discussions we refer to original data sample simulated with Pythia and processed with GEMC without background as $0~nA$ data. And all comparisons of single track efficiency and physics final state statistics 
+Simulated physics events were processed with the CLAS12 emulation software (GEMC) that produces raw signal data (similar to experimental).
+Using these generated files new files were generated emulating different luminosity experimental conditions using CLAS12 standard background merging program \cite{Stepanyan:2020bg}. 
+
+The background merging software uses real experimental data for given luminosity to extract background hits from all detector components that can later be overlayed on top of generated data to emulate the realistic background conditions of the experiment. For our studies we used background files corresponding to beam currents of $45~nA$, $50~nA$ and $55~nA$. Combining them sequentially we generated data corresponding to $45~nA$, $95~nA$ and $150~nA$. The $95~nA$ data sample was produced by merging $45~nA$ background file with the output of GEMC and then merging it with $50~nA$ background data. Similarly by merging $45~nA$, $50~nA$ and $55~nA$ in sequence we obtained a data sample corresponding to $150~nA$. In the further discussions we refer to original data sample simulated with Pythia and processed with GEMC without background as $0~nA$ data. And all comparisons of single track efficiency and physics final state statistics 
 are presented relative to those quantities obtained from $0~nA$ data sample.
 
-Most CLAS12 experiments run with $45~nA-50~nA$ electron beam, and we want to measure performance impact of de-noising procedure for standard running conditions, and also see if we can run at higher beam currents (luminosity) which will potentially increase the statistical power of experiments.
+Most CLAS12 experiments so far have run with $45~nA-50~nA$ electron beam, and we want to measure the performance impact of the de-noising procedure for standard running conditions, and also see if we can run at higher beam currents (luminosity) which will potentially increase the statistical power of experiments.
 
 \subsection{Data Analysis}
 
-To study the effect of de-noising on particle reconstruction efficiency we processed produced data samples through stand-alone de-noiser program to produce de-noised counterparts of simulated data for each luminosity setting. The both data samples were processed using CLAS12 data reconstruction program. Then the track reconstruction efficiency was calculated for both data samples (original and de-noised) as a function of luminosity. The track reconstruction efficiency was calculated following standard (for CLAS12) procedure~\cite{Stepanyan:2020bg}. The efficiency for positive  tracks is defines as a ratio of 
-events containing an electron and a positive  hadron ($N_{eh^+}$) to the number of inclusive events with an electron reconstructed ($N_{e}$). The efficiency of negative tracks is calculated similarly:
+To study the effect of the de-noising on particle reconstruction efficiency we processed the produced data samples through the stand-alone de-noiser program to produce de-noised counterparts of simulated data for each luminosity setting.  Both data samples were processed using the CLAS12 data reconstruction program. Then the track reconstruction efficiency was calculated for both data samples (original and de-noised) as a function of luminosity. The track reconstruction efficiency was calculated following the standard procedure for CLAS12~\cite{Stepanyan:2020bg}. The efficiency for positive  tracks is defined as a ratio of 
+events containing an electron and a positive  hadron ($N_{eh^+}$) to the number of inclusive events with an electron reconstructed ($N_{e}$). The efficiency for negative tracks is calculated similarly:
 
 \begin{equation}
 L_t^+ = \frac{N_{h^+e}}{N_e} , L_t^- = \frac{N_{h^-e}}{N_e} 
 \label{eq::eff}
 \end{equation}
 
-where $L_t^+$ is the efficiency of positive particles and $L_t^-$ is the efficiency of negatively
+where $L_t^+$ is the multiplicity for positive particles and $L_t^-$ is the multiplicity for negatively
 charged particles respectively. In order to estimate the charged particle reconstruction efficiency
 as a function of the beam current, the multiplicity, $L_t^{+/-}$, is fitted with a linear function:
 \begin{equation}
 L_t^{+/-} = a + b\times I
+\label{eq::eff2}
 \end{equation}
 
 Here $a$ and $c$ are the fit parameters and $I$ is the beam current. Then it was assumed that the
@@ -31,6 +36,7 @@ reconstruction efficiency, $E=1$ at $I=0$ nA:
 
 \begin{equation}
 E^{+/-} = 1 + c \times I
+\label{eq::eff3}
 \end{equation}
 
 with $c=\frac{b}{a}$. The slope parameter $c$ represents the variation of the reconstruction
@@ -39,8 +45,8 @@ inefficiency per $nA$~\cite{Stepanyan:2020bg}.
 \subsection{Artificial Intelligence Assisted Tracking}
 
 The CLAS12 data reconstruction software already contains neural networks helping to identify track candidates from combinations of clusters reconstructed in each of the super-layers of drift chambers~\cite{Gavalian:2022mlp}.
-This network already provides big improvement of tracking efficiency compared to traditional reconstruction algorithm. The impact on physics (depending on number of particles in the reaction) is $15\%-35\%$ increase in statistics. 
-In the standard reconstruction software user can chose to use assistance from AI in identifying tracks or use purely the conventional algorithm to identify track candidates. In our studies we first investigated the improvement of de-noising algorithm by using the conventional algorithm to identify tracks. Then we extended these studies to include AI track identification when processing raw and de-noised data. By doing this we want to disentangle the performance improvements arising from de-noising from AI assistance. 
+This network already provides a big improvement of the tracking efficiency compared to the conventional reconstruction algorithm. The impact on physics (depending on the number of particles in the reaction) is a $15\%-35\%$ increase in statistics. 
+In the recently developed reconstruction software the user can chose to use assistance from AI in identifying tracks or use purely the conventional algorithm to identify track candidates. In our studies we first investigated the improvement of the de-noising algorithm by using the conventional algorithm to identify tracks. Then we extended these studies to include AI track identification when processing raw and de-noised data. By doing this we want to disentangle the performance improvements arising from de-noising and from AI assistance. 
 
 
  

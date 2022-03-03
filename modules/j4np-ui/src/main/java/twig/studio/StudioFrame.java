@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -42,6 +44,8 @@ public class StudioFrame extends JPanel {
     TreeProvider  treeProvider = null;
     JTabbedPane     tabbedPane = null;
     TGDataCanvas        canvas = null;
+    StatusPanel     statusPane = null;
+    
     
     private String unicodeSquarePlus = "\u229E";
     
@@ -67,6 +71,27 @@ public class StudioFrame extends JPanel {
         objectTree.setModel(model);
     }
     
+    public void setTreeProvider(String clazz){        
+        try {
+            Class   clazzProvider =  Class.forName(clazz);
+            TreeProvider provider = (TreeProvider) clazzProvider.newInstance();
+            this.treeProvider = provider;                        
+            TreeModel model = this.treeProvider.getTreeModel();
+            System.out.println("UPDATING TREE MODEL : " + (model==null));
+            objectTree.setModel(model);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(StudioFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(StudioFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(StudioFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public TreeProvider getTreeProvider(){
+        return this.treeProvider;
+    }
+    
     private void initUI(){
         
         JSplitPane pane = new JSplitPane();
@@ -87,20 +112,21 @@ public class StudioFrame extends JPanel {
         tabbedPane = new JTabbedPane();
         JComponent panel1 = makeTextPanel("Panel #1");
         this.canvas = new TGDataCanvas();
+        canvas.setName("studio_canvas");
         canvas.region()
                 .getInsets()
                 .left(80).right(40).top(40).bottom(80);
-        tabbedPane.addTab("canvas1", null, canvas,
+        tabbedPane.addTab("data canvas", null, canvas,
                 "Does nothing");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
         
         JComponent panel2 = makeTextPanel("Panel #2");
-        tabbedPane.addTab("canvas2", null, panel2,
+        tabbedPane.addTab("log", null, panel2,
                 "Does twice as much nothing");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
         
         JComponent panel3 = makeTextPanel("Panel #3");
-        tabbedPane.addTab("canvas3", null, panel3,
+        tabbedPane.addTab("settings", null, panel3,
                 "Still does nothing");
         pane.setDividerLocation(0.5);
         objectTree.setPreferredSize(new Dimension(200,600));
@@ -127,8 +153,15 @@ public class StudioFrame extends JPanel {
         Image newimg = image.getScaledInstance(16, 16,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
         imageIcon = new ImageIcon(newimg);
         renderer.setLeafIcon(imageIcon);
+        
+        statusPane = new StatusPanel();
+        
+        this.add(statusPane,BorderLayout.PAGE_END);
         //this.add(this.createInspector(),BorderLayout.LINE_END);
     }
+    
+    
+    public StatusPanel getStatusPane(){ return this.statusPane;}
     
     public void doMouseClicked(MouseEvent me){
         if(me.getClickCount()==2){
@@ -142,7 +175,8 @@ public class StudioFrame extends JPanel {
                     str.append( tp.getPathComponent(i).toString());
                 }
                 String objectPath = str.toString();
-                this.treeProvider.draw(objectPath, canvas );
+                if(treeProvider!=null)
+                    treeProvider.draw(objectPath, canvas );
                 canvas.repaint();
             }
             /*

@@ -15,6 +15,8 @@ import twig.config.TStyle;
 import twig.data.DataSet;
 import twig.data.GraphErrors;
 import twig.data.H1F;
+import twig.math.F1D;
+import twig.math.Func1D;
 
 /**
  *
@@ -346,10 +348,14 @@ public class MarkerTools {
             case 2: step = 8; break;
             case 3: step = 12; break;
             case 4: step = 16; break;
+            case 5: step = 24; break;
+            case 6: step = 32; break;
             case 11: step = 4; break;
             case 12: step = 8; break;
             case 13: step = 12; break;
             case 14: step = 16; break;
+            case 15: step = 24; break;
+            case 16: step = 32; break;
             default: step = 4; break;
         }
         
@@ -408,6 +414,19 @@ public class MarkerTools {
             //g2d.drawRect((int) (p.getX() - width*0.5),(int) (p.getY()-height*0.5),
             //        (int) width,(int)height);
             g2d.draw(rect);
+        }
+        
+        if(ds instanceof Func1D){  
+             Color lc = style.getPalette().getColor(ds.attr().getLineColor());
+             int   lw = ds.attr().getLineWidth();
+             int   ls = ds.attr().getLineStyle();
+             
+             double width = 1.6*height*0.5;
+             BasicStroke stroke = style.getLineStroke(ls, lw);
+             g2d.setColor(lc);
+             g2d.setStroke(stroke);
+             g2d.drawLine((int) (p.getX()-width), (int) p.getY(),
+                    (int) (p.getX()+width), (int) p.getY());                          
         }
         
          if(ds instanceof GraphErrors){            

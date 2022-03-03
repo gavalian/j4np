@@ -214,4 +214,9 @@ public class MLArchitecture implements Widget {
         */
         c.view().region().draw(arch);
     }
+
+    @Override
+    public void configure() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

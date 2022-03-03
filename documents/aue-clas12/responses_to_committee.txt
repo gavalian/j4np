@@ -1,0 +1,9 @@
+Silvia,
+
+Page 71:
+We can not quantify, since we dont have stand alone clustering
+algorithm, and it's tideous to do thee studies with cooking files.
+It was agreed that after pass2 is complete, DC developers will join
+my efforts to develop tools needed for more detailed studies.
+
+

@@ -24,4 +24,15 @@ public class TBrowser {
         window.setVisible(true);                       
         window.getStudioFrame().setTreeProvider(dir);
     }
+    
+    public TBrowser(TreeProvider tp){
+        StudioWindow.changeLook();
+        
+        StudioWindow window = new StudioWindow();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        window.setSize(800, 500);
+        window.setVisible(true);                       
+        window.getStudioFrame().setTreeProvider(tp);
+    }
 }

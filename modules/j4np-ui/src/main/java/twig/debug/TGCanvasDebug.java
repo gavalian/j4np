@@ -9,6 +9,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import twig.config.TPalette;
+import twig.config.TStyle;
 import twig.data.H1F;
 import twig.data.H2F;
 import twig.data.TDataFactory;
@@ -99,6 +103,7 @@ public class TGCanvasDebug {
         c.view().region(0).getAxisFrame().addWidget(statsPave);
         c.view().region().setAxisTicksX(new double[]{0.15,0.35,0.75} ,
                 new String[]{"0.15","0.35","0.75"});
+        c.repaint();
     }
     
     
@@ -214,7 +219,7 @@ public class TGCanvasDebug {
             }
             else c.view().region(i).draw(h);
         }
-        
+        c.repaint();
         //c.view().addLabels(0.8, 0.9, 'a');        
         //c.view().addLabels(0.0, 0.95,new String[]{"10 nA","45 nA","95 nA", "150 nA"});
         
@@ -222,7 +227,15 @@ public class TGCanvasDebug {
     }
     
     public static void main(String[] args){
+               
+        
         TGCanvasDebug.example2();
+        /*
+        TStyle.getInstance().setCanvasBackgroundColor(TPalette.rgbToInt(56, 60, 74));
+        TStyle.getInstance().setAxisLineColor(TPalette.rgbToInt(188, 188, 188));
+        TStyle.getInstance().setAxisLabelColor(TPalette.rgbToInt(188, 188, 188));
+        TStyle.getInstance().setAxisTitleColor(TPalette.rgbToInt(188, 188, 188));
+        */
         //TGCanvasDebug.debugH2F();
         //TGCanvasDebug.fitExample();
         TGCanvasDebug.example2x2();

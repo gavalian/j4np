@@ -2,7 +2,7 @@
 #----------------------------------------------------
 # This script puts together the entire districution
 #----------------------------------------------------
-version=1.0.3
+version=1.0.4
 
 while getopts v:d: flag
 do

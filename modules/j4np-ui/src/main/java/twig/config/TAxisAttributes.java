@@ -15,6 +15,16 @@ import java.util.List;
  */
 public class TAxisAttributes {
 
+    
+    public TAxisAttributes(){
+        TStyle style = TStyle.getInstance();
+        /*if(style!=null){
+            this.axisLineColor  = TStyle.getInstance().getAxisLineColor();
+            this.axisLabelColor = TStyle.getInstance().getAxisLabelColor();
+            this.axisTitleColor = TStyle.getInstance().getAxisTitleColor();
+        }*/
+    }
+    
     public int getAxisTickMarkCount() {
         return axisTickMarkCount;
     }
@@ -221,9 +231,9 @@ public class TAxisAttributes {
     private int         axisLineWidth  =  1;
     private int         axisTicksLineWidth =  1;
     
-    private int         axisLineColor = 30001;
-    private int        axisLabelColor = 30002;
-    private int        axisTitleColor = 30002;
+    private int         axisLineColor = 1;
+    private int        axisLabelColor = 1;
+    private int        axisTitleColor = 1;
     /**
      * fonts for drawing axis Labels and titles.
      */

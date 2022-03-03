@@ -15,6 +15,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import twig.widgets.LatexText.TextAlign;
 import twig.widgets.LatexText.TextRotate;
 
@@ -25,14 +28,16 @@ import twig.widgets.LatexText.TextRotate;
  */
 public class PaveText implements Widget { 
 
+    
+
      public enum PaveTextStyle {
         MULTILINE, ONELINE, STATS_MULTILINE;
     }
      
     protected Font           textFont = new Font("Avenir", Font.PLAIN, 14);
     private Color           textColor = Color.BLACK;
-    private Color         borderColor = new Color(150,150,150);
-    private Color    headerBackground = new Color(250,255,250);
+    private Color         borderColor = new Color(200,200,200);
+    private Color    headerBackground = new Color(255,255,255);
     private String         textHeader = "Info";
     
     
@@ -40,18 +45,26 @@ public class PaveText implements Widget {
     private List<Point2D.Double>  textPositions = new ArrayList<>();
     
     private LatexText       latexText = new LatexText("a",0,0);
+    
     private double        textSpacing = 0.0;
+    
+    private Point2D          position = new Point2D.Double();
+    private Point2D          positionOffset = new Point2D.Double();
     
     private double          positionX = 0;
     private double          positionY = 0;
     
+    private double          positionOffsetX = 0;
+    private double          positionOffsetY = 0;
+    
     private int           paddingLeft = 10;
     private int          paddingRight = 10;
     private int            paddingTop = 3;
-    private int         paddingBottom = 6;
+    private int         paddingBottom = 12;
     
     private int           roundRadius = 5;
     public  PaveTextStyle   paveStyle = PaveTextStyle.MULTILINE;
+    
     
     public  boolean  paveNDF = true;
     
@@ -62,6 +75,8 @@ public class PaveText implements Widget {
     private TextAlign       xAlignment = TextAlign.LEFT;
     private TextAlign       yAlignment = TextAlign.TOP;
     private TextRotate        rotation = TextRotate.NONE;
+    
+    private TextAlign      paveAlignment = TextAlign.TOP_LEFT;
     
     public PaveText(String text, double x, double y, Boolean boxDraw, int fontSize){
         //super(x,y);
@@ -76,6 +91,7 @@ public class PaveText implements Widget {
         textStrings.add(text);
         textPositions.add(new Point2D.Double(0.0,0.0));
     }
+    
     public PaveText(List<String> text, double x, double y, Boolean boxDraw, int fontSize){
         //super(x,y);
         //setBackgroundColor(240,240,240);
@@ -171,6 +187,17 @@ public class PaveText implements Widget {
         return this;
     }
     
+    public PaveText setAlign(TextAlign pal){
+        this.paveAlignment = pal;
+        return this;
+    }
+    
+    public PaveText setPositionOffset(double xp, double yp){
+        this.positionOffsetX = xp;
+        this.positionOffsetY = yp;
+        return this;
+    }
+    
     public PaveText setRotate(TextRotate rot){
         rotation = rot;
         return this;
@@ -239,7 +266,8 @@ public class PaveText implements Widget {
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
         //System.out.println("style = " + paveStyle);
         //if(paveStyle == PaveTextStyle.MULTILINE) drawLayerMultiLine(g2d,r,tr);
-        if(paveStyle == PaveTextStyle.MULTILINE || paveStyle == PaveTextStyle.STATS_MULTILINE) 
+        if(paveStyle == PaveTextStyle.MULTILINE || 
+                paveStyle == PaveTextStyle.STATS_MULTILINE) 
             drawLayerMultiLineNuevo(g2d,r,tr);
         
         if(paveStyle == PaveTextStyle.ONELINE) 
@@ -367,6 +395,9 @@ public class PaveText implements Widget {
         //NodeRegion2D bounds = getParent().getBounds();
         //System.out.println("[Pave Text] ---> " + bounds);
         
+        double xoffset = 0.0;
+        double yoffset = 0.0;
+        
         FontMetrics metrics = g2d.getFontMetrics(textFont);        
         double textHeight = getTextHeightWithSpacing(g2d, textSpacing);
         double textWidth  = getTextWidthMax(g2d);        
@@ -379,10 +410,16 @@ public class PaveText implements Widget {
         //System.out.println(r);
         //tr.show();
         
+        
+        if(this.paveAlignment==TextAlign.TOP_RIGHT){
+            xoffset = -(textWidth + paddingLeft + paddingRight); 
+            yoffset = 0.0;
+        }
+        
         if(this.fillBox==true){
             g2d.setColor(this.headerBackground);
-             g2d.fillRoundRect((int) (xPos), 
-                    (int) (yPos-paddingTop), 
+             g2d.fillRoundRect((int) (xPos + xoffset), 
+                    (int) (yPos-paddingTop + yoffset), 
                     (int) (textWidth + paddingLeft + paddingRight), 
                     (int) (textHeight + paddingTop + paddingBottom), 
                     roundRadius,roundRadius);
@@ -390,10 +427,10 @@ public class PaveText implements Widget {
         
         if(this.drawBox==true){
             g2d.setColor(this.borderColor);
-        
-            g2d.drawRoundRect((int) (xPos), 
-                    (int) (yPos-paddingTop), 
-                    (int) (textWidth + paddingLeft + paddingRight), 
+            g2d.setStroke(new BasicStroke(1));
+            g2d.drawRoundRect((int) (xPos + xoffset), 
+                    (int) (yPos-paddingTop + yoffset), 
+                    (int) (textWidth  + paddingLeft + paddingRight), 
                     (int) (textHeight + paddingTop + paddingBottom), 
                     roundRadius,roundRadius);
         }
@@ -411,11 +448,14 @@ public class PaveText implements Widget {
             this.textPositions.get(i).y = yPos + (tb.getHeight() + textSpacing*tb.getHeight())*0.5;
             if(this.rotation==TextRotate.NONE){
                 //System.out.printf("x = %8.1f y = %8.1f\n",xPos,yPos);
-                latexText.drawString(g2d, (int) xPos, (int) (yPos), this.xAlignment,this.yAlignment,0);
+                latexText.drawString(g2d, (int) (xPos + xoffset), 
+                        (int) (yPos + yoffset), this.xAlignment,this.yAlignment,0);
             } else {
-                latexText.drawString(textStrings.get(i),g2d, (int) xPos, (int) yPos, 
+                latexText.drawString(textStrings.get(i),g2d, 
+                        (int) (xPos + xoffset), (int) (yPos+yoffset), 
                         this.xAlignment,this.yAlignment,rotation);
             }
+            
             yPos += tb.getHeight() + textSpacing*tb.getHeight();
         }
     }
@@ -546,5 +586,42 @@ public class PaveText implements Widget {
      @Override
     public boolean isNDF() {
         return paveNDF;
+    }
+    
+    @Override
+    public void configure() {
+        System.out.println("Oy, Configuring Pave Text");
+        JTextField posX = new JTextField();
+        JTextField posY = new JTextField();
+               
+        posX.setText(String.format("%.3f", this.positionX));
+        posY.setText(String.format("%.3f", this.positionY));
+        
+        JCheckBox drawBoxCheck = new JCheckBox();
+        drawBoxCheck.setSelected(this.drawBox);
+        
+        JCheckBox fillBoxCheck = new JCheckBox();
+        fillBoxCheck.setSelected(this.fillBox);
+        
+        Object[] message = {
+            "Position X:", posX,
+            "Position Y:", posY,
+            "Draw Box:",drawBoxCheck,
+            "Fill Box:",fillBoxCheck
+            
+        };
+        
+        int option = JOptionPane.showConfirmDialog(null, 
+                
+                message, "Pave Text", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            double x = Double.parseDouble(posX.getText());
+            double y = Double.parseDouble(posY.getText());
+            this.setPosition(x, y);
+            this.drawBox = drawBoxCheck.isSelected();
+            this.fillBox = fillBoxCheck.isSelected();
+        } else {
+            System.out.println("Login canceled");
+        }
     }
 }

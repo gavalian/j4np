@@ -147,7 +147,7 @@ public class TDataAttributes {
         this.fillStyle = fillStyle;
     }
     
-    private void set(String params){
+    public void set(String params){
         String[] tokens = params.split(",");
         for(int i = 0; i < tokens.length; i++)
             parse(tokens[i].trim());

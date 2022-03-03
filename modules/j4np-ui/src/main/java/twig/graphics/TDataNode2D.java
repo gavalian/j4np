@@ -56,6 +56,11 @@ public class TDataNode2D implements Widget {
     public boolean isNDF() {
         return false;
     }
+
+    @Override
+    public void configure() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }

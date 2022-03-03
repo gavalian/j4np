@@ -18,11 +18,48 @@ import twig.math.F1D;
 public class TGStyleFactory {
     
     
+    public static void markersAndColors(TGDataCanvas canvas, int size, String options){
+        canvas.divide(1, 1);
+        List<GraphErrors>  graphs = new ArrayList<>();
+        for(int i = 0; i < size; i++){
+            GraphErrors  graph = TDataFactory.createGraph(i+1, i+1); 
+            graph.attr().setMarkerSize(12);
+            graph.attr().setLineStyle(1);
+
+            graph.attr().setLegend(String.format("marker=%d, color=%d", i+1,i+1));
+            graphs.add(graph);
+        }
+        graphs.get(0).attr().setTitleY("Marker Styles & Colors");
+        canvas.cd(0).region().draw(graphs, options);
+        canvas.cd(0).region().setAxisTitleSize(20);
+        canvas.cd(0).region().setAxisLabelSize(24);
+        canvas.repaint();
+    }
+    
+    public static void lineStyles(TGDataCanvas canvas, int size, String options){
+        canvas.divide(1, 1);
+        
+        List<F1D> funcs = new ArrayList<>();
+        for(int i = 0 ; i < 15; i++){
+            F1D f = new F1D("f1","[a]",1,9);
+            f.setParameter(0, i+1);
+            f.attr().setLineStyle(i);
+            f.attr().setLegend("style="+i);
+            f.attr().setLineWidth(3);
+            funcs.add(f);
+        }
+        funcs.get(0).attr().setTitleY("Line Styles");
+        canvas.cd(0).region().draw(funcs, "");
+        canvas.cd(0).region().getAxisFrame().getAxisY().setFixedLimits(0, 16);
+        canvas.repaint();
+    }
+    
     public static void markersAndColors(TGDataCanvas canvas){
         canvas.divide(2, 1);
         List<GraphErrors>  graphs = new ArrayList<>();
         for(int i = 0; i < 15; i++){
             GraphErrors  graph = TDataFactory.createGraph(i+1, i+1);
+            
             graph.attr().setMarkerSize(12);
             graph.attr().setLineStyle(1);
             graphs.add(graph);

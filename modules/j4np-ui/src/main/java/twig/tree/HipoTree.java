@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import twig.studio.OpenHipoDialog;
 
 /**
  *
@@ -168,4 +169,21 @@ public class HipoTree extends Tree {
         w.close();
         System.out.printf(" file : %s ==> %s exported rows = %d\n",csvFile,hipoFile,nLinesWritten);
     }
+
+    @Override
+    public void configure() {
+        OpenHipoDialog d = new OpenHipoDialog(null);
+        d.show();
+        String file = d.getFileName();
+        String bank = d.getBankName();
+        this.reader = new HipoReader();
+        reader.open(file);
+        treeBank  = reader.getBank(bank);
+        treeBank.getSchema().show();
+        bankGroup = treeBank.getSchema().getGroup();
+        bankItem  = treeBank.getSchema().getItem();
+        init();
+    }
+    
+    
 }

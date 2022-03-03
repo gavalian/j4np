@@ -21,14 +21,17 @@ public class TreeExpression {
     String  expName = "";
     String  treeExpression = "";
     List<String> expVariables = new ArrayList<String>();
+
+    private static List<Function>  userDefined = new ArrayList<>();
     
     Expression expr = null;
     private boolean  isCutActive = true;
     
-    Function funcVec3m = new Function("vec3m", 3) {
+    Function funcVec3p = new Function("vec3p", 3) {
             @Override
             public double apply(double... args) {
-                return Math.sqrt(args[0]*args[0] + args[1]*args[1] + args[2]*args[2]);
+                return Math.sqrt(args[0]*args[0] + 
+                        args[1]*args[1] + args[2]*args[2]);
             }
     };
     
@@ -36,18 +39,29 @@ public class TreeExpression {
             @Override
             public double apply(double... args) {
                 if(args[2]==0.0) return 0.0;
-                return Math.sqrt(args[0]*args[0] + args[1]*args[1] + args[2]*args[2])/args[2];
+                double cth = args[2]/Math.sqrt(
+                        args[0]*args[0]+args[1]*args[1]
+                        + args[2]*args[2]
+                );
+                return Math.acos(cth);
             }
     };
-    
+    /*
     Function funcVec3p = new Function("vec3p", 3) {
             @Override
             public double apply(double... args) {
                 if(args[2]==0.0) return 0.0;
                 return Math.atan2(args[1],args[0]);
             }
-    };
+    };*/
     
+    Function funcVec3f = new Function("vec3f", 3) {
+            @Override
+            public double apply(double... args) {
+                if(args[2]==0.0) return 0.0;
+                return Math.atan2(args[1],args[0]);
+            }
+    };
     Function funcVec3pt = new Function("vec3pt", 3) {
             @Override
             public double apply(double... args) {
@@ -65,7 +79,7 @@ public class TreeExpression {
                         + (args[2] - args[5])*(args[2] - args[5]));
             }
     };
-        
+    
     public TreeExpression(String name, String exp, List<String> branches){
         expName       = name;
         treeExpression = exp;
@@ -86,16 +100,20 @@ public class TreeExpression {
         init();
     }
     
+    public static void defineFunction(Function f){
+        TreeExpression.userDefined.add(f);
+    }
+    
     final void init(){
         String[] variables = new String[expVariables.size()];
         for(int i=0; i < variables.length; i++) variables[i] = expVariables.get(i);        
         ExpressionBuilder builder = new ExpressionBuilder(treeExpression)
-                .function(funcVec3m).function(funcVec3p).function(funcVec3t);
+                .function(funcVec3f).function(funcVec3p).function(funcVec3t);
+        builder.functions(userDefined);
         builder.variables(variables);
-        System.out.println("expression = " + treeExpression);
-        System.out.println(" variables = " + Arrays.toString(variables));
-        
-        expr = builder.build();        
+        //System.out.println("expression = " + treeExpression);
+        //System.out.println(" variables = " + Arrays.toString(variables));        
+        expr = builder.build();
     }
     
     public double getValue(Tree tree){

@@ -111,5 +111,10 @@ public class HttpDataConfig implements TreeProvider {
         frame.setSize(800, 500);
         frame.setVisible(true);
     }
+
+    @Override
+    public void configure() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

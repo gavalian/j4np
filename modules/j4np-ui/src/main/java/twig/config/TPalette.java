@@ -157,6 +157,18 @@ public class TPalette {
     }
 
     public TPalette2D palette2d(){ return this.colorPalette2D;}
+    
+    public static int rgbToInt(int r, int g, int b){
+        int value = (r&0xFF)<<16|(g&0xFF)<<8|(b&0xFF);
+        return value;
+    }
+    
+    
+    public static int colorToInt(Color r){
+        int value = (r.getAlpha()&0xFF)<<24|(r.getRed()&0xFF)<<16
+                |(r.getGreen()&0xFF)<<8|(r.getBlue()&0xFF);
+        return value;
+    }
     /**
      * returns color from color pallette. There are some reserved colors.
      * colors above 30000 are used for the data regions and axis coloring.
@@ -173,9 +185,20 @@ public class TPalette {
     
     public Color getColor(int color){
         
-        if(color>30004) return Color.black; 
+        /*if(color>30004) return Color.black; 
         if(color>30000){
             return this.specialtyColorPalette.get(color-30001);
+        }*/
+        
+        int cid = color;        
+        if(color<0) cid = Math.abs(color);
+        
+        if(cid>=200){
+            int a = (cid>>24)&0xFF;
+            int r = (cid>>16)&0xFF;
+            int g = (cid>>8)&0xFF;
+            int b = (cid>>0)&0xFF;
+           return new Color(r,g,b,a);
         }
         
         if(color<colorPalette.size()){

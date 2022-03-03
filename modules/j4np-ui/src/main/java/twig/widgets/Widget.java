@@ -16,4 +16,5 @@ import java.awt.geom.Rectangle2D;
 public interface Widget {
     public    void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr);
     public boolean isNDF();
+    public    void configure();
 }

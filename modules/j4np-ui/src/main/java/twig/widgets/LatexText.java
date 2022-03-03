@@ -23,7 +23,9 @@ import javax.swing.JFrame;
 public class LatexText {
     
     public enum TextAlign {
-        LEFT, CENTER, RIGHT, TOP, BOTTOM
+        LEFT, CENTER, RIGHT, TOP, BOTTOM,
+        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT,
+        BOTTOM_RIGHT
     };
     
     public enum TextRotate {

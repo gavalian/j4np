@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import twig.config.TDataAttributes;
@@ -301,7 +302,7 @@ public class GraphErrors implements DataSet {
 
     @Override
     public List<String> getStats(String options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ArrayList<String>();
     }
     
 }

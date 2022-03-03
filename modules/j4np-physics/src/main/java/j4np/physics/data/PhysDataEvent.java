@@ -8,6 +8,9 @@ package j4np.physics.data;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Schema;
+import j4np.physics.PDGDatabase;
+import j4np.physics.PDGParticle;
+import j4np.physics.Particle;
 import j4np.physics.PhysicsEvent;
 import j4np.physics.Vector3;
 
@@ -17,11 +20,19 @@ import j4np.physics.Vector3;
  */
 public class PhysDataEvent extends PhysicsEvent {
 
-    private Bank dataBank = null;
-        
+    protected Bank     dataBank = null;
+    protected int  index_status = -1;
+    protected int  index_charge = -1;
+    
     public PhysDataEvent(Bank b){
         Schema sc = b.getSchema().copy();
         dataBank  = new Bank(sc);
+        if(sc.hasEntry("status")==true){
+            index_status = sc.getEntryOrder("status");
+        }
+        if(sc.hasEntry("charge")==true){
+            index_charge = sc.getEntryOrder("charge");
+        }
     }    
     
     @Override
@@ -36,7 +47,11 @@ public class PhysDataEvent extends PhysicsEvent {
     
     @Override
     public int charge(int index) {
-        return dataBank.getInt("charge", index);
+        if(index_charge>=0)
+            return dataBank.getInt(index_charge, index);
+        PDGParticle p = PDGDatabase.getParticleById(pid(index));
+        if(p==null) return 0;
+        return p.charge();
     }
 
     @Override
@@ -46,12 +61,15 @@ public class PhysDataEvent extends PhysicsEvent {
 
     @Override
     public int status(int index) {
-        return dataBank.getInt("status", index);
+        if(index_status>=0)
+            return dataBank.getInt(index_status, index);
+        return 1;
     }
 
     @Override
     public void status(int index, int value) {
-        dataBank.putShort("status", index,(short) value);        
+        if(index_status>=0)
+            dataBank.putInt("status", index, value); 
     }
 
     @Override

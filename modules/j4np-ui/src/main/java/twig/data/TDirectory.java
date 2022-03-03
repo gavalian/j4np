@@ -150,7 +150,7 @@ public class TDirectory implements TreeProvider {
         String  directory = path.replace("/root/", "/");
         DataSet ds = this.get(directory);
         if(ds!=null){
-            c.region().draw(ds);
+            c.region().draw(ds); c.next();
         }
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -179,6 +179,11 @@ public class TDirectory implements TreeProvider {
             
             this.add(dir, ds);
         }
+    }
+
+    @Override
+    public void configure() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public static class Directory {

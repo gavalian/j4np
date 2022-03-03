@@ -89,7 +89,8 @@ public class TGAxis implements StyleNode {
             for(int i = 0; i < attributes.getAxisTicksPosition().size(); i++){
                 int xpos = (int) tr.getX(attributes.getAxisTicksPosition().get(i),r);
                 String xlabel = attributes.getAxisTicksString().get(i);                    
-                if(this.attributes.getAxisTicksDraw()==true) g2d.drawLine( xpos, y1, xpos, yend);
+                if(this.attributes.getAxisTicksDraw()==true) 
+                    g2d.drawLine( xpos, y1, xpos, yend);
                 if(this.attributes.getAxisLabelsDraw()==true){
                     textWidget.setText(xlabel);
                     //labelHeight = textWidget.drawString(xlabel, g2d, xpos, ytoplabel, 1, 3, 0);

@@ -14,6 +14,7 @@ import twig.graphics.TGCanvas;
 import twig.widgets.LatexText;
 import twig.widgets.Legend;
 import twig.widgets.Line;
+import twig.widgets.MuPaveText;
 import twig.widgets.PaveText;
 
 /**
@@ -64,8 +65,7 @@ public class PaveTextDebug {
         h2.setName("denoised");
         
         GraphErrors gr = h3.getGraph();
-        
-        
+                
         gr.attr().setMarkerColor(1);
         gr.attr().setMarkerSize(8);
         gr.attr().setLineColor(5);
@@ -89,19 +89,54 @@ public class PaveTextDebug {
         c.view().region().draw(leg);
         c.view().region().axisLimitsX(0.0, 1.0);
         
-        PaveText pt = new PaveText(0.68,0.98);
-        pt.drawBox = false; pt.fillBox = false;
+        PaveText pt = new PaveText(0.985,0.975);
+        pt.drawBox = true; pt.fillBox = false;
         pt.setFont(new Font("Avenir Next",Font.PLAIN,18));
-        
+        pt.setAlign(LatexText.TextAlign.TOP_RIGHT);
         pt.addLines(h.getStatText());
         pt.addLines(h2.getStatText());
         
         c.view().region().draw(pt);
         c.repaint();
     }
+        
+    public static void paveAlign(){
+        TGCanvas c = new TGCanvas(700,500);        
+        c.view().region().setDebugMode(true);
+        
+        H1F h = TDataFactory.createH1F(2500);
+        h.attr().setFillColor(3);
+        h.attr().setFillStyle(2);                
+        c.view().region().draw(h);
+        PaveText  pave = c.view().region().getStats(1.05,1.05,"*");
+        pave.setAlign(LatexText.TextAlign.TOP_RIGHT);
+        pave.setFont(new Font("Avenir Next",Font.PLAIN,18));
+        c.view().region().draw(pave);
+        c.repaint();
+    }
+    
+    public static void paveTextNuevo(){
+        TGCanvas c = new TGCanvas();
+        c.view().region().setDebugMode(true);
+        
+        MuPaveText pt = new MuPaveText(0.1,0.90);
+        pt.setFont(new Font("Times New Roman",Font.PLAIN,18));
+        pt.addLines(new String[] {
+            "conventional tracking 1.2345/-0.2345",
+            "artificial tracking 2.345/0.0056",
+            "denoised tracking 4.134/0.0046",
+        } 
+        );
+        
+        pt.setTexAlign(LatexText.TextAlign.CENTER);
+        pt.setSpacing(0.01);
+        c.view().region().draw(pt);
+    }
     
     public static void main(String[] args){
         //PaveTextDebug.example1();
-        PaveTextDebug.exmapleLegend();
+        //PaveTextDebug.exmapleLegend();
+        //PaveTextDebug.paveAlign();
+        PaveTextDebug.paveTextNuevo();
     }
 }

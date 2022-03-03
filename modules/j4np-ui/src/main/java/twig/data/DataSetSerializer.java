@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
@@ -313,9 +314,17 @@ public class DataSetSerializer {
         
         H1F h = new H1F(name,axisBins);
         
+        JsonArray  stats  = jsonObject.get("stats").asArray();
+        int nStats = stats.size();
+        if(nStats>=3){
+             h.setEntries(stats.get(0).asInt());
+             h.setUnderflow(stats.get(1).asInt());
+             h.setOverflow(stats.get(2).asInt());
+        }
         JsonArray  data  = jsonObject.get("data").asArray();
         
         JsonValue errorObj = jsonObject.get("error");
+        
         JsonArray    error = null;
         if(errorObj!=null) error = jsonObject.get("error").asArray();
         //if(errorObj==null) System.out.println("[deserialize] ::: oh no, no error data");
@@ -442,6 +451,15 @@ public class DataSetSerializer {
     
     public static void main(String[] argas){
         
+        
+        H1F h = new H1F("h",20,.0,1.0);
+        Random r = new Random();
+        for(int i = 0; i < 120; i++){
+            h.fill(r.nextGaussian()+0.5);
+        }
+        String json = DataSetSerializer.serialize_H1F_JSON(h);
+        System.out.println(json);
+        /*
         TDirectory dir = new TDirectory();
         
         dir.add("/server/dc", new H1F("h100",120,0.0,1.0));
@@ -472,7 +490,7 @@ public class DataSetSerializer {
         
         for(DataSet ds : dataSetList){
             System.out.printf("\t%s : %s\n\n",ds.getName(),ds.getClass().getName());
-        }
+        }*/
         
        /* JsonObject obj = (JsonObject) Json.parse("{\"x\":3,\"y\":[4,5,6,7]}");
         

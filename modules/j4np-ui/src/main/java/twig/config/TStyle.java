@@ -22,9 +22,39 @@ import java.util.logging.Logger;
  */
 public class TStyle {
     
-    protected TPalette palette = new TPalette();
-    protected static TStyle globalStyle = new TStyle();
+    protected TPalette          palette = new TPalette();
+    private static TStyle globalStyle = new TStyle();
+    
     protected TAxisAttributes defaultAxisAttributes = new TAxisAttributes();
+    
+    /**
+     * Default fonts to be used with different components
+     * of the graphics.
+     */
+    protected TAttributesFont defaultAxisLabelFont  = 
+            new TAttributesFont("Avenir Next",Font.PLAIN,14);
+    
+    protected TAttributesFont defaultAxisTitleFont  = 
+            new TAttributesFont("Avenir Next",Font.PLAIN,18);
+    
+    protected TAttributesFont defaultPaveTextFont  = 
+            new TAttributesFont("Avenir Next",Font.PLAIN,18);
+    
+    protected TAttributesFont defaultLegendFont  = 
+            new TAttributesFont("Avenir Next",Font.PLAIN,18);
+    
+    protected TAttributesFont defaultStatsFont  = 
+            new TAttributesFont("Avenir Next",Font.PLAIN,18);
+    
+    protected TAttributesMarker  defaultMarkerStyle = 
+            new TAttributesMarker();
+    
+    
+    protected int  canvasBackgroundColor = 0;
+    protected int          axisLineColor = 0;
+    protected int         axisLabelColor = 0;
+    protected int         axisTitleColor = 0;
+    
     
     public static List<float[]> dashPatterns = Arrays.asList(
             new float[]{10.0f,0.0f},
@@ -51,23 +81,60 @@ public class TStyle {
             new float[]{3.0f,1.0f,1.0f,1.0f,1.0f,1.0f}                                    
     );
     
+
     public TStyle(){
         
     }
     
-    public static TStyle getInstance(){ return globalStyle;}
+    public static TStyle getInstance(){ 
+        /*if(globalStyle==null){
+            globalStyle = new TStyle();
+        }*/
+        return globalStyle;
+    }
+
+
+    public int getCanvasBackgroundColor(){
+        return this.canvasBackgroundColor;
+    }
+    
+    public void setCanvasBackgroundColor(int col){
+        canvasBackgroundColor = col;
+    }
+    
+    public int getAxisLineColor() {
+        return axisLineColor;
+    }
+
+    public void setAxisLineColor(int axisLineColor) {
+        this.axisLineColor = axisLineColor;
+    }
+
+    public int getAxisLabelColor() {
+        return axisLabelColor;
+    }
+
+    public void setAxisLabelColor(int axisLabelColor) {
+        this.axisLabelColor = axisLabelColor;
+    }
+
+    public int getAxisTitleColor() {
+        return axisTitleColor;
+    }
+
+    public void setAxisTitleColor(int axisTitleColor) {
+        this.axisTitleColor = axisTitleColor;
+    }
     
     public TPalette getPalette(){ return palette; }
     
-    public BasicStroke getLineStroke(int style, int width){
-        
+    public BasicStroke getLineStroke(int style, int width){        
         if(style<1) return new BasicStroke(width);
         int strokeStyle = style;
         if(style>=dashPatterns.size())
             strokeStyle= style%dashPatterns.size();
-            return new BasicStroke(width, BasicStroke.CAP_BUTT,
-                        BasicStroke.JOIN_MITER, 20.0f, dashPatterns.get(strokeStyle), 0.0f);
-            
+        return new BasicStroke(width, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 20.0f, dashPatterns.get(strokeStyle), 0.0f);        
     }
     
     public static Font createFont(String resource){
@@ -82,6 +149,10 @@ public class TStyle {
             Logger.getLogger(TStyle.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public static void setDarkMode(){
+        
     }
     
     public static Font createFont(){

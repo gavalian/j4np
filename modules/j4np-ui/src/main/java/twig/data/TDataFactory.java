@@ -102,6 +102,22 @@ public class TDataFactory {
         return h;
     }
     
+     public static H1F createH1Fs(int count, int bins, double min, double max, double mean, double sigma){
+        Random r = new Random();
+        H1F h = new H1F("h",bins,min,max);
+        for(int loop = 0; loop < count; loop++){
+            double g = r.nextGaussian()*sigma + mean;
+            h.fill(g);
+            for(int k = 0; k < 2; k++){
+                double n1 = r.nextDouble()*(max-min)+min;
+                double n2 = r.nextDouble()*(max-min)+min;
+                h.fill(n1+n2);
+            }
+            //h.fill(r.nextDouble()*(max-min)+min);
+        }
+        return h;
+    }
+    
     public static H1F createH1F(int count){
         return TDataFactory.createH1F(count, 100, 0.0, 1.0, 0.4, 0.2);
     }

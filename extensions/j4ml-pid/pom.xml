@@ -12,19 +12,19 @@
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-utils</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
       </dependency>
 
       <dependency>
 	<groupId>j4np</groupId>
 	<artifactId>j4np-ui</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
       </dependency>
 
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-physics</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
       </dependency>
 	   
       <dependency>

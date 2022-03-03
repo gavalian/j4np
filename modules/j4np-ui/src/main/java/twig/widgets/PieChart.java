@@ -67,4 +67,9 @@ public class PieChart implements Widget {
         c.view().region().getInsets().left(20);
         c.view().region().draw(pv);
     }
+
+    @Override
+    public void configure() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

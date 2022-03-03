@@ -481,11 +481,11 @@ public class Bank {
         nodeBuffer.putLong(offset, value);        
     }
     
-    public void putShort(int element, int index, short value){
-        
+    public void putShort(int element, int index, short value){        
         int offset = this.nodeHeaderSize + nodeSchema.getOffset(element, index, nodeRows);
         nodeBuffer.putShort(offset, value);        
     }
+    
     public void putShort(String name, int index, short value){
         int type   = nodeSchema.getType(name);
         if(type!=DataType.SHORT.getType()) {

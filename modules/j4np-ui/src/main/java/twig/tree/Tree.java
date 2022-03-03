@@ -6,36 +6,59 @@ package twig.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import twig.data.DataSet;
+import twig.data.DataVector;
 import twig.data.H1F;
 import twig.data.H2F;
+import twig.graphics.TGDataCanvas;
+import twig.server.TreeModelMaker;
+import twig.studio.TreeProvider;
 import twig.studio.TwigStudio;
 
 /**
  *
  * @author gavalian
  */
-public abstract class Tree {
+public abstract class Tree implements TreeProvider {
     
-    private String treeName = "tree";
+    private String    treeName = "tree";
+    private int    defaultBins = 100;
+    
+    private List<TreeCut>  treeCuts = new ArrayList<>();
     
     public Tree(){ }
+    
     public Tree(String name){ setName(name);}
     
     public abstract double   getValue(int order);
-    public abstract double   getValue(String branch);
-    
-    public abstract List<String> getBranches();
+    public abstract double   getValue(String branch);    
+    public abstract List<String> getBranches();    
     public abstract int      getBranchOrder(String name);
     public abstract void     reset();
     public abstract boolean  next();
     
+    public Tree  setDefaultBins(int bins){
+        this.defaultBins = bins; return this;
+    }
+    
     public final void    setName(String name){ treeName = name;}
     public final String  getName(){ return treeName;}
     
+    
+    public void showBranches(){
+        List<String> list = this.getBranches();
+        System.out.printf("-- list of branches --\n");
+        for(String item : list){
+            System.out.printf("\t-> %s\n",item);
+        }
+    }
     
     protected H1F getByStringH1F(String desc){
         String dataName = this.getNameByExperession(desc);
@@ -59,6 +82,20 @@ public abstract class Tree {
         
         return null;
     }
+    
+    
+    public Tree addCut(String name, String cutExp){
+        List<String> branches = getBranches();
+        boolean valid = TreeCut.validateExpression(cutExp, branches);
+        if(valid==true){
+            treeCuts.add(new TreeCut(name,cutExp,branches));
+        } else {
+            System.out.printf("\nERROR : cut expression [%s] is just plain wrong...\n\n",cutExp);
+        }
+        return this;
+    }
+    
+    public List<TreeCut>  getDefaultCuts(){return this.treeCuts;}
     
     protected H2F getByStringH2F(String desc){
         
@@ -102,8 +139,41 @@ public abstract class Tree {
         this.draw(expression, cuts, "");
     }
     
-    public final void draw(String expression, String cuts, String options){
+    private  void drawUndefined(String expression, String cuts, String options){
+        if(expression.contains(":")==true){
+            H2F h = this.geth2undef(expression, cuts, 100,100);
+            TwigStudio.getInstance().getCanvas().view().region().draw(h, options);
+            if(options.contains("same")==false)
+                TwigStudio.getInstance().getCanvas().view().next();
+            TwigStudio.getInstance().getCanvas().repaint();
+        } else {
+            H1F h = this.gethundef(expression, cuts, 100);
+            TwigStudio.getInstance().getCanvas().view().region().draw(h, options);
+            if(options.contains("same")==false)
+                TwigStudio.getInstance().getCanvas().view().next();
+            TwigStudio.getInstance().getCanvas().repaint();
+        }
+    }
+    
+    public final void draw(String expression, String drawCuts, String options){
+                        
+        String cuts = drawCuts;
 
+        if(treeCuts.size()>0){
+            if(drawCuts.length()>0){
+                cuts = drawCuts + "&&" + TreeCut.combine(treeCuts);
+            } else {
+                cuts = TreeCut.combine(treeCuts);
+            }
+        }
+        
+        //System.out.printf("draw >>> (%s) (%s) (%s)\n",expression,cuts,options);
+        
+        if(expression.contains(">>")==false) {
+            drawUndefined( expression,  cuts,  options);
+            return;
+        }
+        
         int  index = expression.indexOf(">>");
         String exp = expression.substring(0, index);        
         
@@ -125,9 +195,55 @@ public abstract class Tree {
             TwigStudio.getInstance().getCanvas().repaint();
         }
         //System.out.println(" parsing " + exp);
-        //H1F h = this.geth(expression, cuts, 0, 0, 0)
-        
+        //H1F h = this.geth(expression, cuts, 0, 0, 0)        
     } 
+    
+    
+    private String getUpdatedCutString(String cut){
+        StringBuilder str = new StringBuilder();
+                
+        if(cut.length()>0){
+            str.append(cut);
+            if(treeCuts.size()>0)
+                str.append("&&").append(TreeCut.combine(treeCuts));
+        } else {
+            str.append(TreeCut.combine(treeCuts));
+        }               
+        return str.toString();
+    }
+    
+    private H1F gethundef(String expression, String cutExpression, int bins){                
+        String cut = this.getUpdatedCutString(cutExpression);
+        //System.out.printf("draw[][] >>> (%s) (%s) (%d) {} debug (%d) (%s) \n",
+        //        expression,cut,bins,this.treeCuts.size(), 
+        //        TreeCut.combine(treeCuts));
+        reset();
+        DataVector v = new DataVector();
+        List<String> branches = this.getBranches();
+        TreeExpression  varExp = new TreeExpression(expression, branches);
+        TreeCut         cutExp = new TreeCut("1",cut,branches);
+        int counter = 0;
+        long evaluate = 0L;
+        long then = System.currentTimeMillis();
+        long start = System.nanoTime();
+        while(this.next()==true){
+            counter++;            
+            if(cutExp.isValid(this)>0.5){ v.add(varExp.getValue(this));}
+        }        
+        long end = System.nanoTime();
+        evaluate += (end - start);
+        long now = System.currentTimeMillis();                
+        long uid = TwigStudio.getInstance().getNextUniqueId();
+        H1F h = H1F.create("h"+uid, bins, v);
+        h.setUniqueID(uid);        
+        TwigStudio.getInstance().addDataSet(uid, h);
+        h.attr().setTitle(cut);
+        h.attr().setTitleX(expression);
+        System.out.printf(
+                "get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
+                counter,(int) (evaluate/1000000.0), now-then);
+        return h;
+    }
     
     public final H1F geth(String expression, String cut, int bins, double min, double max){
         H1F h = new H1F(expression,bins,min,max);
@@ -143,7 +259,13 @@ public abstract class Tree {
         geth2(expression,cut,h2);
         return h2;
     }
-    
+    /**
+     * fills expression provided by "expression" into provided
+     * histogram "h", if the "cut" is valid.
+     * @param expression - expression to evaluate
+     * @param cut - expression representing a cut
+     * @param h - histogram to fill with the expression
+     */
     public final void geth(String expression, String cut, H1F h){
         reset();
         h.attr().setTitle(cut);
@@ -152,9 +274,16 @@ public abstract class Tree {
         TreeExpression  varExp = new TreeExpression(expression, branches);
         TreeCut         cutExp = new TreeCut("1",cut,branches);
         int counter = 0;
+
         long evaluate = 0L;
-        long then = System.currentTimeMillis();
+        long read = 0L;
+
+        boolean isDone = false;
         while(this.next()==true){
+            long then = System.nanoTime();
+            boolean status = this.next();
+            long now = System.nanoTime();
+            read += (now-then);            
             counter++;
             long start = System.nanoTime();
             if(cutExp.isValid(this)>0.5){
@@ -163,9 +292,9 @@ public abstract class Tree {
             long end = System.nanoTime();
             evaluate += (end - start);
         }
-        long now = System.currentTimeMillis();
-        System.out.printf("get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
-                counter,(int) (evaluate/1000000.0), now-then);
+
+        System.out.printf("get::perf>> evaluated #%12d in %12d ms, read %12.4f ms\n", 
+                counter,(int) (evaluate/1000000.0), (read/1000000.0));
     }        
         
     public final void geth2(String expression, String cut, H2F h){
@@ -197,6 +326,43 @@ public abstract class Tree {
         System.out.printf("get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
                 counter,(int) (evaluate/1000000.0), now-then);
     }        
+    
+    public final H2F geth2undef(String expression, String cut, int binsX, int binsY){
+        reset();
+        DataVector vx = new DataVector();
+        DataVector vy = new DataVector();
+        
+        String[] axisExp = expression.split(":");
+        
+        List<String> branches = this.getBranches();
+        TreeExpression  varExpX = new TreeExpression(axisExp[1], branches);
+        TreeExpression  varExpY = new TreeExpression(axisExp[0], branches);
+        
+        TreeCut         cutExp = new TreeCut("1",cut,branches);
+        int counter = 0;
+        long evaluate = 0L;
+        long then = System.currentTimeMillis();
+        while(this.next()==true){
+            counter++;
+            long start = System.nanoTime();
+            if(cutExp.isValid(this)>0.5){
+                double vX = varExpX.getValue(this);
+                double vY = varExpY.getValue(this);
+                vx.add(vX);vy.add(vY);
+            }
+            long end = System.nanoTime();
+            evaluate += (end - start);
+        }
+        long now = System.currentTimeMillis();
+        H2F h = H2F.create("h2000000", binsX, binsY, vx, vy);
+        h.attr().setTitle(cut);
+        h.attr().setTitleX(axisExp[0]);
+        h.attr().setTitleY(axisExp[1]);
+        System.out.printf("get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
+                counter,(int) (evaluate/1000000.0), now-then);
+        return h;
+    }        
+    
     public static List<H1F> createH1D(int[] bins, double[] limits){
         List<H1F> hList = new ArrayList<>();
         for(int i = 0; i < bins.length; i++){
@@ -213,5 +379,43 @@ public abstract class Tree {
     
     public void getData(List<H1F> data,String expressions, String cuts){
         String[] tokens = expressions.split(":");
+    }
+    
+    
+    @Override
+    public TreeModel getTreeModel(){
+        TreeModelMaker    tm = new TreeModelMaker();
+        List<String>   nodes = this.getBranches();
+        Collections.sort(nodes);
+        tm.setList(nodes);
+
+        DefaultMutableTreeNode root = tm.getTreeModel();
+        return new DefaultTreeModel(root);
+    }
+    
+    
+    @Override
+    public void      draw(String path, TGDataCanvas c){
+           System.out.println("will be drawing this : " + path);
+           if(path.contains("/")==true){
+               String branch = path.replaceAll("/", "");               
+               H1F h = this.gethundef(branch, "", 100);
+               c.region().draw(h);
+               c.next();
+           }
+    }
+    
+    
+    public void execute(String command){
+        String[] tokens = command.split("/");
+        System.out.println(" command = " + Arrays.toString(tokens));
+        if(tokens[0].compareTo("addcut")==0){
+            this.treeCuts.clear();
+            this.addCut(tokens[1], tokens[2]);
+        }
+        
+        if(tokens[0].compareTo("defaultbins")==0){
+            this.defaultBins = Integer.parseInt(tokens[1]);
+        }
     }
 }

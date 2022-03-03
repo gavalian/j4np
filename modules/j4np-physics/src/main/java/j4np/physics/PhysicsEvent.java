@@ -143,10 +143,7 @@ public abstract class PhysicsEvent {
         Vector3 temp = new Vector3();
         
         for(int p = 0; p < pid.length; p++){
-            vector(temp,pid[p],skip[p]);
-            
-                
-            
+            vector(temp,pid[p],skip[p]);            
             if(sign[p]>0){
                 v.add(temp.x(), temp.y(), temp.z(), mass[p]);
             } else {

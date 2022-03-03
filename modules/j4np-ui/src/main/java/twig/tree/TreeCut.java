@@ -97,6 +97,19 @@ public class TreeCut {
         }
         return true;
     }
+    
+    
+    public static String combine(List<TreeCut> cuts){
+        if(cuts.size()>0){
+            StringBuilder str = new StringBuilder();
+            str.append(cuts.get(0).getExpression());
+            for (int i = 1; i < cuts.size(); i++) {
+                str.append("&&").append(cuts.get(i).getExpression());
+            }
+            return str.toString();
+        }
+        return "";
+    }
     /*
     public DataCut(String name, String exp){
     cutName = name;

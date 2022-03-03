@@ -8,7 +8,11 @@ package j4np.physics;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
 import j4np.physics.VectorOperator.OperatorType;
+import j4np.physics.data.PhotoDataEvent;
 import j4np.physics.data.PhysDataEvent;
+import j4np.physics.store.EventModifierStore;
+import j4np.physics.store.EventModifierStore.EventModifierForward;
+import j4np.physics.store.ReactionConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 import twig.data.H1F;
@@ -34,8 +38,22 @@ public class PhysicsReaction extends Tree {
     protected Event              reactionEvent = new Event();
     protected List<EventModifier>    modifiers = new ArrayList<>();
     
+    
     public  PhysicsReaction(String filter){
         eventFilter = new EventFilter(filter);
+    }
+    
+    public  PhysicsReaction(){
+        eventFilter = new EventFilter("X+:X-:Xn");
+        beamVector.setPxPyPzM(   0.0, 0.0, 10.6, 0.0005);
+        targetVector.setPxPyPzM( 0.0, 0.0,  0.0, 0.9380);
+        addModifier(new EventModifierForward());
+        addVector(getVector(),"-[11]");
+        addVector("[11]");
+        this.addEntry("w2",   0, OperatorType.MASS);
+        this.addEntry("e_p",  1, OperatorType.P);
+        this.addEntry("e_th", 1, OperatorType.THETA);
+        this.addEntry("e_phi", 1, OperatorType.PHI);        
     }
     
     public  PhysicsReaction(String filter, double beamEnergy){
@@ -48,13 +66,20 @@ public class PhysicsReaction extends Tree {
         return setDataSource(r,"mc::event");
     }
     
-    public PhysicsReaction addModifier(EventModifier m){
+    public final PhysicsReaction addModifier(EventModifier m){
         this.modifiers.add(m); return this;
     }
+    
     
     public PhysicsReaction setDataSource(HipoReader r, String bank){
         reader = r; 
         physicsEvent = new PhysDataEvent(reader.getBank(bank));
+        return this;
+    }
+    
+    public PhysicsReaction setDataSourcePhoto(HipoReader r, String bank, String tagr){
+        reader = r; 
+        physicsEvent = new PhotoDataEvent(reader.getBank(bank),reader.getBank(tagr));
         return this;
     }
     
@@ -205,7 +230,19 @@ public class PhysicsReaction extends Tree {
         
         return true;
     }
-    
+
+    @Override
+    public void configure() {
+        ReactionConfiguration config = new ReactionConfiguration(null,this);
+        config.show();
+        
+        this.setDataSource(config.reader, config.getBankName());
+        this.modifiers.clear();
+        this.addModifier(config.getEventModifier());
+        double energy = config.getBeamEnergy();
+        this.beamVector.setPxPyPzM(0.0, 0.0, 10.6, 0.0005);
+    }
+        
     public static class ReactionEntry {
         
         String    entryName = "u";

@@ -251,13 +251,13 @@ public class Func1D implements DataSet {
         String format = "%.3f";
 
         int np = this.getNPars();
-        if(options.contains("M")==false){
+        if(options.contains("S")==true){
             StringBuilder str = new StringBuilder();
             for(int i = 0; i < np; i++){
                 if(i!=0) str.append(", ");
                 str.append(String.format("%s="+format, this.parameter(i).name(),
                         this.parameter(i).value()));
-                if(options.contains("F")==true)
+                //if(options.contains("F")==true)
                     str.append(String.format("+/-%.4f",this.parameter(i).error()));
             }
             stats.add(str.toString());
@@ -267,11 +267,11 @@ public class Func1D implements DataSet {
                 String par = String.format("%s="+format, this.parameter(i).name(),
                         this.parameter(i).value());                
                 String parError = String.format("+/-%.4f",this.parameter(i).error());
-                if(options.contains("F")==true){
+                //if(options.contains("F")==true){
                     stats.add(par+parError);
-                } else {
-                    stats.add(par);
-                }
+                //} else {
+                //    stats.add(par);
+                //}
             }
         }
         return stats;

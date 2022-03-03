@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class VectorOperator {
     
     public enum OperatorType {
-      MASS,THETA,PHI,P,E,THETA_DEG,PHI_DEG
+      MASS,MASS2,THETA,PHI,P,E,THETA_DEG,PHI_DEG
     };
     
     private LorentzVector vec = new LorentzVector();
@@ -62,6 +62,7 @@ public class VectorOperator {
     public double getValue(OperatorType type){
         switch(type){
             case MASS: return opVector.mass();
+            case MASS2: return opVector.mass2();
             case P: return opVector.p();
             case E: return opVector.e();
             case THETA: return opVector.theta();
