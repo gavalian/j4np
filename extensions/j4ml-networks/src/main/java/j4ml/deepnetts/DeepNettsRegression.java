@@ -11,6 +11,7 @@ import deepnetts.net.layers.activation.ActivationType;
 import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
+import j4np.utils.io.DataPairList;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,9 +148,7 @@ public class DeepNettsRegression {
     
     System.out.println("accuracy = " + trainer.getTrainingAccuracy());
     System.out.println("loss = " + trainer.getTrainingLoss());
-    }*/
-    
-    
+    }*/        
     //trainer.setCheckpointEpochs(100);
     public void train(DataSet trSet, int nEpochs){
         trainer.setMaxEpochs(nEpochs);
@@ -180,10 +179,32 @@ public class DeepNettsRegression {
         System.out.println("*********");
     }
     
+    public void evaluate(String file, DataPairList ds){
+        DataSet set = this.convert(ds);
+        this.evaluate(file, set);
+    }
+    
+    public void test(DataPairList ds){
+        
+        DataSet set = this.convert(ds);
+        Iterator iter = set.iterator();
+        
+        while(iter.hasNext()){
+            TabularDataSet.Item  item = (TabularDataSet.Item) iter.next();
+            float[]  input  = item.getInput().getValues();
+            float[] desired = item.getTargetOutput().getValues();
+            float[]  output = neuralNet.predict(input);
+            
+            
+        }
+    }
+    
     public void evaluate(String file, DataSet ds){
-        Iterator iter = ds.iterator();                
+        
+        Iterator iter = ds.iterator();
         TextFileWriter w = new TextFileWriter();
         w.open(file);
+        
         while(iter.hasNext()){
             TabularDataSet.Item  item = (TabularDataSet.Item) iter.next();
             float[]  input  = item.getInput().getValues();
@@ -195,6 +216,27 @@ public class DeepNettsRegression {
             w.writeString(export);
         }
         w.close();
+    }
+    
+    private DataSet convert(DataPairList list){
+        
+        int nInputs = list.getList().get(0).getFirst().length;
+        int nOutputs = list.getList().get(0).getSecond().length;
+        
+        TabularDataSet  dataset = new TabularDataSet(nInputs,nOutputs);
+        for(int k = 0; k < list.getList().size(); k++){
+            float[]  inBuffer = list.getList().get(k).floatFirst();
+            float[] outBuffer = list.getList().get(k).floatSecond();            
+            dataset.add(new TabularDataSet.Item(inBuffer, outBuffer));                
+        }
+        String[] names = DataSetUtils.generateNames(nInputs, nOutputs);
+        dataset.setColumnNames(names);
+        return dataset;
+    }
+    
+    public void train(DataPairList dpl, int nEpochs){
+        DataSet converted = this.convert(dpl);
+        this.train(converted, nEpochs);
     }
     
     public static void main(String[] args){

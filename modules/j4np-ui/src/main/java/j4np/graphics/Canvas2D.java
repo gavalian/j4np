@@ -116,6 +116,7 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         if(backgroundColor!=null){
             g2d.fillRect(0, 0, w, h);
         }
+        
         NodeRegion2D region = new NodeRegion2D();
         region.set(0, 0, w, h);
         long paintStart = System.currentTimeMillis();

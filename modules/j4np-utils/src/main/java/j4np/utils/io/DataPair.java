@@ -44,6 +44,19 @@ public class DataPair {
        return data;
     }
     
+    public void transform(int nclasses){
+        double[] label = new double[nclasses];
+        for(int i = 0; i < label.length; i++)
+           label[i] =0.0;
+        int which = (int) second[0];
+        if(which<0||which>=label.length){
+            System.out.println("ERROR: the label is larger than provided length\n");
+            return;
+        }
+        label[which] = 1.0;
+        this.second = label;
+    }
+    
     public void show(){
         if(first!=null)
             System.out.print(DataArrayUtils.getDataString(first) );        

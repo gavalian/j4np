@@ -25,7 +25,16 @@ public class InclusiveE2pions extends PhysicsReaction {
         this.initialize();
     }
     
+    @Override
+    public void configChange(){
+        System.out.println("reconfiguring");
+        this.initialize();
+    }
+    
     private void initialize(){
+        
+        this.vecOprators.clear();
+        this.operEntries.clear();
         this.addVector(this.getVector(), "-[11]-[211]-[-211]");
         this.addVector("[211]+[-211]");
         this.addVector( "[11]");
@@ -62,6 +71,7 @@ public class InclusiveE2pions extends PhysicsReaction {
         
         this.showBranches();
     }
+    
     private void addModifierData(){
         EventModifier modifier = new EventModifier(){
             @Override

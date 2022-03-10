@@ -6,6 +6,7 @@
 package j4np.utils.io;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class DataPairList {
     public DataPairList(){
         
     }
-        
+    
     public void add(DataPair pair){
         dataList.add(pair);
     }
@@ -28,7 +29,7 @@ public class DataPairList {
     public List<DataPair> getList(){ return dataList;}
 
     public void show(){
-        
+        System.out.printf("\n>>>>> data pair list, size = %d\n",this.dataList.size());
         int size = dataList.size();
         if(size<2*dataShowLimit+1){
             for(int i = 0; i < size; i++){
@@ -58,6 +59,10 @@ public class DataPairList {
         }
     }
     
+    public void transform(int nclasses){
+        for(DataPair dp : this.dataList)
+            dp.transform(nclasses);
+    }
     
     public DataPairList getNormalizedFirst(double[] min, double[] max){
         DataPairList dList = new DataPairList();
@@ -132,6 +137,32 @@ public class DataPairList {
         return cList;
     }
     
+    public void shuffle(){
+        Collections.shuffle(dataList);
+        Collections.shuffle(dataList);
+    }
+    
+    public static DataPairList[] split(DataPairList list, double... fractions){
+        DataPairList[] lists = new DataPairList[fractions.length];
+        for(int i = 0; i < lists.length; i++)
+            lists[i] = new DataPairList();
+        
+        int   nrows = list.getList().size();
+        int[]   nev = new int[fractions.length];
+        nev[0] = (int) (nrows*fractions[0]);
+        for(int i = 1; i < fractions.length; i++){
+            nev[i] = nev[i-1] + (int) (nrows*fractions[i]);
+        }
+        
+        int current = 0;
+        for(int i = 0; i < list.getList().size(); i++){
+            if(i>nev[current]) current++;
+            if(current>=0&&current<lists.length){
+                lists[current].add(list.getList().get(i));                
+            }
+        }
+        return lists;
+    }
     public void scan(){
         
         System.out.println("** scanning data pair list with entrie = " + dataList.size());

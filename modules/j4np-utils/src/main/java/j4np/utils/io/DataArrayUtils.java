@@ -61,6 +61,16 @@ public class DataArrayUtils {
         return b;
     }
     /**
+     * converts a double array to float array.
+     * @param a inital double array
+     * @return new float array
+     */
+    public static double[] toDouble(float[] a){
+        double[] b = new double[a.length];
+        for(int k = 0; k < b.length; k++) b[k] =  a[k];
+        return b;
+    }
+    /**
      * Returns a difference value between two arrays. 
      * @param a reference array 
      * @param b reference array 

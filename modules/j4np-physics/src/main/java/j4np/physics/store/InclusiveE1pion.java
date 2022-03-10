@@ -4,6 +4,7 @@
  */
 package j4np.physics.store;
 
+import j4np.hipo5.io.HipoReader;
 import j4np.physics.EventModifier;
 import j4np.physics.PhysicsEvent;
 import j4np.physics.PhysicsReaction;
@@ -24,9 +25,17 @@ public class InclusiveE1pion extends PhysicsReaction {
         super("11:211:X+:X-:Xn",energy);
         initialize();
     }
+    
+    public InclusiveE1pion(double energy, String file, String bank){
+        super("11:211:X+:X-:Xn",energy);
+        initialize();
+        HipoReader r = new HipoReader(file);
+        this.setDataSource(r,bank);
+    }
 
     private void initialize(){
-        
+        this.vecOprators.clear();
+        this.operEntries.clear();
         this.addVector(this.getVector(), "-[11]-[211]");
         this.addVector( "[11]");
         this.addVector( "[211]");
@@ -54,6 +63,12 @@ public class InclusiveE1pion extends PhysicsReaction {
         
         
         this.showBranches();
+    }
+    
+    @Override
+    public void configChange(){
+        System.out.println("reconfiguring");
+        this.initialize();
     }
     
     private void addModifierData(){

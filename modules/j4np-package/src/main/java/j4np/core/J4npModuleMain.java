@@ -9,9 +9,11 @@ import j4np.utils.dsl.DSLModuleManager;
 import j4np.utils.io.OptionApplication;
 import j4np.utils.io.OptionExecutor;
 import j4np.utils.io.OptionStore;
+import j4np.utils.io.TextFileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,10 @@ public class J4npModuleMain {
         System.out.println("   █████       ██ ██   ████ ██        ");
         System.out.println("");
     }
+    
+    
     public static void test(){
+    
         AnsiConsole.systemInstall();
         Ansi a = new Ansi();
         while(true){
@@ -76,6 +81,17 @@ public class J4npModuleMain {
                 Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    public static List<String>  getClassConfig(){
+        String dir = System.getenv("J4NPDIR");
+        if(dir==null){
+            System.out.println("\n\n no configuration is provided");
+            return new ArrayList<>();
+        }
+        
+        String file = dir + "/etc/applications.clist";
+        List<String> data = TextFileReader.readFile(file);
+        return data;
     }
     
     public static Map<String,OptionApplication> scan(){
@@ -102,6 +118,25 @@ public class J4npModuleMain {
         */
         Map<String,OptionApplication>  appMap = new HashMap<>();
         for(String clazzName : clazzList){
+            try {
+                Class clazz = Class.forName(clazzName);
+                OptionApplication app = (OptionApplication) clazz.newInstance();
+                System.out.println("---> " + clazz);
+                System.out.printf("%s : %s \n" , app.getAppName(), app.getDescription());
+                
+                appMap.put(app.getAppName(), app);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        List<String>  configList = J4npModuleMain.getClassConfig();
+        
+        for(String clazzName : configList){
             try {
                 Class clazz = Class.forName(clazzName);
                 OptionApplication app = (OptionApplication) clazz.newInstance();

@@ -13,6 +13,7 @@ import j4np.hipo5.io.HipoWriter;
 import j4np.utils.io.DataArrayUtils;
 import j4np.utils.io.DataPair;
 import j4np.utils.io.DataPairList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.visrec.ml.data.DataSet;
@@ -23,6 +24,76 @@ import javax.visrec.ml.data.DataSet;
  * @author gavalian
  */
 public class DataLoader {
+    
+    public static List<DataPairList> loadCombinatoricsPos(String filename, int tag, int max){
+        
+        Combinatorics combi = new Combinatorics();
+        
+        
+        HipoReader reader = new HipoReader();
+        reader.setDebugMode(0);
+        reader.setTags(tag);
+        reader.open(filename);
+        Event event = new Event();
+        int counter = 0;
+        boolean keepReading = true;
+        
+        List<DataPairList> results = new ArrayList<>();
+        
+        while(reader.hasNext()&&keepReading==true){
+            
+            reader.nextEvent(event);
+            DataPairList list = new DataPairList();
+            Node means = event.read(  1001, 4);
+            Node charge = event.read( 1001, 1);
+            Node vertex = event.read(1001, 7);
+            
+            Node layers = event.read(2001, 1);
+            Node avgs   = event.read(2001, 2);
+            
+            double vz = vertex.getFloat(2);
+            int q = charge.getShort(1);
+            
+            if(vz>-15&&vz<5){
+                double[] first = new double[means.getDataSize()];
+                for(int i = 0; i < first.length;i++) first[i] = means.getFloat(i);
+                DataPair realTrack = null;
+                if(q>0){
+                    realTrack = new DataPair(first,new double[]{0.0,1.0,0.0});
+                    list.add(new DataPair(first,new double[]{0.0,1.0,0.0}));
+                } else {
+                    //realTrack = new DataPair(first,new double[]{0.0,0.0,1.0});
+                    //list.add(new DataPair(first,new double[]{0.0,0.0,1.0}));
+                }
+                
+                
+                combi.reset();
+                for(int j = 0; j < layers.getDataSize(); j++){
+                    combi.add(layers.getInt(j)-1, avgs.getFloat(j));
+                }
+                List<double[]> ctrk = combi.getCombinations();
+                //System.out.println("adding combinations # " + ctrk.size());
+                for(int j = 0; j < ctrk.size(); j++){
+                    double distance = combi.distance(ctrk.get(j), realTrack.getFirst());
+                    if(distance<0.001){
+                        double[] output = new double[3];
+                        for(int oc = 0 ; oc < 3; oc++) output[oc] = realTrack.getSecond()[oc];
+                        DataPair dp = new DataPair(ctrk.get(j),output);
+                        list.add(dp);
+                    } else {
+                        DataPair dp = new DataPair(ctrk.get(j),new double[]{1.0,0.0,0.0});
+                        list.add(dp);
+                    }
+                    
+                    //System.out.printf("%8.5f : ",distance);dp.show();
+                }                
+            }                                    
+            counter++;
+            results.add(list);
+            if(max>0) if(counter>=max) keepReading = false;
+        }        
+        return results;
+    }
     
     public static DataPairList loadCombinatorics(String filename, int tag, int max){
         
@@ -93,6 +164,7 @@ public class DataLoader {
     
     
     public static DataPairList load(String filename, int tag, int max){
+        
         DataPairList list = new DataPairList();
         HipoReader reader = new HipoReader();
         reader.setDebugMode(0);
@@ -117,6 +189,7 @@ public class DataLoader {
                 if(q>0){
                     list.add(new DataPair(first,new double[]{0.0,1.0,0.0}));
                 } else {
+                    //System.out.println("omg\n\n");
                     list.add(new DataPair(first,new double[]{0.0,0.0,1.0}));
                 }
             }
@@ -152,7 +225,6 @@ public class DataLoader {
                 realTrack = new DataPair(first,new double[]{0.0,0.0,1.0});
                 list.add(new DataPair(first,new double[]{0.0,0.0,1.0}));
             }
-            
             
             combi.reset();
             for(int j = 0; j < layers.getDataSize(); j++){
@@ -197,6 +269,15 @@ public class DataLoader {
         return list;
     }
     
+    public static DataPairList loadPos(String filename, int max){
+        DataPairList list = new DataPairList();
+        for(int k = 0; k < 19; k++){
+            DataPairList dl = DataLoader.load(filename, k+1, max);
+            list.getList().addAll(dl.getList());
+        }
+        return list;
+    }
+    
     public static String[] generateNames(int input, int output){
         String[] names = new String[input+output];
         for(int i = 0; i < input; i++) names[i] = "in" + i;
@@ -220,6 +301,7 @@ public class DataLoader {
     }
     
     public static DataPairList generateFalse(DataPairList list){
+        
         Random rmean = new Random();
         Random rlayer = new Random();
         Random rsign = new Random();

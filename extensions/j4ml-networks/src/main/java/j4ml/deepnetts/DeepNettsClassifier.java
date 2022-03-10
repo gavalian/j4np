@@ -5,6 +5,7 @@
  */
 package j4ml.deepnetts;
 
+import deepnetts.data.TabularDataSet;
 import deepnetts.eval.ClassifierEvaluator;
 import deepnetts.eval.ConfusionMatrix;
 import deepnetts.net.FeedForwardNetwork;
@@ -18,6 +19,8 @@ import deepnetts.net.train.TrainingListener;
 import deepnetts.net.train.opt.OptimizerType;
 import deepnetts.util.FileIO;
 import j4np.utils.io.DataArrayUtils;
+import j4np.utils.io.DataPair;
+import j4np.utils.io.DataPairList;
 import j4np.utils.io.TextFileWriter;
 import java.io.File;
 import java.io.IOException;
@@ -151,6 +154,46 @@ public class DeepNettsClassifier {
         }
         writer.close();
     }        
+    
+    private DataSet convert(DataPairList list){
+        
+        int nInputs = list.getList().get(0).getFirst().length;
+        int nOutputs = list.getList().get(0).getSecond().length;
+        
+        TabularDataSet  dataset = new TabularDataSet(nInputs,nOutputs);
+        for(int k = 0; k < list.getList().size(); k++){
+            float[]  inBuffer = list.getList().get(k).floatFirst();
+            float[] outBuffer = list.getList().get(k).floatSecond();            
+            dataset.add(new TabularDataSet.Item(inBuffer, outBuffer));                
+        }
+        
+        String[] names = DataSetUtils.generateNames(nInputs, nOutputs);
+        dataset.setColumnNames(names);
+        return dataset;
+    }
+    
+    public DataPairList evaluate(DataPairList dpl){
+        DataPairList result = new DataPairList();
+        for(int i = 0; i < dpl.getList().size(); i++){
+            float[] input = dpl.getList().get(i).floatFirst();
+            this.neuralNet.setInput(input);
+            float[] output = this.neuralNet.getOutput();
+            result.add(new DataPair(
+                    DataArrayUtils.toDouble(input),
+                    DataArrayUtils.toDouble(output)));
+        }
+        return result;
+    }
+    
+    public void train(DataPairList dpl, int nEpochs){
+        DataSet converted = this.convert(dpl);
+        this.train(converted, nEpochs);
+    }
+    
+    public void test(DataPairList dpl){
+        DataSet converted = this.convert(dpl);
+        this.evaluate(converted);
+    }
     
     public void train(DataSet trSet, int nEpochs){
         

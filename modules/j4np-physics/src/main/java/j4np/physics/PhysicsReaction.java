@@ -240,9 +240,16 @@ public class PhysicsReaction extends Tree {
         this.modifiers.clear();
         this.addModifier(config.getEventModifier());
         double energy = config.getBeamEnergy();
-        this.beamVector.setPxPyPzM(0.0, 0.0, 10.6, 0.0005);
+        this.beamVector.setPxPyPzM(0.0, 0.0, energy, 0.0005);        
+        System.out.println("energy = " + energy);
+        //System.out.println();
+        configChange();
     }
-        
+    
+    public void configChange(){
+        System.out.println("reconfiguring");
+    }
+    
     public static class ReactionEntry {
         
         String    entryName = "u";

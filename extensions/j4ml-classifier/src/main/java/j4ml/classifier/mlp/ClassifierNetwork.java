@@ -15,7 +15,7 @@ import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
 import deepnetts.util.FileIO;
-import j4np.utils.io.DataArrayUtils;
+import j4np.utils.io.TextFileWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.visrec.ml.data.DataSet;
 import javax.visrec.ml.eval.EvaluationMetrics;
-import org.jlab.jnp.readers.TextFileWriter;
 
 /**
  *

@@ -7,7 +7,9 @@ package j4ml.pid.data;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -29,6 +31,44 @@ public class DetectorResponse {
     }
     public double[] getData(){return this.responses; }
     
+    
+    public double[] read3(Bank calo, Bank calib, int pindex, double pmom){
+        List<Integer> idx = getIndex(calo,pindex);
+        
+        if(idx.size()!=3) return null;
+        double[] results = new double[27];
+        for(int i = 0; i < results.length; i++) results[i] = 0.0;
+        //results[0] = 0.0; results[1] = 0.0; results[2] = 0.0;        
+
+        for(int i = 0; i < idx.size(); i++){            
+            results[0+i] = calib.getFloat("recEU", idx.get(i))/pmom;
+            results[3+i] = calib.getFloat("recEV", idx.get(i))/pmom;
+            results[6+i] = calib.getFloat("recEW", idx.get(i))/pmom;
+        }
+        
+        for(int i = 0; i < idx.size(); i++){            
+            results[9+i] = calo.getFloat("lu", idx.get(i));
+            results[12+i] = calo.getFloat("lv", idx.get(i));
+            results[15+i] = calo.getFloat("lw", idx.get(i));
+        }
+        
+        for(int i = 0; i < idx.size(); i++){            
+            results[18+i] = calo.getFloat("m2u", idx.get(i));
+            results[21+i] = calo.getFloat("m2v", idx.get(i));
+            results[24+i] = calo.getFloat("m2w", idx.get(i));
+        }
+        return results;
+    }
+    
+    public List<Integer> getIndex(Bank calo, int pindex){
+        List<Integer> idx = new ArrayList<>();
+        int nrows = calo.getRows();
+        for(int i = 0; i < nrows; i++){
+            int pi = calo.getInt("pindex", i);
+            if(pi==pindex) idx.add(i);
+        }
+        return idx;
+    }
     
     public void read(Bank calo, Bank moments, Bank calib, double pmom){
         

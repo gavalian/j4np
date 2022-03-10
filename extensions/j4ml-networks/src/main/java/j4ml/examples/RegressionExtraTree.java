@@ -41,11 +41,11 @@ public class RegressionExtraTree {
                 error,error/nrows);
     }
     
-     public ExtraTrees getTree(DataPairList list){
-         
+    public ExtraTrees getTree(DataPairList list){
+        
         int ndata = list.getList().size();
         int ndim  = 6;
-
+        
         double[] output = new double[ndata];
         double[] v = new double[ndata*ndim];                
         Matrix m = new Matrix(v, ndata, ndim);
@@ -58,11 +58,10 @@ public class RegressionExtraTree {
             }
             
             output[row] = second[0];
-        }
-        
+        }        
         return new ExtraTrees(m,output);
     }
-     
+    
     public DataPairList importData(String file){
         DataPairList list = new DataPairList();
         TextFileReader reader = new TextFileReader(file);

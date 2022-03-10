@@ -184,6 +184,7 @@ public class OptionStore {
                 //        OptionApplication.class.isAssignableFrom(instance)
                 //        );
 //                instance.isAssignableFrom(instance)
+                //System.out.println("=====> considering class : " + clazz);
                 if(OptionApplication.class.isAssignableFrom(instance)){ 
                     if(clazz.compareTo("j4np.utils.io.OptionApplication")!=0)
                         clazzList.add(clazz);
@@ -198,7 +199,11 @@ public class OptionStore {
     }
     
     public static List<String> scanClasses(){
-        return OptionStore.scanClasses("j4np");
+        List<String> j4npList = OptionStore.scanClasses("j4np");
+        List<String> j4mlList = OptionStore.scanClasses("j4ml");
+        System.out.println("scanning : j4np = "+ j4npList.size() + " , j4ml = " + j4mlList.size());
+        j4npList.addAll(j4mlList);
+        return j4npList;
     }
     
     public static void main(String args[]){
