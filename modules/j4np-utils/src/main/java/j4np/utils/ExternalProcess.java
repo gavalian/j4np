@@ -81,6 +81,7 @@ public class ExternalProcess  {
         public ProcessConfiguration(String config){
             parse(config);
         }
+        
         public final void parse(String inputs){
             String[] tokens = inputs.split(":");
             for(int i = 0; i < tokens.length; i+=2){
@@ -116,6 +117,17 @@ public class ExternalProcess  {
             }
             return list;
         }
+        
+        public static List<ProcessConfiguration> fromDir(String file){
+            List<String>  files = FileUtils.getFileListInDir(file);
+            List<ProcessConfiguration> list = new ArrayList<>();
+            for(int i = 0; i < files.size(); i++){
+                String params = "input:"+files.get(i)+":output:"+files.get(i)+"_output";
+                list.add(new ProcessConfiguration(params));
+            }
+            return list;
+        }
+                 
     }
     
     public static class ProcessDescriptor implements Runnable {

@@ -12,10 +12,12 @@ import twig.data.*;
 import twig.graphics.TGCanvas;
 
 /**
- * Data Analysis
+ *
  * @author gavalian
  */
 public class DataAnalysisRegression {
+    
+    public String directory = "/regression";
     
     public static LorentzVector getVector(double mass,String[] data){
         double px = Double.parseDouble(data[1]);
@@ -36,14 +38,18 @@ public class DataAnalysisRegression {
         double[] r = new double[col.length];
         String[] tokens = line.split("\\s+");
         for(int i = 0; i < col.length;i++){
-            r[i] = Double.parseDouble(tokens[col[i]]);
+            if(tokens.length>col[i]){
+                r[i] = Double.parseDouble(tokens[col[i]]);
+            } else r[i] = 0.0;
         }
         return r;
     }
+    
     public static LorentzVector getCM(){
         LorentzVector b = LorentzVector.withPxPyPzM(0, 0, 6.6, 0.0005);
         return b.add(0, 0, 0, 0.938);
     }
+    
     public static LorentzVector fromPTF(double[] v,double mass){
         Vector3 vec = new Vector3();
         vec.setMagThetaPhi(v[0], Math.toRadians(v[1]), Math.toRadians(v[2]));
@@ -62,87 +68,181 @@ public class DataAnalysisRegression {
         String[] tokens = line.split("\\s+");
         return Integer.parseInt(tokens[0]);
     }
-    
-    public static void main(String[] args){
+        
+    public void analyze(String filename, String exportFile){
         
         TextFileReader r = new TextFileReader();
-        r.open("/Users/gavalian/Work/dataspace/pid/extractedDataPredNorm4.txt");
+        r.open(filename);
         
-
-        H1F h  = new H1F("h",120,0.5,2.5);
-        H1F hr = new H1F("hr",120,0.5,2.5);
+        boolean flag = true;
         
-        H1F hs  = new H1F("hs",120,0.5,2.5);
-        H1F hb  = new H1F("hb",120,0.5,2.5);
+        H1F hdata = new H1F("hdata_1n1p",120,0.4,3.2);
+        H1F hreg  = new H1F( "hreg_1n1p",120,0.4,3.2);
+        H1F  hdata_emom = new H1F("hdata_emom",120,0.0,6.5);
+        H1F    hdata_eth = new H1F("hdata_eth",120,0.0,1.0);
+        H1F   hdata_ephi = new H1F("hdata_ephi",120,-Math.PI,Math.PI);
         
-        H1F hsns2  = new H1F("hsns2",120,0.5,2.5);
-        H1F hbns2  = new H1F("hbns2",120,0.5,2.5);
+        H1F  hdata_pmom = new H1F("hdata_pmom",120,0.0,6.5);
+        H1F    hdata_pth = new H1F("hdata_pth",120,0.0,1.0);
+        H1F   hdata_pphi = new H1F("hdata_pphi",120,-Math.PI,Math.PI);
         
-        boolean   flag = true;
+        H1F  hreg_emom = new H1F("hreg_emom",120,0.0,6.5);
+        H1F    hreg_eth = new H1F("hreg_eth",120,0.0,1.0);
+        H1F   hreg_ephi = new H1F("hreg_ephi",120,-Math.PI,Math.PI);
         
-        int    counter = 0;
+        H1F  hreg_pmom = new H1F("hreg_pmom",120,0.0,6.5);
+        H1F    hreg_pth = new H1F("hreg_pth",120,0.0,1.0);
+        H1F   hreg_pphi = new H1F("hreg_pphi",120,-Math.PI,Math.PI);
         
         while(flag==true){
             //counter++;
             List<String> lines = r.readLines(2);
-            //System.out.println("lines read = " + lines.size());
-            if(lines.size()!=2){
-                flag=false;
+            if(lines.size()!=2){ 
+                flag = false;
             } else {
-                double[]  vel = DataAnalysisRegression.getColumns(lines.get(0).trim(), 4,5,6);
-                double[]  vpi = DataAnalysisRegression.getColumns(lines.get(1).trim(), 4,5,6);
                 
-                LorentzVector lve = DataAnalysisRegression.fromPTF(vel,0.0005);
-                LorentzVector lvp = DataAnalysisRegression.fromPTF(vpi,0.139);
+                LorentzVector lve = DataAnalysisRegression.getParticle(
+                        lines.get(0).trim(), new int[]{4,5,6}, 0.0005);
+                LorentzVector lvp = DataAnalysisRegression.getParticle(
+                        lines.get(1).trim(), new int[]{4,5,6}, 0.13957);
                 
-                double[]  vel2 = DataAnalysisRegression.getColumns(lines.get(0).trim(), 24,25,26);
-                double[]  vpi2 = DataAnalysisRegression.getColumns(lines.get(1).trim(), 24,25,26);                                
-                
-                int sec_el = DataAnalysisRegression.getSector(lines.get(0).trim());
-                int sec_pi = DataAnalysisRegression.getSector(lines.get(1).trim());
-                
-                LorentzVector lves = DataAnalysisRegression.fromPTFsec(sec_el,vel2,0.0005);
-                LorentzVector lvps = DataAnalysisRegression.fromPTFsec(sec_pi,vpi2,0.139);
-                
-                //System.out.println("=======");
-                //System.out.println(">>> REAL : " + lve.toString());
-                //System.out.println(">>> INFR : " + lves.toString());
+                LorentzVector lves = DataAnalysisRegression.getParticleSector(
+                        lines.get(0).trim(), new int[]{24,25,26}, 0.0005);
+                LorentzVector lvps = DataAnalysisRegression.getParticleSector(
+                        lines.get(1).trim(), new int[]{24,25,26}, 0.13957);
                 
                 LorentzVector  cm = DataAnalysisRegression.getCM();
-                LorentzVector cmr = DataAnalysisRegression.getCM();
+                LorentzVector cms = DataAnalysisRegression.getCM();
                 
-                cm.sub(lve).sub(lvp);                
-                cmr.sub(lves).sub(lvps);
+                cm.sub(lve).sub(lvp);
+                cms.sub(lves).sub(lvps);
                 
-                h.fill(cm.mass());
-                hr.fill(cmr.mass());
-                if(cmr.mass()<1.35){
-                    hs.fill(cm.mass());
-                } else hb.fill(cm.mass());
+                hdata_emom.fill(lve.p());
+                hdata_eth.fill(lve.theta());
+                hdata_ephi.fill(lve.phi());
                 
-                if(sec_el!=2&&sec_pi!=2){
-                    hsns2.fill(cmr.mass());
-                }
-                //System.out.printf("mass = %8.4f\n",cm.mass());
+                hdata_pmom.fill(lvp.p());
+                hdata_pth.fill(lvp.theta());
+                hdata_pphi.fill(lvp.phi());
+                
+                hreg_emom.fill(lves.p());
+                hreg_eth.fill(lves.theta());
+                hreg_ephi.fill(lves.phi());
+                
+                hreg_pmom.fill(lvps.p());
+                hreg_pth.fill(lvps.theta());
+                hreg_pphi.fill(lvps.phi());
+                
+                hdata.fill(cm.mass());
+                hreg.fill(cms.mass());
             }
-            //String      line = r.getString();
-            //String[]  tokens = line.split("\\s+");
-            //PhysicsAnalysis.getVectorInf(0.0005, tokens);
         }
-        
-        TGCanvas c = new TGCanvas(800,550);
-        
-        c.view().divide(2,3);
-        
-        c.view().region(0).draw(h);
-        c.view().region(1).draw(hr);
-        
-        c.view().region(2).draw(hs);
-        c.view().region(3).draw(hb);
-        c.view().region(4).draw(hsns2);
-        
         TDirectory dir = new TDirectory();
-        dir.add("/airec", hr);
-        dir.write("rec.twig");
+        
+        dir.add(directory, hdata);
+        dir.add(directory, hreg);
+        dir.add(directory, hdata_emom).add(directory, hdata_eth).add(directory, hdata_ephi);
+        dir.add(directory, hdata_pmom).add(directory, hdata_pth).add(directory, hdata_pphi);
+        
+        dir.add(directory, hreg_emom).add(directory, hreg_eth).add(directory, hreg_ephi);
+        dir.add(directory, hreg_pmom).add(directory, hreg_pth).add(directory, hreg_pphi);
+        dir.write(exportFile);
+    }
+    
+    public void analyzeThree(String filename, String exportFile){
+        TextFileReader r = new TextFileReader();
+        r.open(filename);
+        boolean flag = true;
+        
+        H1F hdata = new H1F("hdata_2n1p",120,0.4,3.2);
+        H1F hreg  = new H1F( "hreg_2n1p",120,0.4,3.2);
+        
+        while(flag==true){
+            //counter++;
+            List<String> lines = r.readLines(3);
+            if(lines.size()!=3){ 
+                flag = false;                
+            } else {                
+                LorentzVector lve = DataAnalysisRegression.getParticle(
+                        lines.get(0).trim(), new int[]{4,5,6}, 0.0005);
+                LorentzVector lvpm = DataAnalysisRegression.getParticle(
+                        lines.get(1).trim(), new int[]{4,5,6}, 0.13957);
+                LorentzVector lvpp = DataAnalysisRegression.getParticle(
+                        lines.get(2).trim(), new int[]{4,5,6}, 0.13957);
+                
+                LorentzVector lves = DataAnalysisRegression.getParticleSector(
+                        lines.get(0).trim(), new int[]{24,25,26}, 0.0005);
+                LorentzVector lvpms = DataAnalysisRegression.getParticleSector(
+                        lines.get(1).trim(), new int[]{24,25,26}, 0.13957);
+                LorentzVector lvpps = DataAnalysisRegression.getParticleSector(
+                        lines.get(2).trim(), new int[]{24,25,26}, 0.13957);
+                
+                LorentzVector cm = DataAnalysisRegression.getCM();
+                LorentzVector cms = DataAnalysisRegression.getCM();
+                
+                cm.sub(lve).sub(lvpm).sub(lvpp);
+                cms.sub(lves).sub(lvpms).sub(lvpps);
+                
+                hdata.fill(cm.mass());
+                hreg.fill(cms.mass());
+                
+                LorentzVector lve2 = DataAnalysisRegression.getParticle(
+                        lines.get(1).trim(), new int[]{4,5,6}, 0.0005);
+                LorentzVector lvpm2 = DataAnalysisRegression.getParticle(
+                        lines.get(0).trim(), new int[]{4,5,6}, 0.13957);
+                LorentzVector lvpp2 = DataAnalysisRegression.getParticle(
+                        lines.get(2).trim(), new int[]{4,5,6}, 0.13957);
+                
+                LorentzVector lves2 = DataAnalysisRegression.getParticle(
+                        lines.get(1).trim(), new int[]{24,25,26}, 0.0005);
+                LorentzVector lvpms2 = DataAnalysisRegression.getParticle(
+                        lines.get(0).trim(), new int[]{24,25,26}, 0.13957);
+                LorentzVector lvpps2 = DataAnalysisRegression.getParticle(
+                        lines.get(2).trim(), new int[]{24,25,26}, 0.13957);
+                
+                LorentzVector  cm2 = DataAnalysisRegression.getCM();
+                LorentzVector cms2 = DataAnalysisRegression.getCM();
+                
+                cm2.sub(lve2).sub(lvpm2).sub(lvpp2);
+                cms2.sub(lves2).sub(lvpms2).sub(lvpps2);
+                
+                //hdata.fill(cm2.mass());
+                //hreg.fill(cms2.mass());
+            }
+        }
+        TDirectory dir = new TDirectory();
+        dir.add(directory, hdata);
+        dir.add(directory, hreg);
+        dir.write(exportFile);
+    }
+    
+    public static LorentzVector getParticle(String line, int[] columns, double mass){
+        double[] vec = DataAnalysisRegression.getColumns(line.trim(), columns);
+        return DataAnalysisRegression.fromPTF(vec, mass);
+        //return LorentzVector.withPxPyPzM(vec[0], vec[1], vec[2], mass);
+    }
+    
+    public static LorentzVector getParticleSector(String line, int[] columns, double mass){
+        double[] vec = DataAnalysisRegression.getColumns(line, columns);
+        int   sector = DataAnalysisRegression.getSector(line);        
+        LorentzVector vL = DataAnalysisRegression.fromPTFsec(sector, vec, mass);
+        //vL.rotateZ(angle);
+        return vL;
+    }
+    
+    public static void main(String[] args){
+        //String file = "/Users/gavalian/Work/dataspace/pid/results/c_extract_regression_data_1n1p_hb.txt.pred.norm";        
+        //String file = "/Users/gavalian/Downloads/new_res/h_extract_regression_data_1n1p_hb_res_from_i.txt" ;
+        //String file = "/Users/gavalian/Work/software/project-10a.0.4/j4np-1.0.4/c_extract_regression_data_1n1p_hb.txt" ;
+        String file = "/Users/gavalian/Work/Software/project-10.4/data/results/b_extract_regression_mc_1n1p_hb.txt.pred.norm" ;
+        
+        //String file2 = "/Users/gavalian/Work/dataspace/pid/results/d_extract_regression_data_1n1p_hb.txt.pred.norm";
+        DataAnalysisRegression ana = new DataAnalysisRegression();
+        ana.directory = "/results2c";
+        ana.analyze(file, "inference.twig");
+        
+        /*String data = """                      
+                      """;
+*/
     }
 }

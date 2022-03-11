@@ -8,6 +8,9 @@ import j4ml.common.Track;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
+import j4np.physics.LorentzVector;
+import j4np.physics.VectorOperator;
+import j4np.physics.data.PhysDataEvent;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,18 +94,27 @@ public class DataExtractRegression {
         
         
         Bank    part = r.getBank("REC::Particle");
+        Bank    mc = r.getBank("MC::Particle");
+        LorentzVector vCM = LorentzVector.withPxPyPzM(0.0,0.0, 6.6, 0.0005);
+        vCM.add(0.0,0.0,0.0, 0.938);
+        VectorOperator vop = new VectorOperator(vCM,"-[11]-[211]");
         
+        PhysDataEvent phys = new PhysDataEvent(mc);
         int counter = 0;    
+        
         while(r.hasNext()){
+        
             r.next(ev);
             ev.read(bc);
             ev.read(bt);
             ev.read(part);
             
+            phys.read(ev);
+            vop.apply(phys);
             
-            
-            
-            if(part.getRows()>0){
+            double mass = vop.getValue(VectorOperator.OperatorType.MASS);
+            //System.out.println(" mass = " + mass);
+            if(part.getRows()>0&&mass>0.9){
             
                 int pid = part.getInt("pid", 0);
                 int status = part.getInt("status", 0);
@@ -111,14 +123,15 @@ public class DataExtractRegression {
                     
                     List<Track>  trk = Track.read(bt, bc);
                     List<Track> trkc = Track.getComplete(trk);
-                    
+                    int reaction = 0;
+                    if(mass<0.95) reaction = 1;
                     //System.out.printf("track = %d, tracks valid = %d, charged = %d\n",trk.size(), trkc.size(),npart);
                     if(trkc.size()==2){
                         int in = indexByCharge(trkc,-1);
                         int ip = indexByCharge(trkc, 1);
                         if(in>=0&&ip>=0){
-                            w.writeString(trkc.get(in).toString());
-                            w.writeString(trkc.get(ip).toString());
+                            w.writeString(String.format("%d %s",reaction,trkc.get(in).toString()));
+                            w.writeString(String.format("%d %s",reaction,trkc.get(ip).toString()));
                             //System.out.println(trkc.get(in));
                             //System.out.println(trkc.get(ip));
                             //for(Track t : trkc)
@@ -147,21 +160,35 @@ public class DataExtractRegression {
         Bank    bc = r.getBank(inputBanks.get(dcLevel)[1]);        
         Event   ev = new Event();
         
+        
+        Bank    mc = r.getBank("MC::Particle");
+        LorentzVector vCM = LorentzVector.withPxPyPzM(0.0,0.0, 6.6, 0.0005);
+        vCM.add(0.0,0.0,0.0, 0.938);
+        VectorOperator vop = new VectorOperator(vCM,"-[11]-[211]");
+        
+        PhysDataEvent phys = new PhysDataEvent(mc);
+        
         int counter = 0;    
         while(r.hasNext()){
             r.next(ev);
             ev.read(bc);
             ev.read(bt);
+            
+            phys.read(ev);
+            vop.apply(phys);
+            double mass = vop.getValue(VectorOperator.OperatorType.MASS);
             List<Track>  trk = Track.read(bt, bc);
             List<Track> trkc = Track.getComplete(trk);
-            if(trkc.size()==3){
+            if(trkc.size()==3&&mass>0.9){
                 int in  = indexByCharge(trkc,-1);
                 int in2 = indexByCharge(trkc,-1,1);
                 int ip  = indexByCharge(trkc, 1);
+                int reaction = 0;
+                if(mass<0.95) reaction = 1;
                 if(in>=0&&in2>=0&&ip>=0){
-                    w.writeString(trkc.get(in).toString());
-                    w.writeString(trkc.get(in2).toString());
-                    w.writeString(trkc.get(ip).toString());
+                    w.writeString(String.format("%d %s",reaction,trkc.get(in).toString()));
+                    w.writeString(String.format("%d %s",reaction,trkc.get(in2).toString()));
+                    w.writeString(String.format("%d %s",reaction,trkc.get(ip).toString()));
                     //System.out.println(trkc.get(in));
                     //System.out.println(trkc.get(ip));
                     //for(Track t : trkc)
