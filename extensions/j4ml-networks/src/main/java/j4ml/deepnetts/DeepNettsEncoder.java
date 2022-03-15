@@ -11,6 +11,8 @@ import deepnetts.net.layers.activation.ActivationType;
 import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
+import j4np.utils.io.DataArrayUtils;
+import j4np.utils.io.DataPair;
 import j4np.utils.io.DataPairList;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
@@ -22,18 +24,28 @@ import org.apache.logging.log4j.LogManager;
 
 
 /**
- *
+ * 
  * @author gavalian
  */
 public class DeepNettsEncoder {
     
-    FeedForwardNetwork neuralNet = null;
-    BackpropagationTrainer trainer  = null;
-    
-    
-    public DeepNettsEncoder(int[] layers){init(layers);}
+    FeedForwardNetwork        neuralNet = null;
+    BackpropagationTrainer     trainer  = null;
+    private ActivationType    lastLayer = ActivationType.SIGMOID;
     
     public DeepNettsEncoder(){}
+    
+    public DeepNettsEncoder(int[] layers, ActivationType  type){
+        lastLayer = type;
+        init(layers);
+    }
+    
+    public DeepNettsEncoder(ActivationType  type){ lastLayer = type;}
+    
+    public final void init(int[] layers,ActivationType  type){
+        this.lastLayer = type;
+        this.init(layers);
+    }
     
     public final void init(int[] layers){
         FeedForwardNetwork.Builder b = FeedForwardNetwork.builder();
@@ -43,7 +55,7 @@ public class DeepNettsEncoder {
             b.addFullyConnectedLayer(layers[i], ActivationType.RELU);
         }
         
-        b.addOutputLayer(layers[layers.length-1], ActivationType.SIGMOID)
+        b.addOutputLayer(layers[layers.length-1],lastLayer)
                 .lossFunction(LossType.MEAN_SQUARED_ERROR)
                 .randomSeed(456);
         
@@ -53,7 +65,7 @@ public class DeepNettsEncoder {
         
         trainer = neuralNet.getTrainer();
         trainer.setMaxError(0.000004f);
-        trainer.setLearningRate(0.001f);
+        trainer.setLearningRate(0.01f);
         trainer.setMomentum(0.9f);
         
         trainer.setOptimizer(OptimizerType.SGD);
@@ -185,6 +197,23 @@ public class DeepNettsEncoder {
     public void evaluate(String file, DataPairList ds){
         DataSet set = this.convert(ds);
         this.evaluate(file, set);
+    }
+    
+    public DataPairList evaluate(DataPairList ds){
+        DataPairList p = new DataPairList();
+        DataSet set = this.convert(ds);
+        Iterator iter = set.iterator();
+        
+        while(iter.hasNext()){
+            TabularDataSet.Item  item = (TabularDataSet.Item) iter.next();
+            float[]  input  = item.getInput().getValues();
+            float[] desired = item.getTargetOutput().getValues();
+            float[]  output = neuralNet.predict(input);
+            double[]  first = DataArrayUtils.toDouble(input);
+            double[] second = DataArrayUtils.toDouble(output);
+            p.add(new DataPair(first,second));
+        }
+        return p;
     }
     
     public void test(DataPairList ds){

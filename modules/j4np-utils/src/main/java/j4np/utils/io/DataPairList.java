@@ -46,6 +46,13 @@ public class DataPairList {
         }
         
     }
+    
+    public static DataPairList fromCSV(String file, int[] inputs, int[] outputs){
+        CSVFileReader r = new CSVFileReader();
+        r.setInputOutput(inputs, outputs);
+        r.open(file);
+        return r.getData();
+    }
     public void  turnClassifier(int nclasses){
         for(int i = 0; i < getList().size(); i++){
             DataPair p = getList().get(i);
@@ -85,9 +92,10 @@ public class DataPairList {
         return dList;
     }
     
+    
+    
     public DataPairList getNormalized(double[] min, double[] max){
-        DataPairList dList = new DataPairList();
-        
+        DataPairList dList = new DataPairList();        
         for(int i = 0; i < this.getList().size(); i++){
             DataPair p = getList().get(i);
             boolean  preserve = true;
@@ -191,6 +199,8 @@ public class DataPairList {
         }
     }
 
+    
+    
     public static class DataRange {
         
         private double min = 0.0;

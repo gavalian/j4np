@@ -135,6 +135,17 @@ public class DataAnalysisRegression {
                 
                 hdata.fill(cm.mass());
                 hreg.fill(cms.mass());
+                
+                String data_e = String.format("-1 : %8.5f %8.4f %8.3f : %8.5f %8.4f %8.3f", 
+                        lve.p(),Math.toDegrees(lve.theta()),Math.toDegrees(lve.phi()),
+                        lves.p(),Math.toDegrees(lves.theta()),Math.toDegrees(lves.phi())
+                        );
+                String data_p = String.format(" 1 : %8.5f %8.4f %8.3f : %8.5f %8.4f %8.3f", 
+                        lvp.p(),Math.toDegrees(lvp.theta()),Math.toDegrees(lvp.phi()),
+                        lvps.p(),Math.toDegrees(lvps.theta()),Math.toDegrees(lvps.phi())
+                        );
+                System.out.println(data_e);
+                System.out.println(data_p);
             }
         }
         TDirectory dir = new TDirectory();
@@ -206,6 +217,8 @@ public class DataAnalysisRegression {
                 cm2.sub(lve2).sub(lvpm2).sub(lvpp2);
                 cms2.sub(lves2).sub(lvpms2).sub(lvpps2);
                 
+                
+                
                 //hdata.fill(cm2.mass());
                 //hreg.fill(cms2.mass());
             }
@@ -234,11 +247,12 @@ public class DataAnalysisRegression {
         //String file = "/Users/gavalian/Work/dataspace/pid/results/c_extract_regression_data_1n1p_hb.txt.pred.norm";        
         //String file = "/Users/gavalian/Downloads/new_res/h_extract_regression_data_1n1p_hb_res_from_i.txt" ;
         //String file = "/Users/gavalian/Work/software/project-10a.0.4/j4np-1.0.4/c_extract_regression_data_1n1p_hb.txt" ;
-        String file = "/Users/gavalian/Work/Software/project-10.4/data/results/b_extract_regression_mc_1n1p_hb.txt.pred.norm" ;
+        //String file = "/Users/gavalian/Work/Software/project-10.4/data/results/b_extract_regression_mc_1n1p_hb.txt.pred.norm" ;
+        String file = "/Users/gavalian/Work/Software/project-10.4/data/res_data3/c_extract_regression_data_1n1p_hb_res_from_b.txt" ;
         
         //String file2 = "/Users/gavalian/Work/dataspace/pid/results/d_extract_regression_data_1n1p_hb.txt.pred.norm";
         DataAnalysisRegression ana = new DataAnalysisRegression();
-        ana.directory = "/results2c";
+        ana.directory = "/results2cdata_b";
         ana.analyze(file, "inference.twig");
         
         /*String data = """                      
