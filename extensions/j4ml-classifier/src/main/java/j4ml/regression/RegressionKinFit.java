@@ -195,7 +195,6 @@ public class RegressionKinFit {
                 filter(e -> e.getSecond()[1]>0.5).collect(Collectors.toList());
         List<DataPair> listBkg = pl.getList().stream().
                 filter(e -> e.getSecond()[1]<0.5).collect(Collectors.toList());
-                
         
         DataPairList pos = new DataPairList();
         DataPairList neg = new DataPairList();

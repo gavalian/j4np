@@ -267,6 +267,13 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         return this;
     }
 
+    public TGDataCanvas setAxisTileFont(Font font){
+        for(Node2D node : getGraphicsComponents()){
+            ((TGRegion) node).getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(font);
+            ((TGRegion) node).getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(font);
+        }
+        return this;
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         
