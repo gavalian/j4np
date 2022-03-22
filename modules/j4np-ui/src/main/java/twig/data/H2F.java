@@ -761,8 +761,8 @@ public class H2F implements DataSet {
     /**
      * Creates a 1-D Histogram slice of the specified x Bin
      *
-     * @param yBin			the bin on the x axis to create a slice of
-     * @return 				a slice of the y bins on the specified x bin as a 1-D Histogram
+     * @param yBin the bin on the x axis to create a slice of
+     * @return 	a slice of the y bins on the specified x bin as a 1-D Histogram
      */
     public H1F sliceY(int yBin) {
         String name = "Slice of " + yBin + " Y Bin";

@@ -21,7 +21,8 @@ import javax.swing.JTabbedPane;
 public class SettingsEditor extends JPanel {
     
     ResourceManager manager = new ResourceManager();
-    private JTabbedPane   tabbedPane = null; 
+    
+    private JTabbedPane   tabbedPane = null;
     
     public SettingsEditor(){
         
@@ -34,7 +35,7 @@ public class SettingsEditor extends JPanel {
         this.add(tabbedPane,BorderLayout.CENTER);
     }
     
-    public void initResources(){        
+    public void initResources(){
         manager.load("settings",    "data/icons8-settings-30.png");
         manager.load("histogram",   "data/icons8-data-30.png");
         manager.load("histogram2d", "data/icons8-heat-map-30.png");

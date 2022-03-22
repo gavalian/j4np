@@ -25,6 +25,7 @@ import org.jfree.pdf.PDFGraphics2D;
 import org.jfree.pdf.Page;
 import twig.config.TStyle;
 import twig.data.DataSet;
+import twig.editors.CanvasEditorPanel;
 import twig.editors.DataCanvasEditorDialog;
 import twig.studio.TwigStudio;
 import twig.widgets.PaveText;
@@ -335,7 +336,13 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             this.save(this.getName()+".svg");
         }
         if(e.getActionCommand().compareTo("Edit Canvas")==0){
-            DataCanvasEditorDialog.openOptionsPanel(this);
+            TGRegion reg = popupProvider.region;
+            if(reg!=null){
+                CanvasEditorPanel.openOptionsPanel(this, reg);
+            } else {                            
+                DataCanvasEditorDialog.openOptionsPanel(this);
+            }
+            
         }
         
         if(e.getActionCommand().compareTo("Edit Region")==0){

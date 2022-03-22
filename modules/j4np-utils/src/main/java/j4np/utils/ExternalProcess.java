@@ -72,6 +72,10 @@ public class ExternalProcess  {
         
     }
     
+    public static List<ProcessConfiguration>  fromDir(String dir){
+        return ProcessConfiguration.fromDir(dir);
+    }
+    
     public static class ProcessConfiguration {
         
         protected Map<String,String> replaceMap = new HashMap<>();
@@ -122,7 +126,7 @@ public class ExternalProcess  {
             List<String>  files = FileUtils.getFileListInDir(file);
             List<ProcessConfiguration> list = new ArrayList<>();
             for(int i = 0; i < files.size(); i++){
-                String params = "input:"+files.get(i)+":output:"+files.get(i)+"_output";
+                String params = "input:"+files.get(i).trim()+":output:"+files.get(i).trim()+"_output";
                 list.add(new ProcessConfiguration(params));
             }
             return list;
@@ -190,15 +194,15 @@ public class ExternalProcess  {
         //String result = p.apply("/group/gemc -i ${input} -o ${output} -ffread ${ffread}");
         //System.out.println(">>>> " + result);
         
-        ExternalProcess proc = new ExternalProcess("/group/gemc -i ${input} -o ${output} -ffread ${ffread}");
+        ExternalProcess proc = new ExternalProcess("/group/gemc -i ${input} -o ${output} -ffread /home/ffread");
         
         List<ProcessConfiguration>  config = new ArrayList<>();
         
-        config.add(new ProcessConfiguration("input:data_0001.bos:output:reco_0001.bos:ffread:clasg11.ffred"));
-        config.add(new ProcessConfiguration("input:data_0002.bos:output:reco_0002.bos:ffread:clasg11.ffred"));
-        config.add(new ProcessConfiguration("input:data_0003.bos:output:reco_0003.bos:ffread:clasg11.ffred"));
-        config.add(new ProcessConfiguration("input:data_0004.bos:output:reco_0004.bos:ffread:clasg11.ffred"));
-        config.add(new ProcessConfiguration("input:data_0005.bos:output:reco_0005.bos:ffread:clasg11.ffred"));        
+        config.add(new ProcessConfiguration("input:data_0001.bos:output:reco_0001.bos"));
+        config.add(new ProcessConfiguration("input:data_0002.bos:output:reco_0002.bos"));
+        config.add(new ProcessConfiguration("input:data_0003.bos:output:reco_0003.bos"));
+        config.add(new ProcessConfiguration("input:data_0004.bos:output:reco_0004.bos"));
+        config.add(new ProcessConfiguration("input:data_0005.bos:output:reco_0005.bos"));        
         
         proc.show(config);
         proc.startProcess(config);

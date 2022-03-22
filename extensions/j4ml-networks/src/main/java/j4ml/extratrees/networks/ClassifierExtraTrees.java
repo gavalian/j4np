@@ -7,14 +7,18 @@ package j4ml.extratrees.networks;
 import j4ml.examples.DataRow;
 import j4ml.extratrees.ExtraTrees;
 import j4ml.extratrees.data.Matrix;
+import j4np.utils.base.ArchiveUtils;
 import j4np.utils.io.DataPairList;
 import j4np.utils.io.DataPair;
 import j4np.utils.io.DataArrayUtils;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
@@ -161,6 +165,42 @@ public class ClassifierExtraTrees {
         logger.info(String.format("evaluatetion time : %d ms for %d rows, average %.2f", 
                 now-then,nrows, ((double) (now-then))/nrows  ));
         
+    }
+    
+    public void exportArchive(String archive, String filename) {
+
+        ObjectOutputStream o = null;
+        try {
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            o = new ObjectOutputStream(bo);
+            o.writeObject(tree);
+            ByteArrayInputStream bi = new ByteArrayInputStream(bo.toByteArray());
+            ArchiveUtils.writeInputStream(archive, filename, bi);
+        } catch (IOException ex) {
+            Logger.getLogger(ClassifierExtraTrees.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                o.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierExtraTrees.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    public void loadArchive(String archive,String filename){
+        logger.log(Level.INFO, "[ERT] loading network from file => {0}",filename);
+        
+        try {
+            InputStream fi = ArchiveUtils.getInputStream(archive, filename);
+            ObjectInputStream oi = new ObjectInputStream(fi);
+            tree = (ExtraTrees) oi.readObject();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ClassifierExtraTrees.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ClassifierExtraTrees.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClassifierExtraTrees.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void export(String filename){

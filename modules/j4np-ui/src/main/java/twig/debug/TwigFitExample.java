@@ -44,11 +44,11 @@ public class TwigFitExample {
         func.attr().setLineColor(3);
         func.attr().setLineWidth(2);
         func.attr().setLineStyle(2);
-                
+        
         TGCanvas c = new TGCanvas(530,450);
         c.view().region().draw(g).draw(func,"same");
         c.view().region().showLegend(0.02, 0.98);
-        c.view().region().showStats(0.6, 0.95);
+        c.view().region().showStats(0.8, 0.95);
         c.view().region().axisLimitsX(0, 1);
     }
 }

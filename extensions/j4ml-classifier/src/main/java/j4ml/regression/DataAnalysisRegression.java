@@ -244,15 +244,19 @@ public class DataAnalysisRegression {
     }
     
     public static void main(String[] args){
+        
+        //double[] array = {"a","b"};
+        
         //String file = "/Users/gavalian/Work/dataspace/pid/results/c_extract_regression_data_1n1p_hb.txt.pred.norm";        
         //String file = "/Users/gavalian/Downloads/new_res/h_extract_regression_data_1n1p_hb_res_from_i.txt" ;
         //String file = "/Users/gavalian/Work/software/project-10a.0.4/j4np-1.0.4/c_extract_regression_data_1n1p_hb.txt" ;
-        //String file = "/Users/gavalian/Work/Software/project-10.4/data/results/b_extract_regression_mc_1n1p_hb.txt.pred.norm" ;
-        String file = "/Users/gavalian/Work/Software/project-10.4/data/res_data3/c_extract_regression_data_1n1p_hb_res_from_b.txt" ;
+        String file = "/Users/gavalian/Work/Software/project-10a.0.4/data/regression/catboost_res/c_extract_regression_data_1n1p_hb.txt.pred.norm.b" ;
+        
+//String file = "/Users/gavalian/Work/Software/project-10.4/data/res_data3/c_extract_regression_data_1n1p_hb_res_from_b.txt" ;
         
         //String file2 = "/Users/gavalian/Work/dataspace/pid/results/d_extract_regression_data_1n1p_hb.txt.pred.norm";
         DataAnalysisRegression ana = new DataAnalysisRegression();
-        ana.directory = "/results2cdata_b";
+        ana.directory = "/catboost_b";
         ana.analyze(file, "inference.twig");
         
         /*String data = """                      

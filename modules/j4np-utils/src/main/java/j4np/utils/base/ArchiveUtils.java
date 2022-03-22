@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,6 +59,38 @@ public class ArchiveUtils {
         return true;
     }
 
+    public static void writeInputStream(String zipfile, String outputName, InputStream stream){
+        String directory = String.format("%s",outputName);
+        System.out.println("[exporting] -> " + directory);
+        
+        try {
+            ZipFile zip = new ZipFile(zipfile);
+            ZipParameters pars = new ZipParameters();
+            pars.setOverrideExistingFilesInZip(true);
+            pars.setFileNameInZip(directory);
+            zip.addStream(stream, pars);
+        } catch (IOException ex) {
+            Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+    }
+    
+    public static InputStream getInputStream(String zipfile, String filename){
+        InputStream inputStream = null;
+        
+        ZipFile zip = new ZipFile(zipfile);
+        try {
+            FileHeader header = zip.getFileHeader(filename);
+            //System.out.println("found file : " + header.getFileName());
+            inputStream = zip.getInputStream(header);            
+        } catch (ZipException ex) {
+            Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       return inputStream;
+    }
+    
     public static void addInputStream(String zipfile, String outputName, List<String> dataFile){
         String directory = String.format("%s",outputName);
         System.out.println("[exporting] -> " + directory);
