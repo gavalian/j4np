@@ -12,8 +12,8 @@ import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
 import j4np.utils.io.DataArrayUtils;
-import j4np.utils.io.DataPair;
-import j4np.utils.io.DataPairList;
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,13 +194,13 @@ public class DeepNettsEncoder {
         System.out.println("*********");
     }
     
-    public void evaluate(String file, DataPairList ds){
+    public void evaluate(String file, DataList ds){
         DataSet set = this.convert(ds);
         this.evaluate(file, set);
     }
     
-    public DataPairList evaluate(DataPairList ds){
-        DataPairList p = new DataPairList();
+    public DataList evaluate(DataList ds){
+        DataList p = new DataList();
         DataSet set = this.convert(ds);
         Iterator iter = set.iterator();
         
@@ -211,12 +211,12 @@ public class DeepNettsEncoder {
             float[]  output = neuralNet.predict(input);
             double[]  first = DataArrayUtils.toDouble(input);
             double[] second = DataArrayUtils.toDouble(output);
-            p.add(new DataPair(first,second));
+            p.add(new DataEntry(first,second));
         }
         return p;
     }
     
-    public void test(DataPairList ds){
+    public void test(DataList ds){
         
         DataSet set = this.convert(ds);
         Iterator iter = set.iterator();
@@ -250,7 +250,7 @@ public class DeepNettsEncoder {
         w.close();
     }
     
-    private DataSet convert(DataPairList list){
+    private DataSet convert(DataList list){
         
         int nInputs = list.getList().get(0).getFirst().length;
         int nOutputs = list.getList().get(0).getSecond().length;
@@ -266,7 +266,7 @@ public class DeepNettsEncoder {
         return dataset;
     }
     
-    public void train(DataPairList dpl, int nEpochs){
+    public void train(DataList dpl, int nEpochs){
         DataSet converted = this.convert(dpl);
         this.train(converted, nEpochs);
     }

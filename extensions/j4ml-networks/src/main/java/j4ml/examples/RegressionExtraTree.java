@@ -5,10 +5,11 @@
  */
 package j4ml.examples;
 
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
 import j4ml.extratrees.ExtraTrees;
 import j4ml.extratrees.data.Matrix;
-import j4np.utils.io.DataPair;
-import j4np.utils.io.DataPairList;
+
 import j4np.utils.io.TextFileReader;
 import java.util.Arrays;
 
@@ -21,7 +22,7 @@ public class RegressionExtraTree {
     
     ExtraTrees tree = null;
     
-    public void evaluate(DataPairList list){
+    public void evaluate(DataList list){
         
         int nrows = list.getList().size();
         int[][] matrix = new int[2][2];
@@ -41,7 +42,7 @@ public class RegressionExtraTree {
                 error,error/nrows);
     }
     
-    public ExtraTrees getTree(DataPairList list){
+    public ExtraTrees getTree(DataList list){
         
         int ndata = list.getList().size();
         int ndim  = 6;
@@ -62,8 +63,8 @@ public class RegressionExtraTree {
         return new ExtraTrees(m,output);
     }
     
-    public DataPairList importData(String file){
-        DataPairList list = new DataPairList();
+    public DataList importData(String file){
+        DataList list = new DataList();
         TextFileReader reader = new TextFileReader(file);
         reader.setSeparator(",");
         int counter = 0;
@@ -74,7 +75,7 @@ public class RegressionExtraTree {
                 double[] value = reader.getAsDoubleArray(0, 1);
                 //value[0] = value[0]/10.0;
                 double[] features = reader.getAsDoubleArray(4, 6);
-                DataPair pair = new DataPair(features,value);
+                DataEntry pair = new DataEntry(features,value);
                 //pair.show();
                 list.add(pair);
             } catch (Exception e){
@@ -86,7 +87,7 @@ public class RegressionExtraTree {
         return list;
     }
     
-    public void train(DataPairList list){
+    public void train(DataList list){
         tree = this.getTree(list);
         tree.learnTrees(50, 50, 150);
         System.out.println(tree);         
@@ -96,8 +97,8 @@ public class RegressionExtraTree {
         RegressionExtraTree tree = new RegressionExtraTree();
         //DataPairList  train = tree.importData("regression_train.csv");
         //DataPairList  test = tree.importData("regression_test.csv");        
-        DataPairList  train = tree.importData("regression_train_6n.csv");
-        DataPairList  test = tree.importData("regression_test_6n.csv");        
+        DataList  train = tree.importData("regression_train_6n.csv");
+        DataList  test = tree.importData("regression_test_6n.csv");        
         //DataPairList  train = tree.importData("xaa");
         //DataPairList  test = tree.importData("xab");
         tree.train(train);

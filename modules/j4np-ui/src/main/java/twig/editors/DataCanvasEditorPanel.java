@@ -233,8 +233,7 @@ public class DataCanvasEditorPanel extends JPanel {
                 if (!dialog.isCancelSelected()) { 
                     Font f = dialog.getSelectedFont();
                     System.out.println("Selected font is: " + dialog.getSelectedFont()); 
-                    canvas.setAxisFont(f);
-                    
+                    canvas.setAxisFont(f);                    
                     Font ft = f.deriveFont(f.getStyle(), (int) (f.getSize()*1.2));
                     canvas.setAxisTileFont(ft);
                     canvas.repaint();

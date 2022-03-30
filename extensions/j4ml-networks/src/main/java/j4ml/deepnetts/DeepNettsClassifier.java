@@ -18,9 +18,10 @@ import deepnetts.net.train.TrainingEvent.Type;
 import deepnetts.net.train.TrainingListener;
 import deepnetts.net.train.opt.OptimizerType;
 import deepnetts.util.FileIO;
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
 import j4np.utils.io.DataArrayUtils;
-import j4np.utils.io.DataPair;
-import j4np.utils.io.DataPairList;
+
 import j4np.utils.io.TextFileWriter;
 import java.io.File;
 import java.io.IOException;
@@ -153,9 +154,9 @@ public class DeepNettsClassifier {
             writer.writeString(line);
         }
         writer.close();
-    }        
+    }
     
-    private DataSet convert(DataPairList list){
+    private DataSet convert(DataList list){
         
         int nInputs = list.getList().get(0).getFirst().length;
         int nOutputs = list.getList().get(0).getSecond().length;
@@ -172,25 +173,25 @@ public class DeepNettsClassifier {
         return dataset;
     }
     
-    public DataPairList evaluate(DataPairList dpl){
-        DataPairList result = new DataPairList();
+    public DataList evaluate(DataList dpl){
+        DataList result = new DataList();
         for(int i = 0; i < dpl.getList().size(); i++){
             float[] input = dpl.getList().get(i).floatFirst();
             this.neuralNet.setInput(input);
             float[] output = this.neuralNet.getOutput();
-            result.add(new DataPair(
+            result.add(new DataEntry(
                     DataArrayUtils.toDouble(input),
                     DataArrayUtils.toDouble(output)));
         }
         return result;
     }
     
-    public void train(DataPairList dpl, int nEpochs){
+    public void train(DataList dpl, int nEpochs){
         DataSet converted = this.convert(dpl);
         this.train(converted, nEpochs);
     }
     
-    public void test(DataPairList dpl){
+    public void test(DataList dpl){
         DataSet converted = this.convert(dpl);
         this.evaluate(converted);
     }

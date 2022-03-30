@@ -53,7 +53,7 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     private Timer                 updateTimer = null;
     private Node2D                 activeNode = null;
     private int             canvasDiagnostics = 0;
-    private Background2D           background = null;    
+    private Background2D           background = null; 
     private PopupProvider       popupProvider = null;
     private Color             backgroundColor = null;
     

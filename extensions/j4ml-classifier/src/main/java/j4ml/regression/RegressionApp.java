@@ -52,6 +52,16 @@ public class RegressionApp extends OptionApplication {
             DataExtractRegression extr = new DataExtractRegression();
             extr.setDCLevel(mode);
             extr.outputFile = output;
+            
+            switch (mode){
+                case 0: extr.setDCLevel(0);extr.extract(input.get(0), max); break;
+                case 1: extr.setDCLevel(1);extr.extract(input.get(0), max); break;
+                case 2: extr.setDCLevel(1);extr.extractMCsingle(input.get(0), max); break;
+                case 4: extr.setDCLevel(0);extr.extractThree(input.get(0), max); break;
+                case 5: extr.setDCLevel(1);extr.extractThree(input.get(0), max); break;
+                default: extr.extract(input.get(0), max); break;
+            }
+            /*
             if(mode>=0&&mode<2){
                 if(react==0){
                     extr.extract(input.get(0), max);
@@ -62,7 +72,7 @@ public class RegressionApp extends OptionApplication {
                 if(mode==2){
                     extr.extractTwo(input.get(0), max);
                 }
-            }
+            }*/
         }
         return true;
     }

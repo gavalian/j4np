@@ -6,8 +6,8 @@ package j4ml.classifier.mlp;
 
 import j4ml.classifier.data.DataLoader;
 import j4ml.extratrees.networks.ClassifierExtraTrees;
-import j4np.utils.io.DataPair;
-import j4np.utils.io.DataPairList;
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,13 +21,13 @@ import twig.data.TDirectory;
  */
 public class TrackExtraTrees {
     
-    public static DataPairList convert(DataPairList list){
-        DataPairList result = new DataPairList();
-        for(DataPair item : list.getList()){
+    public static DataList convert(DataList list){
+        DataList result = new DataList();
+        for(DataEntry item : list.getList()){
             if(item.getSecond()[1]>0.5){
-                result.add(new DataPair(item.getFirst(),new double[]{1.0}));
+                result.add(new DataEntry(item.getFirst(),new double[]{1.0}));
             } else {
-                result.add(new DataPair(item.getFirst(),new double[]{0.0}));
+                result.add(new DataEntry(item.getFirst(),new double[]{0.0}));
             }
         }
         return result;
@@ -39,7 +39,7 @@ public class TrackExtraTrees {
         }
         return counter;        
     }
-    public static int getHighestIndex(DataPairList list){
+    public static int getHighestIndex(DataList list){
         int index = 0;
         double max = list.getList().get(0).floatSecond()[0];
         for( int i = 0; i < list.getList().size(); i++){
@@ -52,17 +52,17 @@ public class TrackExtraTrees {
     }
     
     public static int[]  evaluate( String file, ClassifierExtraTrees ct, int tag){
-        List<DataPairList>  list = DataLoader.loadCombinatoricsPos(file, tag, 15000);
+        List<DataList>  list = DataLoader.loadCombinatoricsPos(file, tag, 15000);
         System.out.println(" LOADED DATA SIZE = " + list.size());
         int[] counter = new int[]{0,0};
         
         for(int i = 0; i < list.size(); i++){
             
-            DataPairList item = TrackExtraTrees.convert(list.get(i));
+            DataList item = TrackExtraTrees.convert(list.get(i));
             
             if(item.getList().size()>0){
                 int trueIndex  = TrackExtraTrees.getHighestIndex(item);
-                DataPairList r = ct.evaluate(item);
+                DataList r = ct.evaluate(item);
                 int  resIndex  = TrackExtraTrees.getHighestIndex(r);
                 
                 /*System.out.printf("combinatorics = %5d/%5d index = %5d, infered = %5d\n" ,
@@ -103,21 +103,21 @@ public class TrackExtraTrees {
         
     public static void train(String filename, ClassifierExtraTrees ct){
         
-        DataPairList list = DataLoader.loadPos(filename, 25000);
+        DataList list = DataLoader.loadPos(filename, 25000);
         
         list.shuffle();
 
-        DataPairList[] lists = DataPairList.split(list, 0.7,0.3);
+        DataList[] lists = DataList.split(list, 0.7,0.3);
                 
         lists[0].show();
         lists[1].show();
         
-        DataPairList[] listsfull = new DataPairList[2];
+        DataList[] listsfull = new DataList[2];
         
         listsfull[0] = DataLoader.generateFalse(lists[0]);
         listsfull[1] = DataLoader.generateFalse(lists[1]);
         
-        DataPairList[] data = new DataPairList[2];
+        DataList[] data = new DataList[2];
         
         data[0] = TrackExtraTrees.convert(listsfull[0]);
         data[1] = TrackExtraTrees.convert(listsfull[1]);

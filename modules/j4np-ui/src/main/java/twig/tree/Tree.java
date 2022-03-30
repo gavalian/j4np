@@ -13,10 +13,12 @@ import java.util.regex.Pattern;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
+import twig.data.AsciiPlot;
 import twig.data.DataSet;
 import twig.data.DataVector;
 import twig.data.H1F;
 import twig.data.H2F;
+import twig.data.Range;
 import twig.graphics.TGDataCanvas;
 import twig.server.TreeModelMaker;
 import twig.studio.TreeProvider;
@@ -137,6 +139,27 @@ public abstract class Tree implements TreeProvider {
     
     public final void draw(String expression, String cuts){
         this.draw(expression, cuts, "");
+    }
+    
+    public void ascii(String expression){
+        this.ascii(expression, "", "");
+    }
+    
+    public void ascii(String expression, String cuts){
+        this.ascii(expression, cuts,"");
+    }
+    
+    public void ascii(String expression, String cuts, String options){
+        if(expression.contains(">>")==true){
+            int  index = expression.indexOf(">>");
+            String exp = expression.substring(0, index);
+            H1F      h = this.getByStringH1F(expression);
+            geth(exp, cuts, h);
+            AsciiPlot.draw(h);
+        } else {
+            H1F h = this.gethundef(expression, cuts, 100);
+            AsciiPlot.draw(h);
+        }
     }
     
     private  void drawUndefined(String expression, String cuts, String options){
@@ -405,7 +428,33 @@ public abstract class Tree implements TreeProvider {
            }
     }
     
+    public void scan(){
+        List<String> names = this.getBranches();
+        List<Range>  ranges = new ArrayList<>();
+        this.reset();
+        this.next();
+        for(int i = 0; i < names.size(); i++){
+            Range r = new Range(this.getValue(names.get(i)),this.getValue(names.get(i)));
+            ranges.add(r);
+        }
+        
+        while(this.next() == true){
+            for(int i = 0; i < names.size(); i++){
+                double value = this.getValue(names.get(i));
+                Range r = ranges.get(i);
+                if(value>r.max()) ranges.get(i).set(r.min(), value);
+                if(value<r.min()) ranges.get(i).set(value,r.max());
+            }
+        }
+        System.out.println("---------------------------------------------------");
+        for(int i = 0; i < names.size(); i++){
+            System.out.println(String.format("%24s : %14f %14f\n", names.get(i),
+                    ranges.get(i).min(),ranges.get(i).max()));
+        }
+        System.out.println("---------------------------------------------------");
+    }
     
+    @Override
     public void execute(String command){
         String[] tokens = command.split("/");
         System.out.println(" command = " + Arrays.toString(tokens));

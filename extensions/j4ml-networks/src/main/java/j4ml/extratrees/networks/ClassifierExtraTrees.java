@@ -4,12 +4,12 @@
  */
 package j4ml.extratrees.networks;
 
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
 import j4ml.examples.DataRow;
 import j4ml.extratrees.ExtraTrees;
 import j4ml.extratrees.data.Matrix;
 import j4np.utils.base.ArchiveUtils;
-import j4np.utils.io.DataPairList;
-import j4np.utils.io.DataPair;
 import j4np.utils.io.DataArrayUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -76,7 +76,7 @@ public class ClassifierExtraTrees {
         nMin = nmin;
     }
     
-    public ExtraTrees getTree(DataPairList list){
+    public ExtraTrees getTree(DataList list){
         
         int ndata = list.getList().size();
         int ndim  = nInputs;
@@ -100,7 +100,7 @@ public class ClassifierExtraTrees {
         return new ExtraTrees(m,output);
     }
     
-    public void train(DataPairList list){
+    public void train(DataList list){
         long then = System.currentTimeMillis();
         
         tree = this.getTree(list);
@@ -115,17 +115,17 @@ public class ClassifierExtraTrees {
         return value;
     }
     
-    public DataPairList evaluate(DataPairList list){
-        DataPairList results = new DataPairList();
+    public DataList evaluate(DataList list){
+        DataList results = new DataList();
         for(int i = 0; i < list.getList().size(); i++){
             double[] input = list.getList().get(i).getFirst();
             double   value = this.evaluate(input);
-            results.add(new DataPair(DataArrayUtils.copy(input),new double[]{value}));
+            results.add(new DataEntry(DataArrayUtils.copy(input),new double[]{value}));
         }
         return results;
     }
     
-    public void test(DataPairList list){
+    public void test(DataList list){
         
         int nrows = list.getList().size();
         int[][] matrix = new int[2][2];

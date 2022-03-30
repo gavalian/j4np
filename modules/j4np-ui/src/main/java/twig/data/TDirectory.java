@@ -40,6 +40,15 @@ public class TDirectory implements TreeProvider {
     }
     
     public TDirectory add(String dir, DataSet data){
+        /*if(dirList.containsKey(dir)==false){
+            dirList.put(dir, new Directory(dir));
+        }        
+        dirList.get(dir).data.add(data);
+        return this;*/
+        return this.addToDirectory(dir, data);
+    }
+    
+    private TDirectory addToDirectory(String dir, DataSet data){
         if(dirList.containsKey(dir)==false){
             dirList.put(dir, new Directory(dir));
         }        
@@ -47,6 +56,11 @@ public class TDirectory implements TreeProvider {
         return this;
     }
     
+     public TDirectory add(String dir, DataSet... data){
+        for(DataSet ds : data) this.addToDirectory(dir, ds);
+        return this;
+    }
+     
     public DataSet get(String dir, String name){
 
         if(dirList.containsKey(dir)==false){

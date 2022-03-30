@@ -11,7 +11,9 @@ import deepnetts.net.layers.activation.ActivationType;
 import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
-import j4np.utils.io.DataPairList;
+import j4ml.data.CSVReader;
+import j4ml.data.DataList;
+import j4ml.data.DataNormalizer;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,17 +32,30 @@ public class DeepNettsRegression {
     FeedForwardNetwork neuralNet = null;
     BackpropagationTrainer trainer  = null;
     
+    ActivationType hiddenActivation = ActivationType.RELU;
+    ActivationType  lastActivation = ActivationType.SIGMOID;
+    
     public DeepNettsRegression(){}
     
+    public DeepNettsRegression(ActivationType hidden, ActivationType last){
+        setActivation(hidden,last);
+    }
+    
+    public final void setActivation(ActivationType hidden, ActivationType last){
+        this.hiddenActivation = hidden; 
+        this.lastActivation   = last;
+    }
+    
     public void init(int[] layers){
+        
         FeedForwardNetwork.Builder b = FeedForwardNetwork.builder();
         b.addInputLayer(layers[0]);
         
         for(int i = 1; i < layers.length-1; i++){
-            b.addFullyConnectedLayer(layers[i], ActivationType.TANH);
+            b.addFullyConnectedLayer(layers[i], hiddenActivation);
         }
         
-        b.addOutputLayer(layers[layers.length-1], ActivationType.LINEAR)
+        b.addOutputLayer(layers[layers.length-1], lastActivation)
                 .lossFunction(LossType.MEAN_SQUARED_ERROR)
                 .randomSeed(456);
         
@@ -179,12 +194,12 @@ public class DeepNettsRegression {
         System.out.println("*********");
     }
     
-    public void evaluate(String file, DataPairList ds){
+    public void evaluate(String file, DataList ds){
         DataSet set = this.convert(ds);
         this.evaluate(file, set);
     }
     
-    public void test(DataPairList ds){
+    public void test(DataList ds){
         
         DataSet set = this.convert(ds);
         Iterator iter = set.iterator();
@@ -196,6 +211,23 @@ public class DeepNettsRegression {
             float[]  output = neuralNet.predict(input);
             
             
+        }
+    }
+    
+    public void evaluate(DataList ds){
+        int size = ds.getList().size();
+        for(int i = 0; i < size; i++){
+            float[]  input = ds.getList().get(i).floatFirst();
+            float[]  desired = ds.getList().get(i).floatSecond();
+            float[] output = neuralNet.predict(input);
+            float[] infered = new float[output.length];
+            System.arraycopy(output, 0, infered, 0, infered.length);
+            ds.getList().get(i).setInfered(infered);
+            /*System.out.println( " evaluating " + 
+                    Arrays.toString(input) + " ==> " + 
+                            Arrays.toString(desired) + " ==> " + 
+                            Arrays.toString(output)
+                            );*/
         }
     }
     
@@ -218,7 +250,7 @@ public class DeepNettsRegression {
         w.close();
     }
     
-    private DataSet convert(DataPairList list){
+    private DataSet convert(DataList list){
         
         int nInputs = list.getList().get(0).getFirst().length;
         int nOutputs = list.getList().get(0).getSecond().length;
@@ -234,23 +266,49 @@ public class DeepNettsRegression {
         return dataset;
     }
     
-    public void train(DataPairList dpl, int nEpochs){
+    public void train(DataList dpl, int nEpochs){
         DataSet converted = this.convert(dpl);
         this.train(converted, nEpochs);
     }
     
     public static void main(String[] args){
         
-        CsvDataProvider provider = new CsvDataProvider("mc_t_f9.csv",9,2);
-        DataSet ds = provider.getData();
-        ds.shuffle();
-        DataSet[] data = ds.split(0.8,0.2);
-        System.out.println(ds);
+        String file = "/Users/gavalian/Work/Software/project-10.4/j4np-1.0.4/regression_data_2.csv";
+        
+        
+        CSVReader reader = new CSVReader(file,6,3);                
+        reader.setInputOutput(new int[]{0,1,2,3,4,5}, new int[]{6,7,8});
+        DataList list = reader.getData();
+        
+        list.show();
+
+        DataNormalizer in_norm = new DataNormalizer(new double[]{1,1,1,1,1,1},
+                new double[]{112,112,112,112,112,112});
+        
+        DataNormalizer out_norm = new DataNormalizer(new double[]{0.5,5.0,40.0},
+                new double[]{6.5,35.0,120.0});
+        
+        list.scan();
+        
+        DataList.normalizeInput(list, in_norm);
+        DataList.normalizeOutput(list, out_norm);
+        
+        DataList[] data = DataList.split(list, 0.7,0.3);
+        
         DeepNettsRegression reg = new DeepNettsRegression();
         
-        reg.init(new int[]{9,12,2});
-        reg.train(data[0], 725);
-        reg.evaluate("evaluate.csv", data[1]);
+        reg.init(new int[]{6,12,12,3});
+        reg.train(data[0], 225);
+        
+        reg.evaluate(data[1]);
+        
+        DataList.denormalizeOutput(data[1], out_norm);
+        DataList.denormalizeInfered(data[1], out_norm);
+        System.out.println(data[1].toCSVString());
+        //reg.evaluate("evaluate.csv", data[1]);
+        /*for(int i = 0; i < 25; i++){
+            System.out.println(" infered value = " + Arrays.toString(data[1].getList().get(i).getInfered()));
+        }*/
     }
    
 }

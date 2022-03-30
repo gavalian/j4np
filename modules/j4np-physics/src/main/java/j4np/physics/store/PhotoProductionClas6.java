@@ -4,6 +4,7 @@
  */
 package j4np.physics.store;
 
+import j4np.hipo5.io.HipoReader;
 import j4np.physics.PhysicsReaction;
 import j4np.physics.VectorOperator;
 
@@ -12,6 +13,13 @@ import j4np.physics.VectorOperator;
  * @author gavalian
  */
 public class PhotoProductionClas6 extends PhysicsReaction {
+    
+    public PhotoProductionClas6(String file){
+        super("2212:211:-211:X+:X-:Xn",0.0);
+        initialize();
+        HipoReader r = new HipoReader(file);
+        this.setDataSourcePhoto(r, "EVENT::particle", "TAGGER::tagr");
+    }
     
     public PhotoProductionClas6(){
         super("2212:211:-211:X+:X-:Xn",0.0);

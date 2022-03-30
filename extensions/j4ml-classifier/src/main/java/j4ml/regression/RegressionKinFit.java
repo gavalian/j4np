@@ -6,13 +6,15 @@
 package j4ml.regression;
 
 import deepnetts.net.layers.activation.ActivationType;
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
+import j4ml.data.DataNormalizer;
 import j4ml.deepnetts.DeepNettsClassifier;
 import j4ml.deepnetts.DeepNettsEncoder;
 import j4ml.extratrees.networks.ClassifierExtraTrees;
 import j4np.physics.LorentzVector;
 import j4np.physics.Vector3;
-import j4np.utils.io.DataPairList;
-import j4np.utils.io.DataPair;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import twig.data.H1F;
@@ -42,7 +44,7 @@ public class RegressionKinFit {
         return LorentzVector.withPxPyPzM(v.x(),v.y(),v.z(), mass);
     }
     
-    public H1F getMx(DataPairList pl){
+    public H1F getMx(DataList pl){
         
         int rows = pl.getList().size();
         H1F h = new H1F("h",120,0.4,1.8);
@@ -58,7 +60,7 @@ public class RegressionKinFit {
         return h;
     }
     
-    public H1F getMx(DataPairList pl, int which){
+    public H1F getMx(DataList pl, int which){
         
         int rows = pl.getList().size();
         H1F h = new H1F("h",120,0.4,1.8);
@@ -76,8 +78,8 @@ public class RegressionKinFit {
         return h;
     }
     
-    public DataPairList filter(DataPairList pl){
-        DataPairList p = new DataPairList();
+    public DataList filter(DataList pl){
+        DataList p = new DataList();
         
         int rows = pl.getList().size();               
         for(int i = 0; i < rows; i++){
@@ -92,23 +94,30 @@ public class RegressionKinFit {
         return p;
     }
     
-    public DataPairList normalize(DataPairList dl){
-        DataPairList pl = dl.getNormalized(new double[]{0.5,5.0,-180.0,0.5,5.0,-180.0}, new double[]{6.5,45,180.0,6.5,45,180.0});
-        return pl.getNormalizedFirst(new double[]{0.5,5.0,-180.0,0.5,5.0,-180.0}, new double[]{6.5,45,180.0,6.5,45,180.0});
+    public DataList normalize(DataList dl){
+        DataNormalizer dn = new DataNormalizer(new double[]{0.5,5.0,-180.0,0.5,5.0,-180.0}, new double[]{6.5,45,180.0,6.5,45,180.0});
+        //DataNormalizer dn = new DataNormalizer(new double[]{0.5,5.0,-180.0,0.5,5.0,-180.0}, new double[]{6.5,45,180.0,6.5,45,180.0});
+        
+        DataList.normalizeInput(dl, dn);
+        DataList.normalizeOutput(dl, dn);
+        //DataList pl = dl.getNormalized(new double[]{0.5,5.0,-180.0,0.5,5.0,-180.0}, new double[]{6.5,45,180.0,6.5,45,180.0});
+        return dl;
     }
     
-    public DataPairList normalizeClassifier(DataPairList dl){        
-        return dl.getNormalizedFirst(new double[]{0.5,5.0,-180.0,0.5,5.0,-180.0}, new double[]{6.5,45,180.0,6.5,45,180.0});
+    public DataList normalizeClassifier(DataList dl){        
+        DataNormalizer dn = new DataNormalizer(new double[]{0.5,5.0,-180.0,0.5,5.0,-180.0}, new double[]{6.5,45,180.0,6.5,45,180.0});
+        DataList.normalizeInput(dl, dn);
+        return dl;
     }
     
     
     public void train(String input, String outputNetwork, int nEpochs){
         
         //String file = "/Users/gavalian/Work/Software/project-10.4/studies/kinfit/b.csv";
-        DataPairList dsTrain = DataPairList.fromCSV(input, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
-        DataPairList  normTrain = normalize(dsTrain);
+        DataList dsTrain = DataList.fromCSV(input, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
+        DataList  normTrain = normalize(dsTrain);
         normTrain.shuffle();
-        DataPairList[] train = DataPairList.split(normTrain, 0.7,0.3);
+        DataList[] train = DataList.split(normTrain, 0.7,0.3);
         
         DeepNettsEncoder encoder = new DeepNettsEncoder();
         
@@ -122,21 +131,21 @@ public class RegressionKinFit {
     public void reactionMLP(){
         String fileS = "/Users/gavalian/Work/Software/project-10.4/studies/kinfit/tr_signal.csv";
         String fileB = "/Users/gavalian/Work/Software/project-10.4/studies/kinfit/tr_background.csv";    
-        DataPairList dsSig = DataPairList.fromCSV(fileS, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
-        DataPairList dsBkg = DataPairList.fromCSV(fileB, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
+        DataList dsSig = DataList.fromCSV(fileS, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
+        DataList dsBkg = DataList.fromCSV(fileB, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
         dsSig.show();
         
-        for(DataPair dp : dsSig.getList()) dp.set(dp.getFirst(), new double[]{0.0,1.0});
-        for(DataPair dp : dsBkg.getList()) dp.set(dp.getFirst(), new double[]{1.0,0.0});
+        for(DataEntry dp : dsSig.getList()) dp.set(dp.getFirst(), new double[]{0.0,1.0});
+        for(DataEntry dp : dsBkg.getList()) dp.set(dp.getFirst(), new double[]{1.0,0.0});
         
-        DataPairList normSig = this.normalizeClassifier(dsSig);
-        DataPairList normBkg = this.normalizeClassifier(dsBkg);
+        DataList normSig = this.normalizeClassifier(dsSig);
+        DataList normBkg = this.normalizeClassifier(dsBkg);
         
         DeepNettsClassifier mlp = new DeepNettsClassifier();
        
         mlp.init(new int[]{6,12,12,12,2});
-        DataPairList[] sig = DataPairList.split(normSig, 0.7,0.3);
-        DataPairList[] bkg = DataPairList.split(normBkg, 0.7,0.3);
+        DataList[] sig = DataList.split(normSig, 0.7,0.3);
+        DataList[] bkg = DataList.split(normBkg, 0.7,0.3);
         
         sig[0].getList().addAll(bkg[0].getList());
         sig[1].getList().addAll(bkg[1].getList());
@@ -148,7 +157,7 @@ public class RegressionKinFit {
         mlp.test(sig[1]);
         
         mlp.save("reaction.network");
-        DataPairList pList = mlp.evaluate(sig[1]);
+        DataList pList = mlp.evaluate(sig[1]);
         this.draw(pList);
         //dsSig.show();
         //dsBkg.show();
@@ -159,23 +168,23 @@ public class RegressionKinFit {
         
         String fileS = "/Users/gavalian/Work/Software/project-10.4/studies/kinfit/tr_signal.csv";
         String fileB = "/Users/gavalian/Work/Software/project-10.4/studies/kinfit/tr_background.csv";    
-        DataPairList dsSig = DataPairList.fromCSV(fileS, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
-        DataPairList dsBkg = DataPairList.fromCSV(fileB, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
+        DataList dsSig = DataList.fromCSV(fileS, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
+        DataList dsBkg = DataList.fromCSV(fileB, new int[]{6,7,8,18,19,20},new int[]{3,4,5,15,16,17});
         dsSig.show();
         
-        for(DataPair dp : dsSig.getList()) dp.set(dp.getFirst(), new double[]{1.0});
-        for(DataPair dp : dsBkg.getList()) dp.set(dp.getFirst(), new double[]{0.0});
+        for(DataEntry dp : dsSig.getList()) dp.set(dp.getFirst(), new double[]{1.0});
+        for(DataEntry dp : dsBkg.getList()) dp.set(dp.getFirst(), new double[]{0.0});
         
-        DataPairList normSig = this.normalizeClassifier(dsSig);
-        DataPairList normBkg = this.normalizeClassifier(dsBkg);
+        DataList normSig = this.normalizeClassifier(dsSig);
+        DataList normBkg = this.normalizeClassifier(dsBkg);
         
         ClassifierExtraTrees et = new ClassifierExtraTrees(6,1);
         et.setK(2);
         et.setNMin(50);
         et.setNumTrees(150);
         
-        DataPairList[] sig = DataPairList.split(normSig, 0.7,0.3);
-        DataPairList[] bkg = DataPairList.split(normBkg, 0.7,0.3);
+        DataList[] sig = DataList.split(normSig, 0.7,0.3);
+        DataList[] bkg = DataList.split(normBkg, 0.7,0.3);
         
         sig[0].getList().addAll(bkg[0].getList());
         sig[1].getList().addAll(bkg[1].getList());
@@ -190,14 +199,14 @@ public class RegressionKinFit {
         //dsBkg.show();
     }
     
-    public void draw(DataPairList pl){
-        List<DataPair> listSig = pl.getList().stream().
+    public void draw(DataList pl){
+        List<DataEntry> listSig = pl.getList().stream().
                 filter(e -> e.getSecond()[1]>0.5).collect(Collectors.toList());
-        List<DataPair> listBkg = pl.getList().stream().
+        List<DataEntry> listBkg = pl.getList().stream().
                 filter(e -> e.getSecond()[1]<0.5).collect(Collectors.toList());
         
-        DataPairList pos = new DataPairList();
-        DataPairList neg = new DataPairList();
+        DataList pos = new DataList();
+        DataList neg = new DataList();
         
         pos.getList().addAll(listSig);
         neg.getList().addAll(listBkg);

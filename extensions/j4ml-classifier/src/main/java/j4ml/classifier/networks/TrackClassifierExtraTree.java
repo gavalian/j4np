@@ -11,6 +11,7 @@ import j4ml.extratrees.networks.ClassifierExtraTrees;
  * @author gavalian
  */
 public class TrackClassifierExtraTree {
+    
     ClassifierExtraTrees classifier = null;
     
     public TrackClassifierExtraTree(){

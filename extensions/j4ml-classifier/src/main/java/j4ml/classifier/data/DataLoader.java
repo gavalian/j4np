@@ -11,8 +11,8 @@ import j4np.hipo5.data.Node;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
 import j4np.utils.io.DataArrayUtils;
-import j4np.utils.io.DataPair;
-import j4np.utils.io.DataPairList;
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -25,7 +25,7 @@ import javax.visrec.ml.data.DataSet;
  */
 public class DataLoader {
     
-    public static List<DataPairList> loadCombinatoricsPos(String filename, int tag, int max){
+    public static List<DataList> loadCombinatoricsPos(String filename, int tag, int max){
         
         Combinatorics combi = new Combinatorics();
         
@@ -38,12 +38,12 @@ public class DataLoader {
         int counter = 0;
         boolean keepReading = true;
         
-        List<DataPairList> results = new ArrayList<>();
+        List<DataList> results = new ArrayList<>();
         
         while(reader.hasNext()&&keepReading==true){
             
             reader.nextEvent(event);
-            DataPairList list = new DataPairList();
+            DataList list = new DataList();
             Node means = event.read(  1001, 4);
             Node charge = event.read( 1001, 1);
             Node vertex = event.read(1001, 7);
@@ -57,10 +57,10 @@ public class DataLoader {
             if(vz>-15&&vz<5){
                 double[] first = new double[means.getDataSize()];
                 for(int i = 0; i < first.length;i++) first[i] = means.getFloat(i);
-                DataPair realTrack = null;
+                DataEntry realTrack = null;
                 if(q>0){
-                    realTrack = new DataPair(first,new double[]{0.0,1.0,0.0});
-                    list.add(new DataPair(first,new double[]{0.0,1.0,0.0}));
+                    realTrack = new DataEntry(first,new double[]{0.0,1.0,0.0});
+                    list.add(new DataEntry(first,new double[]{0.0,1.0,0.0}));
                 } else {
                     //realTrack = new DataPair(first,new double[]{0.0,0.0,1.0});
                     //list.add(new DataPair(first,new double[]{0.0,0.0,1.0}));
@@ -78,10 +78,10 @@ public class DataLoader {
                     if(distance<0.001){
                         double[] output = new double[3];
                         for(int oc = 0 ; oc < 3; oc++) output[oc] = realTrack.getSecond()[oc];
-                        DataPair dp = new DataPair(ctrk.get(j),output);
+                        DataEntry dp = new DataEntry(ctrk.get(j),output);
                         list.add(dp);
                     } else {
-                        DataPair dp = new DataPair(ctrk.get(j),new double[]{1.0,0.0,0.0});
+                        DataEntry dp = new DataEntry(ctrk.get(j),new double[]{1.0,0.0,0.0});
                         list.add(dp);
                     }
                     
@@ -95,11 +95,11 @@ public class DataLoader {
         return results;
     }
     
-    public static DataPairList loadCombinatorics(String filename, int tag, int max){
+    public static DataList loadCombinatorics(String filename, int tag, int max){
         
         Combinatorics combi = new Combinatorics();
         
-        DataPairList list = new DataPairList();
+        DataList list = new DataList();
         HipoReader reader = new HipoReader();
         reader.setDebugMode(0);
         reader.setTags(tag);
@@ -125,13 +125,13 @@ public class DataLoader {
             if(vz>-15&&vz<5){
                 double[] first = new double[means.getDataSize()];
                 for(int i = 0; i < first.length;i++) first[i] = means.getFloat(i);
-                DataPair realTrack = null;
+                DataEntry realTrack = null;
                 if(q>0){
-                    realTrack = new DataPair(first,new double[]{0.0,1.0,0.0});
-                    list.add(new DataPair(first,new double[]{0.0,1.0,0.0}));
+                    realTrack = new DataEntry(first,new double[]{0.0,1.0,0.0});
+                    list.add(new DataEntry(first,new double[]{0.0,1.0,0.0}));
                 } else {
-                    realTrack = new DataPair(first,new double[]{0.0,0.0,1.0});
-                    list.add(new DataPair(first,new double[]{0.0,0.0,1.0}));
+                    realTrack = new DataEntry(first,new double[]{0.0,0.0,1.0});
+                    list.add(new DataEntry(first,new double[]{0.0,0.0,1.0}));
                 }
                 
                 
@@ -146,10 +146,10 @@ public class DataLoader {
                     if(distance<0.001){
                         double[] output = new double[3];
                         for(int oc = 0 ; oc < 3; oc++) output[oc] = realTrack.getSecond()[oc];
-                        DataPair dp = new DataPair(ctrk.get(j),output);
+                        DataEntry dp = new DataEntry(ctrk.get(j),output);
                         list.add(dp);
                     } else {
-                        DataPair dp = new DataPair(ctrk.get(j),new double[]{1.0,0.0,0.0});
+                        DataEntry dp = new DataEntry(ctrk.get(j),new double[]{1.0,0.0,0.0});
                         list.add(dp);
                     }
                     
@@ -163,9 +163,9 @@ public class DataLoader {
     }
     
     
-    public static DataPairList load(String filename, int tag, int max){
+    public static DataList load(String filename, int tag, int max){
         
-        DataPairList list = new DataPairList();
+        DataList list = new DataList();
         HipoReader reader = new HipoReader();
         reader.setDebugMode(0);
         reader.setTags(tag);
@@ -187,10 +187,10 @@ public class DataLoader {
                 double[] first = new double[means.getDataSize()];
                 for(int i = 0; i < first.length;i++) first[i] = means.getFloat(i);
                 if(q>0){
-                    list.add(new DataPair(first,new double[]{0.0,1.0,0.0}));
+                    list.add(new DataEntry(first,new double[]{0.0,1.0,0.0}));
                 } else {
                     //System.out.println("omg\n\n");
-                    list.add(new DataPair(first,new double[]{0.0,0.0,1.0}));
+                    list.add(new DataEntry(first,new double[]{0.0,0.0,1.0}));
                 }
             }
             counter++;
@@ -199,10 +199,10 @@ public class DataLoader {
         return list;
     }
     
-    public static DataPairList getEventTracks(Event event){
+    public static DataList getEventTracks(Event event){
         
         Combinatorics combi = new Combinatorics();        
-        DataPairList list = new DataPairList();
+        DataList list = new DataList();
         
         Node means = event.read(  1001, 4);
         Node charge = event.read( 1001, 1);
@@ -217,13 +217,13 @@ public class DataLoader {
         if(vz>-15&&vz<5){
             double[] first = new double[means.getDataSize()];
             for(int i = 0; i < first.length;i++) first[i] = means.getFloat(i);
-            DataPair realTrack = null;
+            DataEntry realTrack = null;
             if(q>0){
-                realTrack = new DataPair(first,new double[]{0.0,1.0,0.0});
-                list.add(new DataPair(first,new double[]{0.0,1.0,0.0}));
+                realTrack = new DataEntry(first,new double[]{0.0,1.0,0.0});
+                list.add(new DataEntry(first,new double[]{0.0,1.0,0.0}));
             } else {
-                realTrack = new DataPair(first,new double[]{0.0,0.0,1.0});
-                list.add(new DataPair(first,new double[]{0.0,0.0,1.0}));
+                realTrack = new DataEntry(first,new double[]{0.0,0.0,1.0});
+                list.add(new DataEntry(first,new double[]{0.0,0.0,1.0}));
             }
             
             combi.reset();
@@ -239,10 +239,10 @@ public class DataLoader {
                 if(distance<0.001){
                     double[] output = new double[3];
                     for(int oc = 0 ; oc < 3; oc++) output[oc] = realTrack.getSecond()[oc];
-                    DataPair dp = new DataPair(ctrk.get(j),output);
+                    DataEntry dp = new DataEntry(ctrk.get(j),output);
                     list.add(dp);
                 } else {
-                    DataPair dp = new DataPair(ctrk.get(j),new double[]{1.0,0.0,0.0});
+                    DataEntry dp = new DataEntry(ctrk.get(j),new double[]{1.0,0.0,0.0});
                     list.add(dp);
                 }                
                 //System.out.printf("%8.5f : ",distance);dp.show();
@@ -251,28 +251,28 @@ public class DataLoader {
         return list;
     }
     
-    public static DataPairList loadCombinatorics(String filename, int max){
-        DataPairList list = new DataPairList();
+    public static DataList loadCombinatorics(String filename, int max){
+        DataList list = new DataList();
         for(int k = 0; k < 40; k++){
-            DataPairList dl = DataLoader.loadCombinatorics(filename, k+1, max);
+            DataList dl = DataLoader.loadCombinatorics(filename, k+1, max);
             list.getList().addAll(dl.getList());
         }
         return list;
     }
     
-    public static DataPairList load(String filename, int max){
-        DataPairList list = new DataPairList();
+    public static DataList load(String filename, int max){
+        DataList list = new DataList();
         for(int k = 0; k < 40; k++){
-            DataPairList dl = DataLoader.load(filename, k+1, max);
+            DataList dl = DataLoader.load(filename, k+1, max);
             list.getList().addAll(dl.getList());
         }
         return list;
     }
     
-    public static DataPairList loadPos(String filename, int max){
-        DataPairList list = new DataPairList();
+    public static DataList loadPos(String filename, int max){
+        DataList list = new DataList();
         for(int k = 0; k < 19; k++){
-            DataPairList dl = DataLoader.load(filename, k+1, max);
+            DataList dl = DataLoader.load(filename, k+1, max);
             list.getList().addAll(dl.getList());
         }
         return list;
@@ -285,7 +285,7 @@ public class DataLoader {
         return names;
     }
     
-    public static DataSet convertList(DataPairList list){
+    public static DataSet convertList(DataList list){
         TabularDataSet  dataset = new TabularDataSet(6,3);
         for(int i = 0; i < list.getList().size(); i++){
             float[]  input = DataArrayUtils.toFloat(list.getList().get(i).getFirst());
@@ -300,16 +300,16 @@ public class DataLoader {
         return dataset;
     }
     
-    public static DataPairList generateFalse(DataPairList list){
+    public static DataList generateFalse(DataList list){
         
         Random rmean = new Random();
         Random rlayer = new Random();
         Random rsign = new Random();
         
-        DataPairList result = new DataPairList();
+        DataList result = new DataList();
         int size = list.getList().size();
         for(int n = 0; n < size; n++){
-            DataPair  pair = list.getList().get(n);
+            DataEntry  pair = list.getList().get(n);
             double[] first = new double[pair.getFirst().length];
             for(int i = 0; i < first.length; i++) first[i] = pair.getFirst()[i];
             int   layer = rlayer.nextInt(5) + 1;
@@ -330,8 +330,8 @@ public class DataLoader {
                     first[layer] = first[layer] + mean;
                 }
             }
-            result.add(new DataPair(pair.getFirst(),pair.getSecond()));
-            result.add(new DataPair(first,new double[]{1.0,0.0,0.0}));
+            result.add(new DataEntry(pair.getFirst(),pair.getSecond()));
+            result.add(new DataEntry(first,new double[]{1.0,0.0,0.0}));
         }
         return result;
     }

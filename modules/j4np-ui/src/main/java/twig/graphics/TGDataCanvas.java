@@ -275,6 +275,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         }
         return this;
     }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         
@@ -350,6 +351,12 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             DataCanvasEditorDialog.openOptionsAttributes(this,reg);
         }
         
+        
+        if(e.getActionCommand().compareTo("set_canvas_palette_2d")==0){
+            TStyle.getInstance().getPalette().palette2d().choosePalette(this);
+            this.repaint();
+        }
+                
         if(e.getActionCommand().startsWith("divide_c_")==true){
             String divSize = e.getActionCommand();
             switch(divSize){
@@ -495,6 +502,11 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             menu.add(new JSeparator());
             this.addMenuItem(menu, "Edit Region");
             this.addMenuItem(menu, "Edit Canvas");
+            
+            this.addMenu(menu, "Configure", 
+                    new String[]{"Set Palette" ,"Set Palette 2D"}, 
+                    new String[]{"set_canvas_palette", "set_canvas_palette_2d"}
+            );
         }
         
         @Override

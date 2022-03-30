@@ -11,8 +11,9 @@ import j4ml.classifier.data.DataLoader;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
-import j4np.utils.io.DataPair;
-import j4np.utils.io.DataPairList;
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
+import j4ml.data.DataNormalizer;
 import j4np.utils.io.OptionExecutor;
 import j4np.utils.io.OptionStore;
 import java.util.ArrayList;
@@ -30,14 +31,14 @@ public class ClassifierMLP implements OptionExecutor {
     
     ClassifierNetwork classifier = new ClassifierNetwork();
     int nEpochs = 125;
-    DataPairList   previous = new DataPairList();
+    DataList   previous = new DataList();
     String outputFileName = "trackClassifier.network";
     List<String>  summary = new ArrayList<>();
     
     public ClassifierMLP(){
         
     }
-    public int getTrueMatch(DataPairList list){
+    public int getTrueMatch(DataList list){
         for(int i = 0; i < list.getList().size();i++){
            double[] desired = list.getList().get(i).getSecond();
            if(desired[0]<0.2) return i;
@@ -45,7 +46,7 @@ public class ClassifierMLP implements OptionExecutor {
         return -1;
     }
     
-    public int getTrueLabel(DataPairList list){
+    public int getTrueLabel(DataList list){
 
         for(int i = 0; i < list.getList().size();i++){
            double[] desired = list.getList().get(i).getSecond();
@@ -72,15 +73,18 @@ public class ClassifierMLP implements OptionExecutor {
         previous.getList().clear();
         classifier.init(new int[]{6,12,24,12,3});
         
-        DataPairList list = DataLoader.load(filename,max);
+        DataList result = DataLoader.load(filename,max);
         //list.show();        
-        DataPairList resultAll = DataLoader.generateFalse(list);
-        DataPairList result = resultAll.getNormalizedFirst(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
-                new double[]{112,112,112,112,112,112}
-                );
-        System.out.println("Neural Netwrok Training Data Size = " + result.getList().size());
-        result.show();
-        result.scan();
+        DataList resultAll = DataLoader.generateFalse(result);
+        
+        DataNormalizer dnorm = new DataNormalizer(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
+                new double[]{112,112,112,112,112,112});
+        
+        DataList.normalizeInput(result, dnorm);
+        
+        //System.out.println("Neural Netwrok Training Data Size = " + result.getList().size());
+        //list.show();
+        //list.scan();
         
         DataSet     dataset = DataLoader.convertList(result);
         dataset.shuffle();
@@ -96,28 +100,33 @@ public class ClassifierMLP implements OptionExecutor {
     }
     
     public void evaluate(String filename, int max){
-        DataPairList list = DataLoader.loadCombinatorics(filename, max);
+        DataList result = DataLoader.loadCombinatorics(filename, max);
         
         /*for(DataPair pair : list.getList()){
             //System.out.println(pair);
             pair.show();
         }*/
-        DataPairList result = list.getNormalizedFirst(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
+        DataNormalizer dnorm = new DataNormalizer(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
+                new double[]{112,112,112,112,112,112});
+        DataList.normalizeInput(result, dnorm);
+        /*DataList result = list.getNormalizedFirst(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
                 new double[]{112,112,112,112,112,112}
-                );        
+                );*/        
         DataSet     dataset = DataLoader.convertList(result);
         dataset.shuffle();
         classifier.evaluate(dataset);
     }
     
-    public DataPairList  getFalseTracks(Event event){
+    public DataList  getFalseTracks(Event event){
         
-        DataPairList  dataResult = new DataPairList();
-        DataPairList list = DataLoader.getEventTracks(event);
-        DataPairList res = list.getNormalizedFirst(
-                new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
+        DataList  dataResult = new DataList();
+        
+        DataList res = DataLoader.getEventTracks(event);
+        DataNormalizer dnorm = new DataNormalizer(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
                 new double[]{112,112,112,112,112,112});
         
+        DataList.normalizeInput(res, dnorm); 
+                
         int     trueIndex = this.getTrueMatch(res);
         int     trueLabel = this.getTrueLabel(res);
         //System.out.println("event # " + counter);
@@ -147,7 +156,7 @@ public class ClassifierMLP implements OptionExecutor {
                 if(maxIndex>=0){
                     
                     double distance = Combinatorics.distance(
-                            list.getList().get(trueIndex).getFirst(),list.getList().get(maxIndex).getFirst() );
+                            res.getList().get(trueIndex).getFirst(),res.getList().get(maxIndex).getFirst() );
                     if(distance > 5.0){
                         dataResult.add(res.getList().get(trueIndex));
                         dataResult.add(res.getList().get(maxIndex));
@@ -173,12 +182,12 @@ public class ClassifierMLP implements OptionExecutor {
             result[1]++;
             reader.nextEvent(event);
             
-            DataPairList list = DataLoader.getEventTracks(event);
-            DataPairList res = list.getNormalizedFirst(
-                    new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
-                    new double[]{112,112,112,112,112,112});
+            DataList res = DataLoader.getEventTracks(event);
+            DataNormalizer dnorm = new DataNormalizer(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
+                new double[]{112,112,112,112,112,112});
             
-            
+            DataList.normalizeInput(res, dnorm);
+
             int     trueIndex = this.getTrueMatch(res);
             int     trueLabel = this.getTrueLabel(res);
             //System.out.println("event # " + counter);
@@ -207,7 +216,7 @@ public class ClassifierMLP implements OptionExecutor {
             if(maxIndex>=0){
 
                     double distance = Combinatorics.distance(
-                        list.getList().get(trueIndex).getFirst(),list.getList().get(maxIndex).getFirst() );
+                        res.getList().get(trueIndex).getFirst(),res.getList().get(maxIndex).getFirst() );
                 if(distance>2){
                    /* System.out.printf("true index = %3d, true prob = %6.4f, max index = %3d, max prob = %6.4f distance = %8.5f\n",
                             trueIndex,trueProb,maxIndex,maxProb,distance);
@@ -262,7 +271,7 @@ public class ClassifierMLP implements OptionExecutor {
         System.out.println("********************************");
     }
     
-    public DataPairList further(String filename, int tag, int max){
+    public DataList further(String filename, int tag, int max){
         HipoReader reader = new HipoReader();
         reader.setDebugMode(0);
         reader.setTags(tag);
@@ -270,12 +279,12 @@ public class ClassifierMLP implements OptionExecutor {
         Event event = new Event();
         
         int counter = 0;
-        DataPairList list = new DataPairList();
+        DataList list = new DataList();
         
         while(reader.hasNext()==true&&counter<max){
             counter++;
             reader.nextEvent(event);
-            DataPairList ds = this.getFalseTracks(event);
+            DataList ds = this.getFalseTracks(event);
             if(ds.getList().size()>0){
                 list.getList().addAll(ds.getList());
             }
@@ -285,22 +294,23 @@ public class ClassifierMLP implements OptionExecutor {
             
     public void trainFurther(String filename, int max){
         
-       DataPairList  falseList = new DataPairList();
+       DataList  falseList = new DataList();
        for(int k = 0; k < 40; k++){
-           DataPairList list = this.further(filename, k+1, max);
+           DataList list = this.further(filename, k+1, max);
            falseList.getList().addAll(list.getList());
        }
         
        System.out.printf("***>>> Further Extension size = %d\n",falseList.getList().size());
         falseList.show();;
         
-        DataPairList list = DataLoader.load(filename,max);
+        DataList result = DataLoader.load(filename,max);
         //list.show();        
-        DataPairList resultAll = DataLoader.generateFalse(list);
-        DataPairList result = resultAll.getNormalizedFirst(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
-                new double[]{112,112,112,112,112,112}
-                );
+        DataList resultAll = DataLoader.generateFalse(result);
         
+        DataNormalizer dnorm = new DataNormalizer(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
+                new double[]{112,112,112,112,112,112});
+        DataList.normalizeInput(result, dnorm);
+
         result.getList().addAll(falseList.getList());
         
         
@@ -321,25 +331,21 @@ public class ClassifierMLP implements OptionExecutor {
     
     public void trainFurther2(String filename, int max){
         
-        DataPairList trList = DataLoader.load(filename,max);
+        DataList trResult = DataLoader.load(filename,max);
         //list.show();        
-        DataPairList trResultAll = DataLoader.generateFalse(trList);
+        DataList trResultAll = DataLoader.generateFalse(trResult);
+        DataNormalizer dnorm = new DataNormalizer(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
+                new double[]{112,112,112,112,112,112});
         
-        DataPairList trResult = trResultAll.getNormalizedFirst(
-                new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
-                new double[]{112,112,112,112,112,112}
-        );
-        
-        DataPairList list = DataLoader.loadCombinatorics(filename, max);
+        DataList.normalizeInput(trResult, dnorm);
+   
+        DataList result = DataLoader.loadCombinatorics(filename, max);
         
         /*for(DataPair pair : list.getList()){
             //System.out.println(pair);
             pair.show();
         }*/
-        DataPairList result = list.getNormalizedFirst(new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
-                new double[]{112,112,112,112,112,112}
-                );
-        
+        DataList.normalizeInput(result, dnorm);
         //result.getList().addAll(result1.getList());        
                 
         
@@ -347,11 +353,11 @@ public class ClassifierMLP implements OptionExecutor {
         int falsePositives = 0;
         int truePositives = 0;
         
-        DataPairList addList = new DataPairList();
+        DataList addList = new DataList();
         System.out.println("data set size = " + result.getList().size());
         
         for(int i = 0; i < dataCount; i++){
-            DataPair pair = result.getList().get(i);
+            DataEntry pair = result.getList().get(i);
             double[] labels = pair.getSecond();
             if(labels[0]<0.2){
                 addList.add(pair);

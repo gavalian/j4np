@@ -152,9 +152,12 @@ public class HipoTree extends Tree {
                 String[] data = lines.get(i).split(",");
                 if(data.length>=names.length){
                     for(int item = 0; item < names.length; item++){
-                        float value = Float.parseFloat(data[item]);
+                        float value = Float.parseFloat(data[item].trim());
                         b.putFloat(item, i, value);
                     }
+                } else {
+                    System.out.println(" error at line # " + i + " data size = " 
+                            + data.length + ", variables size = " + names.length);
                 }
             }
             event.reset();

@@ -81,6 +81,62 @@ public class DataExtractRegression {
         return c;
     }
     
+    
+    public void extractMCsingle(String file,int max){
+        
+        HipoReader r = new HipoReader(file);
+        TextFileWriter w = new TextFileWriter();
+        
+        w.open(outputFile);
+        // structures
+        //Bank    bt = r.getBank("TimeBasedTrkg::TBTracks");
+        //Bank    bc = r.getBank("TimeBasedTrkg::TBClusters");
+        
+        Bank    bt = r.getBank(inputBanks.get(dcLevel)[0]);
+        Bank    bc = r.getBank(inputBanks.get(dcLevel)[1]);        
+        Event   ev = new Event();
+        
+        
+        Bank    part = r.getBank("REC::Particle");
+        Bank    mc = r.getBank("MC::Particle");
+        LorentzVector vCM = LorentzVector.withPxPyPzM(0.0,0.0, 6.6, 0.0005);
+        vCM.add(0.0,0.0,0.0, 0.938);
+        VectorOperator vop = new VectorOperator(vCM,"-[11]-[211]");
+        
+        PhysDataEvent phys = new PhysDataEvent(mc);
+        int counter = 0;    
+        
+        while(r.hasNext()){
+        
+            r.next(ev);
+            ev.read(bc);
+            ev.read(bt);
+            ev.read(part);
+            
+            phys.read(ev);
+            vop.apply(phys);
+            
+            //double mass = vop.getValue(VectorOperator.OperatorType.MASS);
+            //System.out.println(" mass = " + mass);
+            
+            
+            //int pid = part.getInt("pid", 0);
+            //int status = part.getInt("status", 0);
+            //int npart = countCharged(part);
+            
+            List<Track>  trk = Track.read(bt, bc);
+            List<Track> trkc = Track.getComplete(trk);
+            int reaction = 0;
+            //System.out.printf("track = %d, tracks valid = %d, charged = %d\n",trk.size(), trkc.size(),npart);
+            for(int kk = 0; kk < trkc.size(); kk++ )
+                w.writeString(String.format("%s",trkc.get(kk).toString()));
+                    
+            counter++;
+            if(max>0&&counter>max) break;
+        }
+        w.close();
+    }
+    
     public void extract(String file,int max){
         
         HipoReader r = new HipoReader(file);
@@ -134,16 +190,14 @@ public class DataExtractRegression {
                         int in = indexByCharge(trkc,-1);
                         int ip = indexByCharge(trkc, 1);
                         if(in>=0&&ip>=0){
-                            w.writeString(String.format("%d %s",reaction,trkc.get(in).toString()));
-                            w.writeString(String.format("%d %s",reaction,trkc.get(ip).toString()));
-                            //System.out.println(trkc.get(in));
-                            //System.out.println(trkc.get(ip));
-                            //for(Track t : trkc)
-                            //  System.out.println(t);
+                           // w.writeString(String.format("%d %s",reaction,trkc.get(in).toString()));
+                           // w.writeString(String.format("%d %s",reaction,trkc.get(ip).toString()));
+                           w.writeString(String.format("%s",trkc.get(in).toString()));
+                           w.writeString(String.format("%s",trkc.get(ip).toString()));
                         }
                     }
                 }
-            }            
+            }
             counter++;
             if(max>0&&counter>max) break;
         }
@@ -190,10 +244,14 @@ public class DataExtractRegression {
                 int reaction = 0;
                 if(mass<0.95) reaction = 1;
                 if(in>=0&&in2>=0&&ip>=0){
-                    w.writeString(String.format("%d %s",reaction,trkc.get(in).toString()));
-                    w.writeString(String.format("%d %s",reaction,trkc.get(in2).toString()));
-                    w.writeString(String.format("%d %s",reaction,trkc.get(ip).toString()));
-                    //System.out.println(trkc.get(in));
+                    //w.writeString(String.format("%d %s",reaction,trkc.get(in).toString()));
+                    //w.writeString(String.format("%d %s",reaction,trkc.get(in2).toString()));
+                    //w.writeString(String.format("%d %s",reaction,trkc.get(ip).toString()));
+                    
+                    w.writeString(String.format("%s",trkc.get(in).toString()));
+                    w.writeString(String.format("%s",trkc.get(in2).toString()));
+                    w.writeString(String.format("%s",trkc.get(ip).toString()));
+//System.out.println(trkc.get(in));
                     //System.out.println(trkc.get(ip));
                     //for(Track t : trkc)
                       //  System.out.println(t);
@@ -212,7 +270,7 @@ public class DataExtractRegression {
                 Math.toDegrees(v.phi())
         );
     }
-        
+    
     public void extractTwo(String file,int max){        
     
         HipoReader r = new HipoReader(file);

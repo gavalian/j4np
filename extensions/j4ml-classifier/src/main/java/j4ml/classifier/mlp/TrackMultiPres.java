@@ -7,8 +7,8 @@ package j4ml.classifier.mlp;
 import j4ml.classifier.data.DataLoader;
 import j4ml.deepnetts.DeepNettsClassifier;
 import j4ml.extratrees.networks.ClassifierExtraTrees;
-import j4np.utils.io.DataPair;
-import j4np.utils.io.DataPairList;
+import j4ml.data.DataEntry;
+import j4ml.data.DataList;
 import java.util.List;
 import twig.data.GraphErrors;
 import twig.data.H1F;
@@ -25,14 +25,14 @@ public class TrackMultiPres {
         for(int i = 0; i < b.length; i++) b[i] = a[i]/112.0;
         return b;
     }
-    public static DataPairList convert(DataPairList list){
-        DataPairList result = new DataPairList();
-        for(DataPair item : list.getList()){
+    public static DataList convert(DataList list){
+        DataList result = new DataList();
+        for(DataEntry item : list.getList()){
             if(item.getSecond()[1]>0.5){                
-                result.add(new DataPair(
+                result.add(new DataEntry(
                         TrackMultiPres.normalized(item.getFirst()),new double[]{0.0,1.0}));
             } else {
-                result.add(new DataPair(
+                result.add(new DataEntry(
                         TrackMultiPres.normalized(item.getFirst())
                         ,new double[]{1.0,0.0}));
             }
@@ -42,16 +42,16 @@ public class TrackMultiPres {
     
     public static void train(String filename, DeepNettsClassifier network){
         
-        DataPairList list = DataLoader.loadPos(filename, 25000);        
+        DataList list = DataLoader.loadPos(filename, 25000);        
         list.shuffle();
 
-        DataPairList[] lists = DataPairList.split(list, 0.7,0.3);
-        DataPairList[] listsfull = new DataPairList[2];
+        DataList[] lists = DataList.split(list, 0.7,0.3);
+        DataList[] listsfull = new DataList[2];
         
         listsfull[0] = DataLoader.generateFalse(lists[0]);
         listsfull[1] = DataLoader.generateFalse(lists[1]);
         
-        DataPairList[] data = new DataPairList[2];
+        DataList[] data = new DataList[2];
         
         data[0] = TrackMultiPres.convert(listsfull[0]);
         data[1] = TrackMultiPres.convert(listsfull[1]);
@@ -64,7 +64,7 @@ public class TrackMultiPres {
         
     }
     
-    public static int getHighestIndex(DataPairList list){
+    public static int getHighestIndex(DataList list){
         int index = 0;
         double max = list.getList().get(0).floatSecond()[1];
         for( int i = 0; i < list.getList().size(); i++){
@@ -78,17 +78,17 @@ public class TrackMultiPres {
     
     public static int[]  evaluate(String file,DeepNettsClassifier ct,  int tag){
         
-        List<DataPairList>  list = DataLoader.loadCombinatoricsPos(file, tag, 15000);
+        List<DataList>  list = DataLoader.loadCombinatoricsPos(file, tag, 15000);
         System.out.println(" LOADED DATA SIZE = " + list.size());
         int[] counter = new int[]{0,0};
         
         for(int i = 0; i < list.size(); i++){
             
-            DataPairList item = TrackMultiPres.convert(list.get(i));
+            DataList item = TrackMultiPres.convert(list.get(i));
             
             if(item.getList().size()>0){
                 int trueIndex  = TrackMultiPres.getHighestIndex(item);
-                DataPairList r = ct.evaluate(item);
+                DataList r = ct.evaluate(item);
                 int  resIndex  = TrackMultiPres.getHighestIndex(r);
                 
                 //System.out.printf("combinatorics = %5d/%5d index = %5d, infered = %5d\n" ,

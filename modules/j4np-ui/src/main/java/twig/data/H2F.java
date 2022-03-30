@@ -23,7 +23,7 @@ public class H2F implements DataSet {
     
     private long histogramUniqueID = 0L;
     
-    private double[] hBuffer;
+    protected double[] hBuffer;
     private MultiIndex offset;
     
     private TDataAttributes dataAttr = new TDataAttributes();

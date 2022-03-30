@@ -5,8 +5,13 @@
 package twig.config;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -119,7 +124,17 @@ public class TPalette2D {
             }
             return map.get(palVal);
         }
-
+        public static String[] getNames(){
+            Set<Object> set = map.keySet();
+            String[] data = new String[set.size()];
+            int counter = 0;
+            for(Object item : set){
+                data[counter] = item.toString();
+                counter++;
+            }
+            return data;
+        }
+        
         public static PaletteName nameOf(String palName) {
             if (!map.containsKey(palName)) {
                 throw new UnsupportedOperationException("Unknown value for palette map: " + palName);
@@ -796,4 +811,27 @@ public class TPalette2D {
         }
     }
     
+    public final void choosePalette(JComponent c){
+        
+        String[] choices = PaletteName.getNames();
+        
+        JComboBox box = new JComboBox(choices);
+        
+        box.addItemListener(event -> {
+            String item = (String) event.getItem();
+            this.setPalette(item);
+            c.repaint();
+        });
+        Point2D location = c.getLocation();
+        Object[] message = new Object[]{"Palette :",box};
+        int option = JOptionPane.showConfirmDialog(c,                
+                message, "2D Palette", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            String name = box.getSelectedItem().toString();
+            //System.out.println("selected Palette = " + name);
+            this.setPalette(name);
+        } else {
+            System.out.println("Login canceled");
+        }
+    }
 }

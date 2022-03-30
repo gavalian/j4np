@@ -113,29 +113,31 @@ public class DataAnalysisRegression {
                 
                 LorentzVector  cm = DataAnalysisRegression.getCM();
                 LorentzVector cms = DataAnalysisRegression.getCM();
-                
+                int sector_n = DataAnalysisRegression.getSector(lines.get(0));
+                int sector_p = DataAnalysisRegression.getSector(lines.get(1));
                 cm.sub(lve).sub(lvp);
                 cms.sub(lves).sub(lvps);
                 
-                hdata_emom.fill(lve.p());
-                hdata_eth.fill(lve.theta());
-                hdata_ephi.fill(lve.phi());
-                
-                hdata_pmom.fill(lvp.p());
-                hdata_pth.fill(lvp.theta());
-                hdata_pphi.fill(lvp.phi());
-                
-                hreg_emom.fill(lves.p());
-                hreg_eth.fill(lves.theta());
-                hreg_ephi.fill(lves.phi());
-                
-                hreg_pmom.fill(lvps.p());
-                hreg_pth.fill(lvps.theta());
-                hreg_pphi.fill(lvps.phi());
-                
-                hdata.fill(cm.mass());
-                hreg.fill(cms.mass());
-                
+                if(sector_n!=2&&sector_p!=2){
+                    hdata_emom.fill(lve.p());
+                    hdata_eth.fill(lve.theta());
+                    hdata_ephi.fill(lve.phi());
+                    
+                    hdata_pmom.fill(lvp.p());
+                    hdata_pth.fill(lvp.theta());
+                    hdata_pphi.fill(lvp.phi());
+                    
+                    hreg_emom.fill(lves.p());
+                    hreg_eth.fill(lves.theta());
+                    hreg_ephi.fill(lves.phi());
+                    
+                    hreg_pmom.fill(lvps.p());
+                    hreg_pth.fill(lvps.theta());
+                    hreg_pphi.fill(lvps.phi());
+                    
+                    hdata.fill(cm.mass());
+                    hreg.fill(cms.mass());
+                }
                 String data_e = String.format("-1 : %8.5f %8.4f %8.3f : %8.5f %8.4f %8.3f", 
                         lve.p(),Math.toDegrees(lve.theta()),Math.toDegrees(lve.phi()),
                         lves.p(),Math.toDegrees(lves.theta()),Math.toDegrees(lves.phi())
@@ -144,8 +146,8 @@ public class DataAnalysisRegression {
                         lvp.p(),Math.toDegrees(lvp.theta()),Math.toDegrees(lvp.phi()),
                         lvps.p(),Math.toDegrees(lvps.theta()),Math.toDegrees(lvps.phi())
                         );
-                System.out.println(data_e);
-                System.out.println(data_p);
+                //System.out.println(data_e);
+                //System.out.println(data_p);
             }
         }
         TDirectory dir = new TDirectory();
@@ -167,6 +169,23 @@ public class DataAnalysisRegression {
         
         H1F hdata = new H1F("hdata_2n1p",120,0.4,3.2);
         H1F hreg  = new H1F( "hreg_2n1p",120,0.4,3.2);
+        
+        H1F hdatagt2p5 = new H1F("hdata_2n1p_gt2p5",120,0.4,2.0);
+        H1F hreggt2p5  = new H1F( "hreg_2n1p_gt2p5",120,0.4,2.0);
+        
+        H1F hdatalt2p5 = new H1F("hdata_2n1p_lt2p5",120,0.4,2.0);
+        H1F hreglt2p5  = new H1F( "hreg_2n1p_lt2p5",120,0.4,2.0);
+        
+        H2F hdata2e = new H2F("hdata_2n1p_2de",120,0.0,6.5,120,0.4,3.2);
+        H2F hreg2e  = new H2F( "hreg_2n1p_2de",120,0.0,6.5,120,0.4,3.2);
+        
+        H2F hdata2p = new H2F("hdata_2n1p_2dp",120,0.0,6.5,120,0.4,3.2);
+        H2F hreg2p  = new H2F( "hreg_2n1p_2dp",120,0.0,6.5,120,0.4,3.2);
+        
+        
+        H2F h2_ep = new H2F("h2_ep",120,0.0,6.5,120,0.0,6.5);
+        H2F h2_pp = new H2F("h2_pp",120,0.0,6.5,120,0.0,6.5);
+        
         
         while(flag==true){
             //counter++;
@@ -193,9 +212,26 @@ public class DataAnalysisRegression {
                 
                 cm.sub(lve).sub(lvpm).sub(lvpp);
                 cms.sub(lves).sub(lvpms).sub(lvpps);
-                
-                hdata.fill(cm.mass());
-                hreg.fill(cms.mass());
+                int sector_n1 = DataAnalysisRegression.getSector(lines.get(0));
+                int sector_p1 = DataAnalysisRegression.getSector(lines.get(1));
+                int sector_n2 = DataAnalysisRegression.getSector(lines.get(2));
+                if(sector_n1!=2&&sector_n2!=2&&sector_p1!=2){
+                    hdata.fill(cm.mass());                    
+                    hreg.fill(cms.mass());
+                    hdata2e.fill(lve.p(), cm.mass());
+                    hdata2p.fill(lvpp.p(), cm.mass());
+                    h2_ep.fill(lve.p(),lves.p());h2_pp.fill(lvpp.p(),lvpps.p());
+                    hreg2e.fill(lves.p(), cms.mass());
+                    hreg2p.fill(lvpps.p(), cms.mass());
+                    if(lve.p()>2.5)
+                    {
+                        hdatagt2p5.fill(cm.mass());                    
+                        hreggt2p5.fill(cms.mass());
+                    } else {
+                         hdatalt2p5.fill(cm.mass());                    
+                        hreglt2p5.fill(cms.mass());
+                    }
+                }
                 
                 LorentzVector lve2 = DataAnalysisRegression.getParticle(
                         lines.get(1).trim(), new int[]{4,5,6}, 0.0005);
@@ -216,16 +252,16 @@ public class DataAnalysisRegression {
                 
                 cm2.sub(lve2).sub(lvpm2).sub(lvpp2);
                 cms2.sub(lves2).sub(lvpms2).sub(lvpps2);
-                
-                
-                
+                                                
                 //hdata.fill(cm2.mass());
                 //hreg.fill(cms2.mass());
             }
         }
         TDirectory dir = new TDirectory();
-        dir.add(directory, hdata);
-        dir.add(directory, hreg);
+        dir.add(directory, hdata,hreg,hdatagt2p5,hreggt2p5,hdatalt2p5,hreglt2p5);
+        dir.add(directory, h2_pp,h2_ep);
+        dir.add(directory, hdata2e,hdata2p,hreg2e,hreg2p);
+
         dir.write(exportFile);
     }
     
@@ -250,17 +286,21 @@ public class DataAnalysisRegression {
         //String file = "/Users/gavalian/Work/dataspace/pid/results/c_extract_regression_data_1n1p_hb.txt.pred.norm";        
         //String file = "/Users/gavalian/Downloads/new_res/h_extract_regression_data_1n1p_hb_res_from_i.txt" ;
         //String file = "/Users/gavalian/Work/software/project-10a.0.4/j4np-1.0.4/c_extract_regression_data_1n1p_hb.txt" ;
-        String file = "/Users/gavalian/Work/Software/project-10a.0.4/data/regression/catboost_res/c_extract_regression_data_1n1p_hb.txt.pred.norm.b" ;
-        
+        String file = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/mc_e1pi_hb.txt.pred.norm" ;
+        String file2 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/mc_e2pi_hb.txt.pred.norm" ;
+        String file3 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/data_e1p_hb.txt.pred.norm" ;
 //String file = "/Users/gavalian/Work/Software/project-10.4/data/res_data3/c_extract_regression_data_1n1p_hb_res_from_b.txt" ;
         
         //String file2 = "/Users/gavalian/Work/dataspace/pid/results/d_extract_regression_data_1n1p_hb.txt.pred.norm";
         DataAnalysisRegression ana = new DataAnalysisRegression();
-        ana.directory = "/catboost_b";
+        ana.directory = "/mc_e1p";
         ana.analyze(file, "inference.twig");
-        
-        /*String data = """                      
+        ana.directory = "/mc_e2p";
+        ana.analyzeThree(file2, "inference.twig");
+        ana.directory = "/data_e1p";
+        ana.analyze(file3, "inference.twig");
+        /*String data = """
                       """;
-*/
+        */
     }
 }

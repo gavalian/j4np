@@ -15,7 +15,8 @@ import org.ejml.simple.SimpleMatrix;
 public class EJMLModel {
 
     public enum ModelType {
-       SOFTMAX,LINEAR  
+       SOFTMAX,LINEAR, TANH_LINEAR, RELU_LINEAR,
+       SIGMOID_LINEAR, RELU_SIGMOID
     };
     
     private SimpleMatrix[] LAYERS = null;
@@ -79,7 +80,6 @@ public class EJMLModel {
         for (int i = 0; i < output.numRows(); ++i)
             for (int j = 0; j < output.numCols(); ++j)
                 output.set(i, j, Math.max(0, output.get(i, j)));
-
         return output;
     }
 
@@ -88,10 +88,25 @@ public class EJMLModel {
         for (int i = 0; i < output.numRows(); ++i)
             for (int j = 0; j < output.numCols(); ++j)
                 output.set(i, j, 1.0 / (1.0 + Math.exp(-output.get(i, j))));
-
         return output;
     }
 
+    private static SimpleMatrix elementwiseApplyTanh(SimpleMatrix input) {  // Credits to stanfordnlp
+        SimpleMatrix output = new SimpleMatrix(input);
+        for (int i = 0; i < output.numRows(); ++i)
+            for (int j = 0; j < output.numCols(); ++j)
+                output.set(i, j, Math.tanh(output.get(i, j)));
+        return output;
+    }
+    
+    private static SimpleMatrix elementwiseApplyLinear(SimpleMatrix input) {  // Credits to stanfordnlp
+        SimpleMatrix output = new SimpleMatrix(input);
+        for (int i = 0; i < output.numRows(); ++i)
+            for (int j = 0; j < output.numCols(); ++j)
+                output.set(i, j, output.get(i, j));
+        return output;
+    }
+    
     private static SimpleMatrix ApplySoftmax(SimpleMatrix input) {   // Credits to stanfordnlp
         SimpleMatrix output = new SimpleMatrix(input);
         for (int i = 0; i < output.numRows(); ++i)
@@ -222,12 +237,27 @@ public class EJMLModel {
     public int getOutputSize(){
         return outputSize;
     }
-    
+    /**
+     * This function will evaluate the network for for given
+     * network type. supports RELU/TANH/SIGMOID/LINEAR and SOFTMAX
+     * @param input input array 
+     * @param result output from the network
+     */
     public void getOutput(float[] input, float[] result){
+        switch (this.ejmlModelType){
+            
+            case SOFTMAX: feedForwardSoftmax(input, result); return;
+            case TANH_LINEAR: feedForwardTanhLinear(input, result); return;
+            case RELU_LINEAR: feedForwardReLULinear(input, result); return;
+            
+            default: feedForward(input, result);
+        }
+        /*
         if(this.ejmlModelType==ModelType.SOFTMAX){
             this.feedForwardSoftmax(input, result); return;
         }
         this.feedForward(input, result);
+        */
     }
     
     public void feedForward(float[] input, float[] results) {
@@ -244,6 +274,37 @@ public class EJMLModel {
         for (int i = 0; i < matrix.numCols(); i++)
             results[i] = (float) matrix.get(0, i);
     }
+    
+    public void feedForwardReLULinear(float[] input, float[] results) {
+        assert input.length == inputSize;
+
+        SimpleMatrix matrix = new SimpleMatrix(new float[][] {input});
+        for (int i = 0; i < LAYERS.length; i++) {
+            if (i == LAYERS.length - 1)
+                matrix = elementwiseApplyLinear(matrix.mult(LAYERS[i]).plus(BIASES[i]));
+            else
+                matrix = elementwiseApplyReLU(matrix.mult(LAYERS[i]).plus(BIASES[i]));
+        }
+
+        for (int i = 0; i < matrix.numCols(); i++)
+            results[i] = (float) matrix.get(0, i);
+    }
+    
+    private void feedForwardTanhLinear(float[] input, float[] results) {
+        assert input.length == inputSize;
+
+        SimpleMatrix matrix = new SimpleMatrix(new float[][] {input});
+        for (int i = 0; i < LAYERS.length; i++) {
+            if (i == LAYERS.length - 1)
+                matrix = elementwiseApplyLinear(matrix.mult(LAYERS[i]).plus(BIASES[i]));
+            else
+                matrix = elementwiseApplyTanh(matrix.mult(LAYERS[i]).plus(BIASES[i]));
+        }
+
+        for (int i = 0; i < matrix.numCols(); i++)
+            results[i] = (float) matrix.get(0, i);
+    }
+    
     
     public void feedForwardSoftmax(float[] input, float[] results) {
         assert input.length == inputSize;
@@ -280,8 +341,6 @@ public class EJMLModel {
         model.feedForward(new float[]{0.26339f, 0.30208f, 0.23214f, 0.25298f, 0.15051f, 0.15689f}, out);
         System.out.println(Arrays.toString(out));
         model.feedForward(new float[]{0.73393f, 0.73661f, 0.78036f, 0.79911f, 0.15051f, 0.15689f}, out);
-        System.out.println(Arrays.toString(out));
-        
-        
+        System.out.println(Arrays.toString(out));                
     }
 }
