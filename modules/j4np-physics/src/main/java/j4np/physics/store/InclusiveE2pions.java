@@ -4,6 +4,7 @@
  */
 package j4np.physics.store;
 
+import j4np.hipo5.io.HipoReader;
 import j4np.physics.EventModifier;
 import j4np.physics.PhysicsEvent;
 import j4np.physics.PhysicsReaction;
@@ -25,6 +26,15 @@ public class InclusiveE2pions extends PhysicsReaction {
         this.initialize();
     }
     
+    
+     public InclusiveE2pions(double energy, String file, String bank){
+        super("11:211:-211:X+:X-:Xn",energy);
+        this.initialize();
+        HipoReader r = new HipoReader(file);
+        this.setDataSource(r,bank);
+        this.addModifier(new EventModifierStore.EventModifierForward());
+    }
+     
     @Override
     public void configChange(){
         System.out.println("reconfiguring");

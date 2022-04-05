@@ -4,10 +4,18 @@
  */
 package twig.tree;
 
+import com.indvd00m.ascii.render.Render;
+import com.indvd00m.ascii.render.api.ICanvas;
+import com.indvd00m.ascii.render.api.IContextBuilder;
+import com.indvd00m.ascii.render.api.IRender;
+import com.indvd00m.ascii.render.elements.Table;
+import com.indvd00m.ascii.render.elements.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -30,14 +38,15 @@ import twig.studio.TwigStudio;
  */
 public abstract class Tree implements TreeProvider {
     
-    private String    treeName = "tree";
-    private int    defaultBins = 100;
+    private String       treeName = "tree";
+    private int       defaultBins = 100;
+    private Logger     treeLogger = Logger.getLogger(Tree.class.getName());
     
     private List<TreeCut>  treeCuts = new ArrayList<>();
     
-    public Tree(){ }
+    public Tree(){ treeLogger.setLevel(Level.OFF); }
     
-    public Tree(String name){ setName(name);}
+    public Tree(String name){ setName(name);treeLogger.setLevel(Level.OFF);}
     
     public abstract double   getValue(int order);
     public abstract double   getValue(String branch);    
@@ -45,6 +54,13 @@ public abstract class Tree implements TreeProvider {
     public abstract int      getBranchOrder(String name);
     public abstract void     reset();
     public abstract boolean  next();
+    
+    public void  setLoggerLevel(Level level){
+        treeLogger.setLevel(level);
+    }
+    
+    public void setLoggerLevelFine(){ treeLogger.setLevel(Level.FINE);}
+    public void setLoggerLevel(){ treeLogger.setLevel(Level.INFO);}
     
     public Tree  setDefaultBins(int bins){
         this.defaultBins = bins; return this;
@@ -165,6 +181,7 @@ public abstract class Tree implements TreeProvider {
     private  void drawUndefined(String expression, String cuts, String options){
         if(expression.contains(":")==true){
             H2F h = this.geth2undef(expression, cuts, 100,100);
+            
             TwigStudio.getInstance().getCanvas().view().region().draw(h, options);
             if(options.contains("same")==false)
                 TwigStudio.getInstance().getCanvas().view().next();
@@ -245,14 +262,16 @@ public abstract class Tree implements TreeProvider {
         List<String> branches = this.getBranches();
         TreeExpression  varExp = new TreeExpression(expression, branches);
         TreeCut         cutExp = new TreeCut("1",cut,branches);
-        int counter = 0;
-        long evaluate = 0L;
-        long then = System.currentTimeMillis();
-        long start = System.nanoTime();
+        int    counter = 0;
+        long  evaluate = 0L;
+        long      then = System.currentTimeMillis();
+        long     start = System.nanoTime();
+        
         while(this.next()==true){
-            counter++;            
+            counter++;
             if(cutExp.isValid(this)>0.5){ v.add(varExp.getValue(this));}
-        }        
+        }
+        
         long end = System.nanoTime();
         evaluate += (end - start);
         long now = System.currentTimeMillis();                
@@ -262,9 +281,15 @@ public abstract class Tree implements TreeProvider {
         TwigStudio.getInstance().addDataSet(uid, h);
         h.attr().setTitle(cut);
         h.attr().setTitleX(expression);
-        System.out.printf(
-                "get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
-                counter,(int) (evaluate/1000000.0), now-then);
+        
+        treeLogger.log(Level.INFO ,String.format(
+                "get::perf >> evaluated #%12d in %12d ms, total %12d ms\n", 
+                counter,(int) (evaluate/1000000.0), now-then));
+        treeLogger.log(Level.INFO , String.format("get::conf >> exp = '%s', cuts = '%s'",
+                expression,cut));
+        treeLogger.log(Level.INFO , String.format("get::conf >> vector size = %d, [%f,%f]",
+                v.getSize(),v.getMin(),v.getMax()));
+        
         return h;
     }
     
@@ -446,12 +471,28 @@ public abstract class Tree implements TreeProvider {
                 if(value<r.min()) ranges.get(i).set(value,r.max());
             }
         }
-        System.out.println("---------------------------------------------------");
+        
+        IRender render = new Render();
+        IContextBuilder builder = render.newBuilder();
+        builder.width(72).height(names.size()*2+3);
+        Table table = new Table(3, names.size()+1);
+        table.setElement(1, 1, new Text(" variable"),true);
+        table.setElement(2, 1, new Text(" minimum"),true);
+        table.setElement(3, 1, new Text(" maximum"),true);
+        //System.out.println("---------------------------------------------------");
         for(int i = 0; i < names.size(); i++){
-            System.out.println(String.format("%24s : %14f %14f\n", names.get(i),
-                    ranges.get(i).min(),ranges.get(i).max()));
+            table.setElement(1, i+2, new Text(names.get(i)));
+            table.setElement(2, i+2, new Text(String.format("%f",ranges.get(i).min())));
+            table.setElement(3, i+2, new Text(String.format("%f",ranges.get(i).max())));
+
+            /*System.out.println(String.format("%24s : %14f %14f", names.get(i),
+                    ranges.get(i).min(),ranges.get(i).max()));*/
         }
-        System.out.println("---------------------------------------------------");
+        builder.element(table);
+        ICanvas canvas = render.render(builder.build());
+        String s = canvas.getText();              
+        System.out.println(s);
+        //System.out.println("---------------------------------------------------");
     }
     
     @Override

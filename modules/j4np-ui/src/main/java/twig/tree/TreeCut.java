@@ -168,6 +168,8 @@ public class TreeCut {
     }
     
     public double isValid(Tree tree){
+        //System.out.println("------ '" + cutExpression + "' size = " + cutExpression.length());
+        if(cutExpression.length()==0) return 1.0;
         if(expr!=null){
             for(int i = 0; i < cutVariables.size(); i++){
                 expr.setVariable(cutVariables.get(i),tree.getValue(cutVariables.get(i)));

@@ -5,6 +5,12 @@
  */
 package j4np.utils.base;
 
+import com.indvd00m.ascii.render.Render;
+import com.indvd00m.ascii.render.api.ICanvas;
+import com.indvd00m.ascii.render.api.IContextBuilder;
+import com.indvd00m.ascii.render.api.IRender;
+import com.indvd00m.ascii.render.elements.Table;
+import com.indvd00m.ascii.render.elements.Text;
 import j4np.utils.io.OptionParser;
 import j4np.utils.io.OptionStore;
 import j4np.utils.io.TextFileReader;
@@ -22,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
@@ -59,6 +67,22 @@ public class ArchiveUtils {
         return true;
     }
 
+    public static void writeFile(String zipfile, String outputName, List<String> fileLines){
+        InputStream stream = null;
+        try {
+            stream = ArchiveUtils.createFromList(fileLines);
+            ArchiveUtils.writeInputStream(zipfile, outputName, stream);
+        } catch (IOException ex) {
+            Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     public static void writeInputStream(String zipfile, String outputName, InputStream stream){
         String directory = String.format("%s",outputName);
         System.out.println("[exporting] -> " + directory);
@@ -122,15 +146,21 @@ public class ArchiveUtils {
         return false;
     }
     
+    public static List<String> getList(String zipfile){
+        return ArchiveUtils.getList(zipfile, ".*");
+    }
+    
     public static List<String> getList(String zipfile, String pattern){
         
         List<String>  files = new ArrayList<>();
+        Pattern r = Pattern.compile(pattern);
         try {
             ZipFile zip = new ZipFile(zipfile);
             List<FileHeader> headers = zip.getFileHeaders();
             for(int i = 0; i < headers.size(); i++){
                 String name = headers.get(i).getFileName();
-                files.add(name);
+                Matcher m = r.matcher(name);
+                if(m.find()==true){ files.add(name);}
                 //System.out.println("name : " + name + " has = " + name.compareTo(file));
             }
             
@@ -223,7 +253,35 @@ public class ArchiveUtils {
     }
        
     
+    public static void show(String file, String system){
+        List<String>  items = ArchiveUtils.getList(file,  system);
+        System.out.println(" number of items = " + items.size());
+        IRender render = new Render();
+        IContextBuilder builder = render.newBuilder();
+        builder.width(120).height(items.size()*4+1);
+        Table table = new Table(3, items.size());
+        
+        ///table.setElement(1, 1, new Text(items.get(0)),true);
+        //table.setElement(1, 2, new Text(items.get(1)),true);
+        
+        for(int i = 0; i < items.size(); i++){
+            table.setElement(1, i+1, new Text(items.get(i) + "\n" + items.get(i)),true);
+        }
+        
+        builder.element(table);
+        ICanvas canvas = render.render(builder.build());
+        String s = canvas.getText();
+        System.out.println(s);
+    }
+    
     public static void main(String[] args){
+        String file = "ejmlclas12.network";
+        List<String> list = ArchiveUtils.getList(file);
+        
+        list.stream().forEach(System.out::println);
+        
+       
+        /*
         
         OptionStore parser = new OptionStore("archive");
         
@@ -274,6 +332,7 @@ public class ArchiveUtils {
             String   archiveName = dir + "/" + file;
             ArchiveUtils.addInputStream(inputs.get(0), archiveName, content);
         }
+        */
         /*
         List<String> data = Arrays.asList("first line","second line","and finally the third line");
         ArchiveUtils.addInputStream("archive.twig", "data.txt", data);

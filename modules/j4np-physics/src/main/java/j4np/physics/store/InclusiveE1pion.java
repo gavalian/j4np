@@ -31,6 +31,7 @@ public class InclusiveE1pion extends PhysicsReaction {
         initialize();
         HipoReader r = new HipoReader(file);
         this.setDataSource(r,bank);
+        this.addModifier(new EventModifierStore.EventModifierForward());
     }
 
     private void initialize(){

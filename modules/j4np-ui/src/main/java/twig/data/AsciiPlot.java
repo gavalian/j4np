@@ -56,7 +56,15 @@ public class AsciiPlot {
     
     public static void draw(DataSet data, int sizeX, int sizeY){
         List<IPlotPoint> points = null;
-        if(data instanceof H1F) points = AsciiPlot.h1f2points((H1F) data);
+        String dataDesc = "";
+        
+        if(data instanceof H1F){
+            points = AsciiPlot.h1f2points((H1F) data);
+            H1F h = (H1F) data;
+            dataDesc = String.format("H1F : mean = %.5f, rms = %.5f", 
+                    h.getMean(), h.getRMS());
+        }
+        
         if(data instanceof GraphErrors) points = AsciiPlot.graph2points((GraphErrors) data);
         if(points!=null){
             IRender render = new Render();
@@ -69,6 +77,7 @@ public class AsciiPlot {
             builder.element(new Plot(points, new Region(0, 0, sizeX-2, sizeY-2)));
             ICanvas canvas = render.render(builder.build());
             String s = canvas.getText();
+            System.out.println("\n\n ::: %s " + dataDesc + "\n");
             System.out.println(s);
         } else {
             System.out.println("[ASCII] ::: plot not supported for class : " + data.getClass().getName());
