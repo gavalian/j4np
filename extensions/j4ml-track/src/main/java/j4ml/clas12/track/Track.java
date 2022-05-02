@@ -5,11 +5,12 @@
  */
 package j4ml.clas12.track;
 
+import j4np.hipo5.data.Bank;
 import j4np.physics.Vector3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.jlab.jnp.hipo4.data.Bank;
+
 
 /**
  *

@@ -1,10 +1,10 @@
 TDirectory dir = new TDirectory("inference.twig");
 
 List<String[]> names = new ArrayList<>();
+
 names.add(new String[]{"hdata_emom","hreg_emom"});
 names.add(new String[]{"hdata_eth","hreg_eth"});
 names.add(new String[]{"hdata_ephi","hreg_ephi"});
-
 names.add(new String[]{"hdata_pmom","hreg_pmom"});
 names.add(new String[]{"hdata_pth","hreg_pth"});
 names.add(new String[]{"hdata_pphi","hreg_pphi"});

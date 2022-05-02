@@ -44,6 +44,10 @@ public class ArchiveProvider {
     
     public void setFlavor(String __fl){
         flavor = __fl;
+        System.out.printf("\n\n::: switched the flavor to : %s\n\n",flavor);
+        System.out.printf("::: current configuration\n");
+        System.out.printf("::: archive   file : %s\n",archiveFile);
+        System.out.printf("::: archive flavor : %s\n",flavor);        
     }
     
     public List<String> getFile(String filename, int run){
@@ -84,7 +88,92 @@ public class ArchiveProvider {
         String dir = String.format("%s/%d/%s", system,runNumber,flavor);
         return dir;
     }
+    /**
+     * copy file from same flavor to the same flavor for different
+     * run number
+     * @param srcRun source run number
+     * @param dstRun destination run number
+     * @param file filename
+     */
+     public void copyFile(int srcRun, int dstRun,  String file){
+         copyFile(srcRun,flavor,dstRun,flavor,file);
+     }
+    /**
+     * Copy a file into a new run range
+     * @param srcRun source run number
+     * @param srcFlavor source flavor
+     * @param dstRun destination run number
+     * @param dstFlavor destination flavor
+     * @param file filename to copy
+     */
+    public void copyFile(int srcRun, String srcFlavor, 
+            int dstRun, String dstFlavor, String file){
+        int      realRun = this.findEntry(srcRun);
+        String   srcFile = String.format("%s/%d/%s/%s", 
+                system,realRun,srcFlavor,file);
+        String   dstFile = String.format("%s/%d/%s/%s", 
+                system,dstRun,dstFlavor,file);
+        if(dstFile.compareTo(srcFile)==0){
+            System.out.printf("\n redundant copy : \n %s ==> %s\n",srcFile,dstFile);
+        } else {
+            
+            List<String> content = ArchiveUtils.getFileAsList(archiveFile, srcFile);
+            ArchiveUtils.writeFile(archiveFile, dstFile, content);
+            System.out.printf("\n\n copy success : \n %s ==> %s\n",srcFile,dstFile);
+        }
+    }
     
+    public void copy(int srcRun, int dstRun){
+        this.copy(srcRun, flavor, dstRun, flavor);
+    }
+    /**
+     * Copy all files in for the given run number into entry for different
+     * run number.
+     * 
+     * @param srcRun
+     * @param srcFlavor
+     * @param dstRun
+     * @param dstFlavor
+     */
+    public void copy(int srcRun, String srcFlavor, int dstRun, String dstFlavor){
+        int  realRun = this.findEntry(srcRun);        
+        String directory = this.findDirectory(srcRun, srcFlavor);
+        System.out.printf("\nrun %d search... entry found %d\n\n",srcRun,realRun);
+        
+        List<String> fileList = ArchiveUtils.getList(archiveFile, directory);
+        for(String fn : fileList){
+            String file = fn.replace(directory+"/", "");
+            //System.out.println("copy file -> " + fn + "  : " + file);
+            this.copyFile(srcRun, srcFlavor, dstRun, dstFlavor, file);
+        }
+    }
+    
+    public void removeFile(int run, String file){
+        this.removeFile(run, flavor, file);
+    }
+    
+    public void removeFile(int run, String flavor, String file){
+        int  realRun = this.findEntry(run);        
+        String directory = this.findDirectory(run, flavor);
+        String fullPath  = String.format("%s/%s", directory,file);
+        if(ArchiveUtils.hasFile(archiveFile, fullPath)==true){
+            ArchiveUtils.removeFile(archiveFile, fullPath);
+        } else {
+            System.out.println("\n\n::: file not found : " + fullPath + "\n\n");
+        }        
+    }
+    
+    public void remove(int run){
+        int  realRun = this.findEntry(run);        
+        String directory = this.findDirectory(run, flavor);
+        System.out.printf("\nrun %d search... entry found %d\n\n",run,realRun);
+        
+        List<String> fileList = ArchiveUtils.getList(archiveFile, directory);
+        for(String fn : fileList){
+            ArchiveUtils.removeFile(archiveFile, fn);
+            System.out.println("\t removing file : " + fn);
+        }
+    }
     public List<Integer> getRunList(){
        String         filter = String.format(".*/.*/%s", flavor); 
        List<String> directories = ArchiveUtils.getList(archiveFile, filter);
@@ -99,6 +188,23 @@ public class ArchiveProvider {
         for(Integer item : runSet) array.add(item);        
         Collections.sort(array);
         return array;
+    }
+    
+    public List<String> getComment(int run){
+        List<String>  comments = new ArrayList<>();
+        int      realRun = this.findEntry(run);
+        String directory = this.findDirectory(run, flavor);
+        
+        System.out.printf("\nrun %d search... entry found %d\n\n",run,realRun);
+        String comment = String.format("%s/%d/%s/comment.txt", 
+                system,realRun,flavor);
+        if(ArchiveUtils.hasFile(archiveFile, comment)){
+            List<String> fileContent = ArchiveUtils.getFileAsList(archiveFile, comment);
+            comments.addAll(fileContent);
+        } else {
+            comments.add("......");
+        }
+        return comments;
     }
     
     public List<String> getComments(List<Integer> runlist){
@@ -116,7 +222,11 @@ public class ArchiveProvider {
         }
         return comments;
     }
-    
+    /**
+     * returns set of existing flavors in the file, can be printed.
+     * @param archive archive file name
+     * @return set of flavors
+     */
     public static Set<String>  getFlavorSet(String archive){
         List<String> files = ArchiveUtils.getList(archive);
         SortedSet<String> result = new TreeSet<>();
@@ -127,7 +237,10 @@ public class ArchiveProvider {
         }
         return result;
     }
-    
+    /**
+     * Displays run tables for all flavors that exist in the archive
+     * @param archive archive file name.
+     */
     public static void scan(String archive){
         Set<String> flavors = ArchiveProvider.getFlavorSet(archive);
         for(String flavor : flavors){
@@ -135,7 +248,26 @@ public class ArchiveProvider {
             provider.showRunList();
         }
     }
-    
+    /**
+     * Shows files that are present in the archive for give run number.
+     * The entries shown are determined by the run ranges that applies.
+     * @param run run number to investigate.
+     */
+    public void showFiles(int run){
+        
+        int  realRun = this.findEntry(run);        
+        String directory = this.findDirectory(run, flavor);
+        System.out.printf("\nrun %d search... entry found %d\n\n",run,realRun);
+        
+        List<String> fileList = ArchiveUtils.getList(archiveFile, directory);
+        for(String fn : fileList){
+            System.out.println("\t -> " + fn);
+        }
+    }
+    /**
+     * Shows list of runs for for given flavor. The flavor can be
+     * specified in the constructor.
+     */
     public void showRunList(){
         
         List<Integer>  items = this.getRunList();
@@ -194,9 +326,9 @@ public class ArchiveProvider {
     public Integer findEntry(int run){
         
         List<Integer> array = this.getRunList();
-        for(int i = 0; i < array.size(); i++) System.out.printf("%4d : %6d \n",i,array.get(i));
+        //for(int i = 0; i < array.size(); i++) System.out.printf("%4d : %6d \n",i,array.get(i));
         int index = Collections.binarySearch(array,run);
-        System.out.println(" seach for "  + run + " , index =  " + index);
+        //System.out.println(" seach for "  + run + " , index =  " + index);
 
         if(index>=0)  return array.get(index);
         if(index==-1) return array.get(0);

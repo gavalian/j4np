@@ -5,7 +5,8 @@
 \usepackage{hyperref}
 \usepackage{float}
 \usepackage{lineno}
-\linenumbers
+
+%\linenumbers
 % \usepackage[affil-it]{authblk}
 \usepackage{subcaption}
 \newcommand{\note}[1]{\textcolor{blue}{#1}}
@@ -13,7 +14,7 @@
 \definecolor{LightRose}{rgb}{1,0.88,0.88}
 \definecolor{LightGreen}{rgb}{0.88,1,0.88}
 
-\title{Convolutional Auto-Encoders for Drift Chamber data de-noising for CLAS12}
+\title{Convolutional Auto-Encoders for Drift Chamber de-noising for CLAS12}
 \author[1]{Gagik Gavalian}
 \author[2]{Polykarpos Thomadakis}
 \author[2]{Angelos Angelopoulos}
@@ -27,13 +28,13 @@
 
 %\begin{titlepage}
 \begin{abstract}
-In this article we present results of using Convolutional Auto-Encoders for de-noising raw data for CLAS12 drift chambers.
+In this article, we present the results of using Convolutional Auto-Encoders for de-noising raw data for CLAS12 drift chambers.
 The de-noising neural network provides increased efficiency in track reconstruction, also improved performance for high 
-luminosity experimental data collection. The de-noising neural network used in conjunction with previously developed track 
-classifier neural network~\cite{Gavalian:2022hfa} lead to significant track reconstruction efficiency increase for current luminosity
-($0.6\times10^{35}$). The increase in experimentally measured quantities allows running experiments at more than 
-twice higher luminosity (at $1.6\times10^{35}$) with the same track reconstruction efficiency. This will lead to huge saving in accelerator 
-operational costs, and large savings for Jefferson Lab and collaborating institutions.
+luminosity experimental data collection. The de-noising neural network used in conjunction with the previously developed track 
+classifier neural network~\cite{Gavalian:2022hfa} lead to a significant track reconstruction efficiency increase for current luminosity
+($0.6\times10^{35}~cm^{-2}~sec^{-1}$ ). The increase in experimentally measured quantities will allow running experiments at twice 
+the luminosity with the same track reconstruction efficiency. This will lead to huge savings in accelerator operational costs, and large 
+savings for Jefferson Lab and collaborating institutions.
 \end{abstract}
 %\end{titlepage}
 \maketitle

@@ -70,7 +70,11 @@ public class Func1D implements DataSet {
     @Override
     public String getName(){return this.funcName;}
     
-    public void setParameters(double[] values){
+    /*public void setParameters(double[] values){
+        this.userPars.setParameters(values);
+    }*/
+    
+    public void setParameters(double... values){
         this.userPars.setParameters(values);
     }
     

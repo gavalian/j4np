@@ -62,7 +62,7 @@ public class TDirectory implements TreeProvider {
     }
      
     public DataSet get(String dir, String name){
-
+        
         if(dirList.containsKey(dir)==false){
             System.out.println("directory not found : " + dir); 
             return null;
@@ -76,7 +76,7 @@ public class TDirectory implements TreeProvider {
     }
     
     public DataSet get(String fullname){
-        int  index = fullname.lastIndexOf("/");
+        int   index = fullname.lastIndexOf("/");
         String  dir = fullname.substring(0, index);
         String name = fullname.substring(index+1, fullname.length());
         //System.out.printf(" dir [%s] \n name [%s]\n",dir,name);
@@ -161,7 +161,15 @@ public class TDirectory implements TreeProvider {
 
     @Override
     public void draw(String path, TGDataCanvas c) {
-        String  directory = path.replace("/root/", "/");
+        String  directory = path.replace("/root/", "");
+        System.out.println("\nDEBUG:");
+        System.out.println("path  = " + path);
+        System.out.println("looking for " + directory);
+        if(directory.startsWith("/")==true){
+            directory = directory.substring(1, directory.length());
+            System.out.println(" now looking for " + directory);
+        }
+        
         DataSet ds = this.get(directory);
         if(ds!=null){
             c.region().draw(ds); c.next();
@@ -181,7 +189,7 @@ public class TDirectory implements TreeProvider {
     }
     
     public void read(String filename){
-        List<String>  items = ArchiveUtils.getList(filename, "*");
+        List<String>  items = ArchiveUtils.getList(filename, ".*dataset");
         for(String item : items){
             int index = item.lastIndexOf("/");
             String    dir = item.substring(0, index);

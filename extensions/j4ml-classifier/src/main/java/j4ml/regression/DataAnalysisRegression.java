@@ -290,7 +290,13 @@ public class DataAnalysisRegression {
         String file2 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/mc_e2pi_hb.txt.pred.norm" ;
         String file3 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/data_e1p_hb.txt.pred.norm" ;
 //String file = "/Users/gavalian/Work/Software/project-10.4/data/res_data3/c_extract_regression_data_1n1p_hb_res_from_b.txt" ;
-        
+        String file4 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/xboost/c_extract_regression_data_1n1p_hb.txt.pred.norm.a";
+        String file5 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/xboost/c_extract_regression_data_1n1p_hb.txt.pred.norm.a.xgb";
+
+        String file6 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/xboost/c_extract_regression_data_1n1p_hb.txt.pred.norm.b";
+        String file7 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/xboost/c_extract_regression_data_1n1p_hb.txt.pred.norm.b.xgb";
+        String file8 = "/Users/gavalian/Work/Software/project-10.4/studies/regression/c_extract_regression_data_1n1p_hb.txt.pred.norm.xgb_n";
+        String file9 = "/Users/gavalian/Work/Software/project-10.4/studies/regression/c_extract_regression_data_1n1p_hb.txt.pred.norm.xgb_n2";
         //String file2 = "/Users/gavalian/Work/dataspace/pid/results/d_extract_regression_data_1n1p_hb.txt.pred.norm";
         DataAnalysisRegression ana = new DataAnalysisRegression();
         ana.directory = "/mc_e1p";
@@ -299,6 +305,24 @@ public class DataAnalysisRegression {
         ana.analyzeThree(file2, "inference.twig");
         ana.directory = "/data_e1p";
         ana.analyze(file3, "inference.twig");
+        
+        ana.directory = "/data_e1p_a";
+        ana.analyze(file4, "inference.twig");
+        
+        ana.directory = "/data_e1p_a_xgb";
+        ana.analyze(file5, "inference.twig");
+        
+        ana.directory = "/data_e1p_b";
+        ana.analyze(file6, "inference.twig");
+        
+        ana.directory = "/data_e1p_b_xgb";
+        ana.analyze(file7, "inference.twig");
+        
+        ana.directory = "/data_e1p_b_xgb_new";
+        ana.analyze(file8, "inference.twig");
+        
+        ana.directory = "/data_e1p_b_xgb_new_2";
+        ana.analyze(file9, "inference.twig");
         /*String data = """
                       """;
         */

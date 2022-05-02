@@ -5,12 +5,13 @@
  */
 package j4ml.clas12.data;
 
+import j4np.hipo5.data.Event;
+import j4np.hipo5.io.HipoReader;
+import j4np.utils.ProgressPrintout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.jlab.jnp.hipo4.data.Event;
-import org.jlab.jnp.hipo4.io.HipoChain;
-import org.jlab.jnp.utils.benchmark.ProgressPrintout;
+
 
 /**
  *
@@ -35,9 +36,9 @@ public class ExtractTracking {
     }
     
     public void processFile(List<String> list){
-        HipoChain chain = new HipoChain();
-        chain.addFiles(list);
-        chain.open();
+        HipoReader chain = new HipoReader();
+        //chain.addFiles(list);
+        chain.open(list.get(0));
         
         banks.init(chain);
         Event event = new Event();

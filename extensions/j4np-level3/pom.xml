@@ -4,10 +4,9 @@
 
   <groupId>j4ml</groupId>
   <artifactId>j4np-level3</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.4-SNAPSHOT</version>
   <packaging>jar</packaging>
     
-
 
   <properties>
 
@@ -65,7 +64,7 @@
     <dependency>
       <groupId>j4np</groupId>
       <artifactId>j4np-data</artifactId>
-      <version>1.0.2-SNAPSHOT</version>
+      <version>1.0.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jlab.coda</groupId>

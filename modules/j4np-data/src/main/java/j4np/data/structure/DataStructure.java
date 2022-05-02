@@ -5,7 +5,6 @@
  */
 package j4np.data.structure;
 
-import com.sun.tools.sjavac.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -320,8 +319,7 @@ public class DataStructure  extends BaseStructure {
         }
         
         public int getStructureLength(){ return structureLength; }
-        
-        
+                
         public void show(){
             
             System.out.printf(" structure : entries = %6d, length = %6d\n",
@@ -357,6 +355,7 @@ public class DataStructure  extends BaseStructure {
         
         DataStructure struct = new DataStructure("iiifffbsbsbs",40);
         struct.show();
+        
         /*DataStructureDescriptor desc = new DataStructureDescriptor();
         desc.init(new int[]{4,4,2,2,1,1},new int[]{4,4,2,2,1,1});
         desc.show();        

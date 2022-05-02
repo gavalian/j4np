@@ -110,9 +110,9 @@ public class EJMLModel {
     private static SimpleMatrix ApplySoftmax(SimpleMatrix input) {   // Credits to stanfordnlp
         SimpleMatrix output = new SimpleMatrix(input);
         for (int i = 0; i < output.numRows(); ++i)
-            for (int j = 0; j < output.numCols(); ++j)
+            for (int j = 0; j < output.numCols(); ++j){                
                 output.set(i, j, Math.exp(output.get(i, j)));
-
+            }                
         return output.scale(1.0 / output.elementSum());
     }
 
@@ -244,6 +244,23 @@ public class EJMLModel {
      * @param result output from the network
      */
     public void getOutput(float[] input, float[] result){
+        //System.out.println(" doing the thing " + this.ejmlModelType);
+        
+        if(ejmlModelType==ModelType.SOFTMAX){
+            feedForwardSoftmax(input, result);
+            /*if(this.ejmlModelType==ModelType.SOFTMAX){
+            boolean fix = false;
+            for(int i = 0; i < result.length; i++){
+                if(Float.isInfinite(result[i])||Float.isNaN(result[i])) fix = true;
+            }
+            
+            if(fix)
+                for(int i = 0; i < result.length;i++) result[i] = 0.0f;
+            result[0] = 1.0f;
+            }*/
+            return;  
+        } 
+        
         switch (this.ejmlModelType){
             
             case SOFTMAX: feedForwardSoftmax(input, result); return;
@@ -252,12 +269,7 @@ public class EJMLModel {
             
             default: feedForward(input, result);
         }
-        /*
-        if(this.ejmlModelType==ModelType.SOFTMAX){
-            this.feedForwardSoftmax(input, result); return;
-        }
-        this.feedForward(input, result);
-        */
+
     }
     
     public void feedForward(float[] input, float[] results) {
@@ -317,7 +329,7 @@ public class EJMLModel {
             else
                 matrix = elementwiseApplyReLU(matrix.mult(LAYERS[i]).plus(BIASES[i]));
         }
-
+        //System.out.println("doing the thing");
         for (int i = 0; i < matrix.numCols(); i++)
             results[i] = (float) matrix.get(0, i);
     }

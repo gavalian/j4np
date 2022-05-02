@@ -8,29 +8,35 @@ package j4ml.clas12.classifier;
 import j4ml.clas12.track.ClusterCombinations;
 import j4ml.clas12.track.ClusterStore;
 import j4ml.clas12.track.Track;
+import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Node;
+import j4np.hipo5.io.HipoReader;
+import j4np.hipo5.io.HipoWriter;
+import j4np.physics.Vector3;
+import j4np.utils.ProgressPrintout;
+import j4np.utils.io.OptionApplication;
 
 import j4np.utils.io.OptionExecutor;
 import j4np.utils.io.OptionParser;
+import j4np.utils.io.OptionStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.jlab.jnp.hipo4.data.Bank;
-import org.jlab.jnp.hipo4.data.Event;
-import org.jlab.jnp.hipo4.data.Node;
+import twig.data.AsciiPlot;
+import twig.data.H2F;
+import twig.data.Range;
 
-import org.jlab.jnp.hipo4.io.HipoChain;
-
-import org.jlab.jnp.hipo4.io.HipoWriterSorted;
-import org.jlab.jnp.utils.benchmark.ProgressPrintout;
-import org.jlab.jnp.utils.options.OptionStore;
 
 /**
  *
  * @author gavalian
  */
-public class ClassifierDataExtract implements OptionExecutor {
+public class ClassifierDataExtract extends OptionApplication {
+        
+        //implements OptionExecutor {
 
-    HipoWriterSorted writer = new HipoWriterSorted();
+    HipoWriter writer = new HipoWriter();
     
     Bank    tbCL = null;
     Bank    hbCL = null;
@@ -39,22 +45,40 @@ public class ClassifierDataExtract implements OptionExecutor {
     String  outputFileName = "data_extract_classifier.hipo";
     public int     binMaxWrite    = 75000;
     int[]   occupancy = new int[40];
+    H2F     occupancy2D = null;
+    
     int     activeEventTag = 0;
     
     
     public double pMinimum = 0.0;
     public double pMaximum = 0.0;
     
+    public Range  particleAngleRange = new Range(5.0,35.0);
+    
     public ClassifierDataExtract(){
+        super("clas12-ml");
+        OptionStore store = this.getOptionStore();
+        store.addCommand("-extract", "extract data for track ml algorithms");
+        store.getOptionParser("-extract").addRequired("-o",
+                 "output file name to write training data");   
+        store.getOptionParser("-extract").addOption("-max", "64000", "maximum number of tracks per momentum bin");
+        store.getOptionParser("-extract").addOption("-pmin",  "0.0", "minimum momentum");
+        store.getOptionParser("-extract").addOption("-pmax", "11.0", "maximum momentum");
+        
         for(int i = 0; i < occupancy.length; i++) occupancy[i] = 0;
     }
         
-    public void init(HipoChain chain){
+    public void init(HipoReader chain){
         writer.open(this.outputFileName);
         tbTR = chain.getBank("TimeBasedTrkg::TBTracks");
         //tbCL = chain.getBank("TimeBasedTrkg::TBClusters");
         tbCL = chain.getBank("HitBasedTrkg::HBClusters");
         hbCL = chain.getBank("HitBasedTrkg::HBClusters");        
+    }
+    
+    
+    public void initOccupancyContainer(){        
+        this.occupancy2D = new H2F("occ",40,0.5,40.5,24,5.0,35.0);
     }
     
     public static float[] toFloat(List<Float> list){
@@ -163,7 +187,7 @@ public class ClassifierDataExtract implements OptionExecutor {
     public List<Track>  getTracksSelected(List<Track> tracks){
         List<Track> list = new ArrayList<>();
         for(Track tr : tracks){
-            if(tr.chi2<10&&tr.vertex.z()>-25&&tr.vertex.z()<35&&tr.complete()) list.add(tr);
+            if(tr.chi2<10&&tr.vertex.z()>-50&&tr.vertex.z()<50&&tr.complete()) list.add(tr);
         }
         return list;
     }
@@ -214,19 +238,35 @@ public class ClassifierDataExtract implements OptionExecutor {
         List<Track>  trkList = Track.read(tbTR,tbCL);
         
         List<Track>  trkSector = this.getTracksForSector(trkList, sector);
+        
         if(trkSector.size()==1){
-            List<Track> trkSelect = this.getTracksSelected(trkSector);            
+            List<Track> trkSelect = this.getTracksSelected(trkSector);
+            
             if(trkSelect.size()==1){
+                
                 int  charge = trkSelect.get(0).charge;
                 double  mom = trkSelect.get(0).vector.mag();
+                Vector3 trkVec = trkSelect.get(0).vector;
+                
                 int bin = ClassifierDataExtract.getTrackBin(trkSelect.get(0),this.pMinimum,this.pMaximum);
-                int chargeBin = bin+1;                                  
+                int chargeBin = bin+1;
                 if(charge<0) chargeBin += 20;
-                if(chargeBin>=1&&chargeBin<=40){
+                int thetaBin = this.occupancy2D.getYAxis().getBin(
+                        Math.toDegrees(trkVec.theta())
+                );
+                
+                if(chargeBin>=1&&chargeBin<=40&&thetaBin>=0&&thetaBin<24){
+                    
+                    int bc =  (int) occupancy2D.getBinContent(chargeBin-1, thetaBin);
+                    
+                    
                     occupancy[chargeBin-1] = occupancy[chargeBin-1] + 1;
+                    
                     boolean writeStatus = true;
                     if(occupancy[chargeBin-1]>this.binMaxWrite) writeStatus=false;
+                    //if(bc>this.binMaxWrite) writeStatus=false;
                     if(writeStatus==true){
+                        occupancy2D.setBinContent(chargeBin-1, thetaBin, bc+1);
                         //System.out.println(">>> " + trkSelect.get(0));
                         List<Node> trkNodes = ClassifierDataExtract.getNode(trkSelect.get(0));                        
                         result.addAll(clusters);
@@ -247,47 +287,57 @@ public class ClassifierDataExtract implements OptionExecutor {
         writer.close();
     }
     
-    public static void processFiles(List<String> files, double min, double max, int nevents){
-        HipoChain chain = new HipoChain();
-        chain.addFiles(files);
-        chain.open();
+    public static void processFiles(List<String> files, String output, double min, double max, int nevents){
+        HipoReader chain = new HipoReader();
+        
+        //chain.addFiles(files);
+        chain.open(files.get(0));
         
         ClassifierDataExtract ce = new ClassifierDataExtract();
+        ce.outputFileName = output;
         ce.binMaxWrite = nevents;
         ce.pMinimum = min;
         ce.pMaximum = max;
+        
         ce.init(chain);
+        ce.initOccupancyContainer();
         Event    event = new Event();
         Event outEvent = new Event();
         int counter = 0;
         int counterWrite = 0;
         ProgressPrintout progress = new ProgressPrintout();
-        
-        while(chain.hasNext()==true){
-            
-            progress.updateStatus();
-            chain.nextEvent(event);
-            for(int s = 1; s <= 6; s++){
-                List<Node> nodes =  ce.processEvent(event, s);
-                if(nodes.size()>0){
-                    outEvent.reset();
+        for(int k = 0; k < files.size(); k++){
+            chain = new HipoReader(files.get(k));
+            while(chain.hasNext()==true){
+                
+                progress.updateStatus();
+                chain.nextEvent(event);
+                for(int s = 1; s <= 6; s++){
+                    List<Node> nodes =  ce.processEvent(event, s);
+                    if(nodes.size()>0){
+                        outEvent.reset();
                     for(Node node : nodes)
                         outEvent.write(node);                    
                     ce.write(outEvent, ce.getActiveTag());
                     
                     counterWrite++;
+                    }
                 }
+                counter++;            
             }
-            counter++;            
         }
         ce.close();
+        
+        //AsciiPlot.setSize(80, 25);
+        //AsciiPlot.draw(ce.occupancy2D.projectionX());
+        //AsciiPlot.draw(ce.occupancy2D.projectionY());
         System.out.printf("extracted %d / %d (%.2f ) \n",counterWrite,counter,( (double) counterWrite*100)/counter);
     }
     
     public static void processFiles(List<String> files){
-        HipoChain chain = new HipoChain();
-        chain.addFiles(files);
-        chain.open();
+        HipoReader chain = new HipoReader();
+        //chain.addFiles(files);
+        chain.open(files.get(0));
         
         ClassifierDataExtract ce = new ClassifierDataExtract();
         ce.init(chain);
@@ -317,7 +367,7 @@ public class ClassifierDataExtract implements OptionExecutor {
         ce.close();
         System.out.printf("extracted %d / %d (%.2f ) \n",counterWrite,counter,( (double) counterWrite*100)/counter);
     }
-    
+    /*
     @Override
     public void execute(String[] args) {
         
@@ -337,7 +387,7 @@ public class ClassifierDataExtract implements OptionExecutor {
         int nevents = parser.getOption("-n").intValue();
         
         ClassifierDataExtract.processFiles(inputs, pmin,  pmax, nevents);
-    }
+    }*/
     
     public static void main(String[] args){
         List<String> files = new ArrayList<>();
@@ -476,6 +526,32 @@ public class ClassifierDataExtract implements OptionExecutor {
         writer.close();
         }
 */
+    }
+
+    @Override
+    public String getDescription() {
+        return "Applications to deal with CLAS12 AI/ML needs\n"
+                + "  inclding extracting data for training, training and testing....."; 
+    }
+
+    @Override
+    public boolean execute(String[] args) {
+        OptionStore store = this.getOptionStore();
+        
+        store.parse(args);
+        if(store.getCommand().compareTo("-extract")==0){
+            ClassifierDataExtract.processFiles(
+                    store.getOptionParser("-extract").getInputList(),
+                    store.getOptionParser("-extract").getOption("-o").stringValue(),
+                    store.getOptionParser("-extract").getOption("-pmin").doubleValue(),
+                    store.getOptionParser("-extract").getOption("-pmax").doubleValue(),
+                    store.getOptionParser("-extract").getOption("-max").intValue());
+                    /*.extract(
+                    store.getOptionParser("-extract").getOption("-o").stringValue(), 
+                    store.getOptionParser("-extract").getInputList(),
+                    store.getOptionParser("-extract").getOption("-max").intValue());*/
+        }
+        return true;
     }
 
     

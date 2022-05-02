@@ -32,6 +32,10 @@ public class DeepNettsEncoder {
     FeedForwardNetwork        neuralNet = null;
     BackpropagationTrainer     trainer  = null;
     private ActivationType    lastLayer = ActivationType.SIGMOID;
+    private ActivationType  hiddenLayer = ActivationType.RELU;
+    private LossType       lossFunction = LossType.MEAN_SQUARED_ERROR;
+    private OptimizerType     optimizer = OptimizerType.SGD;
+    private int               printout  = 12;
     
     public DeepNettsEncoder(){}
     
@@ -47,16 +51,26 @@ public class DeepNettsEncoder {
         this.init(layers);
     }
     
+    public DeepNettsEncoder  setHiddenActivation(ActivationType type){
+        hiddenLayer = type; return this;
+    }
+    
+    public DeepNettsEncoder  setLossType(LossType type){
+        this.lossFunction = type; return this;
+    }
+    
+    public void setPrintout(int pi){printout = pi;}
+    
     public final void init(int[] layers){
         FeedForwardNetwork.Builder b = FeedForwardNetwork.builder();
         b.addInputLayer(layers[0]);
         
         for(int i = 1; i < layers.length-1; i++){
-            b.addFullyConnectedLayer(layers[i], ActivationType.RELU);
+            b.addFullyConnectedLayer(layers[i], this.hiddenLayer);
         }
         
         b.addOutputLayer(layers[layers.length-1],lastLayer)
-                .lossFunction(LossType.MEAN_SQUARED_ERROR)
+                .lossFunction(this.lossFunction)
                 .randomSeed(456);
         
         neuralNet = b.build();
@@ -67,7 +81,6 @@ public class DeepNettsEncoder {
         trainer.setMaxError(0.000004f);
         trainer.setLearningRate(0.01f);
         trainer.setMomentum(0.9f);
-        
         trainer.setOptimizer(OptimizerType.SGD);
         trainer.setMaxEpochs(2000);
         
@@ -170,6 +183,7 @@ public class DeepNettsEncoder {
         System.out.println("adding listener ");
         
         DeepNettsClassifier.ProgressListener pl = new DeepNettsClassifier.ProgressListener(nEpochs);
+        pl.setPrintoutInterval(this.printout);
         
         LogManager.shutdown();
         
@@ -199,8 +213,14 @@ public class DeepNettsEncoder {
         this.evaluate(file, set);
     }
     
-    public DataList evaluate(DataList ds){
-        DataList p = new DataList();
+    public void evaluate(DataList ds){
+        
+        for(int i = 0; i < ds.getList().size(); i++){
+            float[]  input  = ds.getList().get(i).floatFirst();
+            float[]  output = neuralNet.predict(input);
+            ds.getList().get(i).setInfered(output);
+        }
+       /* DataList p = new DataList();
         DataSet set = this.convert(ds);
         Iterator iter = set.iterator();
         
@@ -212,8 +232,8 @@ public class DeepNettsEncoder {
             double[]  first = DataArrayUtils.toDouble(input);
             double[] second = DataArrayUtils.toDouble(output);
             p.add(new DataEntry(first,second));
-        }
-        return p;
+        }*/
+        //return p;
     }
     
     public void test(DataList ds){

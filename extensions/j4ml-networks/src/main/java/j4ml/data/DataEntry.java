@@ -48,6 +48,11 @@ public class DataEntry {
        return data;
     }
     
+    public final double[] getInferedDouble(){ 
+        double[] l = new double[infered.length];
+        for(int i = 0; i < l.length;i++) l[i] = infered[i];
+        return l;
+    }
     
     public final float[] getInfered(){ return infered;}
     
@@ -81,6 +86,10 @@ public class DataEntry {
             System.out.print(DataArrayUtils.floatToString(first," ") );        
         System.out.print(" => ");
         if(second!=null) System.out.print(DataArrayUtils.floatToString(second," "));
+        if(infered!=null) {
+            System.out.print(" :::: ");
+            System.out.print(DataArrayUtils.floatToString(infered," "));
+        }
         System.out.println();
     }
     

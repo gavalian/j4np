@@ -95,7 +95,7 @@ public class DataAttributesEditorPanel extends JPanel {
     }
     
     private void initFill(){
-        JSpinner fs = DataEditorUtils.makeSpinner(attr.getFillStyle(), -2, 15);
+        JSpinner fs = DataEditorUtils.makeSpinner(attr.getFillStyle(), -2, 25);
         JSpinner fc = DataEditorUtils.makeSpinner(attr.getFillColor(), -2, Integer.MAX_VALUE);
         
         fs.addChangeListener(new ChangeListener(){

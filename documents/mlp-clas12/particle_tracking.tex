@@ -22,7 +22,7 @@ of the activated cells in the two super-layers of one region along the track tra
 Particles that originate at the interaction vertex travel through the magnetic field and pass through all 
 three regions of the drift chambers in a given sector are reconstructed by tracking algorithms. First, 
 in each super-layer adjacent wires with a signal are grouped together into clusters (called segments), 
-shown on Figure~\ref{dc:side_view}. The positions of these clusters (segments) in each super-layer 
+shown in Figure~\ref{dc:side_view}. The positions of these clusters (segments) in each super-layer 
 are used to fit the track trajectory to derive initial parameters, such as momentum and direction. 
 After the initial selection, good track candidates are passed through Kalman filter~\cite{Kalman1960} 
  to further refine measured parameters.
@@ -45,13 +45,13 @@ were determined to be part of a track.
 
 Due to inefficiencies in the drift chambers, it is possible to have one missing segment along the trajectory 
 of the particle, and the track has to be reconstructed using only 5 segments. An example of a 5-segment 
-track is shown on Figure~\ref{dc:events_sector} c), where super-layer 3 does not have any segment detected. 
+track is shown in Figure~\ref{dc:events_sector} c), where super-layer 3 does not have any segment detected. 
 For these types of tracks, candidates have to be identified from a large number of combinatorics consisting 
-of all combinations of clusters that form a  5-segment candidates. 
+of all combinations of clusters that form 5-segment candidates. 
 
 Tracking is computationally intensive and makes up $80\%-90\%$ of the total CLAS12 event processing 
 time (depending on background conditions and track multiplicity). The procedure of finding tracks from a 
-list of track candidates is where we found AI can provide real benefits. Such benefits include: improved 
-accuracy in identifying good tracks, and improved data processing speed by significantly reducing the 
-number of candidates that have to go through initial fitting and then through Kalman filter. AI can also 
+list of track candidates is where we found AI can provide real benefits. Such benefits include improved 
+accuracy in identifying good tracks and improved data processing speed by significantly reducing the 
+number of candidates that have to go through initial fitting and then through the Kalman filter. AI can also 
 help in identifying 5 super-layer track candidates.

@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
+import java.util.Timer;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -25,6 +26,8 @@ import org.jfree.pdf.PDFGraphics2D;
 import org.jfree.pdf.Page;
 import twig.config.TStyle;
 import twig.data.DataSet;
+import twig.data.H1F;
+import twig.data.H2F;
 import twig.editors.CanvasEditorPanel;
 import twig.editors.DataCanvasEditorDialog;
 import twig.studio.TwigStudio;
@@ -35,7 +38,7 @@ import twig.widgets.PaveText;
  * @author gavalian
  */
 public class TGDataCanvas extends Canvas2D implements ActionListener {
-    
+
     private int activeRegion = 0;
     private CanvasPopupProvider popupProvider = null;//new CanvasPopupProvider();
     private boolean drawRegionsEmpty = false;
@@ -111,6 +114,19 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
 
         return this;
     }  
+    /*
+    public void initTimer(int interval) {
+        System.out.println("[EmbeddedCanvas] ---->  starting an update timer.");
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                update();
+              
+            }
+        };
+        updateTimer = new Timer("EmbeddeCanvasTimer");
+        updateTimer.scheduleAtFixedRate(timerTask, 30, interval);
+    }*/
     
     public TGDataCanvas addLabels(double x, double y, char start){
         int nRegions = this.count();
@@ -297,6 +313,38 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             }
         }
         
+        if(e.getActionCommand().compareTo("projection_x")==0){
+            if(popupProvider.region!=null){
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                if(obj.get(0).getDataSet() instanceof H2F){
+                    TGCanvas c = new TGCanvas("canvas",500,500,false); 
+                    H1F h = ((H2F)obj.get(0).getDataSet()).projectionX();
+                    c.view().region().draw(h);
+                }
+            }
+        }
+        if(e.getActionCommand().compareTo("projection_y")==0){
+            if(popupProvider.region!=null){
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                if(obj.get(0).getDataSet() instanceof H2F){
+                    TGCanvas c = new TGCanvas("canvas",500,500,false); 
+                    H1F h = ((H2F)obj.get(0).getDataSet()).projectionY();
+                    c.view().region().draw(h);
+                }
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("profile_x")==0){
+            if(popupProvider.region!=null){
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                if(obj.get(0).getDataSet() instanceof H2F){
+                    TGCanvas c = new TGCanvas("canvas",500,500,false); 
+                    H1F h = ((H2F)obj.get(0).getDataSet()).profileX();
+                    c.view().region().draw(h);
+                }
+            }
+        }
+        
         if(e.getActionCommand().compareTo("Copy Region")==0){
             if(popupProvider.region!=null){
                 List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
@@ -461,6 +509,13 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             this.addMenuItem(menu, "Copy Region");
             this.addMenuItem(menu, "Paste Region");
             
+            menu.add(new JSeparator());
+            this.addMenu(menu, "Data", 
+                    new String[]{"Projection X","Projection Y",
+                        "Profile X", "Profile Y"}, 
+                    new String[]{"projection_x","projection_y",
+                        "profile_x","profile_y"}
+            );
             menu.add(new JSeparator());
             
             this.addMenu(menu, "Export", 

@@ -122,6 +122,12 @@ public class ProgressPrintout {
         return str.toString();
     }
     
+    public static String processRateNano(int count, long then, long now){
+        double time = (now-then)*1e-6;
+        double rate = time/count;
+        return String.format("time = %.4f ms, rate = %.4f ms/event", time,rate);
+    }
+    
     public static void main(String[] args){
         ProgressPrintout  progress = new ProgressPrintout();
         int loop = 0;

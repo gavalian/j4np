@@ -13,6 +13,7 @@ import j4np.hipo5.base.RecordOutputStream;
 import j4np.hipo5.base.Writer;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Node;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
 import java.io.File;
@@ -36,7 +37,9 @@ public class HipoWriter implements DataSync {
     private int         compressionType = 1;
     
     private final SchemaFactory schemaFactory = new SchemaFactory();
-    
+
+    private List<Event>   headerEvents = new ArrayList<>();
+
     private final  Map<Long,RecordOutputStream> outputStreams = new HashMap<>();
     private final  RecordOutputStream     defaultOutputStream = new RecordOutputStream();
             
@@ -88,6 +91,15 @@ public class HipoWriter implements DataSync {
         return flag;
     }
     
+    public void addConfig(String jsonString){
+        Node n = new Node(HipoUtilsIO.HEADER_NODE_GROUP,
+                HipoUtilsIO.HEADER_NODE_ITEM,jsonString);
+        Event e = new Event();
+        e.write(n);
+        headerEvents.add(e);
+    }
+    
+    @Override
     public final boolean open(String filename){
         
         writer = new Writer( HeaderType.HIPO_FILE, // this write HIPO in the 
@@ -108,6 +120,21 @@ public class HipoWriter implements DataSync {
             record.addEvent(schemaEvent.getEventBuffer().array(), 
                     0, schemaEvent.getEventBufferSize());
         }
+        
+        int counter = 0;
+        for(int loop = 0; loop < headerEvents.size(); loop++){
+            boolean status = record.addEvent(headerEvents.get(loop).getEventBuffer().array(), 
+                    0, headerEvents.get(loop).getEventBufferSize());
+            if(status==false){
+                System.err.println("::: error >> appending header event #"+loop+" failed.");
+            } else {
+                counter++;
+            }
+        }
+        System.out.println("::: writer >>  opened hipo5 output : " + filename);
+        System.out.println("::: writer >>      header appended : " + counter);
+        System.out.println("::: writer >>  dictionary appended : " + dictionarySize);
+        
         record.getHeader().setCompressionType(0);
         record.build();
         ByteBuffer buffer = record.getBinaryBuffer();
@@ -119,9 +146,11 @@ public class HipoWriter implements DataSync {
         System.arraycopy(buffer.array(), 0, userHeader, 0, userHeader.length);
         //writer.open(filename,userHeader);
         //writer.open(filename);
+        
         if(this.rewriteMode.compareToIgnoreCase("recreate")==0){
             writer.setRewriteMode(true);
         }
+        
         writer.open(filename,userHeader); return true;
     }
     
@@ -237,14 +266,14 @@ public class HipoWriter implements DataSync {
         double timeCopy = ((double) statsTimeEventCopy)/1_000_000_000;
         double timeComp = ((double) statsTimeCompression)/1_000_000_000;
         double ratio    = ((double) statsBytesCompressed)/statsBytesWritten;
-        System.out.println("**");
-        System.out.printf("Writer<5>: number of tags         : %14d\n",this.outputStreams.size()+1);
-        System.out.printf("Writer<5>: number of events       : %14d\n",this.statsNumberOfEvents);
-        System.out.printf("Writer<5>: bytes written    (byte): %14d\n",this.statsBytesWritten);
-        System.out.printf("Writer<5>: bytes compressed (byte): %14d\n",this.statsBytesCompressed);
-        System.out.printf("Writer<5>: compression ratio      : %14.4f\n",ratio);        
-        System.out.printf("Writer<5>: time event copy   (sec): %14.3f\n",timeCopy);
-        System.out.printf("Writer<5>: time compression  (sec): %14.3f\n",timeComp);        
+        System.out.println("***");
+        System.out.printf(":: writer<5>: number of tags         : %14d\n",this.outputStreams.size()+1);
+        System.out.printf(":: writer<5>: number of events       : %14d\n",this.statsNumberOfEvents);
+        System.out.printf(":: writer<5>: bytes written    (byte): %14d\n",this.statsBytesWritten);
+        System.out.printf(":: writer<5>: bytes compressed (byte): %14d\n",this.statsBytesCompressed);
+        System.out.printf(":: writer<5>: compression ratio      : %14.4f\n",ratio);        
+        System.out.printf(":: writer<5>: time event copy   (sec): %14.3f\n",timeCopy);
+        System.out.printf(":: writer<5>: time compression  (sec): %14.3f\n",timeComp);        
         System.out.println("***");
     }
 

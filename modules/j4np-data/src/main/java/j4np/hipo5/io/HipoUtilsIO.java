@@ -16,6 +16,14 @@ import j4np.hipo5.data.Schema;
  * @author gavalian
  */
 public class HipoUtilsIO {
+    
+    public static int dictNodeGroup = 120;
+    public static int dictNodeItem  = 1;
+    
+    public static int HEADER_NODE_GROUP = 32555;
+    public static int HEADER_NODE_ITEM  = 2;
+    public static int HEADER_NODE_ITEM_KEY  = 1;
+    
     /**
      * Creates a Schema for storing file index.
      * @return Schema defining the bank structure

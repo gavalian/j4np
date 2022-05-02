@@ -5,15 +5,16 @@
  */
 package j4ml.clas12.data;
 
+import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.io.HipoReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jlab.jnp.hipo4.data.Bank;
-import org.jlab.jnp.hipo4.data.Event;
-import org.jlab.jnp.hipo4.io.HipoChain;
+
 
 /**
  *
@@ -28,7 +29,7 @@ public class BankStore {
         bankList.addAll(Arrays.asList(banks));
     }
     
-    public void init(HipoChain chain){
+    public void init(HipoReader chain){
         for(String bank : bankList){
             if(chain.getSchemaFactory().hasSchema(bank)==false){
                 System.out.printf("(error) -> bank with name %s does not exist.",bank);

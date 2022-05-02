@@ -12,6 +12,11 @@ import twig.widgets.LatexText.TextAlign;
 import twig.graphics.*;
 import twig.config.*;
 //--------------------------------------
+// Utils import
+//--------------------------------------
+import j4np.utils.*;
+import j4np.utils.base.*;
+//--------------------------------------
 // Imports for Physics libraries
 //--------------------------------------
 import j4np.physics.*;

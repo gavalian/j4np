@@ -5,16 +5,16 @@
  */
 package j4ml.clas12.track;
 
+import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.io.HipoReader;
+import j4np.utils.ProgressPrintout;
 import j4np.utils.io.DataArrayUtils;
+import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.jlab.jnp.hipo4.data.Bank;
-import org.jlab.jnp.hipo4.data.Event;
-import org.jlab.jnp.hipo4.io.HipoChain;
-import org.jlab.jnp.hipo4.io.HipoReader;
-import org.jlab.jnp.readers.TextFileWriter;
-import org.jlab.jnp.utils.benchmark.ProgressPrintout;
+
 
 /**
  *
@@ -81,7 +81,7 @@ public class TrackBanks {
         return sector;
     }
     
-    public void init(HipoChain reader){
+    public void init(HipoReader reader){
        bankList.clear();
        bankList.add(reader.getBank(hitsBankName));
        bankList.add(reader.getBank(clustersBankName));
@@ -415,10 +415,10 @@ public class TrackBanks {
             }
         }
         
-        HipoChain chain = new HipoChain();
+        HipoReader chain = new HipoReader();
         //chain.addFile("/Users/gavalian/Work/DataSpace/ml/rec_clas_005038.evio.00055-00059.hipo");
-        chain.addFiles(files);
-        chain.open();
+        //chain.addFiles(files);
+        chain.open(files.get(0));
         
         TrackBanks tracks = new TrackBanks();
         

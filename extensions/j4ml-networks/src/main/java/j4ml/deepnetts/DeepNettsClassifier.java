@@ -20,6 +20,7 @@ import deepnetts.net.train.opt.OptimizerType;
 import deepnetts.util.FileIO;
 import j4ml.data.DataEntry;
 import j4ml.data.DataList;
+import j4ml.ejml.EJMLModel;
 import j4np.utils.io.DataArrayUtils;
 
 import j4np.utils.io.TextFileWriter;
@@ -119,10 +120,86 @@ public class DeepNettsClassifier {
         return str.toString();
     }
 
+    public void fromNetworkStream(List<String> stream){
+        
+    }
+    
+    public String  getJson(){
+        StringBuilder str = new StringBuilder();
+        str.append("{\n\"layers\": ");
+
+        int  nLayers = neuralNet.getLayers().size();
+        int[] layers = new int[nLayers];
+        
+        for(int i = 0; i < nLayers; i++){
+            layers[i] = neuralNet.getLayers().get(i).getWidth();
+            neuralNet.getLayers().get(i).init();
+        }
+        
+        str.append(toArray(layers));
+        str.append(",\n");
+        str.append("\"weights\": [\n");
+        for(int i = 1; i < nLayers; i++) 
+        {
+            if(i!=1) str.append(",\n");
+            //Tensor t = neuralNet.getLayers().get(i).getWeights();
+            //System.out.println( i + " + " + (t==null));
+            str.append(toArray(neuralNet.getLayers().get(i).getWeights().getValues()));
+            //str.append("\n");
+            //layers[i] = neuralNet.getLayers().get(i).getWidth();
+        }
+        str.append("\n],\n");
+        
+        str.append("\"biases\": [\n");
+        for(int i = 1; i < nLayers; i++) 
+        {
+            if(i!=1) str.append(",\n");
+            //Tensor t = neuralNet.getLayers().get(i).getWeights();
+            //System.out.println( i + " + " + (t==null));
+            str.append(toArray(neuralNet.getLayers().get(i).getBiases()));
+            //str.append("\n");
+            //layers[i] = neuralNet.getLayers().get(i).getWidth();
+        }
+        str.append("\n]\n");
+        
+        str.append("}\n");
+        return str.toString();
+    }
+    public String  toArray(int[] array){
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for(int i = 0; i < array.length; i++){
+            if(i!=0) str.append(",");
+            str.append(array[i]);
+        } str.append("]");
+        return str.toString();
+    }
+    
+    public String  toArray(float[] array){
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for(int i = 0; i < array.length; i++){
+            if(i!=0) str.append(",");
+            str.append(String.format("%e", array[i]));
+        } str.append("]");
+        return str.toString();
+    }
+    
+    public String  toArray(double[] array){
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for(int i = 0; i < array.length; i++){
+            if(i!=0) str.append(",");
+            str.append(String.format("%e", array[i]));
+        } str.append("]");
+        return str.toString();
+    }
+    
     public List<String>  getNetworkStream(){
         
         List<String> stream = new ArrayList<String>();
         int nLayers = neuralNet.getLayers().size();
+        
         for(int i = 1; i < nLayers; i++){
             //System.out.println(neuralNet.getLayers().get(i-1).getWidth()
             //        +","+neuralNet.getLayers().get(i).getWidth());
@@ -265,6 +342,8 @@ public class DeepNettsClassifier {
         public ProgressListener(int me){
             maxEpochs = me;
         }
+        
+        public void setPrintoutInterval(int pi){ this.printoutInterval = pi;}
         
         public String statusString(BackpropagationTrainer tr){
             return String.format(" [%5d/%5d], loss = %e , accuracy = %12.8f",

@@ -34,7 +34,7 @@ public class Level3Decoder implements InputDataStream {
     private int             nthreads = 2;
     private int                delay = 2000;
     
-    DataFrame<EvioFile,DecoderEvent> frame = new DataFrame();
+    DataFrame<DecoderEvent> frame = new DataFrame();
     private DataSource   dataSource = null;
     
     //private EtDataSource   dataSource = null;

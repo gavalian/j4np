@@ -68,6 +68,7 @@ public class HipoReader implements DataSource {
     protected List<Long>  readerTags = new ArrayList<Long>();
     
     private SchemaFactory  schemaFactory = new SchemaFactory();
+    private List<String>   configFactory = new ArrayList<>();
     
     public HipoReader(){
         
@@ -98,6 +99,7 @@ public class HipoReader implements DataSource {
     }*/
 
     
+    @Override
     public final void open(String filename) {
         try { 
             inStreamRandom = new RandomAccessFile(filename,"r");

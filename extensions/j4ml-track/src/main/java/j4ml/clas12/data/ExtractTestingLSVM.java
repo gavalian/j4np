@@ -9,10 +9,10 @@ import j4ml.clas12.track.ClusterCombinations;
 import j4ml.clas12.track.ClusterStore;
 import j4ml.clas12.track.DCSector;
 import j4ml.clas12.track.Track;
+import j4np.hipo5.data.Bank;
 import java.util.List;
 import java.util.Random;
-import org.jlab.jnp.hipo4.data.Bank;
-import org.jlab.jnp.readers.TextFileWriter;
+
 
 /**
  *

@@ -10,15 +10,19 @@ import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import twig.data.DataVector;
+import twig.data.H1F;
+import twig.tree.Tree;
 
 /**
  *
  * @author gavalian
  */
-public class DataList {
+public class DataList extends Tree {
     
-    private List<DataEntry> dataList = new ArrayList<>();
-    private int       dataShowLimit = 10;
+    private List<DataEntry>  dataList = new ArrayList<>();
+    private int         dataShowLimit = 10;
+    private int      iteratorPosition = 0;
     
     public DataList(){
         
@@ -259,7 +263,93 @@ public class DataList {
         }
     }
 
+    public H1F diff(int label){
+        DataVector x = new DataVector();
+        for(int i = 0; i < getList().size(); i++){
+            if(this.getList().get(i).getInfered()!=null){
+                x.add(getList().get(i).getInfered()[label]-getList().get(i).getSecond()[label]);
+            }
+        }
+        H1F h = H1F.create("label_"+label, 100, x);
+        return h;
+    }
     
+    public H1F diff(int label, boolean norm){
+        DataVector x = new DataVector();
+        for(int i = 0; i < getList().size(); i++){
+            if(this.getList().get(i).getInfered()!=null){
+                double value = getList().get(i).getInfered()[label]-getList().get(i).getSecond()[label];
+                if(norm==true&&getList().get(i).getSecond()[label]!=0.0){
+                    x.add(value/getList().get(i).getSecond()[label]);
+                }
+            }
+        }
+        H1F h = H1F.create("label_"+label, 100, x);
+        return h;
+    }
+    
+    public H1F label(int label){
+        DataVector x = new DataVector();
+        for(int i = 0; i < getList().size(); i++){
+            x.add(getList().get(i).getSecond()[label]);
+        }
+        H1F h = H1F.create("label_"+label, 100, x);
+        return h;
+    }
+
+    @Override
+    public double getValue(int order) {
+        double[] first = dataList.get(this.iteratorPosition).getFirst();
+        int nsize = first.length;
+        if(order<nsize) return first[order];
+        
+        int index = order - first.length;
+        return dataList.get(this.iteratorPosition).getSecond()[index];
+    }
+
+    @Override
+    public double getValue(String branch) {
+        int order = this.getBranchOrder(branch);
+        return this.getValue(order);
+    }
+
+    @Override
+    public List<String> getBranches() {
+        List<String> branches = new ArrayList<>();
+        int  n_inputs = this.dataList.get(this.iteratorPosition).getFirst().length;
+        int n_outputs = this.dataList.get(this.iteratorPosition).getSecond().length;
+        for(int i = 0; i <  n_inputs; i++) branches.add("i"+i);
+        for(int i = 0; i < n_outputs; i++) branches.add("o"+i);
+        return branches;
+    }
+    
+    @Override
+    public int getBranchOrder(String name) {
+        if(name.startsWith("i")==true){
+            int number = Integer.parseInt(name.replace("i", ""));
+            return number;
+        } 
+        int shift = Integer.parseInt(name.replace("o", ""));
+        return shift + this.dataList.get(this.iteratorPosition).getFirst().length;
+    }
+    
+
+    @Override
+    public void reset() {
+        this.iteratorPosition = 0;
+    }
+
+    @Override
+    public boolean next() {
+        if(iteratorPosition>=(dataList.size()-1)) return false;
+        iteratorPosition++;
+        return true;
+    }
+
+    @Override
+    public void configure() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public static class DataRange {
         

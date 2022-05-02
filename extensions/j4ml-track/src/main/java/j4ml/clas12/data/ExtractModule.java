@@ -7,12 +7,13 @@ package j4ml.clas12.data;
 
 import j4ml.clas12.track.DCSector;
 import j4ml.clas12.track.Track;
+import j4np.hipo5.data.Bank;
 import j4np.utils.io.LSVMFileReader;
+import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.jlab.jnp.hipo4.data.Bank;
-import org.jlab.jnp.readers.TextFileWriter;
+
 
 /**
  *

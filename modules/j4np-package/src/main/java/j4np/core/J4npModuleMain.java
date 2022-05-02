@@ -121,8 +121,9 @@ public class J4npModuleMain {
             try {
                 Class clazz = Class.forName(clazzName);
                 OptionApplication app = (OptionApplication) clazz.newInstance();
+                System.out.println(":: "  );
                 System.out.println("---> " + clazz);
-                System.out.printf("%s : %s \n" , app.getAppName(), app.getDescription());
+                System.out.printf("\n%s : %s \n" , app.getAppName(), app.getDescription());
                 
                 appMap.put(app.getAppName(), app);
             } catch (ClassNotFoundException ex) {
@@ -137,19 +138,22 @@ public class J4npModuleMain {
         List<String>  configList = J4npModuleMain.getClassConfig();
         
         for(String clazzName : configList){
+            
             try {
+                
                 Class clazz = Class.forName(clazzName);
                 OptionApplication app = (OptionApplication) clazz.newInstance();
+                System.out.println(":: "  );
                 System.out.println("---> " + clazz);
-                System.out.printf("%s : %s \n" , app.getAppName(), app.getDescription());
+                System.out.printf("\n%s : %s \n" , app.getAppName(), app.getDescription());
                 
                 appMap.put(app.getAppName(), app);
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InstantiationException ex) {
-                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return appMap;

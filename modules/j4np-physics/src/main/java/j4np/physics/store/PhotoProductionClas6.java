@@ -32,6 +32,8 @@ public class PhotoProductionClas6 extends PhysicsReaction {
         this.addVector("[211]+[-211]");
         this.addVector("[5000]+[5001]-[211]-[-211]");
         this.addVector("[5000]+[5001]-[2212]-[211]-[-211]");
+        this.addVector("[5001]-[2212]");
+        this.addVector("[2212]+[211]+[-211]");
         
         this.addEntry("gamma",   0, VectorOperator.OperatorType.P);
         
@@ -49,7 +51,9 @@ public class PhotoProductionClas6 extends PhysicsReaction {
         this.addEntry("mxpk0p",   3, VectorOperator.OperatorType.P);
         this.addEntry("mxpk0th",  3, VectorOperator.OperatorType.THETA);
         this.addEntry("mxpk0phi", 3, VectorOperator.OperatorType.PHI);
-                
+        this.addEntry("mt",       4, VectorOperator.OperatorType.MASS2);
+        this.addEntry("mppipi",   5, VectorOperator.OperatorType.MASS);        
+        
     }
     
     @Override

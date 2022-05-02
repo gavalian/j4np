@@ -29,6 +29,11 @@ public class Range {
             rangeMax = min;
         }
     }
+    
+    public boolean contains(double value){
+        return (value>=rangeMin&&value<=rangeMax);
+    }
+    
     public double length(){ return (rangeMax - rangeMin);}
     
     public double min(){ return rangeMin;}

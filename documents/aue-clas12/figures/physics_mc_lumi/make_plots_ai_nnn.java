@@ -88,13 +88,14 @@ c.view().region(4).setBlank();
 c.repaint();
 
 double[]  x = new double[]{45.0, 95.0, 150.0};
-double[] yc = new double[3];
+double[]  xc = new double[]{45.0, 95.0};
+double[] yc = new double[2];
 double[] yd = new double[3];
 double[] ya = new double[3];
 
 yc[0] = h45_1.area(min,max)/h00_0.area(min,max);
 yc[1] = h95_1.area(min,max)/h00_0.area(min,max);
-yc[2] = h150_1.area(min,max)/h00_0.area(min,max);
+//yc[2] = h150_1.area(min,max)/h00_0.area(min,max);
 
 yd[0] = h45_2.area(min,max)/h00_0.area(min,max);
 yd[1] = h95_2.area(min,max)/h00_0.area(min,max);
@@ -104,7 +105,7 @@ ya[0] = h45_3.area(min,max)/h00_0.area(min,max);
 ya[1] = h95_3.area(min,max)/h00_0.area(min,max);
 ya[2] = h150_3.area(min,max)/h00_0.area(min,max);
 
-GraphErrors grc = new GraphErrors("gr",x,yc);
+GraphErrors grc = new GraphErrors("gr",xc,yc);
 GraphErrors grd = new GraphErrors("gr",x,yd);
 GraphErrors gra = new GraphErrors("gr",x,ya);
 

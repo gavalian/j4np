@@ -10,6 +10,7 @@ import com.indvd00m.ascii.render.api.IContextBuilder;
 import com.indvd00m.ascii.render.api.IRender;
 import com.indvd00m.ascii.render.elements.Table;
 import com.indvd00m.ascii.render.elements.Text;
+import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -329,7 +330,7 @@ public abstract class Tree implements TreeProvider {
         boolean isDone = false;
         while(this.next()==true){
             long then = System.nanoTime();
-            boolean status = this.next();
+            //boolean status = this.next();
             long now = System.nanoTime();
             read += (now-then);            
             counter++;
@@ -493,6 +494,24 @@ public abstract class Tree implements TreeProvider {
         String s = canvas.getText();              
         System.out.println(s);
         //System.out.println("---------------------------------------------------");
+    }
+    
+    public void export(String filename){
+        List<String> branches = this.getBranches();
+        TextFileWriter w = new TextFileWriter();
+        w.open(filename);
+        w.writeString("#" + Arrays.toString(branches.toArray()));
+        this.reset();
+        int nrows = branches.size();
+        while(this.next()==true){
+            StringBuilder str = new StringBuilder();
+            for(int i = 0; i < nrows; i++){
+                if(i!=0) str.append(",");
+                str.append(String.format("%e", this.getValue(i)));
+            }
+            w.writeString(str.toString());
+        }
+        w.close();
     }
     
     @Override

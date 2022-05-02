@@ -66,9 +66,7 @@ public class Combinatorics {
             }
         }
         return data;
-    }
-    
-        
+    }            
     
     public static double distance(double[] a, double[] b){
         double dist = 0.0;
