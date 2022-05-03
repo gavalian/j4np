@@ -17,7 +17,7 @@ import java.util.Random;
 public class Combinatorics {
     
     List<Double>[] layers = new List[6];
-    double[] result = new double[150000*6];
+    double[] result = new double[15*6];
             
     public Combinatorics(){
         for(int i = 0; i < layers.length; i++){

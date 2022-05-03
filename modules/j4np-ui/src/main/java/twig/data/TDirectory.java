@@ -158,7 +158,7 @@ public class TDirectory implements TreeProvider {
         DefaultMutableTreeNode root = tm.getTreeModel();
         return new DefaultTreeModel(root);
     }
-
+    
     @Override
     public void draw(String path, TGDataCanvas c) {
         String  directory = path.replace("/root/", "");
@@ -168,8 +168,7 @@ public class TDirectory implements TreeProvider {
         if(directory.startsWith("/")==true){
             directory = directory.substring(1, directory.length());
             System.out.println(" now looking for " + directory);
-        }
-        
+        }        
         DataSet ds = this.get(directory);
         if(ds!=null){
             c.region().draw(ds); c.next();

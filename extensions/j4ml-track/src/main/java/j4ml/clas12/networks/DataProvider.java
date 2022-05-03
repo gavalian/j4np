@@ -424,10 +424,10 @@ public class DataProvider {
                         first [s] = means.getFloat(s);
                     }
                     int charge = params.getInt(1);
-                    double[] firstFalse = DataProvider.randomNeighbour(r, first, 2.0, 8.0);
+                    double[] firstFalse = DataProvider.randomNeighbour(r, first, 2.0, 45.0);
                     
                     if(event.scan(3001, 4)>0){
-                       System.out.println("yo, found a false positive");
+                       //System.out.println("yo, found a false positive");
                        Node  fm = event.read(3001,4);
                        for(int jj = 0; jj < firstFalse.length; jj++) 
                            firstFalse[jj] = fm.getFloat(jj);
@@ -466,6 +466,7 @@ public class DataProvider {
         
         Vector3 vrt = new Vector3(vertex.getFloat(0),vertex.getFloat(1),
                 vertex.getFloat(2));
+        
         if(constrain.momentum.contains(vec.mag())
                 &&constrain.vertex.contains(vrt.z())&&
                 constrain.chiSquare.contains(chi2.getFloat(0))){

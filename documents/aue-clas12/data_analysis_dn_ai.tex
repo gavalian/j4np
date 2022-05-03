@@ -1,4 +1,4 @@
-\section{Data Analysis of De-Noising data with AI assistance}
+\section{Analysis of De-Noising data with AI assistance}
 
 The two data samples, background merged and de-noised were also processed with the new 
 reconstruction software, which includes AI-assisted track candidate identification~\cite{Gavalian:2020oxg},\cite{Gavalian:2020xmc}. 
@@ -19,15 +19,16 @@ The track reconstruction efficiency was calculated for the three samples using E
 The results are presented in Figure~\ref{lscan::conv_dn_ai}. It can be seen from the figure that using 
 AI-assisted tracking on the de-noised data sample further improves reconstruction efficiency. The raw background 
 merged data sample exhibits a tracking efficiency decline of $0.23\%$ per nA, while the combination of de-noising 
-and AI-assisted tracking reduces this slope to $0.12\%$ per nA (almost a factor of 2), resulting in an efficiency of $0.86\%$ at
- beam current $150~nA$ compared to $0.88\%$ at $45~nA$ beam current. 
+and AI-assisted tracking reduces this slope to $0.12\%$ per nA (almost a factor of 2), resulting in an efficiency of $86\%$ at
+ beam current $150~nA$ compared to $88\%$ at $45~nA$ beam current. 
 
 \begin{figure}[!h]
 \begin{center}
  \includegraphics[width=3.1in]{images/figure_lscan_pos_ai.pdf}
  \includegraphics[width=3.1in]{images/figure_lscan_neg_ai.pdf}
-\caption {Tracking efficiency as a function of luminosity (beam current) for positive (a) and negative particle (b).  The efficiency is shown for
-conventional algorithm running on background merged files (diamonds), and on files with merged background then de-noised with AI (circles).}
+\caption {Tracking efficiency as a function of luminosity (beam current) for positively (a) and negatively (b) charged particles.  The efficiency is shown for
+conventional algorithm running on background merged files (diamonds), and on files with merged background then de-noised (circles), and de-noised data reconstructed 
+ with AI assistance (triangles).}
  \label{lscan::conv_dn_ai}
  \end{center}
 \end{figure}
@@ -38,8 +39,8 @@ This is a significant improvement in tracking efficiency when using both AI-assi
 
 Furthermore, the physics impact was studied for the de-noised data sample processed with AI-assisted tracking. The same data 
 sample was used in these studies with selected $H(e,e^-\pi^+\pi^-p)X$ event from Pythia Monte-Carlo simulations, and analyzed for
-missing mass of $H(e,e^-\pi^+\pi^-)X$, where the number of protons was extracted from under the missing mass 
-(fitted with Gaussian function with polynomial background). 
+missing mass of $H(e,e^-\pi^+\pi^-)X$, where the number of protons was extracted from the missing mass distribution.
+%(fitted with Gaussian function with polynomial background). 
 
 
 \begin{figure}[!h]
@@ -75,8 +76,8 @@ comes from using AI-assisted track classification software after de-noising the 
 \section{Discussion}
 
 Studies with simulated data indicate that using de-noising auto-encoders significantly improves the performance
-of the conventional CLAS12 tracking algorithm, in Figure~\ref{physics::conv_dn} d). Further improvements come from using
-the already established AI-assisted track classifier network with the de-noised data, in Figure~\ref{physics::conv_dn_ai} d).
+of the conventional CLAS12 tracking algorithm, see Figure~\ref{physics::conv_dn} d). Further improvements come from using
+the already established AI-assisted track classifier network with the de-noised data, see Figure~\ref{physics::conv_dn_ai} d).
 
 It is evident from these studies that the analysis of existing data can benefit from this approach to tracking by an increase 
 of statistical significance of physics observables. The numbers for reconstructed protons for each background setting 
@@ -116,13 +117,14 @@ different methods to the number for conventional tracking algorithm at $45~nA$ f
 %the CLAS12 detector. The summary of the number of reconstructed protons in the missing mass peak for
 %different beam currents can be seen in Table~\ref{table:summary}.
 As can be seen from the table, background merged simulated data processed with de-noising and the
- AI-assisted tracking leads to more events in the missing mass peak than the 45 nA background merged 
- MC data was reconstructed with the conventional tracking algorithm.
+ AI-assisted tracking leads to more events in the missing mass peak than data reconstructed with the 
+ conventional tracking algorithm.
  
 %As can be seen in the table conducting an experiment with $95~nA$ beam current and processing the data using artificial 
 %intelligence (both de-noising and AI-assisted tracking) leads to more events in the missing 
 %mass peak compared to running at $45~nA$ and reconstructing with the conventional tracking algorithm. 
-Conducting experiments with $95~nA$ incident beam energy will take twice less time to accumulate the same number of events.
+Conducting experiments with $95~nA$ incident beam energy will take twice less time to accumulate the same number 
+of events as at 45 nA analyzed with the conventional tracking.
 
 Even though the number of reconstructed nucleons is bigger when running at $45~nA$ and using improved 
 tracking (including AI de-noising and the AI classifier), the argument can be made that the collected statistics at 

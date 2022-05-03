@@ -216,18 +216,36 @@ public class TrackNetworkTrainer {
         
         hTruePositive.attr().set("fc=2,fs=2,lc=2");
         hFalsePositive.attr().set("fc=4,fs=12,lc=4");
+        long candidateCount = 0L;
+        long readTime = 0L;
+        long normTime = 0L;
+        long evalTime = 0L;
         
         for(int i = 1; i <=40; i++){
+            long then = System.currentTimeMillis();
             List<DataList> dataList = DataProvider.readClassifierDataWithTagEvents(hipoFile, 
                     constrain, i, maxBinsRead);
+            long now = System.currentTimeMillis();
             
+            readTime += (now-then);
+            System.out.printf("read time = %d ms\n",now-then);
             for(int k = 0; k < dataList.size(); k++){
                 
                 DataList list = dataList.get(k);
+                candidateCount += list.getList().size();
+                long t1 = System.nanoTime();
+                
                 DataList.normalizeInput(list, dc6normalizer);
+                long n1 = System.nanoTime();
+                normTime += n1-t1;
                 
                 int trueIndex = trueIndex(list);
+                
+                long t2 = System.nanoTime();
                 this.classifierEvaluate(model, list);
+                long n2 = System.nanoTime();
+                
+                evalTime += (n2-t1);
                 int maxIndex = highestIndex(list);
                 
                 if(trueIndex>=0&&maxIndex>=0){
@@ -257,7 +275,8 @@ public class TrackNetworkTrainer {
                 }
             }
         }
-        
+        System.out.printf("timess = read %d norm %.1f eval %.1f, count = %d\n",
+                readTime,normTime*1e-6,evalTime*1e-6,candidateCount);
         H1F hEfficiency = H1F.divide(hFalsePositive, hTruePositive);
         hEfficiency.attr().set("fc=5,fs=14,lc=5");
         hEfficiency.setName("hEffciency");
