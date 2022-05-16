@@ -18,6 +18,7 @@ import twig.graphics.TGCanvas;
 public class DataAnalysisRegression {
     
     public String directory = "/regression";
+    public boolean print = false;
     
     public static LorentzVector getVector(double mass,String[] data){
         double px = Double.parseDouble(data[1]);
@@ -36,7 +37,7 @@ public class DataAnalysisRegression {
     }
     public static double[] getColumns(String line,int... col){
         double[] r = new double[col.length];
-        String[] tokens = line.split("\\s+");
+        String[] tokens = line.trim().split("\\s+");
         for(int i = 0; i < col.length;i++){
             if(tokens.length>col[i]){
                 r[i] = Double.parseDouble(tokens[col[i]]);
@@ -65,8 +66,8 @@ public class DataAnalysisRegression {
     }
     
     public static int  getSector(String line){
-        String[] tokens = line.split("\\s+");
-        return Integer.parseInt(tokens[0]);
+        String[] tokens = line.trim().split("\\s+");
+        return Integer.parseInt(tokens[0].trim());
     }
         
     public void analyze(String filename, String exportFile){
@@ -119,6 +120,14 @@ public class DataAnalysisRegression {
                 cms.sub(lves).sub(lvps);
                 
                 if(sector_n!=2&&sector_p!=2){
+                    if(print==true){
+                        System.out.println("*****"  );
+                        System.out.println("e : " + lve);
+                        System.out.println("p : " + lvp);
+                        System.out.println("es: " + lves);
+                        System.out.println("ps: " + lvps);
+                    }
+                    
                     hdata_emom.fill(lve.p());
                     hdata_eth.fill(lve.theta());
                     hdata_ephi.fill(lve.phi());
@@ -297,12 +306,16 @@ public class DataAnalysisRegression {
         String file7 = "/Users/gavalian/Work/Software/project-10.4/studies/jupyter/xboost/c_extract_regression_data_1n1p_hb.txt.pred.norm.b.xgb";
         String file8 = "/Users/gavalian/Work/Software/project-10.4/studies/regression/c_extract_regression_data_1n1p_hb.txt.pred.norm.xgb_n";
         String file9 = "/Users/gavalian/Work/Software/project-10.4/studies/regression/c_extract_regression_data_1n1p_hb.txt.pred.norm.xgb_n2";
+        
+        String file10 = "/Users/gavalian/Work/Software/project-10.4/distribution/artin/projects/pe/xgboost-java/mc_e1pi_hb.norm.eval.txt";
         //String file2 = "/Users/gavalian/Work/dataspace/pid/results/d_extract_regression_data_1n1p_hb.txt.pred.norm";
         DataAnalysisRegression ana = new DataAnalysisRegression();
         ana.directory = "/mc_e1p";
         ana.analyze(file, "inference.twig");
+        
         ana.directory = "/mc_e2p";
         ana.analyzeThree(file2, "inference.twig");
+        
         ana.directory = "/data_e1p";
         ana.analyze(file3, "inference.twig");
         
@@ -323,6 +336,10 @@ public class DataAnalysisRegression {
         
         ana.directory = "/data_e1p_b_xgb_new_2";
         ana.analyze(file9, "inference.twig");
+        
+        ana.directory = "/mc_e1p_xgb";
+        //ana.print = true;
+        ana.analyze(file10, "inference.twig");
         /*String data = """
                       """;
         */

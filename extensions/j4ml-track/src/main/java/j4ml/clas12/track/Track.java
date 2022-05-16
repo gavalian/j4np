@@ -6,6 +6,8 @@
 package j4ml.clas12.track;
 
 import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Node;
 import j4np.physics.Vector3;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,4 +187,25 @@ public class Track {
         return valid;
     }
     
+    
+    public void readEvent(Event event){
+        
+        Node params = event.read(1001,1);
+        Node   chi2 = event.read(1001,2);
+        //Node vector = event.read(1001,6);                                                                                                                
+        Node vector = event.read(1001,6);
+        Node vertex = event.read(1001,7);
+        Node  means = event.read(1001,4);
+        Node  clusters = event.read(1001,3);
+        
+        this.vector.setXYZ(vector.getFloat(0),vector.getFloat(1),
+                    vector.getFloat(2));
+        this.vertex.setXYZ(vertex.getFloat(0),vertex.getFloat(1),
+                    vertex.getFloat(2));
+        this.sector = params.getInt(0);
+        this.charge = params.getInt(1);
+        this.chi2   = chi2.getFloat(0);
+        for(int i = 0; i < this.means.length; i++) this.means[i] = means.getFloat(i);
+        for(int i = 0; i < this.clusters.length; i++) this.clusters[i] = clusters.getInt(i);
+    }
 }

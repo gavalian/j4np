@@ -250,6 +250,23 @@ public class DeepNettsClassifier {
         return dataset;
     }
     
+    public static DataSet toDataSet(DataList list){
+        
+        int nInputs = list.getList().get(0).getFirst().length;
+        int nOutputs = list.getList().get(0).getSecond().length;
+        
+        TabularDataSet  dataset = new TabularDataSet(nInputs,nOutputs);
+        for(int k = 0; k < list.getList().size(); k++){
+            float[]  inBuffer = list.getList().get(k).floatFirst();
+            float[] outBuffer = list.getList().get(k).floatSecond();            
+            dataset.add(new TabularDataSet.Item(inBuffer, outBuffer));                
+        }
+        
+        String[] names = DataSetUtils.generateNames(nInputs, nOutputs);
+        dataset.setColumnNames(names);
+        return dataset;
+    }
+    
     public DataList evaluate(DataList dpl){
         DataList result = new DataList();
         for(int i = 0; i < dpl.getList().size(); i++){

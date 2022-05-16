@@ -165,10 +165,10 @@ public class TDirectory implements TreeProvider {
         System.out.println("\nDEBUG:");
         System.out.println("path  = " + path);
         System.out.println("looking for " + directory);
-        if(directory.startsWith("/")==true){
+        /*if(directory.startsWith("/")==true){
             directory = directory.substring(1, directory.length());
             System.out.println(" now looking for " + directory);
-        }        
+        }*/
         DataSet ds = this.get(directory);
         if(ds!=null){
             c.region().draw(ds); c.next();
@@ -182,7 +182,9 @@ public class TDirectory implements TreeProvider {
             System.out.println("directory " + entry.getValue().directory);
             for(DataSet d : data){
                 System.out.println("\t object " + d.getName());
-                DataSetSerializer.export(d, filename, entry.getValue().directory);
+                String dir = entry.getValue().directory;
+                if(dir.startsWith("/")==true) dir = dir.substring(1, dir.length());
+                DataSetSerializer.export(d, filename, dir);
             }
         }
     }
@@ -198,6 +200,7 @@ public class TDirectory implements TreeProvider {
             //System.out.println("\t name = " + dsname);
             DataSet ds = DataSetSerializer.load(filename, item);
             
+            if(dir.startsWith("/")==false) dir = "/" + dir;
             this.add(dir, ds);
         }
     }

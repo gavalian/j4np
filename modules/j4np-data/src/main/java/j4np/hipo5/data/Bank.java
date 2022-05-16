@@ -589,6 +589,38 @@ public class Bank {
         return str.toString();
     }
     
+    /**
+     * Reduces the bank to contain only rows given by the list
+     * of indices.
+     * @param index
+     * @return new bank with reduced number of rows
+     */
+    public Bank reduce(List<Integer> index){
+        Bank b = new Bank(this.nodeSchema,index.size());
+        int     nrows = index.size();
+
+        Schema schema = b.getSchema();
+        int  nentries = schema.getElements();
+        for(int ir = 0; ir < nrows; ir++){
+            int sr = index.get(ir);
+            for(int ei = 0; ei < nentries; ei++){
+                int type = schema.getType(ei);
+                //System.out.println(" count = " + nrows + " ir = " + ir + " sr = " + sr + " ei = " + ei);                                                              
+                switch(type){
+                    case 1: b.putByte(   ei, ir, this.getByte(  ei, sr)); break;
+                    case 2: b.putShort(  ei, ir, this.getShort( ei, sr)); break;
+                    case 3: b.putInt(    ei, ir, this.getInt(   ei, sr)); break;
+                    case 4: b.putFloat(  ei, ir, this.getFloat( ei, sr)); break;
+                    case 5: b.putDouble( ei, ir, this.getDouble(ei, sr)); break;
+                    case 8: b.putLong(   ei, ir, this.getLong(  ei, sr)); break;
+                    default: System.out.println("getReducedBank:: error : type = "
+                    + type + " is unknown (prety much to anyone)");
+                }
+            }
+        }
+        return b;
+    }
+    
     public String nodeString(String[] items){
         StringBuilder str = new StringBuilder();
         int      rows = getRows();

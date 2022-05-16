@@ -96,7 +96,7 @@ public class DataProvider {
         ct.setK(25);
         ct.setNMin(2);
         
-        ct.train(data);
+        //ct.train(data);
         
         ct.export("network_ert_9.net");
         

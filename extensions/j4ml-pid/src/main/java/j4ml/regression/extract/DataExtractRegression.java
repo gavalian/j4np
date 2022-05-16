@@ -62,7 +62,7 @@ public class DataExtractRegression {
     }
     
     public static void main(String[] args){
-        String file = "/Users/gavalian/Work/dataspace/regression/rec_epi_0002_000_nA.filtered.hb.hipo";
+        String file = "/Users/gavalian/Work/dataspace/regression/tr_negative.hipo_filtered.h5";
         
         DataExtractRegression ext = new DataExtractRegression();
         ext.extract(file,-1);

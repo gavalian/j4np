@@ -45,6 +45,7 @@ public class DataFitter {
             System.setOut(pipeStream);
             System.setErr(pipeStream);
         }
+        
         try{
 	        FitterFunction funcFitter = new FitterFunction(func,
 	                data,options);
@@ -66,15 +67,17 @@ public class DataFitter {
 	        
 	        MnScan  scanner = new MnScan(funcFitter,upar);
 	        FunctionMinimum scanmin = scanner.minimize(); 
-	        /*
-	        System.err.println("******************");
-	        System.err.println("*   SCAN RESULTS  *");
-	        System.err.println("******************");
-	        System.out.println("minimum : " + scanmin);
-	        System.out.println("pars    : " + upar);
-	        System.out.println(upar);
-	        System.err.println("*******************************************");
-	        */
+                
+	        if(options.contains("S")==true){
+                    System.err.println("******************");
+                    System.err.println("*   SCAN RESULTS  *");
+                    System.err.println("******************");
+                    System.out.println("minimum : " + scanmin);
+                    System.out.println("pars    : " + upar);
+                    System.out.println(upar);
+                    System.err.println("*******************************************");
+                }
+                
 	        MnMigrad migrad = new MnMigrad(funcFitter, upar);
 	        
 	        FunctionMinimum min = migrad.minimize();
