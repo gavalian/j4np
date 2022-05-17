@@ -127,7 +127,8 @@ public class PaveTextDebug {
             "denoised tracking 4.134/0.0046",
         } 
         );
-        
+        c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitle("#theta-#gamma");
+        c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitle("#pi-#eta");
         pt.setTexAlign(LatexText.TextAlign.CENTER);
         pt.setSpacing(0.01);
         c.view().region().draw(pt);

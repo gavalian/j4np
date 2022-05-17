@@ -308,34 +308,38 @@ public class DataAnalysisRegression {
         String file9 = "/Users/gavalian/Work/Software/project-10.4/studies/regression/c_extract_regression_data_1n1p_hb.txt.pred.norm.xgb_n2";
         
         String file10 = "/Users/gavalian/Work/Software/project-10.4/distribution/artin/projects/pe/xgboost-java/mc_e1pi_hb.norm.eval.txt";
+        
+        //String file11 = "/Users/gavalian/Work/Software/project-10.4/distribution/j4np/extensions/j4ml-classifier/mc_epi_evaluated_tanh_lin.txt";
+        String file11 = "/Users/gavalian/Work/Software/project-10.4/distribution/j4np/extensions/j4ml-classifier/mc_e1pi_hb.norm.eval.tanh_lin.txt";
+        
         //String file2 = "/Users/gavalian/Work/dataspace/pid/results/d_extract_regression_data_1n1p_hb.txt.pred.norm";
         DataAnalysisRegression ana = new DataAnalysisRegression();
         ana.directory = "/mc_e1p";
         ana.analyze(file, "inference.twig");
         
-        ana.directory = "/mc_e2p";
-        ana.analyzeThree(file2, "inference.twig");
+        //ana.directory = "/mc_e2p";
+        //ana.analyzeThree(file2, "inference.twig");
         
-        ana.directory = "/data_e1p";
-        ana.analyze(file3, "inference.twig");
+        //ana.directory = "/data_e1p";
+        //ana.analyze(file3, "inference.twig");
         
-        ana.directory = "/data_e1p_a";
-        ana.analyze(file4, "inference.twig");
+        //ana.directory = "/data_e1p_a";
+        //ana.analyze(file4, "inference.twig");
         
-        ana.directory = "/data_e1p_a_xgb";
-        ana.analyze(file5, "inference.twig");
+        //ana.directory = "/data_e1p_a_xgb";
+        //ana.analyze(file5, "inference.twig");
         
-        ana.directory = "/data_e1p_b";
-        ana.analyze(file6, "inference.twig");
+        //ana.directory = "/data_e1p_b";
+        //ana.analyze(file6, "inference.twig");
         
-        ana.directory = "/data_e1p_b_xgb";
-        ana.analyze(file7, "inference.twig");
+        //ana.directory = "/data_e1p_b_xgb";
+        //ana.analyze(file7, "inference.twig");
         
-        ana.directory = "/data_e1p_b_xgb_new";
-        ana.analyze(file8, "inference.twig");
+        //ana.directory = "/data_e1p_b_xgb_new";
+        //ana.analyze(file8, "inference.twig");
         
-        ana.directory = "/data_e1p_b_xgb_new_2";
-        ana.analyze(file9, "inference.twig");
+        //ana.directory = "/data_e1p_b_xgb_new_2";
+        //ana.analyze(file9, "inference.twig");
         
         ana.directory = "/mc_e1p_xgb";
         //ana.print = true;
@@ -343,5 +347,8 @@ public class DataAnalysisRegression {
         /*String data = """
                       """;
         */
+        ana.directory = "/mc_e1p_tanh";
+        //ana.print = true;
+        ana.analyze(file11, "inference.twig");
     }
 }

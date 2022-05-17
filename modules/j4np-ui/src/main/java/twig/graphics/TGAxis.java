@@ -238,7 +238,9 @@ public class TGAxis implements StyleNode {
             
             if(attributes.getAxisTitle().length()>0){
                 textWidget.setText(attributes.getAxisTitle());                
-                textWidget.drawString(attributes.getAxisTitle(), g2d,
+                //textWidget.drawString(attributes.getAxisTitle(), g2d,
+                //        titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);
+                textWidget.drawString( g2d,
                         titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);
             }
             /*textWidget.drawString("abra-catabra", g2d,

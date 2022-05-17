@@ -93,7 +93,7 @@ public class FitterFunction implements FCNBase {
             }
             if(x>=function.getMin()&&x<=function.getMax()&&usePoint){
                 double yv = function.evaluate(x);
-                double normalization = yerr*yerr;                
+                double normalization = yerr*yerr;
                 /*
                 if(options.contains("R")==true){
                     normalization = yv;
