@@ -15,6 +15,7 @@ import deepnetts.util.Tensor;
 import j4ml.data.DataEntry;
 import j4ml.data.DataList;
 import j4ml.deepnetts.DeepNettsClassifier;
+import j4ml.deepnetts.DeepNettsNetwork;
 import j4np.utils.io.TextFileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -35,24 +36,19 @@ public class CVTNetwork {
         r.open(file);
         int counter = 0;
         while(r.readNext()==true&&counter<max){
+            
+            
             counter++;
+            
             String line = r.getString();
             String[] tokens = line.split(";");
-            String[] lsvm = tokens[1].trim().split("\\s+");
+            String[] lsvm = tokens[2].trim().split("\\s+");
             
-            double[] input = new double[87*256];
-            for(int i = 0; i < lsvm.length; i++){
-                String[] pair = lsvm[i].split(":");
-                int     index = Integer.parseInt(pair[0]);
-                double  value = Double.parseDouble(pair[1]);
-                if(value>0.5) input[index-1] = 1.0;
-            }
             
-            double[] output = new double[84];
-            String[] csv = tokens[0].trim().split(",");
-            for(int i = 2; i < csv.length; i++){
-                output[i-2] = Double.parseDouble(csv[i].trim());
-            }
+            float[] input = CvtArrayIO.lsvmToArray(tokens[2], 90*256);
+            float[] output = CvtArrayIO.csvToArray(tokens[1]);
+            float[] params = CvtArrayIO.csvToArray(tokens[0]);
+                       
             //System.out.println("--- adding entry");
             list.add(new DataEntry(input,output));
         }
@@ -60,28 +56,36 @@ public class CVTNetwork {
     }
     
     public static int[] compare(float[] desired, float[] result, double threshold){
-        int[] measure = new int[]{0,0,0,0};
+        int[] measure = new int[]{0,0,0,0,0};
         for(int i = 0; i < desired.length; i++){
 
             if(desired[i]>threshold&&result[i]>threshold) measure[0]++;
             if(desired[i]<threshold&&result[i]>threshold) measure[1]++;
             if(desired[i]>threshold&&result[i]<threshold) measure[2]++;
             if(desired[i]>threshold) measure[3]++;
+            if(result[i]>threshold)  measure[4]++;
         }
         return measure;
     }
     
+    
+    
     public static void train(DataList tr, DataList test, int epochs){
-        DataSet ds = DeepNettsClassifier.toDataSet(tr);
+        System.out.println(">>>>> TRAINING DATA SIZE = " + tr.getList().size());
+        DataSet ds = DeepNettsNetwork.convert(tr, true);
+        
+        System.out.println(">>>>> CONVERTED DATA SIZE = " 
+                + ds.getItems().size() + " OLD = " + tr.getList().size());
+        
         ConvolutionalNetwork neuralNet = ConvolutionalNetwork.builder()
-                .addInputLayer(256, 87,1)
+                .addInputLayer(256, 90,1)
                 .addConvolutionalLayer(3, 3, 1, 2)
                 .addMaxPoolingLayer(4, 4, 2)
                 .addConvolutionalLayer(3, 3, 1, 2)
                 .addMaxPoolingLayer(4, 4, 2)
                 .addFullyConnectedLayer(84)
-                .addOutputLayer(84, ActivationType.SIGMOID)
                 .hiddenActivationFunction(ActivationType.RELU)
+                .addOutputLayer(84, ActivationType.SIGMOID)
                 .lossFunction(LossType.CROSS_ENTROPY)
                 .randomSeed(123)
                 .build();
@@ -113,32 +117,32 @@ public class CVTNetwork {
             long now = System.currentTimeMillis();
             time += now-then;
             int[] measure = CVTNetwork.compare(desired, result, 0.5);
-            System.out.println(i + " --m " + Arrays.toString(measure) + " : " + Arrays.toString(result));
-            System.out.println(Arrays.toString(desired));
+            //System.out.println(i + " --m " + Arrays.toString(measure) + " : " + Arrays.toString(result));
+            //System.out.println(Arrays.toString(desired));
         }
         System.out.printf(" evaluated %d , in %d ms, rate = %.2f\n",
                 test.getList().size(),time, ((double) time)/test.getList().size());
     }
     
-    public static void retrain(){
+    public static void retrain(String inNetwork, String outNetwork, String file, int nEpochs, int maxLines){
          //String file = "cvt_training_data_regression_noghost.lsvm";
-         String file = "xaa.lsvm";
+         //String file = "xaa.lsvm";
         try {
-            ConvolutionalNetwork nnet = FileIO.createFromFile("cnn_logreg.nnet", ConvolutionalNetwork.class);
+            ConvolutionalNetwork nnet = FileIO.createFromFile(inNetwork, ConvolutionalNetwork.class);
             
-            DataList tr = CVTNetwork.readFile(file, 55000);
+            DataList tr = CVTNetwork.readFile(file, maxLines);
             tr.shuffle();
             BackpropagationTrainer trainer = new BackpropagationTrainer(nnet);//nnet.getTrainer();
             trainer.setLearningRate(0.001f) // za ada delta 0.00001f za rms prop 0.001
-                .setMaxError(0.003f)
+                .setMaxError(0.0001f)
                 .setOptimizer(OptimizerType.SGD) // use adagrad optimization algorithm
                 .setLearningRate(0.01f)
-                .setMaxEpochs(25);
+                .setMaxEpochs(nEpochs);
             System.out.println("data size = " + tr.getList().size());
             DataSet ds = DeepNettsClassifier.toDataSet(tr);
             System.out.println(" data is null ? " + (ds == null));
             trainer.train(ds);
-            FileIO.writeToFile(nnet, "cnn_logreg_bmt_1.nnet");
+            FileIO.writeToFile(nnet, outNetwork);
         }  catch (IOException ex) {
             Logger.getLogger(CVTNetwork.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -146,12 +150,14 @@ public class CVTNetwork {
         }
     }
     
-    public static void evaluate() {
-        String file = "cvt_training_data_regression_noghost.lsvm";
+    public static void evaluate(String network, String file) {
+        //String file = "cvt_training_data_regression_noghost.lsvm";
+        
         try {
-            ConvolutionalNetwork nnet = FileIO.createFromFile("cnn_logreg_retrained.nnet", ConvolutionalNetwork.class);
+            ConvolutionalNetwork nnet = FileIO.createFromFile(network, ConvolutionalNetwork.class);
             DataList test = CVTNetwork.readFile(file, 10000);
-            
+            System.out.println("FILE    : " + file);
+            System.out.println("NETWORK : " + network);
             //System.out.println(nnet);
             for(double nt = 0.5; nt > 0.04; nt -= 0.05 ){
                 double threshold = nt;
@@ -182,8 +188,8 @@ public class CVTNetwork {
             }
             
             long now = System.currentTimeMillis();
-            System.out.printf("%12.4f : %9d %9d %9d %9d , noise = %8.3f, time = %d ms, rate = %d evt/sec\n",
-                    threshold,counter,counterTrue,counterPartial,counterFalse, 
+            System.out.printf("%12.4f : # %9d, true = %9d, partial = %9d, false = %9d ,  noise = %8.3f, time = %d ms, rate = %d evt/sec\n",
+                    threshold,counter,counterTrue,counterPartial,counterFalse,
                     ((double) noise)/counter,now-then,(int) ((double) counter*1000)/(now-then) );
             }
         } catch (IOException ex) {
@@ -196,18 +202,17 @@ public class CVTNetwork {
     
     
     
-    public static void processCommand(String[] args){
-        
+    public static void processCommand(String[] args){        
         String file = "/Users/gavalian/Work/Software/project-10.4/distribution/j4np/extensions/j4ml-classifier/cvt_regression_train.lsvm";
         int    nentries = 12000;
         int      epochs = 25;
         
-        if(args.length>0) file = args[0];
-        if(args.length>1) nentries = Integer.parseInt(args[1]);
-        if(args.length>2) epochs = Integer.parseInt(args[2]);
+        if(args.length>1) file = args[1];
+        if(args.length>2) nentries = Integer.parseInt(args[2]);
+        if(args.length>3) epochs = Integer.parseInt(args[3]);
         
-        DataList tr = CVTNetwork.readFile(file, nentries);
-        DataList[] data = DataList.split(tr, 0.8,0.2);
+        DataList     tr = CVTNetwork.readFile(file, nentries);
+        DataList[] data = DataList.split(tr, 0.95,0.05);
         //tr.show();
         System.out.println("******************");
         System.out.printf("* training data set = %d\n", data[0].getList().size());
@@ -216,12 +221,24 @@ public class CVTNetwork {
         
         CVTNetwork.train(data[0],data[1],epochs);
     }
+    
     public static void main(String[] args){
-        //CVTNetwork.processCommand(args);
+        
+        if(args[0].compareTo("train")==0){
+            CVTNetwork.processCommand(args);
+            return;
+        }
+        
+        if(args[0].compareTo("test")==0){
+            CVTNetwork.evaluate(args[1],args[2]);
+            return;
+        }
+        
+        System.out.println("\n\n>>>> error : use 'train' or 'test' as argument\n\n");
         //for(double th = 0.5; th >0.08; th -= 0.05)
         //CVTNetwork.evaluate();
         
-        CVTNetwork.retrain();
+        //CVTNetwork.retrain();
         /*
         String file = "/Users/gavalian/Work/Software/project-10.4/distribution/j4np/extensions/j4ml-classifier/cvt_regression_train.lsvm";
         int    nentries = 12000;

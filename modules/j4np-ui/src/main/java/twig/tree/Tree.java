@@ -10,6 +10,9 @@ import com.indvd00m.ascii.render.api.IContextBuilder;
 import com.indvd00m.ascii.render.api.IRender;
 import com.indvd00m.ascii.render.elements.Table;
 import com.indvd00m.ascii.render.elements.Text;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Schema;
+import j4np.hipo5.io.HipoWriter;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,6 +103,16 @@ public abstract class Tree implements TreeProvider {
         }
         
         return null;
+    }
+    
+    public String getBranchString(){
+        List<String>  branches = this.getBranches();
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < branches.size(); i++){
+            if(i!=0) str.append(":");
+            str.append(branches.get(i));
+        }
+        return str.toString();
     }
     
     
@@ -510,6 +523,30 @@ public abstract class Tree implements TreeProvider {
                 str.append(String.format("%e", this.getValue(i)));
             }
             w.writeString(str.toString());
+        }
+        w.close();
+    }
+    
+   
+    public void export(String filename, String cut){
+        
+        List<String> branches = this.getBranches();        
+        TreeCut         cutExp = new TreeCut("1",cut,branches);
+        
+        TextFileWriter w = new TextFileWriter();
+        w.open(filename);
+        w.writeString("#" + Arrays.toString(branches.toArray()));
+        this.reset();
+        int nrows = branches.size();
+        while(this.next()==true){
+            if(cutExp.isValid(this)>0.5){
+                StringBuilder str = new StringBuilder();
+                for(int i = 0; i < nrows; i++){
+                    if(i!=0) str.append(",");
+                    str.append(String.format("%e", this.getValue(i)));
+                }
+                w.writeString(str.toString());
+            }
         }
         w.close();
     }

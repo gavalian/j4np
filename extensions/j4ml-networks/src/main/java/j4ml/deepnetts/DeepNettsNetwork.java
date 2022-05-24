@@ -76,6 +76,25 @@ public class DeepNettsNetwork {
         return this;
     }
 
+    public static DataSet convert(DataList list, boolean transform){
+        
+        int nInputs = list.getList().get(0).getFirst().length;
+        int nOutputs = list.getList().get(0).getSecond().length;        
+        TabularDataSet  dataset = new TabularDataSet(nInputs,nOutputs);
+        
+        while(list.getList().isEmpty()==false){
+            //for(int k = 0; k < list.getList().size(); k++){
+            DataEntry entry = list.getList().get(list.getList().size()-1);
+            list.getList().remove(list.getList().size()-1);            
+            float[]  inBuffer = entry.floatFirst();
+            float[] outBuffer = entry.floatSecond();
+            dataset.add(new TabularDataSet.Item(inBuffer, outBuffer));                
+        }
+        
+        String[] names = DataSetUtils.generateNames(nInputs, nOutputs);
+        dataset.setColumnNames(names);
+        return dataset;
+    }
     private DataSet convert(DataList list){
         
         int nInputs = list.getList().get(0).getFirst().length;

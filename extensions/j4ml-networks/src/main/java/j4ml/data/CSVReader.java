@@ -77,7 +77,7 @@ public class CSVReader {
     
     public DataEntry nextData(){
         boolean status = reader.readNext();
-        if(status==false) return new DataEntry(null,null);
+        if(status==false) return new DataEntry();
         String line = reader.getString();
         String[] tokens = line.trim().split("\\s+");
         double[] input  = new double[inputColumns.length];

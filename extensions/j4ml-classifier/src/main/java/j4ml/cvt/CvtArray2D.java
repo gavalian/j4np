@@ -26,6 +26,16 @@ public class CvtArray2D {
     public  void set(int x, int y, float value){ set(getIndex(x,y),value);}
     public float get(int x, int y) { return array[getIndex(x,y)];}
     
+    
+    public int countLines(int start, int end){
+        int counter = 0;
+        for(int line = start; line < end; line++){
+            int hits = countInLine(line);
+            if(hits>0) counter++;
+        }
+        return counter;
+    }
+    
     public int countInLine(int line){
         int counter = 0;
         for(int x = 0; x < 256; x++) 
@@ -42,6 +52,11 @@ public class CvtArray2D {
         }
         return output;
     }
+    
+    public String getInputLSVM(){
+        return CvtArrayIO.arrayToLSVM(array, 0.5);
+    }
+    
     public int countCentral(){
         int counter = 0; 
         for(int line = 0; line < 84; line++)
@@ -70,14 +85,16 @@ public class CvtArray2D {
         int cc      = countC();
         
         if(zc>=1&&cc>=1&&central==6) return 1;
-        if(central==6&&zc==0&&cc==0) return 2;
-        if(central==6&&zc==0) return 3;
-        if(central==6&&cc==0) return 4;
+        if(zc>=1&&cc>=1&&central==4) return 2;
+        if(zc<1&&central==6) return 3;
+        //if(central==6&&zc==0&&cc==0) return 2;
+        //if(central==6&&zc==0) return 3;
+        //if(central==6&&cc==0) return 4;
         
-        if(zc>=1&&cc>=1&&central==4) return 11;
-        if(central==4&&zc==0&&cc==0) return 12;
-        if(central==4&&zc==0) return 13;
-        if(central==4&&cc==0) return 14;
+        //if(zc>=1&&cc>=1&&central==4) return 11;
+        //if(central==4&&zc==0&&cc==0) return 12;
+        //if(central==4&&zc==0) return 13;
+        //if(central==4&&cc==0) return 14;
 
         if(zc>=1&&cc>=1&&central==2) return 21;
         if(central==2&&zc==0&&cc==0) return 22;

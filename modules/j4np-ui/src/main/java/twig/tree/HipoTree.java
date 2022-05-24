@@ -120,6 +120,60 @@ public class HipoTree extends Tree {
         return tree;
     }
     
+    public static void fromTree(Tree t, String file, String cut){
+        
+        t.reset();
+        List<String> branches = t.getBranches();
+        TreeCut         cutExp = new TreeCut("1",cut,branches);
+        String[] names = t.getBranchString().split(":");
+        
+        Schema.SchemaBuilder builder = new Schema.SchemaBuilder("t::tree",1120,1);
+        for(int i = 0; i < names.length; i++)
+            builder.addEntry(names[i], "F", "");
+        
+        Schema schema = builder.build();
+        
+        HipoWriter w = new HipoWriter();
+        
+        w.getSchemaFactory().addSchema(schema);
+        w.open(file);
+        Event event = new Event();
+        
+        int nLinesPerEvent = 300;
+        int  nLinesWritten = 0;
+        boolean writeFlag = true;
+         while(writeFlag==true){
+             
+             int countDown = nLinesPerEvent;
+             
+             boolean hasEntries = true;
+             Bank b = new Bank(schema,nLinesPerEvent);
+             
+             while(countDown>0&&hasEntries==true){
+                 hasEntries = t.next();
+                 if(hasEntries==false){
+                     writeFlag = false;
+                 } else {
+                     if(cutExp.isValid(t)>0.5){
+                         nLinesWritten++;
+                         for(int kk = 0; kk < branches.size();kk++)
+                             b.putFloat(branches.get(kk), nLinesPerEvent-countDown, 
+                                     (float) t.getValue(kk));
+                         countDown--;
+                     }
+                 }
+             }
+
+             if(countDown==0){
+                 event.reset();
+                 event.write(b);
+                 w.addEvent(event);
+             } 
+         }
+         w.close();
+         System.out.printf(" file : tree ==> %s exported rows = %d\n",file,nLinesWritten);
+    }
+    
     public static void fromCsv(String expression, String csvFile){
         
         String hipoFile = csvFile.replaceAll(".csv", ".h5");
@@ -165,9 +219,7 @@ public class HipoTree extends Tree {
             //b.show();
             //event.show();
             //System.out.println("event size = " + event.getEventBufferSize());
-            w.addEvent(event,0);
-            
-            
+            w.addEvent(event,0);                        
         } while (lines.size()==nLinesPerEvent);
         w.close();
         System.out.printf(" file : %s ==> %s exported rows = %d\n",csvFile,hipoFile,nLinesWritten);

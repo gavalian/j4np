@@ -8,14 +8,21 @@ package j4ml.data;
 import j4np.utils.io.DataArrayUtils;
 
 /**
- *
+ * 
  * @author gavalian
  */
 public class DataEntry {
     
-    private float[]   first = null;
-    private float[]  second = null;
-    private float[] infered = null;
+    private float[]       first = null;
+    private float[]      second = null;
+    private float[]     infered = null;
+    private float[]  parameters = null;
+    
+    
+    public DataEntry(){
+        first  = null;
+        second = null;
+    }
     
     public DataEntry(int nf, int ns){
         first  = new float[nf];
@@ -27,11 +34,21 @@ public class DataEntry {
         if(as!=null) second = DataArrayUtils.toFloat(as);
     }
     
+    public DataEntry(float[] af, float[] as){
+        first  = af;
+        second = as;
+    }
+    
     public final void  set(double[] af, double[] as){
         first  = DataArrayUtils.toFloat(af);
         second = DataArrayUtils.toFloat(as);
     }
         
+    public void setParameters(float[] params){
+        parameters = params;
+    }
+    
+    public float[] getParameters(){ return this.parameters;}
     
     public double[] getFirst(){ return first==null? null:DataArrayUtils.toDouble(first);}
     public double[] getSecond(){return second==null? null:DataArrayUtils.toDouble(second);}    

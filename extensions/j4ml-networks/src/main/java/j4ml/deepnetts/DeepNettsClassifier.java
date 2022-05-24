@@ -54,11 +54,9 @@ public class DeepNettsClassifier {
         
     }
     
-    
     public void load(String filename) {
         try {
             neuralNet =  FileIO.createFromFile(filename, FeedForwardNetwork.class);
-            
         } catch (IOException ex) {
             Logger.getLogger(DeepNettsClassifier.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
