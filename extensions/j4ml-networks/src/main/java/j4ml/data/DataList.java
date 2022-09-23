@@ -227,14 +227,16 @@ public class DataList extends Tree {
         return lists;
     }
     
+    @Override
     public void export(String file){
         TextFileWriter w = new TextFileWriter();
-        w.open(file);
-        
+        w.open(file);        
         for(int i = 0; i < dataList.size(); i++)
             w.writeString(dataList.get(i).toCSVString());
         w.close();
     }
+    
+    @Override
     public void scan(){
         
         System.out.println("** scanning data pair list with entrie = " + dataList.size());

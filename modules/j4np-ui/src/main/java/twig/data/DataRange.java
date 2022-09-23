@@ -42,6 +42,10 @@ public class DataRange {
         if(y>rect.y+rect.height){ rect.height = rect.height + (y - (rect.y + rect.height));}
     }
     
+    public void growY(double fraction){
+        rect.height = rect.height + rect.height*fraction;
+        
+    }
     public void grow(Rectangle2D range){
         this.grow(range.getX(),range.getY());
         this.grow(range.getX()+range.getWidth(), range.getY());
@@ -79,6 +83,9 @@ public class DataRange {
         System.out.println(range.getRange());
         
         range.padY(0.3, 0.3);
+        System.out.println(range.getRange());
+        
+        range.growY(0.2);
         System.out.println(range.getRange());
     }
 }

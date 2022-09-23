@@ -56,6 +56,7 @@
     <module>parent</module>
     <module>modules/j4np-utils</module>
     <module>modules/j4np-physics</module>
+    <module>modules/j4np-geometry</module>
     <module>modules/j4np-package</module>
     <module>modules/j4np-data</module>
     <module>modules/j4np-ui</module>

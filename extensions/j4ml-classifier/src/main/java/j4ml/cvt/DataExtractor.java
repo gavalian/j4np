@@ -6,11 +6,14 @@
 package j4ml.cvt;
 
 import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Evaluator;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
+import j4np.hipo5.io.HipoWriter;
 import j4np.physics.Vector3;
 import j4np.utils.io.TextFileWriter;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -18,6 +21,8 @@ import java.util.Arrays;
  */
 public class DataExtractor {
     public String outputFile = "cvt_extracted_data.csv";
+    public boolean forceBmt  = false;
+    
     public DataExtractor(){
         
     }
@@ -238,7 +243,7 @@ public class DataExtractor {
         }
     }
     
-    public void processExtract(String file){
+    public void processExtract_old(String file){
         
         HipoReader r = new HipoReader();        
         r.open(file);
@@ -302,10 +307,177 @@ public class DataExtractor {
         w.close();
     }
     
+    
+    public void processExtract(String file){
+        
+        HipoReader r = new HipoReader();        
+        r.open(file);
+        
+        Event evt = new Event();
+        
+        Bank bstHits = r.getBank("BSTRec::Hits");
+        Bank   bmtCt = r.getBank("BMTRec::Clusters");
+        Bank      mc = r.getBank("MC::Particle");
+        Bank     cvt = r.getBank("CVTRec::Tracks");
+        
+        Bank     adc = r.getBank("BST::adc");
+        
+        Evaluator eval = new Evaluator(adc,"order==0");
+        
+        int counter = 0;
+        int counterTrue  = 0;
+        int counterGhost = 0;
+        
+        TextFileWriter w = new TextFileWriter();
+        
+        w.open(outputFile);
+        
+        //while(r.hasNext()&&counter<180){
+        while(r.hasNext()){
+            
+            counter++;
+            r.nextEvent(evt);
+            evt.read(bmtCt);
+            evt.read(bstHits);
+            evt.read(cvt);
+            evt.read(mc);
+            evt.read(adc);
+            //adc.show();
+            
+            List<Integer> iter = eval.getIterator(adc);
+
+            Bank reduced = adc.reduce(iter);
+            //CvtArray2D  array = CvtArrayIO.createArray(bstHits, bmtCt, 1);
+            CvtArray2D  array = CvtArrayIO.createArray(reduced);
+            CvtArray2D arrayb = CvtArrayIO.createArray(bstHits, bmtCt, -1);
+            
+            int type = array.getType();
+            
+            //System.out.println(">>> " + adc.getRows() + " " + iter.size() + " " + array.countLines(0, 84));            
+            //array.show();
+            //System.out.println(" type = " + type);
+            if(array.countLines(0, 84)==6){
+                type = 1;
+            } else {
+                type=0;
+            }
+            System.out.println("type = " + type);
+            if(type==1||type==2||type==3){
+                //System.out.println(" type = " + type);
+                float[] output = array.getOutput();
+                String lsvm = arrayb.getInputLSVM();
+                StringBuilder str = new StringBuilder();
+                str.append("t").append(type).append("::");
+                
+                str.append(array.countLines(0, 84))
+                        .append(",")
+                        .append(arrayb.countLines(0, 84))
+                        .append(";"); 
+                
+                str.append(Arrays.toString(output).replace("[", "")
+                        .replace("]", "")).append(";");
+                
+                str.append(lsvm);
+                
+                //System.out.println(str.toString());
+                w.writeString(str.toString());
+                //array.show();
+                //CvtArrayIO.saveImage( array, "cvt_image_sig_"+counter+".png",12,12);
+                //CvtArrayIO.saveImage(arrayb, "cvt_image_bkg_"+counter+".png",12,12);
+            }
+        }
+        w.close();
+    }
+    
+    
+    public void processReduce(String file){
+        
+        HipoReader r = new HipoReader();        
+        r.open(file);
+        
+        Event evt = new Event();
+        
+        Bank bstHits = r.getBank("BSTRec::Hits");
+        Bank   bmtCt = r.getBank("BMTRec::Clusters");
+        Bank      mc = r.getBank("MC::Particle");
+        Bank     cvt = r.getBank("CVTRec::Tracks");
+        
+        Bank     adc = r.getBank("BST::adc");
+        
+        Evaluator eval = new Evaluator(adc,"order==0");
+        
+        int counter = 0;
+        int counterTrue  = 0;
+        int counterGhost = 0;
+        
+        HipoWriter w = new HipoWriter();
+        w.getSchemaFactory().copy(r.getSchemaFactory());
+        
+        w.open(outputFile);
+        
+        //while(r.hasNext()&&counter<180){
+        while(r.hasNext()){
+            
+            counter++;
+            r.nextEvent(evt);
+            evt.read(bmtCt);
+            evt.read(bstHits);
+            evt.read(cvt);
+            evt.read(mc);
+            evt.read(adc);
+            //adc.show();
+            
+            List<Integer> iter = eval.getIterator(adc);
+
+            Bank reduced = adc.reduce(iter);
+            //CvtArray2D  array = CvtArrayIO.createArray(bstHits, bmtCt, 1);
+            CvtArray2D  array = CvtArrayIO.createArray(reduced);            
+            CvtArray2D arrayb = CvtArrayIO.createArray(bstHits, bmtCt, -1);
+            
+            int type = array.getType();
+            
+            //System.out.println(">>> " + adc.getRows() + " " + iter.size() + " " + array.countLines(0, 84));            
+            //array.show();
+            //System.out.println(" type = " + type);
+            
+            if(array.countLines(0, 84)==6){
+                type = 1;
+            } else {
+                type=0;
+            }
+            
+            if(type==1){
+                //System.out.println(" type = " + type);
+               /* float[] output = array.getOutput();
+                String lsvm = arrayb.getInputLSVM();
+                StringBuilder str = new StringBuilder();
+                str.append("t").append(type).append("::");
+                
+                str.append(array.countLines(0, 84))
+                        .append(",")
+                        .append(arrayb.countLines(0, 84))
+                        .append(";"); 
+                
+                str.append(Arrays.toString(output).replace("[", "")
+                        .replace("]", "")).append(";");
+                
+                str.append(lsvm);
+                */
+                //System.out.println(str.toString());
+                //w.writeString(str.toString());
+                w.addEvent(evt);
+                //array.show();
+                //CvtArrayIO.saveImage( array, "cvt_image_sig_"+counter+".png");
+                //CvtArrayIO.saveImage(arrayb, "cvt_image_bkg_"+counter+".png");
+            }
+        }
+        w.close();
+    }
+    
     public static void main(String[] args){
         //String file = "/Users/gavalian/Work/DataSpace/cvt/cvt_proton.rec.hipo";
         //String file = "/Users/gavalian/Work/DataSpace/cvt/out_proton_0.4_1.6GeV_rga-fall2018_bg45nA.hipo";
-        String file = "/Users/gavalian/Work/DataSpace/cvt/out_proton_0.4_1.6GeV_rga-fall2018_bg45nA.hipo";
+        String file = "/Users/gavalian/Work/DataSpace/cvt/proton_95nA_20k.hipo";
         DataExtractor ext = new DataExtractor();
         //ext.process(file);
         ext.processExtract(file);

@@ -97,16 +97,21 @@ public class CVTNetwork {
                 .setLearningRate(0.01f)
                 .setMaxEpochs(epochs);
         
-        trainer.train(ds);
         
-        try {
+        for(int i = 0; i < 20; i++){
+            trainer.train(ds);
             
-            FileIO.writeToFile(neuralNet, "cnn_logreg.nnet");
-            FileIO.writeToFileAsJson(neuralNet, "cnn_logreg.nnet.json");
-            
-        } catch (IOException ex) {
-            Logger.getLogger(CVTNetwork.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                
+                FileIO.writeToFile(neuralNet, "cnn_logreg_"+((i+1)*epochs)+".nnet");
+                FileIO.writeToFileAsJson(neuralNet, "cnn_logreg.nnet.json");
+                
+            } catch (IOException ex) {
+                Logger.getLogger(CVTNetwork.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
         }
+        
         long time = 0L;
         for(int i = 0; i < test.getList().size(); i++){
             float[]   input = test.getList().get(i).floatFirst();
@@ -159,38 +164,39 @@ public class CVTNetwork {
             System.out.println("FILE    : " + file);
             System.out.println("NETWORK : " + network);
             //System.out.println(nnet);
-            for(double nt = 0.5; nt > 0.04; nt -= 0.05 ){
+            for(double nt = 0.1; nt > 0.0001; nt -= 0.002 ){
                 double threshold = nt;
-            int      counter = 0;
-            int  counterTrue = 0;
-            int counterFalse = 0;
-            int noise        = 0;
-            int datanoise = 0;
-            int counterPartial = 0;
-            long then = System.currentTimeMillis();
-            for(int i = 0; i < test.getList().size(); i++){
-                float[]   input = test.getList().get(i).floatFirst();
-                float[] desired = test.getList().get(i).floatSecond();
-                nnet.setInput(new Tensor(input));            
-                float[] result  = nnet.getOutput();
-                int[] measure = CVTNetwork.compare(desired, result, threshold);
-                //System.out.println(i + " [m] " + Arrays.toString(measure));
-                noise += measure[1];
+                int       counter = 0;
+                int   counterTrue = 0;
+                int  counterFalse = 0;
+                int         noise = 0;
+                int    edatanoise = 0;
                 
-                if(measure[0]>=measure[3]){
-                    counterTrue++;
-                } else {
-                    counterFalse++;
+                int counterPartial = 0;
+                long then = System.currentTimeMillis();
+                for(int i = 0; i < test.getList().size(); i++){
+                    float[]   input = test.getList().get(i).floatFirst();
+                    float[] desired = test.getList().get(i).floatSecond();
+                    nnet.setInput(new Tensor(input));            
+                    float[] result  = nnet.getOutput();
+                    int[] measure = CVTNetwork.compare(desired, result, threshold);
+                    //System.out.println(i + " [m] " + Arrays.toString(measure));
+                    noise += measure[1];
+                    
+                    if(measure[0]>=measure[3]){
+                        counterTrue++;
+                    } else {
+                        counterFalse++;
+                    }
+                    
+                    if(measure[3]==6&&measure[0]>=4&&measure[0]<6) counterPartial++;
+                    counter++;
                 }
                 
-                if(measure[3]==6&&measure[0]>=4&&measure[0]<6) counterPartial++;
-                counter++;
-            }
-            
-            long now = System.currentTimeMillis();
-            System.out.printf("%12.4f : # %9d, true = %9d, partial = %9d, false = %9d ,  noise = %8.3f, time = %d ms, rate = %d evt/sec\n",
-                    threshold,counter,counterTrue,counterPartial,counterFalse,
-                    ((double) noise)/counter,now-then,(int) ((double) counter*1000)/(now-then) );
+                long now = System.currentTimeMillis();
+                System.out.printf("%12.4f : # %9d, true = %9d, partial = %9d, false = %9d ,  noise = %8.3f, time = %d ms, rate = %d evt/sec\n",
+                        threshold,counter,counterTrue,counterPartial,counterFalse,
+                        ((double) noise)/counter,now-then,(int) ((double) counter*1000)/(now-then) );
             }
         } catch (IOException ex) {
             Logger.getLogger(CVTNetwork.class.getName()).log(Level.SEVERE, null, ex);

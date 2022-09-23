@@ -446,6 +446,22 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             }
         }
         
+        if(e.getActionCommand().compareTo("set_log_y_true")==0){
+            if(popupProvider.region!=null){                
+                TGRegion reg = popupProvider.region;
+                reg.getAxisFrame().setLogY(true);
+                this.repaint();
+            }
+        }
+
+        if(e.getActionCommand().compareTo("set_log_y_false")==0){
+            if(popupProvider.region!=null){
+                TGRegion reg = popupProvider.region;
+                reg.getAxisFrame().setLogY(false);
+                this.repaint();
+            }
+        }
+                
         if(e.getActionCommand().compareTo("show_region_stats")==0){
             if(popupProvider.region!=null){                
                 TGRegion reg = popupProvider.region;
@@ -548,10 +564,12 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             this.addMenu(menu, "Region", 
                     new String[]{"Duplicate" ,"Show Legend","Hide Legend",
                         "Edit Legend",
-                        "Show Stats","Hide Stats","Edit Stats"}, 
+                        "Show Stats","Hide Stats","Edit Stats",
+                        "Log Y", "Lin Y"}, 
                     new String[]{"region_duplicate", 
                         "show_region_legend", "hide_region_legend","edit_region_legend",
-                        "show_region_stats","hide_region_stats","edit_region_stats",}
+                        "show_region_stats","hide_region_stats","edit_region_stats",
+                        "set_log_y_true","set_log_y_false"}
             );
             
             menu.add(new JSeparator());

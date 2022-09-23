@@ -124,6 +124,34 @@ public class TGNiceScale {
         }
     }
     
+    public void getTicksLog(List<Double> ticks, List<String> texts){
+        ticks.clear(); texts.clear();
+        
+        double maxpoint = this.maxPoint;
+        double minpoint = this.minPoint;
+        if(minpoint<0.0000000001) minpoint = 0.001;
+        
+        int maxPower = (int) Math.log10(maxpoint);
+        int minPower = (int) Math.log10(minpoint);
+        int  expstep = 1;
+        if( (maxPower - minPower) > this.maxTicks) {
+            expstep = (int) (Math.abs(maxPower-minPower)/this.maxTicks) + 1;
+            //System.out.println("--- let's readjust this thing..... exstep = " + expstep);  
+            //System.out.println(Math.abs(maxPower-minPower) + "  " + this.maxTicks);
+        }
+        //System.out.println(" max = " + maxPower + " min power = " + minPower);
+        for(int power = maxPower; power >= minPower; power-= expstep){            
+            double value = Math.pow(10, power);
+            if(value>this.minPoint&&value<this.maxPoint){
+                ticks.add(Math.pow(10, power));
+                if(power>=0)
+                    texts.add(String.format("10^%d", power));
+                else texts.add(String.format("10^-^%d", Math.abs(power)));
+            }
+        }
+        
+    }
+    
     public void getTicks(List<Double> ticks){
         ticks.clear();
         for(int i = 0 ; i < this.maxTicks+5; i++){
@@ -188,16 +216,19 @@ public class TGNiceScale {
     public static void main(String[] args){
         
         
-        TGNiceScale  scale = new TGNiceScale(0.1678,0.28765);
+//        TGNiceScale  scale = new TGNiceScale(0.1678,0.28765);
+        TGNiceScale  scale = new TGNiceScale(0., 1);
         
         List<Double>  ticks = new ArrayList<>();
         List<String>  texts = new ArrayList<>();
         scale.setMaxTicks(10);
-        scale.getTicks(ticks,texts);
+        scale.getTicksLog(ticks,texts);
         
         for(int i = 0; i < ticks.size(); i++){
             System.out.printf("%4d : %f ? %s\n",i, ticks.get(i),texts.get(i));
         }
+        
+        
         
         /*
         TGNiceScale nice = new TGNiceScale(0,10000);

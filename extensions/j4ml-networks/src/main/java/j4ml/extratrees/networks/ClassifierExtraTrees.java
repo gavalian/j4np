@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import twig.data.H1F;
@@ -120,7 +121,9 @@ public class ClassifierExtraTrees {
         for(int i = 0; i < list.getList().size(); i++){
             double[] input = list.getList().get(i).getFirst();
             double   value = this.evaluate(input);
-            results.add(new DataEntry(DataArrayUtils.copy(input),new double[]{value}));
+            list.getList().get(i).setInfered(new float[]{(float) value});
+            //---- modified by gg -- adding infered value makes more sense
+            //results.add(new DataEntry(DataArrayUtils.copy(input),new double[]{value}));
         }
         return results;
     }
@@ -203,6 +206,7 @@ public class ClassifierExtraTrees {
         }
     }
     
+
     public void export(String filename){
         
         logger.log(Level.INFO, "writing network to file => {0}", filename);

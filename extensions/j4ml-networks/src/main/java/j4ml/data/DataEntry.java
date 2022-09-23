@@ -6,6 +6,7 @@
 package j4ml.data;
 
 import j4np.utils.io.DataArrayUtils;
+import java.util.Random;
 
 /**
  * 
@@ -98,6 +99,12 @@ public class DataEntry {
         this.second = label;
     }
     
+    public float[] features(){ return this.first;}
+    public float[] labels(){return this.second;}
+    
+    public double[] featuresDouble(){ return first==null? null:DataArrayUtils.toDouble(first);}
+    public double[] labelsDouble(){return second==null? null:DataArrayUtils.toDouble(second);}
+    
     public void show(){
         if(first!=null)
             System.out.print(DataArrayUtils.floatToString(first," ") );        
@@ -108,6 +115,22 @@ public class DataEntry {
             System.out.print(DataArrayUtils.floatToString(infered," "));
         }
         System.out.println();
+    }
+    
+    public void swap(Random r, int[] index, double min, double max){
+        int     ir = r.nextInt(index.length);
+        double  dist = min + r.nextDouble()*(Math.abs(max-min));
+        double direction = r.nextDouble();
+        double value = this.first[index[ir]];
+        
+        if(direction<0.5){
+           value = value - dist; 
+        } else {
+            value = value + dist;
+        }
+        if(value>1.0) value = value - 2*dist;
+        if(value<0.0) value = value + 2*dist;
+        this.first[index[ir]] = (float) value;
     }
     
     public String toCSVString(){

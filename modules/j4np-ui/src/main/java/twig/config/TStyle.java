@@ -31,15 +31,15 @@ public class TStyle {
      * Default fonts to be used with different components
      * of the graphics.
      */
-    protected TAttributesFont defaultAxisLabelFont  = 
+    /*protected TAttributesFont defaultAxisLabelFont  = 
             new TAttributesFont("Avenir Next",Font.PLAIN,14);
     
     protected TAttributesFont defaultAxisTitleFont  = 
             new TAttributesFont("Avenir Next",Font.PLAIN,18);
-    
-    protected TAttributesFont defaultPaveTextFont  = 
+    */
+    /*protected TAttributesFont defaultPaveTextFont  = 
             new TAttributesFont("Avenir Next",Font.PLAIN,18);
-    
+    */
     protected TAttributesFont defaultLegendFont  = 
             new TAttributesFont("Avenir Next",Font.PLAIN,18);
     
@@ -55,6 +55,26 @@ public class TStyle {
     protected int         axisLabelColor = 0;
     protected int         axisTitleColor = 0;
     
+    
+    protected Font  defaultPaveTextFont = new Font("Avenir",Font.PLAIN,18);
+    protected Font defaultAxisLabelFont = new Font("Avenir",Font.PLAIN,18);
+    protected Font defaultAxisTitleFont = new Font("Avenir",Font.PLAIN,18);
+
+    public Font getDefaultAxisLabelFont() {
+        return defaultAxisLabelFont;
+    }
+
+    public void setDefaultAxisLabelFont(Font defaultAxisLabelFont) {
+        this.defaultAxisLabelFont = defaultAxisLabelFont;
+    }
+
+    public Font getDefaultAxisTitleFont() {
+        return defaultAxisTitleFont;
+    }
+
+    public void setDefaultAxisTitleFont(Font defaultAxisTitleFont) {
+        this.defaultAxisTitleFont = defaultAxisTitleFont;
+    }
     
     public static List<float[]> dashPatterns = Arrays.asList(
             new float[]{10.0f,0.0f},
@@ -86,6 +106,15 @@ public class TStyle {
         
     }
     
+    
+    public void setDefaultPaveTextFont(Font f){
+        this.defaultPaveTextFont = f;
+    }
+    
+    public Font getDefaultPaveTextFont(){
+        return this.defaultPaveTextFont;
+    }
+    
     public static TStyle getInstance(){ 
         /*if(globalStyle==null){
             globalStyle = new TStyle();
@@ -106,6 +135,7 @@ public class TStyle {
         return axisLineColor;
     }
 
+    
     public void setAxisLineColor(int axisLineColor) {
         this.axisLineColor = axisLineColor;
     }

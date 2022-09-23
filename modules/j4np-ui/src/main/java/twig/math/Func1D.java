@@ -243,7 +243,22 @@ public class Func1D implements DataSet {
             range.grow(p.x, p.y);
         }
     }
-
+    
+    public static double calcChiSquare(Func1D f, H1F h){
+        double chi2 = 0;
+        int bins = h.getXaxis().getNBins();
+        for(int i = 0; i < bins; i++){
+            double x = h.getXaxis().getBinCenter(i);
+            double bc = h.getBinContent(i);
+            double normalization = bc;
+            if(x>f.getMin()&&x<f.getMax()&&bc>0.00000000000001){
+              double fc = f.evaluate(x);
+              chi2 += (fc-bc)*(fc-bc)/normalization;
+            }
+        }
+        return chi2;
+    }
+    
     @Override
     public TDataAttributes attr() {
         return funcAttr;

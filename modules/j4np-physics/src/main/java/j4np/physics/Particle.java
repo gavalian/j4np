@@ -5,6 +5,8 @@
  */
 package j4np.physics;
 
+import java.util.Random;
+
 /**
  *
  * @author gavalian
@@ -13,7 +15,8 @@ public class Particle {
     
     private LorentzVector vector = new LorentzVector();
     private       Vector3 vertex = new Vector3();
-    private           int    pid = 0;
+    private          int     pid = 0;
+    private          int pcharge = 0;
     
     public Particle(){
     }
@@ -21,11 +24,24 @@ public class Particle {
     public LorentzVector vector(){ return this.vector;}
     public Vector3       vertex(){ return this.vertex;}
     public int              pid(){ return pid; }
+    public int           charge(){ return pcharge;}
+    public Particle      charge(int __c){pcharge = __c; return this;}
     
     public static Particle withPid(int __p, double px, double py, double pz){
         Particle  p = new Particle(); p.pid = __p;
+        PDGParticle pt = PDGDatabase.getParticleById(__p);
         double mass = PDGDatabase.getParticleMass(p.pid);        
         p.vector.setPxPyPzM(px, py, pz, mass);
+        p.pcharge = pt.charge();
+        return p;
+    }
+    
+    public static Particle withPidMagThetaPhi(int __p, double mag, double theta, double phi){
+        Particle  p = new Particle(); p.pid = __p;
+        PDGParticle pt = PDGDatabase.getParticleById(__p);
+        p.pcharge = pt.charge();
+        double mass = PDGDatabase.getParticleMass(p.pid); 
+        p.vector.setMagThetaPhiM(mag, theta, phi, mass);
         return p;
     }
     
@@ -35,6 +51,14 @@ public class Particle {
         return p;
     }
     
+    
+    public static Particle generate(int pid, double[] p, double[] theta, double[] phi){
+        Random r = new Random();
+        double mom = r.nextDouble()*(p[1]-p[0]) + p[0];
+        double the = r.nextDouble()*(theta[1]-theta[0]) + theta[0];
+        double ph  = r.nextDouble()*(phi[1]-phi[0]) + phi[0];
+        return Particle.withPidMagThetaPhi(pid, mom, the, ph);
+    }
     /*
     private String name = "default";
     

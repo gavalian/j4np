@@ -95,6 +95,7 @@ public class DeepNettsNetwork {
         dataset.setColumnNames(names);
         return dataset;
     }
+    
     private DataSet convert(DataList list){
         
         int nInputs = list.getList().get(0).getFirst().length;

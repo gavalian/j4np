@@ -28,13 +28,16 @@ public class PhotoProductionClas6 extends PhysicsReaction {
     
     private void initialize(){
         
-        this.addVector("[5001]");
-        this.addVector("[211]+[-211]");
-        this.addVector("[5000]+[5001]-[211]-[-211]");
-        this.addVector("[5000]+[5001]-[2212]-[211]-[-211]");
-        this.addVector("[5001]-[2212]");
-        this.addVector("[2212]+[211]+[-211]");
-        this.addVector("[5001]-[211]-[-211]");
+        this.addVector("[5001]"); // 0
+        this.addVector("[211]+[-211]"); // 1
+        this.addVector("[5000]+[5001]-[211]-[-211]"); // 2
+        this.addVector("[5000]+[5001]-[2212]-[211]-[-211]"); // 3
+        this.addVector("[5001]-[2212]"); // 4
+        this.addVector("[2212]+[211]+[-211]"); // 5
+        this.addVector("[5001]-[211]-[-211]"); // 6
+        this.addVector("[2212]"); // 7
+        this.addVector("[211]"); // 8
+        this.addVector("[-211]"); // 9
         
         this.addEntry("gamma",   0, VectorOperator.OperatorType.P);
         
@@ -56,6 +59,18 @@ public class PhotoProductionClas6 extends PhysicsReaction {
         this.addEntry("mppipi",   5, VectorOperator.OperatorType.MASS);
         this.addEntry("mt",       6, VectorOperator.OperatorType.MASS2);
         
+        this.addEntry("p_2212",   7, VectorOperator.OperatorType.P);
+        this.addEntry("th_2212",  7, VectorOperator.OperatorType.THETA);
+        this.addEntry("phi_2212", 7, VectorOperator.OperatorType.PHI);
+        
+        this.addEntry("p_211",    8, VectorOperator.OperatorType.P);
+        this.addEntry("th_211",   8, VectorOperator.OperatorType.THETA);
+        this.addEntry("phi_211",  8, VectorOperator.OperatorType.PHI);
+
+        this.addEntry("p_m211",   9, VectorOperator.OperatorType.P);
+        this.addEntry("th_m211",  9, VectorOperator.OperatorType.THETA);
+        this.addEntry("phi_m211", 9, VectorOperator.OperatorType.PHI);
+        
     }
     
     @Override
@@ -69,5 +84,10 @@ public class PhotoProductionClas6 extends PhysicsReaction {
         this.addModifier(config.getEventModifier());
         double energy = config.getBeamEnergy();
         this.beamVector.setPxPyPzM(0.0, 0.0, 10.6, 0.0005);
+    }
+    
+    public static void main(String[] args){
+        String file = "";
+        PhotoProductionClas6 p = new PhotoProductionClas6("sigma1660_d_pkl.h5");
     }
 }

@@ -266,16 +266,17 @@ public class DeepNettsClassifier {
     }
     
     public DataList evaluate(DataList dpl){
-        DataList result = new DataList();
+        //DataList result = new DataList();
         for(int i = 0; i < dpl.getList().size(); i++){
             float[] input = dpl.getList().get(i).floatFirst();
             this.neuralNet.setInput(input);
             float[] output = this.neuralNet.getOutput();
-            result.add(new DataEntry(
-                    DataArrayUtils.toDouble(input),
-                    DataArrayUtils.toDouble(output)));
+            float[] result = new float[output.length];
+            
+            for(int r = 0; r < result.length; r++) result[r] = output[r];
+            dpl.getList().get(i).setInfered(result);
         }
-        return result;
+        return dpl;
     }
     
     public void train(DataList dpl, int nEpochs){

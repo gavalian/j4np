@@ -43,6 +43,14 @@ public class LorentzVector {
             v.setPxPyPzM(px, py, pz, m);
             return v;
         }
+        
+        public static LorentzVector withSphericalM(double p, double theta, double phi, double m){
+            LorentzVector v = new LorentzVector();
+            v.vector.setMagThetaPhi(p, theta, phi);
+            v.energy = Math.sqrt(m*m + v.vector.mag2());
+            return v;
+        }
+        
         public static LorentzVector add(LorentzVector v1, LorentzVector v2){
             LorentzVector vec = LorentzVector.from(v1);
             return vec.add(v2);
@@ -58,6 +66,11 @@ public class LorentzVector {
 		energy = Math.sqrt(m * m + vector.mag2());
 	}
 
+        public void setMagThetaPhiM(double mag, double theta, double phi, double m) {
+		vector.setMagThetaPhi(mag,theta,phi);
+		energy = Math.sqrt(m * m + vector.mag2());
+	}
+        
 	public void setVectM(Vector3 vect, double m) {
 		vector = vect;
 		energy = Math.sqrt(m * m + vector.mag2());

@@ -181,8 +181,8 @@ public class Axis implements Serializable {
     		if ((xVal >= axisMargins[i] && xVal < axisMargins[i+1])) {
                     return i;
     		}
-        }        
-        return numBins;*/                
+        } 
+        return numBins;*/ 
         int bin = Arrays.binarySearch(axisMargins, xVal);
         if(bin>=0) return bin;               
         return ((-bin) - 2);

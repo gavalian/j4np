@@ -5,17 +5,9 @@
  */
 package twig.data;
 
-
-
-import j4np.graphics.settings.DataAttributes;
 import j4np.utils.io.TextFileReader;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import twig.config.TDataAttributes;
 
 /**
@@ -45,11 +37,13 @@ public class GraphErrors implements DataSet {
         for (int i = 0; i < grX.getSize(); i++) {
             this.addPoint(grX.getValue(i), grY.getValue(i), 0.0, 0.0);
         }
+        graphName = name;
         initAttributes();
     }
 
     public GraphErrors(String name, DataVector grX, DataVector grY, DataVector erX, DataVector erY) {
         //setName(name);
+        graphName = name;
         for (int i = 0; i < grX.getSize(); i++) {
             double errX = 0.0;
             if (erX != null) errX = erX.getValue(i);

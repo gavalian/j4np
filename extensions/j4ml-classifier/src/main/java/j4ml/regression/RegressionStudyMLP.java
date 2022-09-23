@@ -164,11 +164,11 @@ public class RegressionStudyMLP {
     }
     
     public static void main(String[] args){
-        String file = "/Users/gavalian/Work/Software/project-10.4/data/regression/data_negative_full.csv";
+        //String file = "/Users/gavalian/Work/Software/project-10.4/data/regression/data_negative_full.csv";
         
-        String eval = "/Users/gavalian/Work/DataSpace/regression/mc_epi_evalu_0013_hb.txt";
-        //String file = "/Users/gavalian/Work/Software/project-10.4/j4np-1.0.4/data_flat_tb.csv";
-        /*
+        //String eval = "/Users/gavalian/Work/DataSpace/regression/mc_epi_evalu_0013_hb.txt";
+        String file = "/Users/gavalian/Work/Software/project-10.5/study/data/mlp_study_data_tb.csv";
+        
         RegressionStudyMLP.study(file,ActivationType.RELU, ActivationType.LINEAR);
         RegressionStudyMLP.study(file,ActivationType.RELU, ActivationType.TANH);
         RegressionStudyMLP.study(file,ActivationType.RELU, ActivationType.SIGMOID);
@@ -176,10 +176,11 @@ public class RegressionStudyMLP {
         RegressionStudyMLP.study(file,ActivationType.TANH, ActivationType.TANH);
         RegressionStudyMLP.study(file,ActivationType.TANH, ActivationType.LINEAR);
         RegressionStudyMLP.study(file,ActivationType.SIGMOID, ActivationType.LINEAR);
-        RegressionStudyMLP.study(file,ActivationType.SIGMOID, ActivationType.SIGMOID);*/
+        RegressionStudyMLP.study(file,ActivationType.SIGMOID, ActivationType.SIGMOID);
         
-        RegressionStudyMLP.trainSector2();
-        String eval2 = "/Users/gavalian/Work/Software/project-10.4/distribution/artin/projects/pe/xgboost-java/mc_e1pi_hb.txt";
+        
+        //RegressionStudyMLP.trainSector2();
+        //String eval2 = "/Users/gavalian/Work/Software/project-10.4/distribution/artin/projects/pe/xgboost-java/mc_e1pi_hb.txt";
         //RegressionStudyMLP.evaluateSector2(eval2);
         
     }

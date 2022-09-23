@@ -37,6 +37,8 @@ public class TGAxis implements StyleNode {
     private Range          fixedAxisRange = null;
     private TGNiceScale     axisScaleTool = new TGNiceScale(0.0,1.0);
     
+    public boolean isLogarithmic = false;
+    
     public TGAxis(){}
     
     public TGAxis(AxisType type){attributes.setAxisType(type);}
@@ -206,9 +208,18 @@ public class TGAxis implements StyleNode {
             this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
             this.axisScaleTool.setMaxTicks(attributes.getAxisTickMarkCount());
             
-            this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
+            //System.out.println("----> getting axis ticks");
+            if(this.isLogarithmic==true){
+                   this.axisScaleTool.getTicksLog(axisTicksBuffer, axisTextsBuffer);
+            } else {
+                this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
+            }
+            
+            //System.out.println(axisTicksBuffer);
+            
             for(int i = 0; i < axisTicksBuffer.size(); i++){
                 int ypos = (int)(y1 + r.getY() - tr.getY(axisTicksBuffer.get(i),r));
+                //System.out.println(" translating -> " + axisTicksBuffer.get(i) + "  " + tr.isLogY());
                 //int ypos = (int)( tr.getY(axisTicksBuffer.get(i),r));
                 String ylabel = axisTextsBuffer.get(i);
                 if(this.attributes.getAxisTicksDraw()==true) g2d.drawLine( x1, ypos, xend, ypos);

@@ -62,11 +62,11 @@ public class DataFitter {
 	            if(par.min()>-1e9&&par.max()<1e9){
 	                upar.setLimits(par.name(), par.min(), par.max());
 	            }
-	        }
+                }
 	        
-	        
+                /*
 	        MnScan  scanner = new MnScan(funcFitter,upar);
-	        FunctionMinimum scanmin = scanner.minimize(); 
+	        FunctionMinimum scanmin = scanner.minimize();
                 
 	        if(options.contains("S")==true){
                     System.err.println("******************");
@@ -74,14 +74,14 @@ public class DataFitter {
                     System.err.println("******************");
                     System.out.println("minimum : " + scanmin);
                     System.out.println("pars    : " + upar);
-                    System.out.println(upar);
+                    //System.out.println(upar);
                     System.err.println("*******************************************");
-                }
+                }*/
                 
-	        MnMigrad migrad = new MnMigrad(funcFitter, upar);
-	        
+	        MnMigrad migrad = new MnMigrad(funcFitter, upar);	        
 	        FunctionMinimum min = migrad.minimize();
 	        
+                
 	        MnUserParameters userpar = min.userParameters();
 	        
 	        for(int loop = 0; loop < npars; loop++){

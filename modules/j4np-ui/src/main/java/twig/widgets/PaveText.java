@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import twig.config.TStyle;
 import twig.widgets.LatexText.TextAlign;
 import twig.widgets.LatexText.TextRotate;
 
@@ -85,8 +86,9 @@ public class PaveText implements Widget {
         this.positionY = y;
         this.drawBox = boxDraw;
         this.fillBox = boxDraw;
-        textFont = new Font("Avenir", Font.PLAIN, fontSize);
-        this.latexText.setFont(textFont);
+        //textFont = new Font("Avenir", Font.PLAIN, fontSize);
+        //this.latexText.setFont(textFont);
+        this.initDefualtFont();
         //setName("pave_text");
         textStrings.add(text);
         textPositions.add(new Point2D.Double(0.0,0.0));
@@ -99,8 +101,9 @@ public class PaveText implements Widget {
         this.positionY = y;
         this.drawBox = boxDraw;
         this.fillBox = boxDraw;
-        textFont = new Font("Avenir", Font.PLAIN, fontSize);
-        this.latexText.setFont(textFont);
+        //textFont = new Font("Avenir", Font.PLAIN, fontSize);
+        //this.latexText.setFont(textFont);
+        this.initDefualtFont();
         //setName("pave_text");
         this.addLines(text);
         textPositions.add(new Point2D.Double(0.0,0.0));
@@ -114,6 +117,7 @@ public class PaveText implements Widget {
         //setName("pave_text");
         textStrings.add(text);
         textPositions.add(new Point2D.Double(0.0,0.0));
+        this.initDefualtFont();
     }
     
     public PaveText(List<String> texts, double x, double y){
@@ -125,6 +129,7 @@ public class PaveText implements Widget {
         for(String text : texts)
             this.addLine(text);
         //textPositions.add(new Point2D.Double(0.0,0.0));
+        this.initDefualtFont();
     }
     
     public PaveText(double x, double y){
@@ -133,7 +138,8 @@ public class PaveText implements Widget {
         this.positionX = x;
         this.positionY = y;
         //setName("pave_text");
-        latexText.setFont(textFont);
+        //latexText.setFont(textFont);
+        this.initDefualtFont();
     }
     
     public PaveText(double x, double y, boolean boxDraw){
@@ -142,11 +148,22 @@ public class PaveText implements Widget {
         this.positionX = x;
         this.positionY = y;
         //setName("pave_text");
-        latexText.setFont(textFont);
+        //latexText.setFont(textFont);        
         this.drawBox = boxDraw;
         this.fillBox = boxDraw;
+        this.initDefualtFont();
     }
     
+    
+    private void initDefualtFont(){
+        try {
+           Font f = TStyle.getInstance().getDefaultPaveTextFont();
+           this.latexText.setFont(f);
+        } catch (Exception e){
+            System.err.println(":: error. can not find default TStyle to load fonts");
+            this.latexText.setFont(textFont);
+        }
+    }
     public PaveText setStyle(PaveTextStyle style){
         paveStyle = style; return this;
     }
@@ -216,7 +233,7 @@ public class PaveText implements Widget {
         return this;
     }
     
-    public PaveText addLines(List<String> lines){
+    public final PaveText addLines(List<String> lines){
         for(String line : lines)
             this.addLine(line);
         return this;

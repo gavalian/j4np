@@ -159,10 +159,10 @@ grc.attr().setTitleX("Beam Current (nA)");
 grc.attr().setTitleY("Reconstructed Fraction");
 Line line = new Line(38.0,0.70,162,0.70);
 Legend leg = new Legend(0.2,0.98);
-leg.add(grc,"ratio - conv/0nA");
-leg.add(grd,"ratio - denoised conv/0nA");
-leg.add(gra,"ratio - denoised ai/0nA");
-leg.add(grf,"ratio - ai/0nA");
+leg.add(grc,"ratio - conv/45nA");
+leg.add(grd,"ratio - denoised conv/45nA");
+leg.add(gra,"ratio - denoised ai/45nA");
+leg.add(grf,"ratio - ai/45nA");
 
 cr.region(0).setBlank();
 cr.view().region(1).draw(grc,"PL").draw(grf,"PLsame").draw(grd,"PLsame").draw(gra,"PLsame").wrapX();

@@ -43,6 +43,8 @@ public class CvtArray2D {
         return counter;
     }
     
+    public float[] getInput(){return array;}
+    
     public float[] getOutput(){
         float[] output = new float[84];
         for(int i = 0; i < 84; i++){

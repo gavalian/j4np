@@ -13,7 +13,9 @@ import java.awt.geom.Rectangle2D;
  */
 public class Translation2D {
     
-    private Rectangle2D  transBounds = new Rectangle2D.Double();
+    private Rectangle2D     transBounds = new Rectangle2D.Double();
+    private boolean      isLogarithmicX = false;
+    private boolean      isLogarithmicY = false;
     
     public Translation2D(double xmin, double xmax, double ymin, double ymax){
         transBounds.setRect(xmin, ymin, xmax-xmin, ymax-ymin);
@@ -33,23 +35,56 @@ public class Translation2D {
         return r.getHeight()*fraction;
     }
     
+    public Translation2D growY(double fraction){
+        double height = transBounds.getHeight() + transBounds.getHeight()*fraction;
+        transBounds.setFrame(transBounds.getX(), transBounds.getY(), height, transBounds.getWidth());
+        return this;
+    }
+    
+    public boolean isLogX(){ return this.isLogarithmicX;}
+    public boolean isLogY(){ return this.isLogarithmicY;}
+    
+    public Translation2D setLogX(boolean flag){ this.isLogarithmicX = flag; return this;}
+    public Translation2D setLogY(boolean flag){ this.isLogarithmicY = flag; return this;}
+    
     public double getX(double x, Rectangle2D r){
         double fraction = (x-transBounds.getX())/transBounds.getWidth();
         return r.getX()+fraction*r.getWidth();
     }
     
     public double getY(double y, Rectangle2D r){
-        double fraction = (y-transBounds.getY())/transBounds.getHeight();
-        return r.getY()+fraction*r.getHeight();
+        if(this.isLogarithmicY==false){
+            double fraction = (y-transBounds.getY())/transBounds.getHeight();
+            return r.getY()+fraction*r.getHeight();
+        }
+        double ymin = transBounds.getY();        
+        double yadj    = y;
+        if(ymin<0.0000000000001) ymin = 0.001;
+        if(yadj<0.0000000000001) yadj = 0.001;
+        double ylength = Math.log10(transBounds.getHeight()) - Math.log10(ymin);
+        double fraction = (Math.log10(yadj)-Math.log10(ymin))/ylength;
+        //System.out.printf("%8.5f %8.5f %8.5f =>>> %8.5f %8.5f\n",y,ymin,ylength , fraction,r.getHeight());
+        return r.getY() + fraction*r.getHeight();
     }
     
-    public double relativeX(double x, Rectangle2D r){
+    public double relativeX(double x, Rectangle2D r){        
         double fraction = (x-transBounds.getX())/transBounds.getWidth();
         return fraction*r.getWidth();
     }
     
     public double relativeY(double y, Rectangle2D r){
-        double fraction = (y-transBounds.getY())/transBounds.getHeight();
+        if(this.isLogarithmicY==false){
+            double fraction = (y-transBounds.getY())/transBounds.getHeight();
+            return fraction*r.getHeight();
+        }
+        
+        double ymin = transBounds.getY();        
+        double yadj    = y;
+        if(ymin<0.0000000000001) ymin = 0.001;
+        if(yadj<0.0000000000001) yadj = 0.001;
+        double ylength = Math.log10(transBounds.getHeight()) - Math.log10(ymin);
+        double fraction = (Math.log10(yadj)-Math.log10(ymin))/ylength;
+        //System.out.printf("%8.5f %8.5f %8.5f =>>> %8.5f %8.5f\n",y,ymin,ylength , fraction,r.getHeight());
         return fraction*r.getHeight();
     }
     

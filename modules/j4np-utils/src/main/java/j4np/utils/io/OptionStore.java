@@ -103,6 +103,7 @@ public class OptionStore {
      * @return program name
      */
     public String getName(){ return programName;}
+    public OptionStore setName(String name){ this.programName = name;return this;}
     /**
      * returns the current command
      * @return 

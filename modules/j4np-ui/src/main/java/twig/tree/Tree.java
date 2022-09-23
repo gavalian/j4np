@@ -10,9 +10,6 @@ import com.indvd00m.ascii.render.api.IContextBuilder;
 import com.indvd00m.ascii.render.api.IRender;
 import com.indvd00m.ascii.render.elements.Table;
 import com.indvd00m.ascii.render.elements.Text;
-import j4np.hipo5.data.Event;
-import j4np.hipo5.data.Schema;
-import j4np.hipo5.io.HipoWriter;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,11 +39,13 @@ import twig.studio.TwigStudio;
  */
 public abstract class Tree implements TreeProvider {
     
-    private String       treeName = "tree";
-    private int       defaultBins = 100;
-    private Logger     treeLogger = Logger.getLogger(Tree.class.getName());
-    
+    private String         treeName = "tree";
+    private int         defaultBins = 100;
+    private int    treeProcessLimit = -1;    
     private List<TreeCut>  treeCuts = new ArrayList<>();
+
+
+    private Logger      treeLogger = Logger.getLogger(Tree.class.getName());
     
     public Tree(){ treeLogger.setLevel(Level.OFF); }
     
@@ -100,8 +99,7 @@ public abstract class Tree implements TreeProvider {
             }
         } catch (Exception e){
             System.out.println("[tree] error : syntax error in string [" + desc +"]");
-        }
-        
+        }        
         return null;
     }
     
@@ -115,6 +113,7 @@ public abstract class Tree implements TreeProvider {
         return str.toString();
     }
     
+    public void setLimit(int limit){treeProcessLimit = limit;}
     
     public Tree addCut(String name, String cutExp){
         List<String> branches = getBranches();
@@ -337,16 +336,17 @@ public abstract class Tree implements TreeProvider {
         TreeCut         cutExp = new TreeCut("1",cut,branches);
         int counter = 0;
 
-        long evaluate = 0L;
-        long read = 0L;
-
-        boolean isDone = false;
+        long    evaluate = 0L;
+        long        read = 0L;
+        boolean   isDone = false;
+        
         while(this.next()==true){
-            long then = System.nanoTime();
+            //long then = System.nanoTime();
             //boolean status = this.next();
-            long now = System.nanoTime();
-            read += (now-then);            
+            //long now = System.nanoTime();
+            //read += (now-then);            
             counter++;
+            if(treeProcessLimit>0&&counter>=treeProcessLimit) break;
             long start = System.nanoTime();
             if(cutExp.isValid(this)>0.5){
                 h.fill(varExp.getValue(this));
@@ -354,11 +354,10 @@ public abstract class Tree implements TreeProvider {
             long end = System.nanoTime();
             evaluate += (end - start);
         }
-
         System.out.printf("get::perf>> evaluated #%12d in %12d ms, read %12.4f ms\n", 
                 counter,(int) (evaluate/1000000.0), (read/1000000.0));
-    }        
-        
+    }    
+    
     public final void geth2(String expression, String cut, H2F h){
         reset();
         h.attr().setTitle(cut);
@@ -418,12 +417,12 @@ public abstract class Tree implements TreeProvider {
         long now = System.currentTimeMillis();
         H2F h = H2F.create("h2000000", binsX, binsY, vx, vy);
         h.attr().setTitle(cut);
-        h.attr().setTitleX(axisExp[0]);
-        h.attr().setTitleY(axisExp[1]);
+        h.attr().setTitleX(axisExp[1]);
+        h.attr().setTitleY(axisExp[0]);
         System.out.printf("get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
                 counter,(int) (evaluate/1000000.0), now-then);
         return h;
-    }        
+    }
     
     public static List<H1F> createH1D(int[] bins, double[] limits){
         List<H1F> hList = new ArrayList<>();
@@ -457,7 +456,7 @@ public abstract class Tree implements TreeProvider {
     
     
     @Override
-    public void      draw(String path, TGDataCanvas c){
+    public void  draw(String path, TGDataCanvas c){
            System.out.println("will be drawing this : " + path);
            if(path.contains("/")==true){
                String branch = path.replaceAll("/", "");               
@@ -527,6 +526,28 @@ public abstract class Tree implements TreeProvider {
         w.close();
     }
     
+    public void export(String filename, String[] selection, int limit){
+        List<String> branches = Arrays.asList(selection);
+        TextFileWriter w = new TextFileWriter();
+        w.open(filename);
+        w.writeString("#" + Arrays.toString(branches.toArray()));
+        this.reset();
+        int nrows = branches.size();
+        int counter = 0;
+        while(this.next()==true){
+            StringBuilder str = new StringBuilder();
+            for(int i = 0; i < nrows; i++){
+                if(i!=0) str.append(",");
+                int order = this.getBranchOrder(branches.get(i));
+                str.append(String.format("%e", this.getValue(order)));
+            }
+            w.writeString(str.toString());
+            counter++;
+            if(limit>0&&counter>limit) break;
+        }
+        w.close();
+        System.out.printf("\n\n>> exported %d rows into file : %s\n",counter,filename);
+    }
    
     public void export(String filename, String cut){
         

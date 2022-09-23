@@ -104,7 +104,7 @@ public class DataExtractRegression {
         VectorOperator vop = new VectorOperator(vCM,"-[11]-[211]");
         
         PhysDataEvent phys = new PhysDataEvent(mc);
-        int counter = 0;    
+        int counter = 0;
         
         while(r.hasNext()){
         
@@ -419,10 +419,11 @@ public class DataExtractRegression {
     }
     
     public static void main(String[] args){
-        String file = "/Users/gavalian/Work/DataSpace/regression/rec_epi_0002_000_nA_tor_m_1.hipo_filtered.h5";
+        String file = "/Users/gavalian/Work/DataSpace/regression/tr_negative.hipo_filtered.h5";
         
         DataExtractRegression ext = new DataExtractRegression();
         ext.setDCLevel(1);
-        ext.extractTwo(file,2000);
+        //ext.extractTwo(file,2000);
+        ext.extractMCsingle(file, -1);
     }
 }

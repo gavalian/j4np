@@ -198,6 +198,11 @@ public class H1F  implements DataSet {
         }
     }
     
+    public H1F copy(){
+        H1F h = new H1F(this.getName()+"_copy",
+                this.xAxis.getNBins(),this.xAxis.min(),this.xAxis.max());
+        return h;
+    }
     /**
      * Sets the x-axis title to the specified parameter
      * @param xTitle		The desired title of the x-axis

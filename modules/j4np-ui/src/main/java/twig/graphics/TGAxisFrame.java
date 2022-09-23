@@ -7,6 +7,7 @@ package twig.graphics;
 
 import j4np.graphics.Node2D;
 import j4np.graphics.Translation2D;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -60,13 +61,36 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         axisY.getAttributes().getAxisTicksString().add("0.35");
         axisY.getAttributes().getAxisTicksString().add("0.75");
         */
+        this.initDefaultFonts();
     }
     
+    public TGAxisFrame setLogY(boolean flag){ 
+        this.axisFrameRange.setLogY(flag);
+        this.axisY.isLogarithmic = flag;
+        return this;
+    }
+    
+    private void initDefaultFonts(){
+        try {
+           Font lf = TStyle.getInstance().getDefaultAxisLabelFont();
+           Font tf = TStyle.getInstance().getDefaultAxisTitleFont();
+           this.axisX.getAttributes().setAxisLabelFont(lf);
+           this.axisY.getAttributes().setAxisLabelFont(lf);
+           this.axisZ.getAttributes().setAxisLabelFont(lf);
+           
+           this.axisX.getAttributes().setAxisTitleFont(tf);
+           this.axisY.getAttributes().setAxisTitleFont(tf);
+           this.axisZ.getAttributes().setAxisTitleFont(tf);
+        } catch (Exception e){
+            System.err.println(":: error. can not find default TStyle to load fonts");            
+        }
+    }
     @Override
     public void drawLayer(Graphics2D g2d, int layer){
         
         Node2D parent = this.getParent();
         Rectangle2D r = parent.getBounds().getBounds();
+        
         /**
          * Calculate the axis range by iterating over the 
          */
@@ -82,12 +106,20 @@ public class TGAxisFrame extends Node2D implements StyleNode {
                 axisDataRange.grow(tempDataRange.getRange());
             }
             
+            
+            if(this.axisFrameRange.isLogY()==true){
+                //System.out.println(axisDataRange.getRange());
+                axisDataRange.growY(10.);
+                //System.out.println(axisDataRange.getRange());
+            }
+            
             this.setLimits(
                     axisDataRange.getRange().getX(), 
                     axisDataRange.getRange().getX() + axisDataRange.getRange().getWidth(),
                     axisDataRange.getRange().getY(), 
                     axisDataRange.getRange().getY() + axisDataRange.getRange().getHeight()
             );
+            
             
             updateLimits();
             g2d.setClip(r.getBounds2D());

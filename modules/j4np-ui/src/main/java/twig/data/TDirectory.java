@@ -8,12 +8,10 @@ import j4np.utils.base.ArchiveUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -191,6 +189,7 @@ public class TDirectory implements TreeProvider {
     
     public void read(String filename){
         List<String>  items = ArchiveUtils.getList(filename, ".*dataset");
+        //System.out.println("size = " + items.size());
         for(String item : items){
             int index = item.lastIndexOf("/");
             String    dir = item.substring(0, index);
@@ -259,6 +258,9 @@ public class TDirectory implements TreeProvider {
     
     public static void main(String[] args){
         
+        TDirectory d = new TDirectory("studydir.twig");
+        d.list();
+        /*
         H1F h1 = new H1F("h1",100,0.0,1.0);
         H1F h2 = new H1F("h2",100,0.0,1.0);
         H1F h3 = new H1F("h3",100,0.0,1.0);
@@ -287,6 +289,6 @@ public class TDirectory implements TreeProvider {
         dir2.read("archive.twig");
         
         System.out.println("\n\n------------------\n");
-        dir2.show();
+        dir2.show();*/
     }
 }

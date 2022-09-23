@@ -64,7 +64,7 @@ public class HipoTree extends Tree {
     
     @Override
     public double getValue(int order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return treeBank.getValue(order, bankRow);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class HipoTree extends Tree {
 
     @Override
     public int getBranchOrder(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        
+        return this.treeBank.getSchema().getEntryOrder(name);
     }
 
     @Override
@@ -203,15 +203,17 @@ public class HipoTree extends Tree {
             Bank b = new Bank(schema,lines.size());
             for(int i = 0; i < lines.size(); i++){
                 nLinesWritten++;
-                String[] data = lines.get(i).split(",");
-                if(data.length>=names.length){
-                    for(int item = 0; item < names.length; item++){
-                        float value = Float.parseFloat(data[item].trim());
-                        b.putFloat(item, i, value);
+                if(lines.get(i).startsWith("#")==false){
+                    String[] data = lines.get(i).split(",");
+                    if(data.length>=names.length){
+                        for(int item = 0; item < names.length; item++){
+                            float value = Float.parseFloat(data[item].trim());
+                            b.putFloat(item, i, value);
+                        }
+                    } else {
+                        System.out.println(" error at line # " + i + " data size = " 
+                                + data.length + ", variables size = " + names.length);
                     }
-                } else {
-                    System.out.println(" error at line # " + i + " data size = " 
-                            + data.length + ", variables size = " + names.length);
                 }
             }
             event.reset();

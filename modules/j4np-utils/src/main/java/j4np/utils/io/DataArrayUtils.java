@@ -90,6 +90,16 @@ public class DataArrayUtils {
         return str.toString();
     }
     
+    
+    public static String getDataString(double[] array, int prec){
+        String format = "%." + String.format("%d", prec) + "f";
+        StringBuilder str = new StringBuilder();
+        str.append(String.format(format, array[0]));        
+        for(int i = 1; i < array.length; i++) 
+            str.append(",").append(String.format(format, array[i]));
+        return str.toString();
+    }
+    
     public static String doubleToString(double[] array, String delim){
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < array.length; i++) {

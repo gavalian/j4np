@@ -30,7 +30,11 @@ react.addModifier(new EventModifier(){
         }
     }
 });
-H1F h = react.geth("mxepipi", "", 120, 0.5, 2.6);
-TGCanvas c = new TGCanvas();
-c.view().region().draw(h);
-c.repaint();
+
+while(react.next()==true){
+    System.out.println("missing mass = " + react.getValue("mxepipi"));
+}
+//H1F h = react.geth("mxepipi", "", 120, 0.5, 2.6);
+//TGCanvas c = new TGCanvas();
+//c.view().region().draw(h);
+//c.repaint();

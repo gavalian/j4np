@@ -35,6 +35,7 @@ import j4np.hipo5.data.Node;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.utils.HipoLogos;
+import j4np.utils.ProgressPrintout;
 
 /**
  *
@@ -70,6 +71,9 @@ public class HipoReader implements DataSource {
     private SchemaFactory  schemaFactory = new SchemaFactory();
     private List<String>   configFactory = new ArrayList<>();
     
+    private ProgressPrintout      progress = new ProgressPrintout();
+    private boolean          progressPrint = true;
+            
     public HipoReader(){
         
     }
@@ -80,6 +84,10 @@ public class HipoReader implements DataSource {
     
     public void setDebugMode(int mode){
         this.debugMode = mode;
+    }
+    
+    public void setProgressPrint(boolean mode){
+        this.progressPrint = mode;
     }
     
     public HipoReader setTags(long... tags){
@@ -125,20 +133,31 @@ public class HipoReader implements DataSource {
             }*/
             
             Event dictionaryEvent = new Event();            
-            Node       schemaNode = new Node(120,1,DataType.STRING,20);
+            Node       schemaNode = new Node(120,1,DataType.STRING,128);
             for(int nevt = 0 ; nevt < recordEntries; nevt++){
                 
                 byte[] event = dictionaryRecord.getEvent(nevt);
                 dictionaryEvent.initFrom(event);
+                //System.out.println(" event # " + nevt);
+                //dictionaryEvent.scanShow();
                 //dictionaryEvent.show();
                 int nodePosition = dictionaryEvent.scan(120, 1);
-                schemaNode = dictionaryEvent.read(schemaNode, nodePosition);
-                
-                //schemaNode.show();
-                //System.out.println("NODE TYPE = " + schemaNode.getType());                
-                Schema schema = Schema.fromJsonString(schemaNode.getString());
-                //schema.show();
-                schemaFactory.addSchema(schema);
+                if(nodePosition>4){
+                    try {
+                        schemaNode = dictionaryEvent.read(schemaNode, nodePosition);                    
+                        //schemaNode.show();
+                        //System.out.println("NODE TYPE = " + schemaNode.getType());                
+                        Schema schema = Schema.fromJsonString(schemaNode.getString());
+                        //schema.show();
+                        schemaFactory.addSchema(schema);
+                        //System.out.printf("position : %d\n",nodePosition);
+                        //System.out.printf("content  : %s\n\n", schemaNode.getString());
+                    } catch (Exception e) { 
+                        System.out.println("something went horribly wrong");
+                        System.out.printf("position : %d\n",nodePosition);
+                        System.out.printf("content  : %s\n\n", schemaNode.getString());
+                    }
+                }
             }
             
             this.scanFileTrailer();
@@ -154,7 +173,7 @@ public class HipoReader implements DataSource {
             }*/
             
             System.out.printf("[hipo5] >> records %9d, event %9d, schemas %5d << f = %s\n",
-                    recordPositions.size(),eventIndex.getMaxEvents(),recordEntries, filename);
+                    recordPositions.size(),eventIndex.getMaxEvents(),schemaFactory.getSchemaKeys().size(), filename);
             
             /*for(int i = 0; i < recordPositions.size(); i++){
                 System.out.printf("----> record %5d , position %5d\n",i,recordPositions.get(i).getPosition());
@@ -253,7 +272,7 @@ public class HipoReader implements DataSource {
      * returns the next event that contains schemas provided
      * by the list.
      * @param event event to fill
-     * @param schmeas list of schemas required to have in the event
+     * @param schemas
      * @return the filled event.
      */
     public Event nextEvent(Event event, List<Schema> schemas){
@@ -354,6 +373,7 @@ public class HipoReader implements DataSource {
         //System.out.println("next event:: event # " + eventNumber + " , record # " + recordNumber);
         //if(eventNumber<0) eventIndex.advance();        
         //if( eventNumber == 0 ){
+        if(this.progressPrint==true) this.progress.updateStatus();
         if( eventNumber < 0 ){
             long position = this.recordPositions.get(0).getPosition();
             //System.out.println("next event:: reading first record at position " + position);

@@ -740,6 +740,11 @@ public class Bank {
         System.out.println(nodeString(tokens));
     }
     
+    public String getSummary(){
+        return String.format(" %44s | %8d | %8d | %8d | %8d ",
+                                    nodeSchema.getName(), nodeSchema.getGroup(),nodeSchema.getItem(),getRows(), this.getNodeBufferLength());
+    }
+    
     public void setByte(String sector, int i, byte b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

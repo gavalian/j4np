@@ -14,7 +14,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import twig.config.TStyle;
+import twig.data.DataSet;
 import twig.studio.StudioWindow;
+import twig.studio.TwigStudio;
+import twig.widgets.Widget;
 
 /**
  *
@@ -187,6 +190,29 @@ public class TGCanvas extends JFrame implements ActionListener {
         menuBar.add(themeMenu);
         menuBar.add(fileHelp);
         return menuBar;
+    }
+    public TGCanvas cd(int pad){ this.view().cd(pad); return this;}
+    
+    public TGCanvas draw(String data){ return this.draw(data, "");}
+    public TGCanvas draw(String data, String option){
+        if(data.contains("/")==false){
+            DataSet ds = TwigStudio.getInstance().dir().get("/studio",data);
+            this.draw(ds, option);
+        }
+        return this;
+    }
+    public TGCanvas draw(DataSet ds,String option){ 
+        this.view().region().draw(ds, option); this.repaint();
+        return this;
+    }
+    
+    public TGCanvas draw(DataSet ds){ return this.draw(ds, "");}
+    
+    public TGRegion region(){return this.view().region();}
+    
+    public TGCanvas draw(Widget w){
+        this.view().region().draw(w);
+        return this;
     }
     
     @Override

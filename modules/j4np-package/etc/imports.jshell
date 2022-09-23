@@ -24,6 +24,7 @@ import j4np.physics.data.*;
 import j4np.physics.store.*;
 import j4np.hipo5.data.*;
 import j4np.hipo5.io.*;
+import j4np.hipo5.utils.*;
 //--------------------------------------
 // Imports for JAVA standard libraries
 //--------------------------------------

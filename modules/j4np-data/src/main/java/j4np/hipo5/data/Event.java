@@ -51,8 +51,8 @@ public class Event implements DataEvent {
         byte[] bytes = new byte[this.eventBufferDefaultSize];
         bytes[0] = 'E';
         bytes[1] = 'V';
-        bytes[2] = '4';
-        bytes[3] = 'a';
+        bytes[2] = '5';
+        bytes[3] = 'b';
         eventBuffer  = ByteBuffer.wrap(bytes);
         /*bytes[0] = 'E';
         bytes[1] = 'V';
@@ -450,6 +450,13 @@ public class Event implements DataEvent {
     public void reset(){
         eventNodesMap.reset();
         eventBuffer.putInt(EVENT_LENGTH_OFFSET, 16);
+    }
+    
+    public Event copy(){
+        int size  = getEventBufferSize();
+        Event evt = new Event(size+56);
+        evt.initFrom(this.getBuffer().array(), size);
+        return evt;
     }
     
     public void initFrom(byte[] buffer){

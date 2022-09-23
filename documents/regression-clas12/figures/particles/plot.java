@@ -18,6 +18,15 @@ for(int i = 0; i < names.size();i++){
    String[] n = names.get(i);
    H1F hd = (H1F) dir.get(parent+"/"+n[0]);
    H1F hi = (H1F) dir.get(parent+"/"+n[1]);
+   if(i==0||i==3){
+       hd.attr().setTitleX("P [GeV]");
+   }
+   if(i==1||i==4){
+       hd.attr().setTitleX("#Theta [rad]");
+   }
+   if(i==2||i==5){
+       hd.attr().setTitleX("#phi [rad]");
+   }
    hd.attr().setFillColor(4);
    if(i>2) hd.attr().setFillColor(2);
    hd.attr().setFillStyle(2);

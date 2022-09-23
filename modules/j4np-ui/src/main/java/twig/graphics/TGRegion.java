@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import twig.config.TStyle;
+import twig.data.DataGroup;
 import twig.data.DataSet;
 import twig.data.GraphErrors;
 import twig.data.H1F;
@@ -364,6 +365,20 @@ public class TGRegion extends Node2D implements StyleNode {
         this.axisFrame.getAxisY().getAttributes().setAxisTitlesDraw(flag);
         this.axisFrame.getAxisY().getAttributes().setAxisBoxDraw(flag);
         
+        return this;
+    }
+    
+    
+    public TGRegion draw(DataGroup grp){
+        this.axisFrame.clear();
+        for(DataSet ds : grp.getData()){
+            this.draw(ds, "same");
+        }        
+        if(!grp.getAxisTickLabels().isEmpty()&&
+                !grp.getAxisTickMarks().isEmpty()){
+            this.axisFrame.getAxisX().getAttributes().setAxisTicksPosition(grp.getAxisTickMarks());
+            this.axisFrame.getAxisX().getAttributes().setAxisTicksString(grp.getAxisTickLabels());
+        }
         return this;
     }
     

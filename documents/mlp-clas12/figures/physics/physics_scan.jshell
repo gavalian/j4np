@@ -82,12 +82,12 @@ h12.setTitleX("Mx(e#rarrowe'#pi^+#pi^-X) [GeV]");
 
 
 GraphErrors graph = h3.getGraph();
-graph.attr().setMarkerSize(4);
+graph.attr().setMarkerSize(8);
 graph.attr().setLineColor(2);
 graph.attr().setMarkerColor(2);
 
 GraphErrors graph2 = h13.getGraph();
-graph2.attr().setMarkerSize(4);
+graph2.attr().setMarkerSize(8);
 graph2.attr().setLineColor(2);
 graph2.attr().setMarkerColor(2);
 
@@ -100,11 +100,13 @@ graph.attr().setTitleY("Ratio");
 graph2.attr().setTitleX("Mx(e#rarrow e'#pi^+#pi^-X) [GeV]");
 graph2.attr().setTitleY("Ratio");
 
+Line l1 = new Line(0.0,1.0,3.0,1.0);
+
 c.view().cd(0).region().draw(h2).draw(h,"same");
 c.view().cd(2).region().draw(h12).draw(h11,"same");
 
-c.view().cd(1).region().draw(graph);
-c.view().cd(3).region().draw(graph2);
+c.view().cd(1).region().draw(graph).draw(l1);
+c.view().cd(3).region().draw(graph2).draw(l1);
 
 c.view().cd(1).region().getAxisFrame().getAxisX().setFixedLimits(0.0,3.0);
 c.view().cd(1).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
@@ -114,7 +116,6 @@ c.view().cd(3).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
 
 //c.view().addLabels(0.9,0.98);
 c.repaint();
-
 c.view().export("physics_scan.pdf","pdf");
 
 /*

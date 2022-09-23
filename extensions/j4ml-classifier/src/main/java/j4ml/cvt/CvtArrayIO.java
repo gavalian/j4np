@@ -6,6 +6,9 @@
 package j4ml.cvt;
 
 import j4np.hipo5.data.Bank;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +21,7 @@ import javax.imageio.ImageIO;
  * @author gavalian
  */
 public class CvtArrayIO {
-    
+    /*
     public static int getSensor(int sector, int layer){        
         if(layer==1||layer==2)
             return (sector-1)+(layer-1)*10;
@@ -27,8 +30,8 @@ public class CvtArrayIO {
             return 20 + (sector-1)+(layer-3)*14;
         
         return 48 + (sector-1)+(layer-5)*18;
-    }
-    /*
+    }*/
+    
     public static int getSensor(int sector, int layer){        
         if(layer==1||layer==2)
             return (sector-1)*2+(layer-1);
@@ -37,7 +40,7 @@ public class CvtArrayIO {
             return 20 + (sector-1)*2+(layer-3);
         
         return 48 + (sector-1)*2+(layer-5);
-    }*/
+    }
     
     public static CvtArray2D createArray(Bank bst, Bank bmt, int track){
         
@@ -88,24 +91,80 @@ public class CvtArrayIO {
                 }
             }
         }
-        
-        return a2d;
+        return a2d;   
     }
     
+    
+        public static CvtArray2D createArray(Bank bst){
+        
+        CvtArray2D a2d = new CvtArray2D();
+        
+        int rowsbst = bst.getRows();
+        
+        for(int i = 0; i < rowsbst; i++){
+
+            int layer = bst.getInt("layer", i);
+            int sector = bst.getInt("sector", i);
+            int strip = bst.getInt("component", i);            
+            int y = CvtArrayIO.getSensor(sector, layer);
+            if(strip>0) a2d.set(strip-1, y, 1.0f);
+            
+        }
+        
+        return a2d;   
+    }
+        
     public static int  getRGB(int r, int g, int b){ 
         return (255 << 24) | (r << 16) | (g << 8) | b;//(r << 16) | (g << 8) | b;
     }
     
-    public static void saveImage(CvtArray2D t, String file){
+    public static void saveImage(CvtArray2D t, String file, int xsize, int ysize){
+        Color emptyColor = new Color(204,210,198);
+        Color highlightColor = new Color(58,78,81);
+        Color gridColor = new Color(230,230,230);
+        int   gridWidth = 1;
         try {
-            BufferedImage bi = new BufferedImage(256, 90, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bi = new BufferedImage(256*xsize + 60, 90*ysize, 
+                    BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = bi.createGraphics();
+            
             for(int x = 0; x < 256; x++){
                 for(int y = 0; y < 90; y++){
+                    int cellX = x*xsize;
+                    int cellY = y*ysize;
                     if(t.get(x, y)>0.5){
-                        bi.setRGB(x, y, CvtArrayIO.getRGB(255, 255, 255));
-                    } else  bi.setRGB(x, y, CvtArrayIO.getRGB(0, 0, 0));
+                        g2d.setColor(highlightColor);
+                        g2d.fillRect(cellX, cellY, xsize, ysize);
+                        
+                        //bi.setRGB(x, y, CvtArrayIO.getRGB(255, 255, 255));
+                    } else {
+                        g2d.setColor(emptyColor);
+                        g2d.fillRect(cellX, cellY, xsize, ysize);                        
+                    }
                 }
             }
+            if(gridWidth>0){
+            g2d.setColor(gridColor);
+            g2d.setStroke(new BasicStroke(gridWidth));
+            for(int x = 0; x < 256; x++) {
+                int xcoord = x*xsize;
+                g2d.drawLine(xcoord, 0, xcoord, 90*ysize);
+            }
+            
+            for(int y = 0; y < 84; y++) {
+                int ycoord = y*ysize;
+                g2d.setColor(gridColor);
+                g2d.drawLine(0, ycoord, 256*xsize,ycoord);
+                if(t.countInLine(y)>0){
+                    g2d.setColor(Color.red);
+                    for(int jj = 0; jj < ysize -2; jj++){
+                        g2d.drawLine(256*xsize+5, ycoord+jj,   256*xsize+50,ycoord+jj);
+                     
+                    }
+                }
+            }
+            
+        }
             File outputfile = new File(file);
             ImageIO.write(bi, "png", outputfile);
         } catch (IOException ex) {

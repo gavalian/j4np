@@ -10,7 +10,6 @@ import j4np.hipo5.io.HipoReader;
 import j4np.physics.VectorOperator.OperatorType;
 import j4np.physics.data.PhotoDataEvent;
 import j4np.physics.data.PhysDataEvent;
-import j4np.physics.store.EventModifierStore;
 import j4np.physics.store.EventModifierStore.EventModifierForward;
 import j4np.physics.store.ReactionConfiguration;
 import java.util.ArrayList;

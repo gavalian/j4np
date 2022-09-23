@@ -344,8 +344,7 @@ public class TrackNetworkTrainer {
     }
      
     public void regressionTrain(String hipoFile, String testFile,  String archive, int run, String flavor){
-        
-        
+                
         for(int sector = 1; sector <= 1; sector++){
             DataList data = DataProvider.readRegressionPositive(hipoFile, constrain, sector, maxBinsRead);
             data.show();
@@ -423,8 +422,8 @@ public class TrackNetworkTrainer {
             H2F hthe = new H2F("hthe_"+sector,80,0.0,40.0,80,-2.5,2.5);
             H2F hphi = new H2F("hphi_"+sector,80,40,80,80,-4.5,4.5);
             
-            DataList.denormalizeOutput(list, regression3normalizer);
-            DataList.denormalizeInfered(list, regression3normalizer);
+            DataList.denormalizeOutput(  list, regression3normalizer);
+            DataList.denormalizeInfered( list, regression3normalizer);
             
             for(int loop = 0; loop < list.getList().size(); loop++){
                 float[] output = list.getList().get(loop).floatSecond();
@@ -443,6 +442,7 @@ public class TrackNetworkTrainer {
         }
     
     }
+    
     public void regressionTestDebug(DeepNettsRegression network,String hipoFile, String archive, int run, String flavor){
         
         String archiveFile = String.format("network/%d/%s/trackRegression_neg_2.network",run,flavor); 

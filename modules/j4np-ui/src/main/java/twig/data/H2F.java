@@ -185,9 +185,16 @@ public class H2F implements DataSet {
         return xAxis;
     }
     
-    public void normalize(double norm){
-        for(int i = 0; i < hBuffer.length; i++){
-            hBuffer[i] = hBuffer[i]/((float) norm);
+    public void normalize(double number){
+        StatNumber  der = new StatNumber(number,0);
+        StatNumber binc = new StatNumber();
+        
+        for(int i = 0; i < hBuffer.length; i++)
+        {
+            binc.set(hBuffer[i], hBuffer[i]);
+            binc.divide(der);
+            hBuffer[i] = binc.number();
+            hBuffer[i] = binc.error();
         }
     }
     /**
@@ -287,6 +294,22 @@ public class H2F implements DataSet {
         return h2;
     }
  
+    /**
+     * divides the content of each bin in the histogram to the 
+     * maximum bin.
+     */
+    public void unit(){
+        float max = (float) this.getMaximum();
+        if(max<0e-12){
+            System.out.println("[H1F] ** error ** the histogram has very low maximum. can not be set to unit.");
+            return;
+        }
+        for(int i = 0; i < this.hBuffer.length; i++){
+            this.hBuffer[i] = this.hBuffer[i]/max;
+            this.hBuffer[i] = this.hBuffer[i]/max;
+        }
+    }
+    
     public int getDataBufferSize(){
         return this.hBuffer.length;
     }

@@ -41,26 +41,28 @@ public class OptionParser {
         this.requiresInputList = flag;
     }
     
-    public void addRequired(String key){
+    public OptionParser addRequired(String key){
         OptionValue option = new OptionValue(key);
         requiredOptions.put(key, option);
+        return this;
     }
     
-    public void addRequired(String key,String desc){
+    public OptionParser addRequired(String key,String desc){
         OptionValue option = new OptionValue(key);
         option.setDescription(desc);
-        requiredOptions.put(key, option);
+        requiredOptions.put(key, option); return this;
     }
     
-    public void addOption(String key, String defaultValue){
+    public OptionParser addOption(String key, String defaultValue){
         OptionValue option = new OptionValue(key,defaultValue);
-        optionsDescriptors.put(key, option);
+        optionsDescriptors.put(key, option); return this;
     }
     
-    public void addOption(String key, String defaultValue, String description){
+    public OptionParser addOption(String key, String defaultValue, String description){
         OptionValue option = new OptionValue(key,defaultValue);
         option.setDescription(description);
         optionsDescriptors.put(key, option);
+        return this;
     }
     
     public boolean hasOption(String option){

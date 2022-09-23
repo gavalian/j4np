@@ -198,9 +198,10 @@ public class MLArchitecture implements Widget {
         arch.setOutputLabels(new String[]{"W_c_1","W_c_2","W_c_3","W_c_4","W_c_5","W_c_5"});
         */
         
-        MLArchitecture arch = new MLArchitecture(new int[] {6,12,12,12,3} );
+        MLArchitecture arch = new MLArchitecture(new int[] {6,12,24,24,12,3} );
         arch.setInputLabels( new String[]{"W_c_1","W_c_2","W_c_3","W_c_4","W_c_5","W_c_5"});
-        arch.setOutputLabels(new String[]{"0 - no track", "+ track","- track"});
+        //arch.setOutputLabels(new String[]{"0 - no track", "+ track","- track"});
+        arch.setOutputLabels(new String[]{"P", "#theta","#phi"});
         
         /*c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisLineDraw(false);
         c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisBoxDraw(false);
