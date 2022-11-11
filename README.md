@@ -11,7 +11,7 @@ For Maven dependencies use:
   <repositories>
     <repository>
       <id>j4np-maven</id>
-      <url>https://clasweb.jlab.org/jhep/maven</url>
+      <url>https://clasweb.jlab.org/clas12maven</url>
     </repository>
   </repositories>
 
