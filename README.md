@@ -1,4 +1,28 @@
-This repository is for nuclear physics tools in java
+# Java 4 Nuclear Physics (j4np)
+
+This repository is for nuclear physics tools in java, includes data I/O HiPO libraries,
+Twig (data visualization) package, MAchine learning libraries (DeepNetts) and many more.
+
+# Linking to the Packages
+
+For Maven dependencies use:
+
+```
+  <repositories>
+    <repository>
+      <id>j4np-maven</id>
+      <url>https://clasweb.jlab.org/jhep/maven</url>
+    </repository>
+  </repositories>
+
+<dependencies> 
+    <dependency>
+      <groupId>j4np</groupId>
+      <artifactId>j4np-data</artifactId>
+      <version>1.0.5-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+```
 
 # Useful Packages
 
