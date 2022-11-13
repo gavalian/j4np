@@ -1,0 +1,40 @@
+import j4ml.clas12.networks.*;
+
+String    trainFile = "training_sample_max150000_012922-012925.hipo";
+String     testFile = "testing_sample_max150000_012930-012932.hipo";
+String       flavor = "default";
+String  networkFile = "clas12rgf.network";
+int       runNumber = 12922;
+
+TrackNetworkTrainer t = new TrackNetworkTrainer();
+
+t.nEpochs = 125;
+
+t.maxBinsRead = 45000;
+
+t.getConstrain().momentum.set(0.5,10.5);
+//t.getConstrain().vertex.set( -15.0,  5.0); // RG-A
+t.getConstrain().vertex.set( -35.0, 25.0); // RG-F
+t.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+
+t.getConstrain().show();
+
+t.classifierTrain( trainFile,networkFile,runNumber,"temp");
+t.classifierTest(   testFile,networkFile,runNumber,"temp");
+
+TrackNetworkValidator v = new TrackNetworkValidator();
+
+v.archiv     = networkFile;
+v.network    = "network/" + runNumber + "/temp/trackClassifier.network";
+v.outputFile = "validation_postprocess.h5";
+v.getConstrain().momentum.set(0.5,10.5);
+//v.getConstrain().vertex.set(-15.0,5.0); // RG-A 
+v.getConstrain().vertex.set( -35.0, 25.0); // RG-F
+v.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+
+v.getConstrain().show();
+v.processFile(trainFile);
+
+t.nEpochs = 250;
+t.classifierTrain("validation_postprocess.h5",networkFile,runNumber,flavor);
+t.classifierTest(   testFile,networkFile,runNumber,flavor);

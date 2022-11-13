@@ -22,24 +22,24 @@ public class TAttributesLine {
         return lineStyle;
     }
 
-    public void setLineStyle(int lineStyle) {
-        this.lineStyle = lineStyle;
+    public TAttributesLine setLineStyle(int lineStyle) {
+        this.lineStyle = lineStyle; return this;
     }
 
     public int getLineWidth() {
         return lineWidth;
     }
 
-    public void setLineWidth(int lineWidth) {
-        this.lineWidth = lineWidth;
+    public TAttributesLine setLineWidth(int lineWidth) {
+        this.lineWidth = lineWidth; return this;
     }
 
     public int getLineColor() {
         return lineColor;
     }
 
-    public void setLineColor(int lineColor) {
-        this.lineColor = lineColor;
+    public TAttributesLine setLineColor(int lineColor) {
+        this.lineColor = lineColor; return this;
     }
     
     private int lineStyle = 0;

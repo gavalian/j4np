@@ -43,7 +43,7 @@ public class TDirectory implements TreeProvider {
         }        
         dirList.get(dir).data.add(data);
         return this;*/
-        return this.addToDirectory(dir, data);
+        return  this.addToDirectory(dir, data);
     }
     
     private TDirectory addToDirectory(String dir, DataSet data){
@@ -69,7 +69,7 @@ public class TDirectory implements TreeProvider {
         for(DataSet item : dirList.get(dir).data){
             if(item.getName().compareTo(name)==0) return item;
         }
-        System.out.printf("[dir] : %s , data not found [%s]\n" , dir,name);
+        //System.out.printf("[dir] : %s , data not found [%s]\n" , dir,name);
         return null;
     }
     
@@ -105,8 +105,8 @@ public class TDirectory implements TreeProvider {
         for(String item : root){
             for(int k = 0; k < 4; k++){
                 Set<String> c = this.getChildren(objects, item, k);
-                System.out.println(" NODE : " + item);
-                System.out.println("\t" + Arrays.toString(c.toArray()));
+                //System.out.println(" NODE : " + item);
+                //System.out.println("\t" + Arrays.toString(c.toArray()));
             }
         }
     }
@@ -160,9 +160,9 @@ public class TDirectory implements TreeProvider {
     @Override
     public void draw(String path, TGDataCanvas c) {
         String  directory = path.replace("/root/", "");
-        System.out.println("\nDEBUG:");
-        System.out.println("path  = " + path);
-        System.out.println("looking for " + directory);
+        //System.out.println("\nDEBUG:");
+        //System.out.println("path  = " + path);
+        //System.out.println("looking for " + directory);
         /*if(directory.startsWith("/")==true){
             directory = directory.substring(1, directory.length());
             System.out.println(" now looking for " + directory);
@@ -177,9 +177,9 @@ public class TDirectory implements TreeProvider {
     public void write(String filename){
         for(Map.Entry<String,Directory> entry : this.dirList.entrySet() ){
             List<DataSet> data = entry.getValue().data;                        
-            System.out.println("directory " + entry.getValue().directory);
+            //System.out.println("directory " + entry.getValue().directory);
             for(DataSet d : data){
-                System.out.println("\t object " + d.getName());
+                //System.out.println("\t object " + d.getName());
                 String dir = entry.getValue().directory;
                 if(dir.startsWith("/")==true) dir = dir.substring(1, dir.length());
                 DataSetSerializer.export(d, filename, dir);

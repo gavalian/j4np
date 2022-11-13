@@ -73,12 +73,19 @@ public class HipoReader implements DataSource {
     
     private ProgressPrintout      progress = new ProgressPrintout();
     private boolean          progressPrint = true;
-            
+    
+    private Event            internalEvent = new Event();
+    
     public HipoReader(){
         
     }
     
     public HipoReader(String file){
+        this.open(file);
+    }
+    
+    public HipoReader(String file, long... tags){
+        this.setTags(tags);
         this.open(file);
     }
     
@@ -90,7 +97,7 @@ public class HipoReader implements DataSource {
         this.progressPrint = mode;
     }
     
-    public HipoReader setTags(long... tags){
+    public final HipoReader setTags(long... tags){
         for(int i = 0; i < tags.length; i++){
             readerTags.add(tags[i]);
         }
@@ -289,6 +296,15 @@ public class HipoReader implements DataSource {
         return event;
     }
     
+    public boolean nextEvent(Bank[] banks){
+        if(this.hasNext()==false){
+            for(Bank b : banks) b.reset();
+            return false;
+        }
+        this.nextEvent(internalEvent);
+        this.internalEvent.read(banks);
+        return true;
+    }
     /**
      * returns the next event that contains schemas provided
      * by the list.
@@ -322,6 +338,27 @@ public class HipoReader implements DataSource {
     
     public Bank getBank(String name){
         return this.schemaFactory.getBank(name);
+    }
+    
+    public Bank[] getBanks(String... banks){
+        Bank[] b = new Bank[banks.length];
+        for(int i = 0; i < banks.length; i++)
+            b[i] = this.getBank(banks[i]);
+        return b;
+    }
+    
+    public Schema[] getSchemas(String... schemas){
+        Schema[] s = new Schema[schemas.length];
+        for(int i = 0; i < s.length; i++)
+            s[i] = this.getSchemaFactory().getSchema(schemas[i]);
+        return s;
+    }
+       
+    public Schema[] getSchemasCopy(String... schemas){
+        Schema[] s = new Schema[schemas.length];
+        for(int i = 0; i < s.length; i++)
+            s[i] = this.getSchemaFactory().getSchema(schemas[i]).copy();
+        return s;
     }
     
     public boolean next(){

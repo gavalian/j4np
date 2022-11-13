@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import javax.swing.JComponent;
 import twig.config.TStyle;
 import twig.graphics.TGCanvas;
 
@@ -69,7 +70,7 @@ public class PieChart implements Widget {
     }
 
     @Override
-    public void configure() {
+    public void configure(JComponent parent) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

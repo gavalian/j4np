@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
+import javax.swing.JComponent;
 import twig.config.TStyle;
 import twig.graphics.TGCanvas;
 import twig.widgets.LatexText.TextAlign;
@@ -217,7 +218,7 @@ public class MLArchitecture implements Widget {
     }
 
     @Override
-    public void configure() {
+    public void configure(JComponent parent) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

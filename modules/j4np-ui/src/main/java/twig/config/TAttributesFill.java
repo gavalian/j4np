@@ -14,27 +14,27 @@ public class TAttributesFill {
         return fillColor;
     }
 
-    public void setFillColor(int fillColor) {
-        this.fillColor = fillColor;
+    public TAttributesFill setFillColor(int fillColor) {
+        this.fillColor = fillColor; return this;
     }
 
     public int getFillStyle() {
         return fillStyle;
     }
 
-    public void setFillStyle(int fillStyle) {
-        this.fillStyle = fillStyle;
+    public TAttributesFill setFillStyle(int fillStyle) {
+        this.fillStyle = fillStyle; return this;
     }
 
     public int getFillColorFade() {
         return fillColorFade;
     }
 
-    public void setFillColorFade(int fillColorFade) {
-        this.fillColorFade = fillColorFade;
+    public TAttributesFill setFillColorFade(int fillColorFade) {
+        this.fillColorFade = fillColorFade; return this;
     }
     
-    private int fillColor = -1;
+    private int fillColor =  0;
     private int fillStyle =  0;    
     private int fillColorFade = 0;
     

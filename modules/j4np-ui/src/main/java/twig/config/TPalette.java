@@ -169,6 +169,23 @@ public class TPalette {
                 |(r.getGreen()&0xFF)<<8|(r.getBlue()&0xFF);
         return value;
     }
+    
+    public static int createColor(int r, int g, int b){
+        int word = b; int a = 255;
+        word = (word|((g<<8)&0x0000FF00));
+        word = (word|((r<<16)&0x00FF0000));
+        word = (word|((a<<24)&0xFF000000));
+       return word;
+    }
+    
+    public static int createColor(int r, int g, int b, int a){
+        int word = b;
+        int alpha = a/2;        
+        word = (word|((g<<8)&0x0000FF00));
+        word = (word|((r<<16)&0x00FF0000));        
+        word = (word|((alpha<<24)&0xFF000000));
+       return word;
+    }
     /**
      * returns color from color pallette. There are some reserved colors.
      * colors above 30000 are used for the data regions and axis coloring.
@@ -191,14 +208,17 @@ public class TPalette {
         }*/
         
         int cid = color;        
-        if(color<0) cid = Math.abs(color);
-        
-        if(cid>=200){
-            int a = (cid>>24)&0xFF;
+        //if(color<0) cid = Math.abs(color);
+
+        if(Math.abs(cid)>=200){
+            //System.out.println(" decoding color " + cid);
+            int a = (cid>>24)&0x7F;
+            
             int r = (cid>>16)&0xFF;
             int g = (cid>>8)&0xFF;
             int b = (cid>>0)&0xFF;
-           return new Color(r,g,b,a);
+            //System.out.println(" r = " + r + "g = "+ g + " b = " + b + " a = " + a);
+           return new Color(r,g,b,a*2);
         }
         
         if(color<colorPalette.size()){

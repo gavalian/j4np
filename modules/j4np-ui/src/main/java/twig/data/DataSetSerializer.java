@@ -107,7 +107,9 @@ public class DataSetSerializer {
             directory += ".dataset";
         }
         if(ArchiveUtils.hasFile(archive, directory)==true){
+            
             String     jsonString = ArchiveUtils.getFile(archive, directory);
+            
             JsonObject jsonObject = (JsonObject) Json.parse(jsonString);
             String           type = jsonObject.get("class").asString();
             

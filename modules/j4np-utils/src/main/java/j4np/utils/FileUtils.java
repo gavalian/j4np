@@ -246,6 +246,32 @@ public class FileUtils {
         return str.toString();
     }
         
+    public static List<String> dir(String directory, String regExpPosix){
+        return FileUtils.dir(directory, regExpPosix, false);
+    }
+    
+    public static List<String> dir(String directory, String regExpPosix, boolean recursive){
+        
+        String   regExp = regExpPosix.replace("*", ".*");
+        Pattern pattern = Pattern.compile(regExp);
+        
+        List<String> directoryList = new ArrayList<String>();
+        try {            
+           Stream<Path>    paths = Files.walk(Paths.get(directory)).filter(Files::isRegularFile);
+           List<Path>    pathList = paths.collect(Collectors.toList());
+           //System.out.println(" n paths = " + pathList.size());
+           
+           for(Path path : pathList){
+               //System.out.println(" path --> " + path.toString());
+               Matcher m = pattern.matcher(path.toString());
+               if(m.matches()==true) directoryList.add(path.toString());
+           }
+           
+        } catch (IOException ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return directoryList;
+    }
     public static List<String> getFilesInDirectoryRecursive(String directory, String regExpPosix){
         
         String   regExp = regExpPosix.replace("*", ".*");
@@ -256,6 +282,7 @@ public class FileUtils {
             
            Stream<Path>    paths = Files.walk(Paths.get(directory)).filter(Files::isRegularFile);
            List<Path>    pathList = paths.collect(Collectors.toList());
+           //System.out.println(" n paths = " + pathList.size());
            for(Path path : pathList){
                //System.out.println(" path --> " + path.toString());
                Matcher m = pattern.matcher(path.toString());

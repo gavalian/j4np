@@ -85,7 +85,7 @@ public class ArchiveUtils {
     
     public static void writeInputStream(String zipfile, String outputName, InputStream stream){
         String directory = String.format("%s",outputName);
-        System.out.println("[exporting] -> " + directory);
+        //System.out.println("[exporting] -> " + directory);
         
         try {
             ZipFile zip = new ZipFile(zipfile);
@@ -117,7 +117,7 @@ public class ArchiveUtils {
     
     public static void addInputStream(String zipfile, String outputName, List<String> dataFile){
         String directory = String.format("%s",outputName);
-        System.out.println("[exporting] -> " + directory);
+        //System.out.println("[exporting] -> " + directory);
         
         try {
             InputStream stream = ArchiveUtils.createFromList(dataFile);
@@ -236,7 +236,7 @@ public class ArchiveUtils {
         ZipFile zip = new ZipFile(zipfile);
         try {
             FileHeader header = zip.getFileHeader(filename);
-            System.out.println("found file : " + header.getFileName());
+            //System.out.println("found file : " + header.getFileName());
             InputStream inputStream = zip.getInputStream(header);
             
             BufferedReader reader = new BufferedReader(

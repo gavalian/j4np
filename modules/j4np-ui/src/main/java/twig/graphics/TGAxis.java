@@ -32,6 +32,7 @@ public class TGAxis implements StyleNode {
     private TStyle              tStyle = null;
     
     private List<Double>  axisTicksBuffer = new ArrayList<>();
+    private List<Double>  axisMinorTicksBuffer = new ArrayList<>();
     private List<String>  axisTextsBuffer = new ArrayList<>();    
     private Range               axisRange = new Range();
     private Range          fixedAxisRange = null;
@@ -50,7 +51,62 @@ public class TGAxis implements StyleNode {
             this.axisRange.set(min,max);
     }
         
+    public void drawAxisGridX(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        TStyle style = getStyle();
+        int x1 = ( int ) r.getX();
+        int x2 = ( int ) (r.getWidth()+r.getX());
+        int y1 = ( int ) (r.getY()+r.getHeight());
+        int y2 = ( int ) (r.getY());
+        Color lineColor = style.getPalette().getColor(attributes.getAxisGridLineColor());
+
+        int lstyle = this.attributes.getAxisGridLineStyle();
+        int lwidth = this.attributes.getAxisGridLineWidth();
+
+        BasicStroke stroke = style.getLineStroke(lstyle, lwidth);
+
+        g2d.setColor(lineColor);
+        g2d.setStroke(stroke);
+
+        this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
+        this.axisScaleTool.setMaxTicks(attributes.getAxisTickMarkCount());
+        this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
+        
+        for(int i = 0; i < this.axisTicksBuffer.size(); i++){
+            int xpos = (int) tr.getX(axisTicksBuffer.get(i),r);
+            
+            g2d.drawLine(xpos, y1, xpos, y2);
+        }
+    }
+    
+    public void drawAxisGridY(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        
+        TStyle style = getStyle();
+        int x1 = ( int ) r.getX();
+        int x2 = ( int ) (r.getWidth()+r.getX());
+        int y1 = ( int ) (r.getY()+r.getHeight());
+        int y2 = ( int ) (r.getY());
+        Color lineColor = style.getPalette().getColor(attributes.getAxisGridLineColor());
+
+        int lstyle = this.attributes.getAxisGridLineStyle();
+        int lwidth = this.attributes.getAxisGridLineWidth();
+
+        BasicStroke stroke = style.getLineStroke(lstyle, lwidth);
+
+        g2d.setColor(lineColor);
+        g2d.setStroke(stroke);
+
+        this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
+        this.axisScaleTool.setMaxTicks(attributes.getAxisTickMarkCount());
+        this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
+        
+        for(int i = 0; i < this.axisTicksBuffer.size(); i++){
+            int ypos = (int) ( y1 + r.getY() - tr.getY(axisTicksBuffer.get(i),r) );
+            g2d.drawLine(x1, ypos, x2, ypos);
+        }
+    }
+
     public void drawAxisX(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        
         TStyle style = getStyle();
         int x1 = ( int ) r.getX();
         int x2 = ( int ) (r.getWidth()+r.getX());
@@ -66,9 +122,9 @@ public class TGAxis implements StyleNode {
         
         Color lineColor = style.getPalette().getColor(attributes.getAxisLineColor());
         Color textColor = style.getPalette().getColor(attributes.getAxisLabelColor());
+        Color titleColor = style.getPalette().getColor(attributes.getAxisTitleColor());
         
         textWidget.setColor(textColor);
-        
         g2d.setColor(lineColor);
         /*
         * Draw Axis line if the axis the draw box is set, then 
@@ -86,8 +142,10 @@ public class TGAxis implements StyleNode {
         int labelHeight = 0;
         
         if(attributes.getAxisTicksPosition().size()>0){            
+            
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(attributes.getAxisTicksLineWidth()));
+            
             for(int i = 0; i < attributes.getAxisTicksPosition().size(); i++){
                 int xpos = (int) tr.getX(attributes.getAxisTicksPosition().get(i),r);
                 String xlabel = attributes.getAxisTicksString().get(i);                    
@@ -101,22 +159,38 @@ public class TGAxis implements StyleNode {
                 }
             }
         }  else {
+            
             g2d.setColor(lineColor);
-            g2d.setStroke(new BasicStroke(attributes.getAxisTicksLineWidth()));
+
+            
             this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
             this.axisScaleTool.setMaxTicks(attributes.getAxisTickMarkCount());
             this.axisScaleTool.getTicks(axisTicksBuffer, axisTextsBuffer);
+
+            g2d.setColor(lineColor);
+            g2d.setStroke(new BasicStroke(attributes.getAxisTicksLineWidth()));            
             for(int i = 0; i < axisTicksBuffer.size(); i++){
                 int xpos = (int) tr.getX(axisTicksBuffer.get(i),r);
-                String xlabel = axisTextsBuffer.get(i);                    
                 if(this.attributes.getAxisTicksDraw()==true) g2d.drawLine( xpos, y1, xpos, yend);
+            }
+            
+            int yendminor = y1 - attributes.getAxisTickMarkSize()/2;
+            this.axisScaleTool.getMinorTicks(axisMinorTicksBuffer);
+            for(int i = 0; i < axisMinorTicksBuffer.size(); i++){
+                int xpos = (int) tr.getX(axisMinorTicksBuffer.get(i),r);
+                if(this.attributes.getAxisTicksDraw()==true) g2d.drawLine( xpos, y1, xpos, yendminor);
+            }
+            
+            for(int i = 0; i < axisTicksBuffer.size(); i++){
                 if(this.attributes.getAxisLabelsDraw()==true){
+                    int xpos = (int) tr.getX(axisTicksBuffer.get(i),r);
+                    String xlabel = axisTextsBuffer.get(i);                    
                     textWidget.setText(xlabel);
                     //textWidget.setFont(this.attributes.getAxisLabelFont());                    
                     labelHeight = 
                     textWidget.drawString(g2d, xpos, ytoplabel,TextAlign.CENTER,TextAlign.TOP,0);
                 }
-            }
+            }            
         }
         //double x = ( int ) r.getX();
         int titlePositionX = (int) (x1+(x2-x1)*0.5);
@@ -138,6 +212,7 @@ public class TGAxis implements StyleNode {
         System.out.printf("string @ : %8d %8d\n",titlePositionX,titlePositionY);
         */
         if(attributes.getAxisTitle().length()>0&&attributes.getAxisTitlesDraw()==true){
+            textWidget.setColor(titleColor);
             textWidget.setText(attributes.getAxisTitle());
             textWidget.drawString(g2d,
                     titlePositionX ,  titlePositionY, LatexText.ALIGN_CENTER,LatexText.ALIGN_TOP);
@@ -161,6 +236,9 @@ public class TGAxis implements StyleNode {
         Color lineColor = style.getPalette().getColor(attributes.getAxisLineColor());
         Color textColor = style.getPalette().getColor(attributes.getAxisLabelColor());
         
+        textWidget.setColor(textColor);        
+        g2d.setColor(lineColor);
+        
         if(this.attributes.getAxisLineDraw()==true){
             g2d.setStroke(new BasicStroke(attributes.getAxisLineWidth()));            
             g2d.drawLine(x1,y1,x1,y2);
@@ -181,7 +259,7 @@ public class TGAxis implements StyleNode {
         int maximumLabelSize = 0;
         
         if(attributes.getAxisTicksPosition().size()>0){
-            g2d.setColor(lineColor);
+            //g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(attributes.getAxisTicksLineWidth()));
             for(int i = 0; i < attributes.getAxisTicksPosition().size(); i++){
                 int ypos = (int)(y1 + r.getY() - tr.getY(attributes.getAxisTicksPosition().get(i),r));
@@ -202,7 +280,7 @@ public class TGAxis implements StyleNode {
             } 
             //double x = ( int ) r.getX();
         } else {
-            g2d.setColor(lineColor);
+            //g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(attributes.getAxisTicksLineWidth()));
             textWidget.setFont(this.attributes.getAxisLabelFont());
             this.axisScaleTool.setMinMaxPoints(axisRange.min(), axisRange.max());
@@ -229,6 +307,13 @@ public class TGAxis implements StyleNode {
                     if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
                 }
             } 
+            int xendminor = x1 + attributes.getAxisTickMarkSize()/2;
+            this.axisScaleTool.getMinorTicks(axisMinorTicksBuffer);
+            for(int i = 0; i < axisMinorTicksBuffer.size(); i++){
+                int ypos = (int)(y1 + r.getY() - tr.getY(axisMinorTicksBuffer.get(i),r));
+                if(this.attributes.getAxisTicksDraw()==true) g2d.drawLine( x1, ypos, xendminor, ypos);
+                
+            }
         }
         
         
@@ -264,10 +349,12 @@ public class TGAxis implements StyleNode {
         
         TStyle style = getStyle();
         if(attributes.getAxisType()==AxisType.AXIS_X){
+            if(this.attributes.getAxisGridDraw()==true)drawAxisGridX(g2d, r, tr);
             drawAxisX(g2d, r, tr);
         }
         
         if(attributes.getAxisType()==AxisType.AXIS_Y){
+            if(this.attributes.getAxisGridDraw()==true) drawAxisGridY(g2d, r, tr);
             drawAxisY(g2d,r,tr);
         }
     }

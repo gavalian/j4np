@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import twig.config.TDataAttributes;
 
 
@@ -201,6 +202,7 @@ public class H1F  implements DataSet {
     public H1F copy(){
         H1F h = new H1F(this.getName()+"_copy",
                 this.xAxis.getNBins(),this.xAxis.min(),this.xAxis.max());
+        for(int i = 0; i < this.xAxis.getNBins(); i++) h.setBinContent(i, this.getBinContent(i));
         return h;
     }
     /**
@@ -819,7 +821,15 @@ public class H1F  implements DataSet {
                 this.getEntries()));
         return buffer.toString();
     } 
-    
+    public String show() {
+        StringBuilder buffer = new StringBuilder();        
+        for(int i = 0; i < xAxis.getNBins(); i++) {
+            buffer.append(String.format("%12.6f %18.4f %18.4f\n",
+                    xAxis.getBinCenter(i),this.getBinContent(i),
+                    this.getBinError(i)));
+        }        
+        return buffer.toString();
+    }
     /**
      * Retrieves a graph of the histogram
      * 
@@ -1044,4 +1054,23 @@ public class H1F  implements DataSet {
         return stats;
     }
     
+    
+    public static void main(String[] args){
+        int iter = 10000;
+        Random rnd = new Random();
+        
+        H1F h = new H1F("h",120,0.0,1.0);
+        int counter = 0;
+        long time = 0L;
+        double[] buffer = new double[25000];
+        for(int i = 0; i < iter; i++){
+            for(int r = 0 ; r < buffer.length; r++) buffer[r] = rnd.nextDouble();
+            long then = System.nanoTime();
+            for(int r = 0 ; r < buffer.length; r++) h.fill(buffer[r]);
+            counter += buffer.length;
+            time += System.nanoTime() - then;
+        }
+        double msTime = ((double) time)/1000000.0;
+        System.out.printf("total time msec count = %d , time = %f, average = %f msec/event\n", counter,msTime , msTime/counter);
+    }
 }

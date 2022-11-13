@@ -14,9 +14,11 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import java.util.Timer;
+import javax.imageio.ImageIO;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -31,7 +33,9 @@ import twig.data.H2F;
 import twig.editors.CanvasEditorPanel;
 import twig.editors.DataCanvasEditorDialog;
 import twig.studio.TwigStudio;
+import twig.widgets.Line;
 import twig.widgets.PaveText;
+import twig.widgets.WidgetEditor;
 
 /**
  *
@@ -172,6 +176,23 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         return getGraphicsComponents().size();
     }
     
+    public BufferedImage getScreenShot() {
+        BufferedImage bi = new BufferedImage(
+                this.getWidth(), this.getHeight(), BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        this.paint(bi.getGraphics());
+        return bi;
+    }
+    
+    public void export(String filename){
+        if(filename.endsWith("png")||filename.endsWith("PNG")){
+            this.export(filename,"png"); return;
+        }
+        if(filename.endsWith("pdf")||filename.endsWith("PDF")){
+            this.export(filename,"pdf"); return;
+        }
+        System.out.println("<canvas.export> unable to determine file type from name : " + filename);
+    }
+    
     public void export(String filename, String type){
         if(type.compareTo("PDF")==0||type.compareTo("pdf")==0){
             System.out.println("[canvas] >>> exporting file : " + filename);
@@ -182,6 +203,15 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             pdfDoc.writeToFile(new File(filename));
             
         }
+        if(type.compareTo("PNG")==0||type.compareTo("png")==0){
+            File imageFile = new File(filename);
+            try {
+                imageFile.createNewFile();
+                ImageIO.write(getScreenShot(), "png", imageFile);
+            } catch (Exception ignored) {
+            }
+        }
+        
     }
     
     public TGDataCanvas left(int left){
@@ -478,6 +508,31 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             }
         }
         
+        if(e.getActionCommand().compareTo("add_region_text")==0){
+            if(popupProvider.region!=null){
+                PaveText t = new PaveText("text",0.15,0.85);
+                popupProvider.region.getAxisFrame().addWidget(t);
+                this.repaint();
+            }            
+        }
+        
+        if(e.getActionCommand().compareTo("add_region_line")==0){
+            if(popupProvider.region!=null){
+                Line t = new Line(0.,0.5,1.0,0.5);
+                t.setNDF(true);
+                popupProvider.region.getAxisFrame().addWidget(t);
+                this.repaint();
+            }            
+        }
+        
+        if(e.getActionCommand().compareTo("edit_region_widgets")==0){
+            if(popupProvider.region!=null){
+                WidgetEditor editor = new WidgetEditor(popupProvider.region.axisFrame.widgetNodes, this);
+                editor.show();
+                this.repaint();
+            }
+        }
+        
         if(e.getActionCommand().compareTo("region_duplicate")==0){
             if(popupProvider.region!=null){                
                 List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
@@ -487,6 +542,9 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                 }
             }
         }
+        
+        
+        
     }
     
     public static class CanvasPopupProvider extends PopupProvider {
@@ -565,10 +623,12 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                     new String[]{"Duplicate" ,"Show Legend","Hide Legend",
                         "Edit Legend",
                         "Show Stats","Hide Stats","Edit Stats",
+                        "Add Text","Add Line","Edit Widgets",                        
                         "Log Y", "Lin Y"}, 
                     new String[]{"region_duplicate", 
                         "show_region_legend", "hide_region_legend","edit_region_legend",
                         "show_region_stats","hide_region_stats","edit_region_stats",
+                        "add_region_text","add_region_line","edit_region_widgets",
                         "set_log_y_true","set_log_y_false"}
             );
             

@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -130,11 +131,11 @@ public class StudioFrame extends JPanel {
                 "Still does nothing");
         pane.setDividerLocation(0.5);
         objectTree.setPreferredSize(new Dimension(200,600));
-        
-        
+                
         //JPanel panel = new JPanel();
         JScrollPane panel = new JScrollPane(objectTree);
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         //panel.add(objectTree);
         
         //pane.setLeftComponent(objectTree);

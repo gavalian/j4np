@@ -4,7 +4,7 @@
 
   <groupId>j4ml</groupId>
   <artifactId>j4np-level3</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
     
 
@@ -24,7 +24,7 @@
     -->
     
     <!-- Uncomment block for CPU usage -->
-    <dl4j-master.version>1.0.0-beta7</dl4j-master.version>
+    <dl4j-master.version>1.0.0-M1</dl4j-master.version>
     <dl4j.backend>deeplearning4j-core</dl4j.backend> 
     <nd4j.backend>nd4j-native</nd4j.backend>
 
@@ -64,7 +64,7 @@
     <dependency>
       <groupId>j4np</groupId>
       <artifactId>j4np-data</artifactId>
-      <version>1.0.4-SNAPSHOT</version>
+      <version>1.0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jlab.coda</groupId>
@@ -88,12 +88,14 @@
          ie only have more recent CUDA versions.
          Error message will be something like
          org.nd4j.linalg.factory.Nd4jBackend$NoAvailableBackendException -->
+    <!--
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>cuda-platform-redist</artifactId>
       <version>10.2-7.6-1.5.3</version>
     </dependency>
-
+    -->
+    
     <!-- Recommended nd4j and dl4j dependencies -->
     <dependency>
       <groupId>org.nd4j</groupId>

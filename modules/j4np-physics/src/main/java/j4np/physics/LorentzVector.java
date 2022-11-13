@@ -207,9 +207,9 @@ public class LorentzVector {
             return this;
         }
         
-	public void invert() {
+	public LorentzVector invert() {
             this.vector.setXYZ(-this.vector.x(), -this.vector.y(), -this.vector.z());
-            this.energy = -this.energy;
+            this.energy = -this.energy; return this;
 	}
         
 	public void print() {

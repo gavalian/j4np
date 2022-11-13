@@ -89,6 +89,18 @@ public class Bank {
         nodeBuffer.put(      3, type);
         nodeBuffer.putInt(   4, length);
     }
+    
+    protected Bank(Schema sc, ByteBuffer buffer, int position, int length){
+        nodeSchema   = sc;
+        byte[] bytes = new byte[length+24];
+        
+        nodeBuffer   = ByteBuffer.wrap(bytes);
+        nodeBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        System.arraycopy(buffer.array(), position, nodeBuffer.array(), 0, length);
+        int size = nodeBuffer.getInt(4);
+        int rowLength = this.nodeSchema.getEntryLength();
+        nodeRows = size/rowLength;
+    }
     /**
      * Copy the content of the given buffer into the current Node
      * structure. 

@@ -9,6 +9,7 @@ import j4np.graphics.Translation2D;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import javax.swing.JComponent;
 
 /**
  *
@@ -54,7 +55,7 @@ public class Arc implements Widget {
     }
 
     @Override
-    public void configure() {
+    public void configure(JComponent parent) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -8,6 +8,7 @@ package twig.widgets;
 import j4np.graphics.Translation2D;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import javax.swing.JComponent;
 
 /**
  *
@@ -16,5 +17,5 @@ import java.awt.geom.Rectangle2D;
 public interface Widget {
     public    void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr);
     public boolean isNDF();
-    public    void configure();
+    public    void configure(JComponent parent);
 }

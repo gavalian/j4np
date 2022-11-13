@@ -69,31 +69,31 @@ public class MultiIndex implements Serializable {
 	 * @return			The size of the 1D array from storing all the elements
 	 */
 	public int getArrayIndex(int... ind) {
-		if(ind.length == indexDim) {
-            if(ind.length == 1) { 
-                return ind[0];
+            if(ind.length == indexDim) {
+                if(ind.length == 1) { 
+                    return ind[0];
+                }
+                
+                if(ind.length == 2) { 
+                    if(this.checkIndex(0, ind[0]) == false ||
+                            this.checkIndex(1, ind[1]) == false) {
+                        return -1; 
+                    }
+                    return ind[0] + ind[1]*dimSizes[0];
+                }
+                
+                if(ind.length == 3) { 
+                    if(this.checkIndex(0, ind[0])==false||
+                            this.checkIndex(1, ind[1])==false||
+                            this.checkIndex(2, ind[2])==false) {
+                        return -1;
+                    }
+                    return (ind[2]*dimSizes[1]*dimSizes[0])+(ind[1]*dimSizes[0]) + ind[0];
+                }
             }
             
-            if(ind.length == 2) { 
-                if(this.checkIndex(0, ind[0]) == false ||
-                        this.checkIndex(1, ind[1]) == false) {
-                	return -1; 
-                }
-                return ind[0] + ind[1]*dimSizes[0];
-            }
-
-            if(ind.length == 3) { 
-                if(this.checkIndex(0, ind[0])==false||
-                        this.checkIndex(1, ind[1])==false||
-                        this.checkIndex(2, ind[2])==false) {
-                	return -1;
-                }
-                return (ind[2]*dimSizes[1]*dimSizes[0])+(ind[1]*dimSizes[0]) + ind[0];
-            }
+            return -1;
         }
-		
-        return -1;
-	}
 	
 	/**
 	 * Checks if the index is valid at that dimension

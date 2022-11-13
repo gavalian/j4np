@@ -10,15 +10,28 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.drjekyll.fontchooser.FontDialog;
 import twig.config.TStyle;
+import twig.editors.DataEditorUtils;
 import twig.widgets.LatexText.TextAlign;
 import twig.widgets.LatexText.TextRotate;
 
@@ -35,12 +48,12 @@ public class PaveText implements Widget {
         MULTILINE, ONELINE, STATS_MULTILINE;
     }
      
-    protected Font           textFont = new Font("Avenir", Font.PLAIN, 14);
-    private Color           textColor = Color.BLACK;
-    private Color         borderColor = new Color(200,200,200);
-    private Color    headerBackground = new Color(255,255,255);
-    private String         textHeader = "Info";
-    
+    protected Font                textFont = new Font("Avenir", Font.PLAIN, 12);
+    private Color                textColor = Color.BLACK;
+    private Color              borderColor = new Color(200,200,200);
+    private Color         headerBackground = new Color(255,255,255);
+    private String              textHeader = "Info";
+    protected boolean      editTextContent = true;
     
     private List<String>            textStrings = new ArrayList<>();
     private List<Point2D.Double>  textPositions = new ArrayList<>();
@@ -606,37 +619,126 @@ public class PaveText implements Widget {
     }
     
     @Override
-    public void configure() {
+    public void configure(JComponent parent) {
         System.out.println("Oy, Configuring Pave Text");
         JTextField posX = new JTextField();
+        
+        JSpinner   psX =  DataEditorUtils.makeSpinnerDouble(positionX, -0.5, 1.5, 0.01);
+        JSpinner   psY =  DataEditorUtils.makeSpinnerDouble(positionY, -0.5, 1.5, 0.01);
+        
+        psX.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                positionX = (double) ((JSpinner) e.getSource()).getValue();
+                //System.out.println("sate changed....");
+                if(parent!=null) parent.repaint();
+            }        
+        });
+        
+        psY.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                positionY = (double) ((JSpinner) e.getSource()).getValue();
+                if(parent!=null) parent.repaint();
+            }
+        });
+        
         JTextField posY = new JTextField();
                
         posX.setText(String.format("%.3f", this.positionX));
         posY.setText(String.format("%.3f", this.positionY));
         
+        posX.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //System.out.println("Text=" + text.getText());
+                System.out.println("painting");
+                if(parent!=null) parent.repaint();
+            }
+        });
+        
         JCheckBox drawBoxCheck = new JCheckBox();
         drawBoxCheck.setSelected(this.drawBox);
+        drawBoxCheck.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                drawBox = ((JCheckBox) e.getSource()).isSelected();
+                if(parent!=null) parent.repaint();
+            }
+        });
+        
         
         JCheckBox fillBoxCheck = new JCheckBox();
         fillBoxCheck.setSelected(this.fillBox);
+        fillBoxCheck.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                fillBox = ((JCheckBox) e.getSource()).isSelected();
+                if(parent!=null) parent.repaint();
+            }
+        });
         
-        Object[] message = {
-            "Position X:", posX,
-            "Position Y:", posY,
+        JTextArea textArea = new JTextArea(5, 20);
+        JScrollPane scrollPane = new JScrollPane(textArea); 
+        textArea.setEditable(true);
+        StringBuilder str = new StringBuilder();
+        for(String s : textStrings){
+            str.append(s).append("\n");
+        }
+        
+        textArea.setText(str.toString());
+        
+        
+        JButton fontButton = new JButton("Choose Font");
+        
+        fontButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FontDialog dialog = new FontDialog((Frame)null, "Font Dialog Example", true);             
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);                                      
+                dialog.setVisible(true);                                                                                
+                if (!dialog.isCancelSelected()) { 
+                    Font f = dialog.getSelectedFont();
+                    setFont(f);
+                }
+            }
+        });
+                
+         
+         
+         Object[] message = {
+             "Position X:", psX,
+            "Position Y:", psY,
             "Draw Box:",drawBoxCheck,
-            "Fill Box:",fillBoxCheck
-            
+            "Fill Box:",fillBoxCheck,
+            "Font:", fontButton,
+            "Text", textArea
         };
         
         int option = JOptionPane.showConfirmDialog(null, 
                 
                 message, "Pave Text", JOptionPane.OK_CANCEL_OPTION);
+        
         if (option == JOptionPane.OK_OPTION) {
-            double x = Double.parseDouble(posX.getText());
-            double y = Double.parseDouble(posY.getText());
-            this.setPosition(x, y);
+            //double x = Double.parseDouble(posX.getText());
+            //double y = Double.parseDouble(posY.getText());
+            //this.setPosition(x, y);
+            
             this.drawBox = drawBoxCheck.isSelected();
             this.fillBox = fillBoxCheck.isSelected();
+            
+            String text = textArea.getText();
+            
+            String[] lines = text.split("\r?\n|\r");
+            System.out.println("FULL Text : " + text);
+            System.out.println(" LINES = "+ lines.length);
+            this.textStrings.clear();
+            textPositions.clear();
+            for(String line : lines) {
+                System.out.println("adding line [" + line + "]");
+                this.textStrings.add(line);
+                this.textPositions.add(new Point2D.Double(0.0,0.0));
+            }
         } else {
             System.out.println("Login canceled");
         }

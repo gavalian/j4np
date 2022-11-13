@@ -1,0 +1,17 @@
+ import j4ml.clas12.networks.*;
+ TrackNetworkTrainer t = new TrackNetworkTrainer();
+ t.nEpochs = 125;
+ t.maxBinsRead = 10000;
+
+String    trainFile = "training_sample_max150000_012922-012925.hipo";
+String     testFile = "testing_sample_max150000_012930-012932.hipo";
+String       flavor = "default";
+String  networkFile = "clas12rgf.network";
+int       runNumber = 12922;
+
+t.getConstrain().momentum.set(0.5,10.5);
+t.getConstrain().vertex.set( -35.0, 25.0); // RG-F
+t.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+
+t.regressionTrain(trainFile,networkFile,runNumber,"default");
+//t.encoderTest(testFile,networkFile,runNumber,"default");

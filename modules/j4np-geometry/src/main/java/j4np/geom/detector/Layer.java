@@ -20,7 +20,7 @@ public class Layer {
     
     protected int layer_id = 0;
     
-    List<Shape3D> boundary = new ArrayList<>();    
+    List<Shape3D> boundary = new ArrayList<>();
     List<Line3D>  components = new ArrayList<>();
     
     public List<Line3D>   getComponents(){return this.components;}
@@ -44,6 +44,7 @@ public class Layer {
     public List<DetectorHit>  getHits(Path3D path){
         
         List<DetectorHit> hits = new ArrayList<>();
+        
        if(hasIntersection(path)==true){
            
            int[] index = path.getClosest(components);
@@ -52,6 +53,7 @@ public class Layer {
            DetectorHit hit = new DetectorHit(layer_id,index[1]+1);
            //System.out.println("path line = " + line);
            hit.getPosition().copy(dst.midpoint());
+           hit.getLine().copy(this.components.get(index[1]));
            hit.setDistance(dst.length());
            hits.add(hit);
        }

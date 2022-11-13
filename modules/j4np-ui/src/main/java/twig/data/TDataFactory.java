@@ -19,6 +19,44 @@ import javax.imageio.ImageIO;
  */
 public class TDataFactory {
     
+    public static GraphErrors getGraph(int type){
+        
+        Random r = new Random();
+        double min = 0.5; 
+        double max = 2.75;
+        double step = 0.25;
+        
+        GraphErrors gr = new GraphErrors();
+        
+        if(type==0){
+            for(double x = min; x < max; x += step){
+                double y = Math.exp(x);
+                double error = Math.sqrt(Math.abs(y));
+                gr.addPoint(x, y,0.0,error);
+            }
+        }
+        
+        if(type==1){
+            for(double x = min; x < max; x += step){
+                double y = Math.exp(x);                
+                double error = Math.sqrt(Math.abs(y));
+                double shift = r.nextGaussian()*error*0.2;
+                gr.addPoint(x, y+shift,0.0,error);
+            }
+        }
+        
+        if(type==2){
+            for(double x = min; x < max; x += step){
+                double y = Math.exp(2.5-x);                
+                double error = Math.sqrt(Math.abs(y));
+                double shift = r.nextGaussian()*error*0.2;
+                gr.addPoint(x+0.05, y+shift,0.0,error);
+            }
+        }
+        
+        return gr;
+    }
+    
     public static GraphErrors createGraph(int color, int level){
         GraphErrors graph = new GraphErrors();
         graph.addPoint(1.0, 3.0 + level*2.2 , 0.0, 1.6);

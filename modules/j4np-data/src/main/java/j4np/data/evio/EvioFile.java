@@ -10,6 +10,9 @@ import j4np.data.base.DataFrame;
 import j4np.data.base.DataSourceFrame;
 import j4np.data.base.DataNodeCallback;
 import j4np.data.base.DataSource;
+import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Node;
+import j4np.hipo5.io.HipoWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -204,17 +207,49 @@ public class EvioFile implements DataSource {
         return -1;
     }
     
+    
+     @Override
+    public int nextFrame(DataFrame frame) {
+        int counter = 0;
+        int entries = frame.getCount();
+        for(int loop = 0; loop < entries; loop++){
+            if(next(frame.getEvent(loop))==true) counter++;
+        }
+        return counter;
+    }
+    
     public static void main(String[] args){
         EvioFile struct = new EvioFile();
         //struct.open("/Users/gavalian/Work/DataSpace/evio/segm1.evio");
         //struct.open("/Users/gavalian/Work/DataSpace/evio/segm5662.evio.00001");
-        struct.open("/Users/gavalian/Work/DataSpace/evio/clas_003852.evio.981");        
+        struct.open("/Users/gavalian/Work/DataSpace/evio/clas_017401.evio.00475");        
         //struct.firstBlock();
         
         int counter = 0;
         EvioEvent event = new EvioEvent();
         
+        //System.out.println("[] reading next block : " + struct.next());
+        HipoWriter w = new HipoWriter();
+        w.open("output.evio");
         
+        Event e = new Event();
+        
+        while(struct.hasNext()==true){
+            counter++;
+            struct.next(event);
+            
+            int esize = event.bufferLength()*4;
+            event.scan();
+            byte[] bytes = new byte[esize];
+            System.arraycopy(event.getBuffer().array(), 0, bytes, 0, esize);
+            Node node = new Node(32,1,bytes);
+            e.reset();
+            e.write(node);
+            w.addEvent(e);
+
+        }
+        w.close();
+        /*
         event.setCallback(new DataNodeCallback(){
             int counter = 0;
             int[] tdc = new int[1000];
@@ -233,8 +268,7 @@ public class EvioFile implements DataSource {
                 }
             }
             
-        });
-        
+        });        
         long nanoTime = 0L;
         long nanoTimeTotal = 0L;
         long start = System.nanoTime();
@@ -255,16 +289,6 @@ public class EvioFile implements DataSource {
         
         System.out.printf("---> events in the block = %s, time = %8.5f, total time = %8.5f", 
                 counter,((double)nanoTime)*10e-9,((double)nanoTimeTotal)*10e-9
-        );
-    }
-
-    @Override
-    public int nextFrame(DataFrame frame) {
-        int counter = 0;
-        int entries = frame.getCount();
-        for(int loop = 0; loop < entries; loop++){
-            if(next(frame.getEvent(loop))==true) counter++;
-        }
-        return counter;
+        );*/
     }
 }

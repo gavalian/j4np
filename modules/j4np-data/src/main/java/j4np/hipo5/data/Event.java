@@ -132,7 +132,16 @@ public class Event implements DataEvent {
             eventBuffer.putInt(EVENT_LENGTH_OFFSET, 16);
         }
     }
-    
+    public void write(CompositeNode node){
+        if(node.getLength()>0){
+            int totalLength = node.getLength() + 8;            
+            int  position = eventBuffer.getInt(EVENT_LENGTH_OFFSET);
+            this.require(position+totalLength + 24);
+            System.arraycopy(node.getByteBuffer().array(), 0, 
+                eventBuffer.array(), position, totalLength);
+            eventBuffer.putInt(EVENT_LENGTH_OFFSET, position+totalLength);
+        }
+    }
     public void write(Node node){
         int bufferSize = node.getBufferSize();
         if(bufferSize<=8) return;
@@ -140,6 +149,7 @@ public class Event implements DataEvent {
         
         System.arraycopy(node.getBufferData(), 0, 
                 eventBuffer.array(), position, bufferSize);
+        
         int group  = node.getGroup();
         int  item  = node.getItem();
         int  hash  = getHash(group,item);
@@ -221,18 +231,22 @@ public class Event implements DataEvent {
         return node;
     }
     
-    public Node read(Node node, int position){
-        
+    public void read(CompositeNode node, int group, int item){
+        int position = scan(group,item);
+        int   length = this.scanLengthAt(group,item, position);
+        node.initFromBuffer(this.eventBuffer.array(), position, length+8);
+    }
+    
+    public Node read(Node node, int position){        
         short group_p = eventBuffer.getShort( position    );
         byte  item_p  = eventBuffer.get(      position + 2);
         byte  type_p  = eventBuffer.get(      position + 3);
-        int   size_p  = eventBuffer.getInt(   position + 4);
+        int   size_p  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
         //System.out.println(" size = " + size_p + " type = " + type_p);
         DataType type = DataType.getTypeById(type_p);
         //System.out.println(" TYPE ID = " + type_p + "  TYPE = " + type);
         Node        n = new Node();
-        n.allocate(size_p+8, type);
-        
+        n.allocate(size_p+8, type);        
         System.arraycopy(eventBuffer.array(), position, n.getBufferData(), 0, size_p+8);        
         return n;
     }
@@ -242,6 +256,24 @@ public class Event implements DataEvent {
         read(bank.getSlaveBank());
         bank.processIndex();
         return bank;
+    }
+    
+    public void read(Bank... banks){
+        for(Bank b : banks) this.read(b);
+    }
+    
+    public Bank[] read(Schema... schemas){
+        Bank[] b = new Bank[schemas.length];
+        for(int i = 0; i < schemas.length; i++){
+            int position = this.scan(schemas[i].getGroup(), schemas[i].getItem());
+            if(position<0){
+                b[i] = new Bank(schemas[i],0);
+            } else {
+                int length = this.scanLengthAt(schemas[i].getGroup(), schemas[i].getItem(), position);
+                b[i] = new Bank(schemas[i],this.eventBuffer, position,length);
+            }
+        }
+        return b;
     }
     
     public Bank read(Bank node){
@@ -279,7 +311,7 @@ public class Event implements DataEvent {
             short group_p = eventBuffer.getShort( position    );
             byte  item_p  = eventBuffer.get(      position + 2);
             byte  type_p  = eventBuffer.get(      position + 3);
-            int   size_p  = eventBuffer.getInt(   position + 4);
+            int   size_p  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
             //System.out.println(" size = " + size_p + " type = " + type_p);
             DataType type = DataType.getTypeById(type_p);
             //System.out.println(" TYPE ID = " + type_p + "  TYPE = " + type);
@@ -311,7 +343,7 @@ public class Event implements DataEvent {
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4);
+            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
             //int   hash  = this.getHash(group,item);
             //eventNodesMap.addLeaf(hash, position);
             System.out.printf("\t at %8d : goup = %8d, item = %4d, type = %4d, size = %8d %n", 
@@ -331,7 +363,7 @@ public class Event implements DataEvent {
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4);
+            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
             if(__group==group&&__item==item)    return position;
             position += size + NODE_HEADER_LENGTH;
         }
@@ -348,7 +380,7 @@ public class Event implements DataEvent {
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4);
+            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
             
             if((type>0&&type<9)&&type!=7){
                 Node node = read(group,item);
@@ -372,7 +404,7 @@ public class Event implements DataEvent {
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4);
+            int   size  = (eventBuffer.getInt(   position + 4)&0x00FFFFFF);
             //System.out.printf("\t group/item : [%5d / %4d] , position = %5d, type = %4d , size = %4d\n",
             //        group,item, position, type,size);
             DataType typeId = DataType.getTypeById(type);
@@ -397,15 +429,15 @@ public class Event implements DataEvent {
         int    position = EVENT_HEADER_SIZE;
         int eventLength = this.eventBuffer.getInt(EVENT_LENGTH_OFFSET);
         //this.eventNodesMap.reset();
-        
+        System.out.println("\n" + getEventHeaderString()+"\n");
         while(position +NODE_HEADER_LENGTH <eventLength){
             short group = eventBuffer.getShort( position    );
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4);
-            System.out.printf("\t group/item : [%5d / %4d] , position = %5d, type = %4d , size = %4d\n",
-                    group,item, position, type,size);
+            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
+            System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , size = %4d\n",
+                    group,item, position, type, size&0x00FFFFFF);
             //if(__group==group&&__item==item)    return position;
             position += size + NODE_HEADER_LENGTH;
         }
@@ -417,7 +449,7 @@ public class Event implements DataEvent {
          byte  item  = eventBuffer.get(      position + 2);
          byte  type  = eventBuffer.get(      position + 3);
          int   size  = eventBuffer.getInt(   position + 4);
-         if(__group==group&&__item==item)   return size;
+         if(__group==group&&__item==item)   return (size&0x00FFFFFF);
         return -1;
     }
     
@@ -433,7 +465,7 @@ public class Event implements DataEvent {
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
             int   size  = eventBuffer.getInt(   position + 4);
-            if(__group==group&&__item==item)    return size;
+            if(__group==group&&__item==item)    return (size&0x00FFFFFF);
             position += size + NODE_HEADER_LENGTH;
         }
         return -1;
@@ -481,6 +513,10 @@ public class Event implements DataEvent {
         System.out.println();
     }
     
+    public String getEventHeaderString(){
+        return String.format("... event ... ::: tag = %8d, mask = %032X, size = %8d", 
+                getEventTag(),getEventMask(),getEventBufferSize());
+    }
     public void show(){
         
         int[] keys = this.eventNodesMap.getKeys();
@@ -592,9 +628,31 @@ public class Event implements DataEvent {
     }
     
     public static void main(String[] args){
+
+        Event event = new Event();
+        
+        CompositeNode node1 = new CompositeNode(12,1,"sssi",15);
+        event.write(node1);
+        
+        CompositeNode node2 = new CompositeNode(12,2,"fflf",15);
+        event.write(node2);
+        node2.info();
+        CompositeNode node3 = new CompositeNode(12,3,"2b4f2l",15);
+        event.write(node3);
+        
+        event.scanShow();
+        
+        System.out.println(event.getEventBufferSize());
         
         
         
+        CompositeNode node4 = new CompositeNode(480);
+        
+        
+        event.read(node4,12,3);
+        
+        node4.show();
+        /*
         SchemaBuilder schemaBuilder = new SchemaBuilder("event",1234,1);
         schemaBuilder.addEntry("pid", "I", "pid");
         schemaBuilder.addEntry( "px", "F", "x-component");
@@ -642,7 +700,7 @@ public class Event implements DataEvent {
         node.show();
         Node  str = new Node();
         
-        event.read(str, indexNode);
+        event.read(str, indexNode);*/
         /*  
         event.printEventBuffer();
         
@@ -662,6 +720,7 @@ public class Event implements DataEvent {
             event.read(noder);
             noder.show();
         }*/
+        /*
         System.out.println("DONE reading...");
         
         System.out.println("---------- AFTER");
@@ -674,6 +733,6 @@ public class Event implements DataEvent {
         event.show();
         event.remove(1432, 1);
         event.scan();
-        event.show();
+        event.show();*/
     }
 }

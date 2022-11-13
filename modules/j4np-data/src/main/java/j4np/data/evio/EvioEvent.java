@@ -41,6 +41,7 @@ public class EvioEvent extends BaseStructure implements DataEvent {
     public void scan(){
         
         int  eventSize = getByteBuffer().getInt(0)*4;
+        
         int   identity = getByteBuffer().getInt(4);
         
         /*System.out.printf("event : size = %8d (%5d) , identity = (%5d, %4d), type = %4d\n",
@@ -76,6 +77,7 @@ public class EvioEvent extends BaseStructure implements DataEvent {
     }
     
     public void scanBank(int pos, int tag, int num){
+        
         int[] iden = new int[4];
         iden[0] = tag;
         iden[1] = num;

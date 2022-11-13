@@ -170,6 +170,8 @@ public class HipoWriter implements DataSync {
     }
     
     public void addEvent(Event event, long eventTag){
+        
+        if(event.getEventBufferSize()<=16) return;
         if(eventTag==0){
             int size = event.getEventBufferSize();
             boolean status = 

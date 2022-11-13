@@ -40,6 +40,17 @@ public class DataEditorUtils {
         return spinner;
     }
     
+    public static JSpinner makeSpinnerDouble(double value, double min, double max, double step){
+        SpinnerModel model =
+                new  SpinnerNumberModel(value, min, max, step);
+
+        JSpinner spinner = new JSpinner(model);
+        int h = spinner.getHeight();
+        spinner.setMaximumSize(new Dimension(90, 25));
+        spinner.setMinimumSize(new Dimension(90, 25));
+        return spinner;
+    }
+    
     public static JTextField makeTextField(String value, int length){
         JTextField tf = new JTextField(length);
         tf.setText(value);

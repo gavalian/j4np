@@ -5,6 +5,8 @@
  */
 package j4np.data.structure;
 
+import j4np.hipo5.data.CompositeNode;
+
 /**
  *
  * @author gavalian
@@ -15,15 +17,15 @@ public class DataStructureUtils {
         
     } 
     
-    public static void print(DataStructure struct){
+    public static void print(CompositeNode struct){
         DataStructureUtils.print(struct, new int[0]);
     }
     
-    public static void print(DataStructure struct, int[] mask){
+    public static void print(CompositeNode struct, int[] mask){
         int    nrows = struct.getRows();
         int nentries = struct.getEntries();
-        System.out.printf("structure : rows = %5d, row length = %5d, entries = %5d\n",
-                nrows,struct.dataDescriptor.getStructureLength(),nentries);
+        //System.out.printf("structure : rows = %5d, row length = %5d, entries = %5d\n",
+        //        nrows,struct.dataDescriptor.getStructureLength(),nentries);
         for(int e = 0; e < nentries; e++){
             
             boolean showEntry = false;

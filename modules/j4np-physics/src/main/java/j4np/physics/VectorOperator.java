@@ -18,11 +18,11 @@ import java.util.logging.Logger;
 public class VectorOperator {
     
     public enum OperatorType {
-      MASS,MASS2,THETA,PHI,P,E,THETA_DEG,PHI_DEG
+      MASS,MASS2,THETA,PHI,P,E,THETA_DEG,PHI_DEG,PX,PY,PZ, PT
     };
     
-    private LorentzVector vec = new LorentzVector();
-    private LorentzVector opVector = new LorentzVector();
+    protected LorentzVector vec = new LorentzVector();
+    protected LorentzVector opVector = new LorentzVector();
     protected int[]           particleID = null;
     protected double[]      particleMass = null;
     protected int[]        particleOrder = null;
@@ -64,6 +64,10 @@ public class VectorOperator {
             case MASS: return opVector.mass();
             case MASS2: return opVector.mass2();
             case P: return opVector.p();
+            case PX: return opVector.px();
+            case PY: return opVector.py();
+            case PZ: return opVector.pz();
+            case PT: return opVector.pt();
             case E: return opVector.e();
             case THETA: return opVector.theta();
             case THETA_DEG: return Math.toDegrees(opVector.theta());

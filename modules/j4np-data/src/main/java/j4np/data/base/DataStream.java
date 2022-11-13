@@ -52,6 +52,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
     private long         timeReadFrame = 0L;
     private long          timeConsumer = 0L;
     private long          timeExportSync = 0L;
+    
     public DataStream(){
        initThreading();
     }
@@ -75,6 +76,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
     public DataStream withSource(R ds){ source = ds; return this;}
     public DataStream withOutput(K dst){ destination = dst; return this;}    
     public DataStream withFrame(DataFrame<T> df){ frame = df; return this;}
+    public DataStream limit(int nEvents){ this.maxEvents = nEvents; return this;}
     /*
     protected void initFrame(String clazzName){
        
@@ -135,6 +137,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
                 now = System.nanoTime();
                 timeExportSync += (now-then);
             }
+            if(progress.getCounter()>this.maxEvents&&this.maxEvents>0) break;
         }
         consumer.finilize();
         if(destination!=null) destination.close();

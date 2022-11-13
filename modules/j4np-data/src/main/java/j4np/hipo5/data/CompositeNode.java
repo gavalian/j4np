@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package j4np.data.structure;
+package j4np.hipo5.data;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -14,27 +14,42 @@ import java.util.List;
  *
  * @author gavalian
  */
-public class DataStructure  extends BaseStructure {
+public class CompositeNode extends BaseHipoStructure {
     
-    DataStructureDescriptor dataDescriptor = null;
- 
+    DataStructureDescriptor dataDescriptor = null; 
     
-    public DataStructure(){
+    public CompositeNode(){
         super();
     }
-        
-    public DataStructure(String format){
+    
+    public CompositeNode(int size){
+        super(size);
+    }
+    public CompositeNode(String format){
         dataDescriptor = new DataStructureDescriptor();
         dataDescriptor.parse(format);
         require(dataDescriptor.getStructureLength()*200);
+        
     }
     
-    public DataStructure(String format, int rows){
+    public CompositeNode(String format, int rows){
+        
         dataDescriptor = new DataStructureDescriptor();
         dataDescriptor.parse(format);
         int rowLength = dataDescriptor.getStructureLength();
+        
         int size = rowLength*rows + 16;
+        require(size);        
+    }
+    
+    public CompositeNode(int group, int item, String format, int rows){        
+        dataDescriptor = new DataStructureDescriptor();
+        dataDescriptor.parse(format);
+        int rowLength = dataDescriptor.getStructureLength();
+        int formatLength = format.length();
+        int size = rowLength*rows + formatLength;        
         require(size);
+        this.setGroup(group).setItem(item).setType(10).setFormatAndLength(format, rowLength*rows);
     }
     
     public final void setRows(int rows){
@@ -56,6 +71,16 @@ public class DataStructure  extends BaseStructure {
         setRows(0);
     }
     
+    protected void initFromBuffer(byte[] array, int position, int length){
+        this.require(length);
+        System.arraycopy(array, position, this.getByteBuffer().array(), 0, length);
+        int   headerLength = this.getHeaderLength();
+        byte[] formatBytes = new byte[headerLength];
+        System.arraycopy(this.getByteBuffer().array(), 8, formatBytes, 0, headerLength);
+        this.dataDescriptor = new DataStructureDescriptor();
+        this.dataDescriptor.parse(new String(formatBytes));
+    }
+    
     public int getRowsSize(){
         return dataDescriptor.structureLength;
     }
@@ -67,7 +92,7 @@ public class DataStructure  extends BaseStructure {
         return false;
     }
     
-    public DataStructure putInt(int row, int entry, int number){
+    public CompositeNode putInt(int row, int entry, int number){
         if(testTypeForEntry(entry,3)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -77,7 +102,7 @@ public class DataStructure  extends BaseStructure {
         return this;
     }
     
-    public DataStructure putLong(int row, int entry, long number){
+    public CompositeNode putLong(int row, int entry, long number){
         if(testTypeForEntry(entry,3)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -87,7 +112,7 @@ public class DataStructure  extends BaseStructure {
         return this;
     }
     
-    public DataStructure putByte(int row, int entry, byte number){
+    public CompositeNode putByte(int row, int entry, byte number){
         if(testTypeForEntry(entry,1)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -96,7 +121,7 @@ public class DataStructure  extends BaseStructure {
         }
         return this;
     }
-    public DataStructure putShort(int row, int entry, short number){
+    public CompositeNode putShort(int row, int entry, short number){
         if(testTypeForEntry(entry,2)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -106,7 +131,7 @@ public class DataStructure  extends BaseStructure {
         return this;
     }
     
-    public DataStructure putFloat(int row, int entry, float number){
+    public CompositeNode putFloat(int row, int entry, float number){
         if(testTypeForEntry(entry,4)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -116,7 +141,7 @@ public class DataStructure  extends BaseStructure {
         return this;
     }
     
-    public DataStructure putDouble(int row, int entry, double number){
+    public CompositeNode putDouble(int row, int entry, double number){
         if(testTypeForEntry(entry,5)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -349,13 +374,27 @@ public class DataStructure  extends BaseStructure {
             System.out.println();
             
         }
-    }        
+    }
     
     public static void main(String[] args){
         
-        DataStructure struct = new DataStructure("iiifffbsbsbs",40);
+        CompositeNode struct = new CompositeNode(12,1,"ssb",5);
+        for(int i = 0; i < 5; i++) struct.putShort(i, 1, (short) ((i+1)*4));
+        struct.info();
+        
+        int   size = struct.getSize();
+        int length = struct.getDataLength();
+        
+        System.out.println("size = " + size + "  data length = " + length);
         struct.show();
         
+        
+        int entries = struct.getEntries();
+        int    rows = struct.getRows();
+        System.out.println(" entries = " + entries + " rows = " + rows);
+        for(int r = 0; r < rows; r++){
+            System.out.printf("%3d %8d\n",r,struct.getInt(r, 1));
+        }
         /*DataStructureDescriptor desc = new DataStructureDescriptor();
         desc.init(new int[]{4,4,2,2,1,1},new int[]{4,4,2,2,1,1});
         desc.show();        

@@ -40,6 +40,22 @@ public class TGF1D extends TDataNode2D {
         }
     }
     
+    @Override
+    public void drawLegend(Graphics2D g2d, int x, int y, int w, int h){
+        TStyle style = this.getStyle();
+        String opt = this.getOptions();
+         Color lc = style.getPalette().getColor(dataSet.attr().getLineColor());
+         int   lw = dataSet.attr().getLineWidth();
+         int   ls = dataSet.attr().getLineStyle();
+         
+         double width = w;
+         BasicStroke stroke = style.getLineStroke(ls, lw);
+         g2d.setColor(lc);
+         g2d.setStroke(stroke);
+         g2d.drawLine((int) (x-width/2), (int) y,
+                    (int) (x+width/2), (int) y);   
+    }
+    
      @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
 

@@ -15,14 +15,50 @@ import java.util.List;
  */
 public class TAxisAttributes {
 
+    public int getAxisGridLineColor() {
+        return axisGridLineColor;
+    }
+
+    public void setAxisGridLineColor(int axisGridLineColor) {
+        this.axisGridLineColor = axisGridLineColor;
+    }
+
+    public int getAxisGridLineStyle() {
+        return axisGridLineStyle;
+    }
+
+    public void setAxisGridLineStyle(int axisGridLineStyle) {
+        this.axisGridLineStyle = axisGridLineStyle;
+    }
+
+    public int getAxisGridLineWidth() {
+        return axisGridLineWidth;
+    }
+
+    public void setAxisGridLineWidth(int axisGridLineWidth) {
+        this.axisGridLineWidth = axisGridLineWidth;
+    }
+
+    public Boolean getAxisGridDraw() {
+        return axisGridDraw;
+    }
+
+    public void setAxisGridDraw(Boolean axisGridDraw) {
+        this.axisGridDraw = axisGridDraw;
+    }
+
     
     public TAxisAttributes(){
         TStyle style = TStyle.getInstance();
-        /*if(style!=null){
+        if(style!=null){
             this.axisLineColor  = TStyle.getInstance().getAxisLineColor();
             this.axisLabelColor = TStyle.getInstance().getAxisLabelColor();
             this.axisTitleColor = TStyle.getInstance().getAxisTitleColor();
-        }*/
+            
+            this.axisGridLineColor = style.getDefaultGridLineColor();
+            this.axisGridLineStyle = style.getDefaultGridLineStyle();
+            this.axisGridLineWidth = style.getDefaultGridLineWidth();
+        }
     }
     
     public int getAxisTickMarkCount() {
@@ -223,7 +259,7 @@ public class TAxisAttributes {
     /**
      * Basic offsets for markers, labels and titles.
      */    
-    private int      axisTickMarkSize  = -6;
+    private int      axisTickMarkSize  =  6;
     private int      axisTickMarkCount = 10;
     private int axisMinorTickMarkSize  =  0;
     private int       axisLabelOffset  =  4;
@@ -234,6 +270,10 @@ public class TAxisAttributes {
     private int         axisLineColor = 1;
     private int        axisLabelColor = 1;
     private int        axisTitleColor = 1;
+    
+    private int        axisGridLineColor = 1;
+    private int        axisGridLineStyle = 1;
+    private int        axisGridLineWidth = 1;
     /**
      * fonts for drawing axis Labels and titles.
      */
@@ -247,6 +287,7 @@ public class TAxisAttributes {
     private Boolean           axisBoxDraw = true;
     private Boolean         axisTicksDraw = true;
     private Boolean          axisLineDraw = true;
+    private Boolean          axisGridDraw = false;
     
     private Boolean        axisLabelsDraw = true;
     private Boolean        axisTitlesDraw = true;

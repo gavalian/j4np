@@ -6,7 +6,7 @@
 package j4np.data.tests;
 
 import j4np.data.evio.EvioNode;
-import j4np.data.structure.DataStructure;
+import j4np.hipo5.data.CompositeNode;
 
 /**
  *
@@ -40,7 +40,7 @@ public class DataDecoder {
      * @param struct
      * @param node 
      */
-    public static void decode_57622(EvioNode node, int crate, DataStructure struct){
+    public static void decode_57622(EvioNode node, int crate, CompositeNode struct){
         
         byte[] buffer = node.getBuffer().array();
         String t = new String();
@@ -83,7 +83,7 @@ public class DataDecoder {
         }                
     }
     
-    public static void decode_57638(EvioNode node, int crate, DataStructure struct, DataTranslator tr){
+    public static void decode_57638(EvioNode node, int crate, CompositeNode struct, DataTranslator tr){
         
         int[]    haddr = new int[]{crate,0,0,0};
         

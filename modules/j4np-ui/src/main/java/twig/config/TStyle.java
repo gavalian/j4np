@@ -6,6 +6,7 @@
 package twig.config;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -21,9 +22,45 @@ import java.util.logging.Logger;
  * @author gavalian
  */
 public class TStyle {
+
+    public static enum TwigStyle {
+        PRESENTATION, MONITOR, MATPLOTLIB
+    }
+    
+    public int getDefaultGridLineColor() {
+        return defaultGridLineColor;
+    }
+
+    public void setDefaultGridLineColor(int defaultGridLineColor) {
+        this.defaultGridLineColor = defaultGridLineColor;
+    }
+
+    public int getDefaultGridLineStyle() {
+        return defaultGridLineStyle;
+    }
+
+    public void setDefaultGridLineStyle(int defaultGridLineStyle) {
+        this.defaultGridLineStyle = defaultGridLineStyle;
+    }
+
+    public int getDefaultGridLineWidth() {
+        return defaultGridLineWidth;
+    }
+
+    public void setDefaultGridLineWidth(int defaultGridLineWidth) {
+        this.defaultGridLineWidth = defaultGridLineWidth;
+    }
+
+    public Color getDefaultAxisBackgroundColor() {
+        return defaultAxisBackgroundColor;
+    }
+
+    public void setDefaultAxisBackgroundColor(Color defaultAxisBackgroundColor) {
+        this.defaultAxisBackgroundColor = defaultAxisBackgroundColor;
+    }
     
     protected TPalette          palette = new TPalette();
-    private static TStyle globalStyle = new TStyle();
+    private static TStyle   globalStyle = new TStyle();
     
     protected TAxisAttributes defaultAxisAttributes = new TAxisAttributes();
     
@@ -51,20 +88,27 @@ public class TStyle {
     
     
     protected int  canvasBackgroundColor = 0;
-    protected int          axisLineColor = 0;
-    protected int         axisLabelColor = 0;
-    protected int         axisTitleColor = 0;
+    protected int          axisLineColor = 1;
+    protected int         axisLabelColor = 1;
+    protected int         axisTitleColor = 1;
     
     
-    protected Font  defaultPaveTextFont = new Font("Avenir",Font.PLAIN,18);
+    protected Font  defaultPaveTextFont = new Font("Avenir",Font.PLAIN,14);
     protected Font defaultAxisLabelFont = new Font("Avenir",Font.PLAIN,18);
     protected Font defaultAxisTitleFont = new Font("Avenir",Font.PLAIN,18);
-
+    
+    protected Color defaultAxisBackgroundColor = null;
+    
+    protected int   defaultGridLineColor = 171;
+    protected int   defaultGridLineStyle = 1;
+    protected int   defaultGridLineWidth = 1;
+    
+    
     public Font getDefaultAxisLabelFont() {
         return defaultAxisLabelFont;
     }
 
-    public void setDefaultAxisLabelFont(Font defaultAxisLabelFont) {
+    public final void setDefaultAxisLabelFont(Font defaultAxisLabelFont) {
         this.defaultAxisLabelFont = defaultAxisLabelFont;
     }
 
@@ -72,7 +116,7 @@ public class TStyle {
         return defaultAxisTitleFont;
     }
 
-    public void setDefaultAxisTitleFont(Font defaultAxisTitleFont) {
+    public final void setDefaultAxisTitleFont(Font defaultAxisTitleFont) {
         this.defaultAxisTitleFont = defaultAxisTitleFont;
     }
     
@@ -103,11 +147,37 @@ public class TStyle {
     
 
     public TStyle(){
-        
+        this.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+        this.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+        this.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));
     }
     
     
-    public void setDefaultPaveTextFont(Font f){
+    public static void setStyle(TwigStyle type){
+        TStyle style = TStyle.getInstance();
+        if(type == TwigStyle.PRESENTATION){
+           style.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           style.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));
+        }
+        if(type == TwigStyle.MONITOR){
+           style.setDefaultAxisLabelFont(new Font("Avenir",Font.PLAIN,12));
+           style.setDefaultPaveTextFont(new Font("Avenir",Font.PLAIN,12));
+           style.setDefaultAxisTitleFont(new Font("Avenir",Font.PLAIN,14));
+           
+        }
+    }
+    
+    public static void setStyle(int type){
+        switch(type){
+            case 1: TStyle.setStyle(TwigStyle.PRESENTATION); break;
+            case 2: TStyle.setStyle(TwigStyle.MATPLOTLIB); break;
+            case 3: TStyle.setStyle(TwigStyle.MONITOR); break;            
+            default: TStyle.setStyle(TwigStyle.PRESENTATION); break;
+        }
+    }
+    
+    public final void setDefaultPaveTextFont(Font f){
         this.defaultPaveTextFont = f;
     }
     

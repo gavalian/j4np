@@ -34,6 +34,13 @@ public class HipoLogos {
          "╚═╝  ╚═╝╚═╝╚═╝      ╚═════╝          ╚═╝╚═╝ ╚═════╝",
          "=== Jefferson National Lab (2017)"
      };
+
+         public static String[] SYMBOL_YODA = {
+	     "  _  ",
+	     " |_)  _.  _|   |\\ |  _        _ ",
+	     " |_) (_| (_|   | \\| (/_ \\/\\/ _> ",""
+	 };
+    /*
      public static String[] SYMBOL_YODA = {
 "                    ____",
 "                 _.' :  `._",
@@ -64,8 +71,14 @@ public class HipoLogos {
 "          :-\"\"-.`./-.'     /    `.___.'",
 "                \\ `t  ._  /  ",
 "                 \"-.t-._:'"
-     };
-     public static String[] FILE_NOT_FOUND = {
+};*/
+        public static String[] FILE_NOT_FOUND = {
+	"  _ ___     _                  _               ",
+	" |_  |  |  |_   ._   _ _|_   _|_ _      ._   _|", 
+	" |  _|_ |_ |_   | | (_) |_    | (_) |_| | | (_|",
+	""};
+    
+    /*public static String[] FILE_NOT_FOUND = {
          "  _____ _     _       _                   _     _   _              ___ _ _                  ",
          " /__   \\ |__ (_)___  (_)___   _ __   ___ | |_  | |_| |__   ___    / __(_) | ___             ",
          "   / /\\/ '_ \\| / __| | / __| | '_ \\ / _ \\| __| | __| '_ \\ / _ \\  / _\\ | | |/ _ \\            ",
@@ -78,7 +91,7 @@ public class HipoLogos {
          " / \\ (_) | |_| | | (_| | | |  __/ | | (_) | (_) |   <| | | | | (_| | |  _| (_) | |    /\\_/ ",
          " \\_/\\___/ \\__,_|  \\__,_|_|  \\___| |_|\\___/ \\___/|_|\\_\\_|_| |_|\\__, | |_|  \\___/|_|    \\/   ",
          "                                                              |___/                      "
-     };
+	 };*/
      
      
      public static String shrugIcon   = "¯\\_(ツ)_/¯";
@@ -86,7 +99,21 @@ public class HipoLogos {
      public static String lennyStrongIcon = "ᕦ( ͡° ͜ʖ ͡°)ᕤ";
      public static String blushIcon   = "(˵͡° ͜ʖ͡°˵)";
      public static String sleepIcon   = "(҂◡_◡)";
-     
+
+    public static String  emptyCircle = "\u25CB";
+    public static String  fullCircle = "\u25CF";
+    
+    public static String[] hipo5brail = new String[] {
+	"  .  ....   .    . ",
+	"  ... .  .   ..... ",
+	"      . . ..   .   "
+    };
+
+    public static String[] hipo5brailEQ = new String[]{
+        "  =  ====   =    = ",
+        "  === =  =   ===== ",
+        "      = = ==   =   "
+    };
      public static String getShrugIcon(){
          return HipoLogos.shrugIcon;
      }

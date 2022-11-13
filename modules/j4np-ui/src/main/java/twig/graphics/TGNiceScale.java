@@ -124,6 +124,21 @@ public class TGNiceScale {
         }
     }
     
+    public void getMinorTicks(List<Double> ticks){
+        ticks.clear(); 
+        this.setOrderString();
+        String format = this.getOrderString();
+        
+        for(int i = 0 ; i < this.maxTicks+5; i++){
+            //double value = this.minPoint + i*this.tickSpacing;
+            double value = niceMin + i*this.tickSpacing - this.tickSpacing*0.5;
+            if(value>=this.minPoint&&value<=this.maxPoint){
+                ticks.add(value);
+                //texts.add(String.format(format, value));
+            }
+        }
+    }
+    
     public void getTicksLog(List<Double> ticks, List<String> texts){
         ticks.clear(); texts.clear();
         

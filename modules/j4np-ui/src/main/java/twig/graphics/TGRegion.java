@@ -8,14 +8,11 @@ package twig.graphics;
 import j4np.graphics.Background2D;
 import j4np.graphics.Canvas2D;
 import j4np.graphics.Node2D;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import twig.config.TStyle;
 import twig.data.DataGroup;
 import twig.data.DataSet;
@@ -186,7 +183,7 @@ public class TGRegion extends Node2D implements StyleNode {
         for(Widget w : this.axisFrame.widgetNodes){
             if(w instanceof Legend) l = (Legend) w;
         }
-        if(l!=null) l.configure();
+        if(l!=null) l.configure(null);
     }
     
     public PaveText getStats(double x, double y, String options){
@@ -250,7 +247,7 @@ public class TGRegion extends Node2D implements StyleNode {
         leg.drawBox = false;
         leg.fillBox = false;
         for(TDataNode2D node : this.getAxisFrame().dataNodes){
-            leg.add(node.getDataSet());
+            leg.add(node);
         }
         return leg;
     }
@@ -407,6 +404,7 @@ public class TGRegion extends Node2D implements StyleNode {
     }
     
     public TGRegion draw(DataSet ds, String options){
+        
         if(options.contains("same")==false){
             this.axisFrame.clear();
         }
@@ -429,7 +427,7 @@ public class TGRegion extends Node2D implements StyleNode {
         System.out.println(" unknown type of data set : " + ds.getClass().getName());
         return this;
     }
-    
+            
     public static void main(String[] args){
         JFrame frame = new JFrame();
         Canvas2D canvas = Canvas2D.createFrame(frame, 600, 500);

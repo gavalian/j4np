@@ -37,6 +37,18 @@ public class PhysicsReaction extends Tree {
     protected Event              reactionEvent = new Event();
     protected List<EventModifier>    modifiers = new ArrayList<>();
     
+    public static  EventModifier FORWARD_ONLY = new EventModifier(){
+        @Override
+        public void modify(PhysicsEvent event) {
+            int counter = event.count();
+            for(int i = 0; i < counter ; i++){
+                int status = event.status(i);
+                if(Math.abs(status)>=2000&&Math.abs(status)<3000){
+                    event.status(i, 1);
+                } else { event.status(i, -1);}
+            }
+        }
+    };
     
     public  PhysicsReaction(String filter){
         eventFilter = new EventFilter(filter);
@@ -176,7 +188,7 @@ public class PhysicsReaction extends Tree {
     }    
 
     @Override
-    public double getValue(int order) {        
+    public double getValue(int order) { 
         if(this.isValid(physicsEvent)==false) return -100000.0;        
         ReactionEntry re = operEntries.get(order);
         int index = re.entryOrder;
@@ -220,6 +232,7 @@ public class PhysicsReaction extends Tree {
     @Override
     public boolean next() {
         if(reader.hasNext()==false) return false;
+        
         reader.nextEvent(reactionEvent);
         physicsEvent.read(reactionEvent);
         

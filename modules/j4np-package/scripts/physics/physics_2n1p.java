@@ -4,12 +4,12 @@
 //**************************************************
 import j4np.physics.VectorOperator.OperatorType;
 
-PhysicsReaction react = new PhysicsReaction("11:211:-211",10.6);
+PhysicsReaction react = new PhysicsReaction("11:211:-211:X+:X-:Xn",10.2);
 
 react.addVector(react.getVector(), "-[11]-[211]-[-211]");
 react.addEntry("mxepipi", 0, OperatorType.MASS);
 
-HipoReader r = new HipoReader("/Users/gavalian/Work/dataspace/denoise/out.ev.bg.hipo_rec.hipo");
+HipoReader r = new HipoReader("infile.hipo");
 react.setDataSource(r, "REC::Particle");
 /**
  * the modifiers are used to adjust particle status flags.
@@ -31,8 +31,18 @@ react.addModifier(new EventModifier(){
     }
 });
 
+H1F h = new H1F("h",120,0.5,2.5);
+h.attr().setLegend("H(e^-,e^-#pi^+#pi^-)X");
+h.attr().setTitleX("Mx(e^-#pi^+#pi^-) [GeV]");
+
+TGCanvas c = new TGCanvas();
+c.draw(h);
+c.view().initTimer(1000);
+c.region().showLegend(0.05,0.98);
+
 while(react.next()==true){
-    System.out.println("missing mass = " + react.getValue("mxepipi"));
+    //System.out.println("missing mass = " + react.getValue("mxepipi"));
+    h.fill(react.getValue("mxepipi"));
 }
 //H1F h = react.geth("mxepipi", "", 120, 0.5, 2.6);
 //TGCanvas c = new TGCanvas();

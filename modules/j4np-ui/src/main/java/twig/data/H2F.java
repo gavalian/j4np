@@ -294,6 +294,11 @@ public class H2F implements DataSet {
         return h2;
     }
  
+    public static H2F create(int xBins, int yBins, float[] data){
+        H2F h = new H2F("h2",xBins, 0.5, xBins+0.5,yBins, 0.5, yBins+0.5);
+        for(int i = 0; i < h.hBuffer.length; i++) h.hBuffer[i] = data[i];
+        return h;
+    }
     /**
      * divides the content of each bin in the histogram to the 
      * maximum bin.
@@ -457,8 +462,7 @@ public class H2F implements DataSet {
                     + this.getName() + "  " + h.getName()
                     + ". inconsistent bin numbers");
         }
-    }
-    
+    }    
     
     public static H2F  divide(H2F h1, H2F h2){
         if((h1.getXAxis().getNBins()!=h2.getXAxis().getNBins())||
@@ -480,6 +484,13 @@ public class H2F implements DataSet {
             }
         }
         return h2div;
+    }
+    
+    public void discretize(double threshold){
+        for(int r = 0; r < hBuffer.length; r++) 
+            if(hBuffer[r]>threshold){
+                hBuffer[r] = 1.0;
+            } else { hBuffer[r] = 0.0;}
     }
     
     public void divide(H2F h){
@@ -513,7 +524,11 @@ public class H2F implements DataSet {
         }
         return -1;
     }
-    
+    public float[] getContentArrayFloat(){
+        float[] data = new float[this.hBuffer.length];
+        for(int i = 0; i < data.length; i++) data[i] = (float) this.hBuffer[i];
+        return data;
+    }
     /**
      * Generates a 2D array with the content in the histogram
      *
@@ -873,6 +888,22 @@ public class H2F implements DataSet {
         }
     }
 
+    public void sub(H2F h){
+        if(h.getXAxis().getNBins()==this.getXAxis().getNBins()&&
+                h.getYAxis().getNBins()==this.getYAxis().getNBins()){
+            StatNumber   result = new StatNumber();
+            StatNumber   denom  = new StatNumber();
+            for(int loop = 0; loop < this.hBuffer.length; loop++){
+                result.set(this.hBuffer[loop], Math.sqrt(Math.abs(this.hBuffer[loop])));
+                denom.set(h.hBuffer[loop], Math.sqrt(Math.abs(h.hBuffer[loop])));
+                result.subtract(denom);
+                this.hBuffer[loop] = result.number();
+            }
+        } else {
+            System.out.println("[warning] ---> histograms have different bin number. not added.");
+        }
+    }
+    
     @Override
     public int getSize(int dimension) {
         if(dimension==0) return xAxis.getNBins();

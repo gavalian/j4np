@@ -9,6 +9,7 @@ import j4np.graphics.Node2D;
 import j4np.graphics.Translation2D;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import javax.swing.JComponent;
 import twig.config.TStyle;
 import twig.data.DataRange;
 import twig.data.DataSet;
@@ -46,7 +47,11 @@ public class TDataNode2D implements Widget {
             dataSet.getRange(range);            
         }
     }
-
+    
+    public void drawLegend(Graphics2D g2d, int x, int y, int w, int h){
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -58,7 +63,7 @@ public class TDataNode2D implements Widget {
     }
 
     @Override
-    public void configure() {
+    public void configure(JComponent parent) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

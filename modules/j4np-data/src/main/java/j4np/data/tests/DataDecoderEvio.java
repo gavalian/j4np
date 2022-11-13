@@ -13,7 +13,7 @@ import j4np.data.base.DataUtils;
 import j4np.data.evio.EvioEvent;
 import j4np.data.evio.EvioFile;
 import j4np.data.evio.EvioNode;
-import j4np.data.structure.DataStructure;
+import j4np.hipo5.data.CompositeNode;
 import j4np.data.structure.DataStructureUtils;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -90,8 +90,8 @@ public class DataDecoderEvio implements DataNodeCallback,Consumer<EvioEvent> {
     public void processDataEvent(EvioEvent event){
         
         //System.out.println("---- processing event ");
-        DataStructure   tdcData = new DataStructure("bbbsbi",20000);
-        DataStructure   adcData = new DataStructure("bbbsbi",20000);
+        CompositeNode   tdcData = new CompositeNode("bbbsbi",20000);
+        CompositeNode   adcData = new CompositeNode("bbbsbi",20000);
         tdcData.setRows(0);
         adcData.setRows(0);
         //DataStructure tdcData = new DataStructure("bbbsbi",1200); 

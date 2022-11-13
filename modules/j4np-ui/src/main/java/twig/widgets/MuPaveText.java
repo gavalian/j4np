@@ -17,6 +17,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import twig.widgets.LatexText.TextAlign;
@@ -410,7 +411,7 @@ public class MuPaveText implements Widget {
     }
     
     @Override
-    public void configure() {
+    public void configure(JComponent parent) {
         
         System.out.println("Oy, Configuring Pave Text");
         JTextField posX = new JTextField();

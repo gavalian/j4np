@@ -7,6 +7,7 @@ package twig.graphics;
 
 import j4np.graphics.Node2D;
 import j4np.graphics.Translation2D;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -39,11 +40,14 @@ public class TGAxisFrame extends Node2D implements StyleNode {
     private DataRange             axisDataRange = new DataRange();
     private DataRange             tempDataRange = new DataRange();
     private DataRange            fixedDataRange = null;
+    private Color                axisBackgroundColor = new Color(250,250,250);
+    
     
     public TGAxisFrame(){
         
         super(0,0,500,500);
-        
+        TStyle style = TStyle.getInstance();
+        if(style!=null) this.axisBackgroundColor = style.getDefaultAxisBackgroundColor();
         /*
         axisX.getAttributes().getAxisTicksPosition().add(0.2);
         axisX.getAttributes().getAxisTicksPosition().add(0.45);
@@ -91,6 +95,11 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         Node2D parent = this.getParent();
         Rectangle2D r = parent.getBounds().getBounds();
         
+        //System.out.println("axis frame bounds = " + r);
+        if(this.axisBackgroundColor!=null){
+            g2d.setColor(this.axisBackgroundColor);
+            g2d.fill(r);
+        }
         /**
          * Calculate the axis range by iterating over the 
          */

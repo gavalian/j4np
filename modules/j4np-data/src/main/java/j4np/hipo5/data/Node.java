@@ -60,6 +60,11 @@ public class Node {
         for(int i = 0; i < value.length;i++) this.setLong(i, value[i]);        
     }
     
+    public Node(int group, int item, byte[] value){
+        createNode(group,item,DataType.BYTE,value.length);
+        for(int i = 0; i < value.length;i++) this.setByte(i, value[i]);        
+    }
+    
     public Node(int group, int item, short[] value){
         createNode(group,item,DataType.SHORT,value.length);
         for(int i = 0; i < value.length;i++) this.setInt(i, value[i]);        
@@ -114,7 +119,7 @@ public class Node {
         nodeBuffer.putShort( 0,  groupID); // byte 0 and 1 (16 bits) are group ID
         nodeBuffer.put(      2,   itemID); // byte 2 ( 8 bits) is item id
         nodeBuffer.put(      3,   typeID); // byte 3 describes the type 
-        nodeBuffer.putInt(   4, lengthID);
+        nodeBuffer.putInt(   4, lengthID&0x00FFFFFF);
         
         nodeType = getType();
     }
@@ -131,7 +136,7 @@ public class Node {
      */
     public int getDataSize(){
         DataType   type = getType();
-        int    bufferLength = nodeBuffer.getInt(4);
+        int    bufferLength = nodeBuffer.getInt(4)&0x00FFFFFF;
         int           ndata = bufferLength/type.getSize();
         return ndata;
     }

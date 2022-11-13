@@ -20,8 +20,8 @@ public class TBrowser {
         StudioWindow window = new StudioWindow();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        window.setSize(800, 500);
-        window.setVisible(true);                       
+        window.setSize(1200, 900);
+        window.setVisible(true); 
         window.getStudioFrame().setTreeProvider(dir);
     }
     
@@ -31,7 +31,7 @@ public class TBrowser {
         StudioWindow window = new StudioWindow();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        window.setSize(800, 500);
+        window.setSize(1200, 900);
         window.setVisible(true);                       
         window.getStudioFrame().setTreeProvider(tp);
     }
