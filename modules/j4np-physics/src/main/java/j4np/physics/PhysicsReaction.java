@@ -25,17 +25,20 @@ import twig.tree.Tree;
 public class PhysicsReaction extends Tree {
     
     protected List<VectorOperator> vecOprators = new ArrayList<>();
+    protected List<ReactionEntry>  operEntries = new ArrayList<>();
+    protected List<EventModifier>    modifiers = new ArrayList<>();
+    
     protected EventFilter          eventFilter = new EventFilter("X+:X-:Xn");
     protected LorentzVector         beamVector = new LorentzVector();
     protected LorentzVector       targetVector = new LorentzVector();
     protected PhysDataEvent       physicsEvent = null;
     protected HipoReader                reader = null;
     protected String        dataPrintoutFormat = "%8.5f";
-    protected List<ReactionEntry>  operEntries = new ArrayList<>();
+    
     protected long                counterCalls = 0L;
     protected long               counterFilter = 0L;
     protected Event              reactionEvent = new Event();
-    protected List<EventModifier>    modifiers = new ArrayList<>();
+    
     
     public static  EventModifier FORWARD_ONLY = new EventModifier(){
         @Override
@@ -135,6 +138,9 @@ public class PhysicsReaction extends Tree {
     }
     
     public PhysicsEvent getPhysicsEvent(){ return this.physicsEvent;}
+    
+    public PhysicsEvent event(){ return this.physicsEvent;}
+    public Event dataEvent(){ return this.reactionEvent;}
     
     public boolean checkCuts(){
         for(ReactionEntry entry : operEntries){

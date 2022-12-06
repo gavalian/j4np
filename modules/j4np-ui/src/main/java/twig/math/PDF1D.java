@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class PDF1D extends Func1D {
     
-    List<F1D>  funcList = new ArrayList<>();
+    List<Func1D>  funcList = new ArrayList<>();
     
     private  static int[] lineColors = new int[]{4,2,7,6,11,10};
     private  static int[] lineStyles = new int[]{4,2,6,9,5,7};
@@ -29,7 +29,7 @@ public class PDF1D extends Func1D {
     }
     
     public final void  add(String[] exp){
-        List<F1D> list = new ArrayList<>();
+        List<Func1D> list = new ArrayList<>();
         
         for(int i = 0; i < exp.length; i++){
             F1D f = new F1D("f"+i,exp[i],getMin(),getMax());
@@ -39,11 +39,11 @@ public class PDF1D extends Func1D {
         this.add(list);
     }
     
-    public PDF1D add(F1D f){ funcList.add(f); return this;}
+    public PDF1D add(Func1D f){ funcList.add(f); return this;}
     
-    public PDF1D add(List<F1D> funcs){
+    public PDF1D add(List<Func1D> funcs){
         this.userPars.clear();
-        for(F1D f : funcs){
+        for(Func1D f : funcs){
             int n = f.getNPars();
             for(int i = 0; i < n; i++){
                 this.addParameter(
@@ -71,7 +71,7 @@ public class PDF1D extends Func1D {
     public  F1D  getFunction(){
 
         StringBuilder str = new StringBuilder();
-        for( F1D f : funcList){
+        for( Func1D f : funcList){
             str.append("+").append(f.getExpression());
         }
         str.deleteCharAt(0);
@@ -93,13 +93,15 @@ public class PDF1D extends Func1D {
         
         return fp;
     }
+    
     private void updateParameters(){
         int whichOne = 0;
         for(int i = 0; i < this.funcList.size(); i++){
-            F1D temp = funcList.get(i);
+            Func1D temp = funcList.get(i);
             int nparams = temp.getNPars();
             for(int p = 0; p < nparams; p++){
                 temp.parameter(p).setValue(parameter(whichOne).value());
+                //temp.setParLimits(p, i, p);
                 whichOne++;
             }
         }
@@ -115,5 +117,15 @@ public class PDF1D extends Func1D {
         return value;
     }
     
-    public List<F1D>  list(){ return funcList;}
+    public List<Func1D>  list(){ return funcList;}
+    
+    public static void main(String[] args){
+        PDF1D pdf = new PDF1D("pdf",2.5,3.5,new String[]{"[a]+[b]*x","[amp]*gaus(x,[mean],[sigma])"});
+        pdf.setParameters(0,0,30,3.1,0.05);
+        
+        pdf.show();
+        for(double x = 2.6; x < 3.5; x+=0.05){
+            System.out.printf(" x = %9.5f, value = %9.5f\n",x,pdf.evaluate(x));
+        }
+    }
 }

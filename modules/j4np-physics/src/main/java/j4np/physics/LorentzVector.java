@@ -146,9 +146,10 @@ public class LorentzVector {
         
         @Override
         public String toString(){
-            String str = String.format("%9.4f %9.4f %9.4f %9.4f", vector.x(),vector.y(),vector.z(),mass());
+            String str = String.format("%9.4f %9.4f %9.4f %9.4f [%9.5f]", vector.x(),vector.y(),vector.z(), this.energy, mass());
             return str;
         }
+        
 	public Vector3 boostVector() {
 		if (energy == 0)
 			return new Vector3(0., 0., 0.);

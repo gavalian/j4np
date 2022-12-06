@@ -62,10 +62,16 @@ public class TreeModelMaker {
         if(r.isEmpty()) return;
         for(int i = 0; i < r.size(); i++){
             String item = r.get(i);
-            DefaultMutableTreeNode nNode = new DefaultMutableTreeNode(item);
-            node.add(nNode);          
+            //for(String line : list){
+             //   if(line.contains(item)==true){
+             //System.out.println();
+             DefaultMutableTreeNode nNode = new DefaultMutableTreeNode(item);
+             node.add(nNode);          
+             this.printTree(nNode, list, item, num+1);
+             //  }
+            //}
             //System.out.println("adding : " + item + " @ level " + num);
-            this.printTree(nNode, list, item, num+1);
+            //this.printTree(nNode, list, item, num+1);
         }
     }
     
@@ -74,11 +80,18 @@ public class TreeModelMaker {
         
         TreeModelMaker tm = new TreeModelMaker();
         
-        List<String> list =  Arrays.asList(
+        /*List<String> list =  Arrays.asList(
                 "/a/b/c",
                 "/a/b/d",
                 "/a/b/e/f",
                 "/a/b/g/h"
+        );*/
+        
+        List<String> list =  Arrays.asList(
+                "/a/b/co",
+                "/c/b/do",
+                "/c/b/to",
+                "/c/b/eo"                
         );
         
         List<String> r = tm.getSubs(list, "a", 1);

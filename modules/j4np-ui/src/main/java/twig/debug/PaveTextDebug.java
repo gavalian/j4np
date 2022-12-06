@@ -129,7 +129,7 @@ public class PaveTextDebug {
         );
         c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitle("#theta-#gamma");
         c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitle("#pi-#eta");
-        pt.setTexAlign(LatexText.TextAlign.CENTER);
+        pt.setTexAlign(LatexText.TextAlign.LEFT);
         pt.setSpacing(0.01);
         c.view().region().draw(pt);
     }

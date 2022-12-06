@@ -195,7 +195,7 @@ public class MarkersDebug {
         hits.show();
     }
     public static void main(String[] args){
-        MarkersDebug.example2();
+        MarkersDebug.example1();
     }
     
     

@@ -93,6 +93,18 @@ public class GraphErrors implements DataSet {
         
     }
 
+    public GraphErrors copy(){
+        GraphErrors gr = new GraphErrors();
+        for(int i = 0; i < this.dataEX.size(); i++){
+            gr.addPoint(
+                    this.dataX.getValue(i),
+                    this.dataY.getValue(i),
+                    this.dataEX.getValue(i),
+                    this.dataEY.getValue(i)
+                    );
+        }
+        return gr;
+    }
     
     public final void addPoint(double x, double y) {
         addPoint(x,y,0.0,0.0);

@@ -649,7 +649,7 @@ public class H1F  implements DataSet {
         } else {
             System.out.println("[warning] ---> histograms have different bin number. not added.");
         }
-    }
+    } 
     /**
      * returns a new histogram with a content of h1 where the integral is normalized
      * to histogram h2.

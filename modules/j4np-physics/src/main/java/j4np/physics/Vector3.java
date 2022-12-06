@@ -9,6 +9,7 @@ package j4np.physics;
  * @author gavalian
  */
 public class Vector3 {
+    
     double fX;
     double fY;
     double fZ;
@@ -196,6 +197,13 @@ public class Vector3 {
        fX = -fX;
        fY = -fY;
        fZ = -fZ;
+    }
+    
+    public Vector3 scale(double factor){
+        fX = fX*factor;
+        fY = fY*factor;
+        fZ = fZ*factor;
+        return this;
     }
     
     public double compareWeighted(Vector3 vect)

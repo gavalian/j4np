@@ -20,6 +20,7 @@ import javax.swing.tree.TreeModel;
 import twig.graphics.TGDataCanvas;
 import twig.server.TreeModelMaker;
 import twig.studio.TreeProvider;
+import twig.studio.TwigStudio;
 
 /**
  *
@@ -54,7 +55,81 @@ public class TDirectory implements TreeProvider {
         return this;
     }
     
-     public TDirectory add(String dir, DataSet... data){
+    public TDirectory add(String dir, DataSet... data){
+        for(DataSet ds : data) this.addToDirectory(dir, ds);
+        return this;
+    }
+    
+    public static void export(String file, String directory, DataSet... data){
+        for(DataSet ds : data){
+            DataSetSerializer.export(ds, file, directory);
+        }
+        //return this;
+    }
+    
+    public static void export(String file, String directory, List<DataSet> data){
+        for(DataSet ds : data){
+            DataSetSerializer.export(ds, file, directory);
+        }
+        //return this;
+    }
+    
+    public static DataGroup load(String file, String directory){
+        DataGroup group = new DataGroup();
+        List<String>  items = ArchiveUtils.getList(file, ".*dataset");
+        for(String item : items){
+            if(item.startsWith(directory)){
+                int index = item.lastIndexOf("/");
+                String    dir = item.substring(0, index);
+                String dsname = item.substring(index+1, item.length()-1);
+                //System.out.println(" item = " + item);
+                //System.out.println("\t  dir = " + dir);
+                //System.out.println("\t name = " + dsname);
+                DataSet ds = DataSetSerializer.load(file, item);
+                
+                if(dir.startsWith("/")==false) dir = "/" + dir;
+                //this.add(dir, ds);
+                group.getData().add(ds);
+            }
+        }
+        return group;
+    }
+    
+    public static DataSet loadData(String file, String dataset){
+        DataGroup group = new DataGroup();
+        
+        System.out.println("[group] >>> loading : " +  dataset);
+        DataSet ds = DataSetSerializer.load(file, dataset);
+        return ds;
+     }
+    
+    public static DataGroup load(String file, String directory, String... names){
+        DataGroup group = new DataGroup();
+        for(int i = 0; i < names.length; i++){
+            System.out.println("[group] >>> loading : " +  directory+"/"+names[i]);
+            DataSet ds = DataSetSerializer.load(file, directory+"/"+names[i]);
+            group.getData().add(ds);
+        }
+        /*List<String>  items = ArchiveUtils.getList(file, ".*dataset");
+        for(String item : items){
+            if(item.startsWith(directory)){
+                int index = item.lastIndexOf("/");
+                String    dir = item.substring(0, index);
+                String dsname = item.substring(index+1, item.length()-1);
+                //System.out.println(" item = " + item);
+                //System.out.println("\t  dir = " + dir);
+                //System.out.println("\t name = " + dsname);
+                DataSet ds = DataSetSerializer.load(file, item);
+                
+                if(dir.startsWith("/")==false) dir = "/" + dir;
+                //this.add(dir, ds);
+                group.getData().add(ds);
+            }
+        }*/
+        return group;
+    }
+    
+    public TDirectory add(String dir, List<DataSet> data){
         for(DataSet ds : data) this.addToDirectory(dir, ds);
         return this;
     }
@@ -258,8 +333,9 @@ public class TDirectory implements TreeProvider {
     
     public static void main(String[] args){
         
-        TDirectory d = new TDirectory("studydir.twig");
-        d.list();
+        TwigStudio.browser("myfile.twig");
+        //TDirectory d = new TDirectory("myfile.twig");
+        //d.list();
         /*
         H1F h1 = new H1F("h1",100,0.0,1.0);
         H1F h2 = new H1F("h2",100,0.0,1.0);

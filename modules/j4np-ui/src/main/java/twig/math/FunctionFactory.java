@@ -262,4 +262,28 @@ public class FunctionFactory {
                 LpB,LpSB,sig);
         return sig;
     }
+    
+    public static double significance(H1F data, PDF1D total, PDF1D back, 
+            Func1D signal, double min, double max){
+        double  LpB = 0.0;
+        double LpSB = 0.0;
+        int nbins = data.getAxis().getNBins();
+        for(int i = 0; i < nbins; i++){
+            double x = data.getAxis().getBinCenter(i);
+            if(x>=min&&x<=max){
+                double ni = data.getBinContent(i);
+                double bi = back.evaluate(x);
+                double si = signal.evaluate(x);
+                double ti = total.evaluate(x);
+                
+                LpSB += 2*(ti - ni + ni*Math.log(ni/ti));
+                LpB  += bi - ni + ni*Math.log(ni/bi);
+            }
+        }
+
+        double sig = Math.sqrt(2*(LpB/LpSB));
+        System.out.printf("LpB = %f, LpSB = %f, sig = %f\n",
+                LpB,LpSB,sig);
+        return sig;
+    }
 }

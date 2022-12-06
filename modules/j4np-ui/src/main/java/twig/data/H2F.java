@@ -940,6 +940,10 @@ public class H2F implements DataSet {
 
     @Override
     public List<String> getStats(String options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<String> stats = new ArrayList<>();
+        stats.add(String.format("name : %s", this.getName()));
+        stats.add(String.format("entries : %d", this.getEntries()));
+        stats.add(String.format("max : %.3f", this.getMaximum()));
+        return stats;
     }
 }

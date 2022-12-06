@@ -703,9 +703,7 @@ public class PaveText implements Widget {
                 }
             }
         });
-                
-         
-         
+        
          Object[] message = {
              "Position X:", psX,
             "Position Y:", psY,
@@ -715,9 +713,9 @@ public class PaveText implements Widget {
             "Text", textArea
         };
         
-        int option = JOptionPane.showConfirmDialog(null, 
-                
-                message, "Pave Text", JOptionPane.OK_CANCEL_OPTION);
+        int option = JOptionPane.showConfirmDialog(null,                 
+                message, "Pave Text", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE);
         
         if (option == JOptionPane.OK_OPTION) {
             //double x = Double.parseDouble(posX.getText());

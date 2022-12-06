@@ -240,8 +240,13 @@ public class TGGraphicsDebug {
     
       public static void example9(){
         
+        //TStyle.getInstance().setCanvasBackgroundColor(42);
+        
+        TStyle.getInstance().setDefaultAxisBackgroundColor(new Color(230,230,240));
+        
+         
         TGDataCanvas canvas = new TGDataCanvas();
-        JFrame frame = Canvas2D.getFrame(canvas, 500, 800);
+        JFrame frame = Canvas2D.getFrame(canvas, 800, 800);
        
         canvas.divide(1, 2);
         //region.getAxisFrame().setLimits(0, 2.0, 0.0, 2.0);
@@ -255,11 +260,20 @@ public class TGGraphicsDebug {
         graph2.attr().setMarkerSize(16);
         graph2.attr().setLineWidth(2);
         
-        canvas.region(0).getAxisFrame().addDataNode(new TGENode2D(graph));
+        canvas.region(0).getAxisFrame().getAxisX().getAttributes().setAxisGridDraw(Boolean.TRUE);
+        canvas.region(0).getAxisFrame().getAxisY().getAttributes().setAxisGridDraw(Boolean.TRUE);
+        canvas.region(0).getAxisFrame().getAxisX().getAttributes().setAxisGridLineColor(0);
+        canvas.region(0).getAxisFrame().getAxisX().getAttributes().setAxisGridLineWidth(2);
+        canvas.region(0).getAxisFrame().getAxisY().getAttributes().setAxisGridLineColor(0);
+        canvas.region(0).getAxisFrame().getAxisY().getAttributes().setAxisGridLineWidth(2);
+        canvas.region(0).getAxisFrame().getAxisY().getAttributes().setAxisGridLineStyle(7);
+        canvas.region(0).getAxisFrame().getAxisX().getAttributes().setAxisGridLineStyle(7);
+        //canvas.region(0).se
+        canvas.region(0).getAxisFrame().addDataNode(new TGENode2D(graph,"EPL"));
         canvas.region(0).getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(
-                new Font("Avenir",Font.PLAIN,18));
+                new Font("Palatino",Font.PLAIN,22));
         canvas.region(0).getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(
-                new Font("Avenir",Font.PLAIN,18));
+                new Font("Palatino",Font.PLAIN,22));
         canvas.region(1).getAxisFrame().addDataNode(new TGENode2D(graph2));
         //canvas.region(1).getAxisFrame().setFixedLimits(0.5,5.5, 0.0, 16.0);
         canvas.region(1).getAxisFrame().getAxisY().setFixedLimits(0.0, 16.0);

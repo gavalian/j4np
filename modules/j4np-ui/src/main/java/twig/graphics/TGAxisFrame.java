@@ -40,7 +40,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
     private DataRange             axisDataRange = new DataRange();
     private DataRange             tempDataRange = new DataRange();
     private DataRange            fixedDataRange = null;
-    private Color                axisBackgroundColor = new Color(250,250,250);
+    private Color                axisBackgroundColor = new Color(240,240,240);
     
     
     public TGAxisFrame(){
@@ -100,6 +100,10 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             g2d.setColor(this.axisBackgroundColor);
             g2d.fill(r);
         }
+        
+        //axisX.draw(g2d, r, axisFrameRange);
+        //axisY.draw(g2d, r, axisFrameRange);
+        //axisZ.draw(g2d, r, axisFrameRange);
         /**
          * Calculate the axis range by iterating over the 
          */
@@ -131,6 +135,10 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             
             
             updateLimits();
+            axisX.draw(g2d, r, axisFrameRange);
+            axisY.draw(g2d, r, axisFrameRange);
+            axisZ.draw(g2d, r, axisFrameRange);
+            
             g2d.setClip(r.getBounds2D());
             for(int d = 0; d < dataNodes.size(); d++){
                 dataNodes.get(d).draw(g2d, r, axisFrameRange);
@@ -152,9 +160,9 @@ public class TGAxisFrame extends Node2D implements StyleNode {
                     (int) r.getWidth(), (int) r.getHeight());
         }*/
         
-        axisX.draw(g2d, r, axisFrameRange);
-        axisY.draw(g2d, r, axisFrameRange);
-        axisZ.draw(g2d, r, axisFrameRange);
+        //axisX.draw(g2d, r, axisFrameRange);
+        //axisY.draw(g2d, r, axisFrameRange);
+        //axisZ.draw(g2d, r, axisFrameRange);
         
         for(int w = 0; w < widgetNodes.size(); w++){
             if(widgetNodes.get(w).isNDF()==true){

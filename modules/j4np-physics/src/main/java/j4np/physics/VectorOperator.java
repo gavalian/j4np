@@ -21,7 +21,7 @@ public class VectorOperator {
       MASS,MASS2,THETA,PHI,P,E,THETA_DEG,PHI_DEG,PX,PY,PZ, PT
     };
     
-    protected LorentzVector vec = new LorentzVector();
+    protected LorentzVector      vec = new LorentzVector();
     protected LorentzVector opVector = new LorentzVector();
     protected int[]           particleID = null;
     protected double[]      particleMass = null;
@@ -35,6 +35,7 @@ public class VectorOperator {
     public VectorOperator(LorentzVector start, String format){
         vec.copy(start); parse(format);
     }
+    
     public VectorOperator(LorentzVector start, int[] pid, int[] order, int[] sign) {
         vec.copy(start);
         particleID    = pid;

@@ -8,6 +8,7 @@ package twig.graphics;
 import j4np.graphics.Background2D;
 import j4np.graphics.Canvas2D;
 import j4np.graphics.Node2D;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -61,6 +62,8 @@ public class TGRegion extends Node2D implements StyleNode {
     
     @Override
     public void drawLayer(Graphics2D g2d, int layer){ 
+        //Color background = this.getBackgroundColor();
+        
         if(this.isInDebugMode==false){
             if(axisFrame.dataNodes.size()>0||axisFrame.widgetNodes.size()>0){
                 axisFrame.drawLayer(g2d, layer);
@@ -251,6 +254,7 @@ public class TGRegion extends Node2D implements StyleNode {
         }
         return leg;
     }
+    
     public TGAxis axisX(){ return this.axisFrame.getAxisX();}
     public TGAxis axisY(){ return this.axisFrame.getAxisY();}
     

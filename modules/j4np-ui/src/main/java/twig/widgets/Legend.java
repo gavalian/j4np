@@ -28,7 +28,7 @@ public class Legend extends PaveText {
         super(x,y);
         this.setNDF(true);
         this.drawBox = false;
-        this.left(35);
+        this.left(45);
         this.fillBox = false;
         this.editTextContent = false;
     }

@@ -55,7 +55,8 @@ public class OptionValue {
     
     private int getOptionIndex(List<String> options){
         for(int i = 0; i < options.size(); i++){
-            if(options.get(i).startsWith(optionString)==true)
+            //if(options.get(i).startsWith(optionString)==true)
+            if(options.get(i).compareTo(optionString)==0)
                 return i;
         }
         return -1;

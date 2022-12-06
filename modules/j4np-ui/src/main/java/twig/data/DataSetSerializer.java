@@ -128,7 +128,10 @@ public class DataSetSerializer {
                 return gre;
             }
             
-        }        
+        }  else {
+            System.out.println("[] error with archive : " + archive );
+            System.out.println("[] error loading file : " + directory );
+        }
         return null;
     }
     

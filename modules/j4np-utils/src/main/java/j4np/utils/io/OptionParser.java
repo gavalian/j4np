@@ -180,5 +180,16 @@ public class OptionParser {
         parser.parse(options);
         
         parser.show();
+        
+        System.out.println("\n\n--- debug");
+        /*debug*/
+        String[] options2 = new String[]{"-n","5","-network","comp.network","-net","2","-f","4.5"};
+        OptionParser parser2 = new OptionParser()
+                .addOption("-net", "1", "")
+                .addOption("-network", "default.network")
+                .addOption("-n", "1000")
+                .addOption("-f", "2.3");
+        parser2.parse(options2);
+        parser2.show();
     }
 }
