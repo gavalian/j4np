@@ -52,6 +52,7 @@ public class TGCanvas extends JFrame implements ActionListener {
         CANVAS_DEFAULT_WIDTH  = xsize;
         CANVAS_DEFAULT_HEIGHT = ysize;  
         dataCanvasTitle = name;
+        this.setTitle(name);
         initUI(true);
     }
     
@@ -60,6 +61,7 @@ public class TGCanvas extends JFrame implements ActionListener {
         CANVAS_DEFAULT_WIDTH  = xsize;
         CANVAS_DEFAULT_HEIGHT = ysize;  
         dataCanvasTitle = name;
+        this.setTitle(name);
         initUI(exitOnClose);
     }
     

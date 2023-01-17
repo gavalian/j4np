@@ -280,4 +280,9 @@ public final class Sector3D implements Face3D {
                 .append(dR)
                 .toString();
     }
+
+    @Override
+    public int reflection(Line3D line, Line3D reflection) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

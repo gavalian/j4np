@@ -135,15 +135,20 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             
             
             updateLimits();
-            axisX.draw(g2d, r, axisFrameRange);
-            axisY.draw(g2d, r, axisFrameRange);
-            axisZ.draw(g2d, r, axisFrameRange);
+            //axisX.draw(g2d, r, axisFrameRange);
+            //axisY.draw(g2d, r, axisFrameRange);
+            //axisZ.draw(g2d, r, axisFrameRange);
             
             g2d.setClip(r.getBounds2D());
             for(int d = 0; d < dataNodes.size(); d++){
                 dataNodes.get(d).draw(g2d, r, axisFrameRange);
             } 
+            
+            
             g2d.setClip(null);
+            axisX.draw(g2d, r, axisFrameRange);
+            axisY.draw(g2d, r, axisFrameRange);
+            axisZ.draw(g2d, r, axisFrameRange);
         }
         
         //this.setLimits(axisFrameRange., layer, layer, layer)

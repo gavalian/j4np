@@ -26,6 +26,10 @@ import j4np.hipo5.data.*;
 import j4np.hipo5.io.*;
 import j4np.hipo5.utils.*;
 //--------------------------------------
+//--- CLAS 12 tools included here
+//--------------------------------------
+import j4np.clas12.dc.*;
+//--------------------------------------
 // Imports for JAVA standard libraries
 //--------------------------------------
 import java.io.*

@@ -44,13 +44,15 @@ public class PieChart implements Widget {
         
         //Font fbrushed = TStyle.createFont("fonts/Tahoma-Font/TAHOMA_0.TTF");
         Font fbrushed = TStyle.createFont();
-        Font fbr = fbrushed.deriveFont(48);
+        Font fbr = fbrushed.deriveFont(42);
         
         //g2d.setFont(new Font("Avenir",Font.BOLD,120));
         g2d.setFont(new Font("Brushed",Font.BOLD,120));
         //g2d.setFont(fbr);
-        g2d.setColor(Color.cyan);
+        g2d.setColor(Color.gray);
         g2d.drawString("Twig", (int) (posX), (int) (posY+100));
+        g2d.setColor(Color.black);
+        g2d.drawString("Twig", (int) (posX-10), (int) (posY+100-10));
         //System.out.println(" is null = " + (fbrushed==null));
     }
 

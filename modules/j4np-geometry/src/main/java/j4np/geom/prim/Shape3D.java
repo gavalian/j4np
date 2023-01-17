@@ -259,6 +259,21 @@ public class Shape3D implements Transformable, Showable {
         return str.toString();
     }
     
+    public static Shape3D  squareXY(double xd, double yd){
+        Shape3D  shapeSq = new Shape3D();
+        shapeSq.addFace(new Triangle3D(
+                xd/2.0,yd/2,0.0,
+                -xd/2.0,yd/2.0,0,
+                -xd/2.0,-yd/2.0,0.0
+        ));
+        shapeSq.addFace(new Triangle3D(
+                -xd/2.0,-yd/2.0,0.0,
+                xd/2.0,-yd/2.0,0.0,
+                xd/2.0,yd/2.0,0.0
+        ));
+        return shapeSq;
+    }
+    
     public static Shape3D  box(double xd, double yd, double zd){
         
         Shape3D  shapeBox = new Shape3D();
@@ -300,5 +315,13 @@ public class Shape3D implements Transformable, Showable {
         str.append("\t\t</TriangleMesh>\n");
         str.append("\t</mesh>\n");
         return str.toString();
+    }
+    
+    public static void main(String[] args){
+        Shape3D square = Shape3D.squareXY(3, 3);
+        square.show();
+        Vector3D normal = ((Triangle3D) square.face(1)).normal();
+        normal.unit();
+        normal.show();
     }
 }

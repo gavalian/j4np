@@ -40,6 +40,14 @@ public class HipoLogos {
 	     " |_)  _.  _|   |\\ |  _        _ ",
 	     " |_) (_| (_|   | \\| (/_ \\/\\/ _> ",""
 	 };
+         
+         public static String[] SMALL_YODA = {
+             "     __.-._",
+             "     '-._\"7'",
+             "     /'.-c",
+             "     |  /T",
+             "snd _)_/LI"
+         };
     /*
      public static String[] SYMBOL_YODA = {
 "                    ____",

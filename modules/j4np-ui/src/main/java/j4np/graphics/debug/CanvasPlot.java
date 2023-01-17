@@ -526,8 +526,9 @@ public class CanvasPlot {
 
         //Node2D node = CanvasPlot.example22(5);
         //Node2D node = CanvasPlot.example3(3,new Color(255,0,0));
-        //Node2D node = CanvasPlot.example5();
-        Node2D node = CanvasPlot.example7();
+        Node2D node = CanvasPlot.example5();
+        
+        //Node2D node = CanvasPlot.example7();
         //Node2D node = CanvasPlot.example4();
         
         

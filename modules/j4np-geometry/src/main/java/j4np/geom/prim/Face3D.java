@@ -64,4 +64,14 @@ public interface Face3D extends Transformable, Showable {
      * @return the number of intersections found
      */
     int intersectionSegment(Line3D line, List<Point3D> intersections);
+    
+    /**
+     * returns a line that will be the reflection of the line when hitting the 
+     * boundary of the face. This method will be extended in Triangle3D class.
+     * @param line the incoming ray, that intersects with the triangle
+     * @param reflection the outgoing reflected ray from the surface
+     * @return 0 if the incoming ray is not intersecting with the face, 
+     *   and 1 if otherwise.
+     */
+    int reflection(Line3D line, Line3D reflection);
 }

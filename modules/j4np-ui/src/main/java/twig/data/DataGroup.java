@@ -46,12 +46,18 @@ public class DataGroup {
             
             if(ds instanceof H2F) { 
                 H2F h = ((H2F) ds).histClone(ds.getName()+ext);
+                h.attr().setTitle(ds.attr().getTitle());
+                h.attr().setTitleX(ds.attr().getTitleX());
+                h.attr().setTitleY(ds.attr().getTitleY());
                 //h.setName(ds.getName()+ext);
                 h.reset();
                 group.groupData.add(h);
             }
             if(ds instanceof GraphErrors) { 
                 GraphErrors gr = ((GraphErrors) ds).copy();
+                gr.attr().setTitle(ds.attr().getTitle());
+                gr.attr().setTitleX(ds.attr().getTitleX());
+                gr.attr().setTitleY(ds.attr().getTitleY());
                 gr.setName(ds.getName()+ext);
             }
             
@@ -96,10 +102,12 @@ public class DataGroup {
             c.region().draw(ds,"same");
             c.next();
         }
+        c.repaint();
     }
     
     public void draw(TGCanvas c){
         this.draw(c.view());
+        c.repaint();
     }
     
     public DataGroup  add(DataSet d){this.groupData.add(d);return this;}

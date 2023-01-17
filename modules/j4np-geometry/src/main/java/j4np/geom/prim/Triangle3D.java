@@ -1,5 +1,6 @@
 package j4np.geom.prim;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ import java.util.List;
  * @author gavalian
  */
 public final class Triangle3D implements Face3D {
+    
     private final Point3D point0 = new Point3D(); // the first point
     private final Point3D point1 = new Point3D(); // the second point
     private final Point3D point2 = new Point3D(); // the third point
@@ -276,5 +278,54 @@ public final class Triangle3D implements Face3D {
                 point0.x(), point0.y(), point0.z(),
                 point1.x(), point1.y(), point1.z(),
                 point2.x(), point2.y(), point2.z());
+    }
+    /**
+     * The implementation of ray reflection:
+     * source: https://math.stackexchange.com/questions/2235997/reflecting-ray-on-triangle-in-3d-space
+     * @param line
+     * @param reflection
+     * @return 
+ */
+    @Override
+    public int reflection(Line3D line, Line3D reflection) {
+        List<Point3D> points = new ArrayList<>();
+        this.intersectionRay(line, points);
+        if(points.isEmpty()) return 0;
+        
+        Vector3D ok = this.normal();
+        ok.unit();
+        Vector3D v = line.toVector(); // this is the vector OM
+        
+        double factor = ok.dot(v);
+        Vector3D ol = ok.multiply(factor*2); // this is the vector OL in the example
+        
+        Vector3D w = v.sub(ol);
+        
+        
+        System.out.println("intersection = ");
+        points.get(0).show();
+        System.out.println(" OL = ");
+        ok.show();
+        
+        reflection.origin().copy(points.get(0));
+        reflection.end().set(points.get(0).x() + w.x(), 
+                points.get(0).y() + w.y(),
+                points.get(0).z() + w.z());
+        return 1;
+    }
+    
+    public static void main(String[] args){
+        Triangle3D tri = new Triangle3D(1,0,0,-1,-1,0,-1,1,0);
+        Vector3D n = tri.normal();
+        n.unit();
+        n.show();
+        
+        Line3D line = new Line3D(1.,0.,1.0,0.5,0,-1);
+        line.show();
+        
+        Line3D refl = new Line3D();
+        refl.show();
+        tri.reflection(line, refl);
+        refl.show();
     }
 }
