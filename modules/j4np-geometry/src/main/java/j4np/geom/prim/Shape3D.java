@@ -316,7 +316,7 @@ public class Shape3D implements Transformable, Showable {
         str.append("\t</mesh>\n");
         return str.toString();
     }
-    
+        
     public static void main(String[] args){
         Shape3D square = Shape3D.squareXY(3, 3);
         square.show();

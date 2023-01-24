@@ -129,9 +129,16 @@ public class TDataFactory {
         return graphs;
     }
     
+    public static H1F createH1F(String name, int count, int bins, double min, double max, double mean, double sigma){
+        H1F h = TDataFactory.createH1F(count, bins, min, max, mean, sigma); h.setName(name);
+        return h;
+    }
+    
     public static H1F createH1F(int count, int bins, double min, double max, double mean, double sigma){
         Random r = new Random();
         H1F h = new H1F("h",bins,min,max);
+        h.attr().setLegend(String.format("rndm (#mu=%.2f, #sigma=%.3f)", mean,sigma));
+        h.attr().setTitleX("X-axis");
         for(int loop = 0; loop < count; loop++){
             double g = r.nextGaussian()*sigma + mean;
             h.fill(g);
@@ -160,11 +167,18 @@ public class TDataFactory {
         return TDataFactory.createH1F(count, 100, 0.0, 1.0, 0.4, 0.2);
     }
     
+    public static H1F createH1F(String name, int count){
+        H1F h =  TDataFactory.createH1F(count, 100, 0.0, 1.0, 0.4, 0.2);
+        h.setName(name); return h;
+    }
+    
     public static H2F createH2F(int count, int bins){
         
         //int bins =240;
         Random r = new Random();
         H2F   rh = new H2F("rh",bins,-1.0,1.0,bins,-1.0,1.0);
+        rh.attr().setTitleX("x-axis");
+        rh.attr().setTitleY("y-axis");
         
         double xc1 = 0.4;//r.nextDouble()*2.0-1.0;
         double xc2 = -0.5;//r.nextDouble()*2.0-1.0;

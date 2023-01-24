@@ -6,6 +6,7 @@
 package twig.studio;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -29,6 +30,8 @@ import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -46,7 +49,7 @@ public class StudioFrame extends JPanel {
     JTabbedPane     tabbedPane = null;
     TGDataCanvas        canvas = null;
     StatusPanel     statusPane = null;
-    
+    private int    canvasCount = 1;
     
     private String unicodeSquarePlus = "\u229E";
     
@@ -119,6 +122,7 @@ public class StudioFrame extends JPanel {
                 .left(80).right(40).top(40).bottom(80);
         tabbedPane.addTab("data canvas", null, canvas,
                 "Does nothing");
+        
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
         
         JComponent panel2 = makeTextPanel("Panel #2");
@@ -157,12 +161,35 @@ public class StudioFrame extends JPanel {
         
         statusPane = new StatusPanel();
         
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                System.out.println("Tab: " + tabbedPane.getSelectedIndex());
+                Component c = tabbedPane.getSelectedComponent();
+                System.out.println("component class = " + c.getClass().getName());
+                if(c instanceof TGDataCanvas){
+                    canvas = (TGDataCanvas) c;
+                }
+            }
+        });
         this.add(statusPane,BorderLayout.PAGE_END);
         //this.add(this.createInspector(),BorderLayout.LINE_END);
     }
     
     
     public StatusPanel getStatusPane(){ return this.statusPane;}
+    
+    public void addCanvas(){
+        String name = "c"+this.canvasCount; canvasCount++;
+        this.canvas = new TGDataCanvas();
+        canvas.setName(name);
+        canvas.region()
+                .getInsets()
+                .left(80).right(40).top(40).bottom(80);
+        tabbedPane.insertTab(name, null, canvas, "Data Canvas for plotting", 0);
+        //tabbedPane.addTab(name, null, canvas,
+        //        "Does nothing");
+    }
     
     public void doMouseClicked(MouseEvent me){
         if(me.getClickCount()==2){
@@ -176,8 +203,9 @@ public class StudioFrame extends JPanel {
                     str.append( tp.getPathComponent(i).toString());
                 }
                 String objectPath = str.toString();
-                if(treeProvider!=null)
+                if(treeProvider!=null){
                     treeProvider.draw(objectPath, canvas );
+                }
                 canvas.repaint();
             }
             /*

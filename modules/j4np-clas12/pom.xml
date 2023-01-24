@@ -33,6 +33,12 @@
         <version>${revision}</version>
       </dependency>
 
+      <dependency>
+        <groupId>j4np</groupId>
+        <artifactId>j4np-geometry</artifactId>
+        <version>${revision}</version>
+      </dependency>
+
 
     </dependencies>
 

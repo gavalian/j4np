@@ -44,6 +44,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import twig.data.TDirectory;
+import twig.data.TGroupDirectory;
 import twig.tree.HipoTree;
 
 /**
@@ -103,8 +104,10 @@ public class StudioWindow extends JFrame implements ActionListener {
         
         JMenu menuFile = this.getMenu("File", 
                 new String[]{"Open...","-","Open Twig",
-                "Open Hipo","-","Import Text","Import h5"});
+                "Open Hipo","Open Group", "-","Import Text","Import h5"});
         
+        JMenu menuView = this.getMenu("View", 
+                new String[]{"New Canvas"});
         
         JMenu menuEdit = this.getMenu("Edit", 
                 new String[]{"Configure","-","Edit Cuts","Set Bins"});
@@ -141,6 +144,7 @@ public class StudioWindow extends JFrame implements ActionListener {
         
         menuBar.add(menuFile);
         menuBar.add(menuEdit);
+        menuBar.add(menuView);
         menuBar.add(menuPlugins);
         this.setJMenuBar(menuBar);
     }
@@ -281,6 +285,10 @@ public class StudioWindow extends JFrame implements ActionListener {
             this.sFrame.setTreeProvider(ht);
         }
         
+        if(arg0.getActionCommand().compareTo("New Canvas")==0){            
+            this.sFrame.addCanvas();
+        }
+        
         if(arg0.getActionCommand().compareTo("Open Twig")==0){
             final JFileChooser fc = new JFileChooser();
             fc.addChoosableFileFilter(new FileNameExtensionFilter("Twig Files (.twig)","twig"));
@@ -296,6 +304,29 @@ public class StudioWindow extends JFrame implements ActionListener {
                 //This is where a real application would open the file.
                 System.out.println("file -> " + file.getAbsolutePath());
                 TDirectory dir = new TDirectory();
+                dir.read(file.getAbsolutePath());
+                sFrame.setTreeProvider(dir);
+            } else {
+                
+            }
+ 
+        }
+        
+        if(arg0.getActionCommand().compareTo("Open Group")==0){
+            final JFileChooser fc = new JFileChooser();
+            fc.addChoosableFileFilter(new FileNameExtensionFilter("Twig Files (.twig)","twig"));
+            fc.addChoosableFileFilter(new FileNameExtensionFilter("Hipo Files (.h5)","h5"));
+            
+            File workingDirectory = new File(System.getProperty("user.dir"));
+            fc.setCurrentDirectory(workingDirectory);
+
+            int returnVal = fc.showOpenDialog(this);
+            
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                //This is where a real application would open the file.
+                System.out.println("file -> " + file.getAbsolutePath());
+                TGroupDirectory dir = new TGroupDirectory();
                 dir.read(file.getAbsolutePath());
                 sFrame.setTreeProvider(dir);
             } else {

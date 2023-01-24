@@ -28,7 +28,7 @@ public class TPalette2D {
     
     
     public TPalette2D(){
-        this.setPalette(PaletteName.kWaterMelon);
+        this.setPalette(PaletteName.kRainBow);
     }
     
     public TPalette2D(String name ){
@@ -113,8 +113,10 @@ public class TPalette2D {
 
         static {
             for (PaletteName palName : PaletteName.values()) {
-                map.put(palName.name(), palName);
-                map.put(palName.value, palName);
+                if(palName.name().startsWith("k")==true){
+                    map.put(palName.name(), palName);
+                    //map.put(palName.value, palName);
+                }
             }
         }
 

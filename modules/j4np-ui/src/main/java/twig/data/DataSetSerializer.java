@@ -64,6 +64,42 @@ public class DataSetSerializer {
         }
     }
     
+    
+    public static void exportDataGroup(DataGroup group, String archive, String directory){
+        DataSetSerializer.export(group.getData(), archive, directory);
+        String path = String.format("%s/%s.group", directory, group.getName());
+        ArchiveUtils.addInputStream(archive, path, Arrays.asList(group.toJson()));
+    }
+    
+    public static DataGroup importDataGroup(String archive, String directory, String filename){
+        String path = directory + "/" + filename;
+        
+        if(path.endsWith(".group")==false){
+                path += ".group";
+        }
+        
+        String     jsonString = ArchiveUtils.getFile(archive, path);
+        JsonObject jsonObject = (JsonObject) Json.parse(jsonString);
+        String           type = jsonObject.get("class").asString();
+        if(type.compareTo("twig.data.DataGroup")==0){
+            JsonArray datasets = jsonObject.get("datasets").asArray();
+             String           name = jsonObject.get("name").asString();
+             int           columns = jsonObject.get("columns").asInt();
+             int              rows = jsonObject.get("rows").asInt();
+             DataGroup grp = new DataGroup(name,columns,rows);
+             for(int i = 0; i < datasets.size(); i++){
+                 DataSet ds = DataSetSerializer.load(archive, directory + "/" + datasets.get(i).asString());
+                 grp.getData().add(ds);
+             }
+             
+             grp.configure(jsonObject);
+             return grp;
+        } else {
+            System.out.println("[DataSetSerializer::importDataGroup] >>> error, the file is not a groups file.");
+        }
+        return null;
+    }
+    
     public static void export(DataSet ds, String archive, String directory){
         String jsonString = DataSetSerializer.toJson(ds);
         String       path = String.format("%s/%s.dataset",directory,ds.getName());
@@ -103,39 +139,44 @@ public class DataSetSerializer {
     }
     
     public static DataSet load(String archive, String directory){
-        if(directory.endsWith(".dataset")==false){
-            directory += ".dataset";
-        }
-        if(ArchiveUtils.hasFile(archive, directory)==true){
-            
-            String     jsonString = ArchiveUtils.getFile(archive, directory);
-            
-            JsonObject jsonObject = (JsonObject) Json.parse(jsonString);
-            String           type = jsonObject.get("class").asString();
-            
-            if(type.contains("H1F")==true){
-                H1F h1f = DataSetSerializer.deserialize_H1F(jsonString);
-                return h1f;
+        try {
+            if(directory.endsWith(".dataset")==false){
+                directory += ".dataset";
             }
-            
-            if(type.contains("H2F")==true){
-                H2F h2f = DataSetSerializer.deserialize_H2F(jsonString);
-                return h2f;
+            if(ArchiveUtils.hasFile(archive, directory)==true){
+                
+                String     jsonString = ArchiveUtils.getFile(archive, directory);
+                
+                JsonObject jsonObject = (JsonObject) Json.parse(jsonString);
+                String           type = jsonObject.get("class").asString();
+                
+                if(type.contains("H1F")==true){
+                    H1F h1f = DataSetSerializer.deserialize_H1F(jsonString);
+                    return h1f;
+                }
+                
+                if(type.contains("H2F")==true){
+                    H2F h2f = DataSetSerializer.deserialize_H2F(jsonString);
+                    return h2f;
+                }
+                
+                if(type.contains("GraphErrors")==true){
+                    GraphErrors gre = DataSetSerializer.deserialize_GraphErrors_JSON(jsonString);
+                    return gre;
+                }
+                
+            }  else {
+                System.out.println("[] error with archive : " + archive );
+                System.out.println("[] error loading file : " + directory );
             }
-            
-            if(type.contains("GraphErrors")==true){
-                GraphErrors gre = DataSetSerializer.deserialize_GraphErrors_JSON(jsonString);
-                return gre;
-            }
-            
-        }  else {
-            System.out.println("[] error with archive : " + archive );
-            System.out.println("[] error loading file : " + directory );
+        } catch (Exception e){
+            System.out.println(" error loading directory : " + directory);
+            e.printStackTrace();
         }
         return null;
     }
     
-    public static String serialize(DataSet ds){ 
+        public static String serialize(DataSet ds){ 
         return DataSetSerializer.serialize(ds, false);
     }
     

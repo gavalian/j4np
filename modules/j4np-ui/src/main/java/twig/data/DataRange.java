@@ -67,7 +67,13 @@ public class DataRange {
         rect.height = rect.height + lowMove + highMove;
         rect.y = rect.y - lowMove;
     }
-    
+    @Override
+    public String toString(){
+        return String.format("[%8.5f - %8.5f][%8.5f - %8.5f]", 
+                this.rect.getX(),this.rect.getX()+this.rect.getWidth(),
+                this.rect.getY(),this.rect.getY()+this.rect.getHeight()
+                );
+    }
     public static void main(String[] args){
         DataRange  range = new DataRange(0.0,1.0,0.0,1.0);
         DataRange range2 = new DataRange(0.5,1.5,0.8,1.2);

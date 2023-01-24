@@ -302,10 +302,10 @@ public final class Triangle3D implements Face3D {
         Vector3D w = v.sub(ol);
         
         
-        System.out.println("intersection = ");
-        points.get(0).show();
-        System.out.println(" OL = ");
-        ok.show();
+        //System.out.println("intersection = ");
+        //points.get(0).show();
+        //System.out.println(" OL = ");
+        //ok.show();
         
         reflection.origin().copy(points.get(0));
         reflection.end().set(points.get(0).x() + w.x(), 

@@ -4,10 +4,14 @@
  */
 package twig.data;
 
+import j4np.utils.json.Json;
+import j4np.utils.json.JsonArray;
+import j4np.utils.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import twig.graphics.TGCanvas;
 import twig.graphics.TGDataCanvas;
+import twig.math.F1D;
 
 /**
  *
@@ -15,13 +19,51 @@ import twig.graphics.TGDataCanvas;
  */
 public class DataGroup {
     
-    private List<DataSet>      groupData = new ArrayList<>();
+    private String                  groupName = "datagroup";
+    private List<DataSet>           groupData = new ArrayList<>();
+    private List<DataGroupRegion> groupRegions = new ArrayList<>();
+    
+    private List<DataGroupDescriptor> groupDescriptors = new ArrayList<>();
+    
     private List<Double>   axisTickMarks = new ArrayList<>();
     private List<String>  axisTickLabels = new ArrayList<>();
     
+    private int canvasDivisionX = 1;
+    private int canvasDivisionY = 1;
+    
+    
     public DataGroup(){
-        
+        groupRegions.add(new DataGroupRegion(0));
     }
+    
+    public DataGroup(int xsize, int ysize){
+        this.canvasDivisionX = xsize; this.canvasDivisionY = ysize;
+        for(int r = 0; r < xsize*ysize; r++) 
+            groupRegions.add(new DataGroupRegion(r));
+    }
+    
+    public DataGroup(String name, int xsize, int ysize){
+        this.groupName = name;
+        this.canvasDivisionX = xsize; this.canvasDivisionY = ysize;
+        for(int r = 0; r < xsize*ysize; r++) 
+            groupRegions.add(new DataGroupRegion(r));
+    }
+    public void show(){
+        System.out.printf("[DataGroup] >>> size %d , columns = %d, rows = %d\n",
+                this.groupData.size(), this.canvasDivisionX,this.canvasDivisionY);
+        for(int i = 0; i < this.groupData.size(); i++){
+            System.out.printf("%24s | %s\n",groupData.get(i).getName(),groupData.get(i).getClass().getName());
+        }
+        
+        for(DataGroupRegion reg : this.groupRegions){
+            System.out.println(reg);
+        }
+    }
+    public String getName(){return groupName;}
+    
+    public DataGroup setName(String name){this.groupName = name; return this;}
+    
+    public List<DataGroupRegion> getRegions(){ return groupRegions;}
     
     public DataGroup[] duplicate(String... exts){
         DataGroup[] groups = new DataGroup[exts.length];
@@ -64,8 +106,7 @@ public class DataGroup {
         }
         return group;
     }
-    
-    
+        
     public void lineColors(int... colors){
         for(int i = 0; i < colors.length; i++){ 
             this.groupData.get(i).attr().setLineColor(colors[i]);
@@ -96,6 +137,43 @@ public class DataGroup {
         }
     }
     
+    public void configure(JsonObject jsonObj){
+        JsonArray regions = jsonObj.get("regions").asArray();
+        for(int r = 0; r < regions.size(); r++){
+            DataGroupRegion region = groupRegions.get(r);
+            JsonArray desc = ((JsonObject) regions.get(r)).get("descriptors").asArray();
+            for(int d = 0; d < desc.size(); d++){
+                JsonObject dObj = desc.get(d).asObject();
+                DataGroupDescriptor ptr = DataGroupDescriptor.fromJson(dObj);
+                region.dataDescriptor.add(ptr);
+            }
+        }
+    }
+    
+    public String toJson(){
+        StringBuilder str = new StringBuilder();
+        str.append("{\n");
+        str.append("\"type\":\"datagroup\",\n");
+        str.append(String.format("\"class\":\"%s\",\n",DataGroup.class.getName()));
+        str.append(String.format("\"name\":\"%s\",\n",getName()));
+        str.append(String.format("\"columns\":%d, \"rows\":%d,\n",this.canvasDivisionX,this.canvasDivisionY));
+        str.append("\"datasets\": [");
+        for(int i = 0; i < this.groupData.size(); i++){
+            str.append(String.format("\"%s\"", this.groupData.get(i).getName()));
+            if(i!=groupData.size()-1) str.append(",");
+        }
+        str.append("],\n");
+        str.append("\"regions\": [\n");
+        for(int i = 0; i < this.groupRegions.size(); i++){
+            //str.append(String.format("{\"data\":\"%s\"",this.groupData.get(i).getName()));
+            str.append(String.format("%s",this.groupRegions.get(i).toJson()));
+            if(i!=this.groupRegions.size()-1) str.append(",\n"); else str.append("\n");
+        }
+        str.append("]\n");
+        str.append("}");
+        return str.toString();
+    }
+    
     public void draw(TGDataCanvas c){
         c.cd(0);
         for(DataSet ds : this.groupData){
@@ -105,13 +183,184 @@ public class DataGroup {
         c.repaint();
     }
     
+    public void draw(TGDataCanvas c, boolean recreate){
+        if(recreate==false){
+            draw(c); return;
+        }
+        
+        c.divide(canvasDivisionX, canvasDivisionY);
+        for(int r = 0; r < groupRegions.size(); r++){
+            DataGroupRegion reg = groupRegions.get(r);
+            c.cd(reg.order); 
+            for(int d = 0; d < reg.dataDescriptor.size(); d++){
+                DataGroupDescriptor desc = reg.dataDescriptor.get(d);
+                c.region().draw(this.groupData.get(desc.region), desc.options+"same");               
+            }
+            
+            if(reg.showLegend==true) c.region().showLegend(0.05, 0.95);
+            if(reg.showStats==true) c.region().showStats(0.98, 0.97);
+        }
+        /*
+        for(int i = 0; i < this.groupData.size(); i++){
+            DataGroupDescriptor d = this.groupDescriptors.get(i);
+            c.cd(d.region);
+            c.region().draw(this.groupData.get(i),"same"+d.options);
+            c.next();
+        }*/
+        c.repaint();
+    }
+    
     public void draw(TGCanvas c){
         this.draw(c.view());
         c.repaint();
     }
     
-    public DataGroup  add(DataSet d){this.groupData.add(d);return this;}
+    public DataGroup  add(DataSet d){
+        this.groupData.add(d);
+        //this.groupDescriptors.add(new DataGroupDescriptor(0,""));
+        return this;
+    }
+    
+    public DataGroup  add(DataSet d, int region, String options){
+        int order = this.groupData.size();
+        this.groupData.add(d);
+        this.groupRegions.get(region).dataDescriptor.add(new DataGroupDescriptor(d.getName(),order,options));
+        //this.groupDescriptors.add(new DataGroupDescriptor(d.getName(),region,options));
+        return this;
+    }
+    
     public List<DataSet> getData(){ return groupData;}
     public List<Double> getAxisTickMarks(){return this.axisTickMarks;}
     public List<String> getAxisTickLabels(){return this.axisTickLabels;}
+    
+    public static class DataGroupDescriptor {
+        public String   name = "";
+        public int      region = 0;
+        public String  options = "";
+        public DataGroupDescriptor(){}
+        public DataGroupDescriptor(String nm, int r, String opt){ region = r; options = opt;name = nm;}
+        public String  toJson(){
+            return String.format("{ \"name\": \"%s\", \"region\":%d, \"options\":\"%s\"}", name,region,options);
+        }
+        
+        public static DataGroupDescriptor fromJson(JsonObject json){
+            String     name = json.get("name").asString();
+            int      region = json.get("region").asInt();
+            String  options = json.get("options").asString();
+            
+            return new DataGroupDescriptor(name,region,options);
+        }
+        
+        @Override
+        public String toString(){
+           return String.format("name = %12s, region = %4d, options = [%s]", name,region,options);
+        }
+    }
+    
+    public static class DataGroupRegion {
+       List<DataGroupDescriptor> dataDescriptor = new ArrayList<>();
+       public int order = 0;
+       boolean showLegend = false;
+       boolean  showStats = false;
+       public DataGroupRegion(int ord){ order = ord;}
+       
+       public String toJson(){
+           StringBuilder str = new StringBuilder();
+           str.append("{");
+           str.append(String.format("\"order\":%d, \"showLegend\":%s, \"showStats\":%s, ",order,showLegend,showStats));
+           str.append(" \"descriptors\": [");
+           for(int i = 0; i < this.dataDescriptor.size();i++){               
+               str.append(this.dataDescriptor.get(i).toJson());
+               if(i!=dataDescriptor.size()-1) str.append(",");
+           } str.append("]");
+           str.append("}");
+           return str.toString();
+       }
+       
+       public static DataGroupRegion fromJson(JsonObject json){
+           DataGroupRegion region = new DataGroupRegion(0);
+           
+           return region;
+       }
+       
+       @Override
+       public String toString(){
+           StringBuilder str = new StringBuilder();
+           str.append(String.format(" order = %4d , legend = %8s, stats %8s\n", 
+                   order,showLegend,showStats));
+           for(DataGroupDescriptor d : this.dataDescriptor){
+               str.append("\t").append(d).append("\n");
+           }
+           return str.toString();
+       }
+    }
+    
+    
+    public static DataGroup fronJson(String archive, String directory, String json){
+        
+        JsonObject jsonObject = (JsonObject) Json.parse(json);
+        String           name = jsonObject.get("name").asString();
+        int           columns = jsonObject.get("columns").asInt();
+        int              rows = jsonObject.get("rows").asInt();
+        DataGroup grp = new DataGroup(name,columns,rows);
+        
+        JsonArray    datasets = jsonObject.get("datasets").asArray();
+        JsonArray     regions = jsonObject.get("regions").asArray();
+        int nData = datasets.size();
+        for(int d = 0; d < nData; d++){
+            
+        }
+        return grp;
+    }
+    
+    public static void main(String[] args){
+        
+        DataGroup grp = new DataGroup("demoCanvas",2,2);
+        
+        grp.getRegions().get(0).showLegend = true;
+        grp.getRegions().get(1).showStats = true;
+        
+        grp.add(TDataFactory.createH1F("h1",2000), 0, "");
+        grp.add(TDataFactory.createH1F("h2",1000), 0, "");
+        grp.add(TDataFactory.createH1F("h3",2000), 1, "");
+        grp.add(TDataFactory.createH1F("h4",1000), 1, "A");
+        
+        grp.add(TDataFactory.createH1F("h5",3000,120, 0.0,1.0,0.6,0.1), 2, "");
+        grp.add(TDataFactory.createH1F("h6",3000,120, 0.0,1.0,0.2,0.1), 2, "EP");
+        F1D func = new F1D("func","[p0]+[p1]*x+[amp]*gaus(x,[mean],[sigma])",0,1.0);
+        func.setParameters(1.0,1.0,100,0.2,0.02);
+        func.attr().set("lw=3,ls=3,lc=2");
+        //grp.add(func, 2, "");
+        
+        func.fit(grp.getData().get(5));
+        func.show();
+        H2F h2 = TDataFactory.createH2F(250000,80);
+        h2.setName("h2_1");
+        
+        grp.add(h2, 3, "");
+        
+        grp.getData().get(0).attr().set("lc=1,fc=82");
+        grp.getData().get(1).attr().set("lc=1,fc=84");
+        grp.getData().get(2).attr().set("lc=1,fc=67");
+        grp.getData().get(3).attr().set("lc=1,fc=7");
+        
+        grp.getData().get(4).attr().set("lc=1,fc=125");
+        grp.getData().get(5).attr().set("lc=1,fc=123");
+        
+        System.out.println(grp.toJson());
+        
+        TGCanvas c = new TGCanvas(900,800);
+        
+        grp.draw(c.view(),true);
+        
+        DataSetSerializer.exportDataGroup(grp, "groups.twig", "data/groups");
+        
+        grp.show();
+        
+        DataGroup grp2 = DataSetSerializer.importDataGroup("groups.twig", "data/groups", "demoCanvas");
+        grp2.show();
+        
+        TGCanvas c2 = new TGCanvas();
+        grp2.draw(c2.view(), true);
+    }
 }

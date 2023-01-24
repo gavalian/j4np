@@ -523,4 +523,17 @@ public final class Line3D implements Transformable, Showable {
         return i.toVector3D();
     }
 
+    public static Line3D generate(double x, double y, double z, 
+            double theta_min, double theta_max, double phi_min, double phi_max){        
+        double phi = phi_min + Math.random()*(phi_max-phi_min);
+        double cos_theta_min = Math.cos(theta_max);
+        double cos_theta_max = Math.cos(theta_min);
+        double cos_theta = cos_theta_min + Math.random()*(cos_theta_max-cos_theta_min);
+        double theta = Math.acos(cos_theta);
+        Line3D line = new Line3D();
+        line.origin().set(0., 0., 0.0);
+        line.end().set(1*Math.cos(phi)*Math.sin(theta), 1*Math.sin(phi)*Math.sin(theta), 1*Math.cos(theta));
+        line.translateXYZ(x, y, z);
+        return line;
+    }
 }

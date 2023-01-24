@@ -30,6 +30,10 @@ public class Range {
         }
     }
     
+    public double translate(double x){
+        return (x - rangeMin)/(rangeMax-rangeMin);
+    }
+    
     public boolean contains(double value){
         return (value>=rangeMin&&value<=rangeMax);
     }
