@@ -96,6 +96,28 @@ public class DeepNettsNetwork {
         return dataset;
     }
     
+    public void evaluate(DataList ds){
+        
+        for(int i = 0; i < ds.getList().size(); i++){
+            float[]  input  = ds.getList().get(i).floatFirst();
+            float[]  output = neuralNet.predict(input);
+            ds.getList().get(i).setInfered(output);
+        }
+       /* DataList p = new DataList();
+        DataSet set = this.convert(ds);
+        Iterator iter = set.iterator();
+        
+        while(iter.hasNext()){
+            TabularDataSet.Item  item = (TabularDataSet.Item) iter.next();
+            float[]  input  = item.getInput().getValues();
+            float[] desired = item.getTargetOutput().getValues();
+            float[]  output = neuralNet.predict(input);
+            double[]  first = DataArrayUtils.toDouble(input);
+            double[] second = DataArrayUtils.toDouble(output);
+            p.add(new DataEntry(first,second));
+        }*/
+        //return p;
+    }
     private DataSet convert(DataList list){
         
         int nInputs = list.getList().get(0).getFirst().length;

@@ -101,17 +101,20 @@ public class RichRun {
             if(part.intersection().end().z()>0){
                 
                 double mom = part.vector().mag();
-                double theta = RichGeometry.getRingTheta(0.497, mom);
+                double theta = RichGeometry.getRingTheta(0.139, mom);
+                //double theta = RichGeometry.getRingTheta(0.497, mom);
                 
-                geom.getHits(r, part, theta, 25);
+                geom.getHits(r, part, theta, 50);
                 
                 h.reset();
                 for(int kk = 0; kk < part.getHits().size(); kk++){
                     h.fill(
                             part.getHits().get(kk).position().x(),
-                            part.getHits().get(kk).position().y()                            
+                            part.getHits().get(kk).position().y()
                             );
                 }
+                
+                                
                 Vector3D dir = part.getDirection();
                 rxy.grow(dir.x(), dir.y());
                 rxz.grow(dir.x(), dir.z());
@@ -123,7 +126,7 @@ public class RichRun {
                 if(part.getHits().size()>0){
                     List<String> lines = part.csvSting();
                     for(String line : lines) 
-                        w.writeString(line+","+String.format("%.6f", rt.translate(theta)));
+                        w.writeString(line+","+String.format("%.6f", rt.translate(theta)));//,rt.translate(thetapi)));
                 }
                 
                 //c.repaint();

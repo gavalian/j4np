@@ -21,9 +21,10 @@ public class RichGeometry {
     
     private List<Shape3D>   mirrors = new ArrayList<>();
     private Shape3D         aerogel = null;
-    Shape3D         sensors = null;
+    Shape3D                 sensors = null;
     private double         boxSizeX = 1.;
     private double         boxSizeY = 1.;
+    
     public RichGeometry(){
         construct();
     }
@@ -78,6 +79,7 @@ public class RichGeometry {
     }
     
     public Point3D getHit(Line3D line){
+        
         List<Point3D> points = new ArrayList<>();
         
         int order = this.getMirrorCross(line);

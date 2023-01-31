@@ -1,5 +1,10 @@
 package j4ml.ejml;
 
+import j4np.utils.FileUtils;
+import j4np.utils.io.TextFileWriter;
+import j4np.utils.json.Json;
+import j4np.utils.json.JsonArray;
+import j4np.utils.json.JsonObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -345,7 +350,70 @@ public class EJMLModel {
         return item;
     }
     
+    
+    public static void torchToEjml(String filename, String output, int count){
+
+        String fileContent = FileUtils.readFileAsString(filename);
+        JsonObject obj = (JsonObject) Json.parse(fileContent);
+        
+        TextFileWriter writer = new TextFileWriter();
+        writer.open(output);
+        
+        for(int c = 0; c < count; c++){
+            String weight = String.format("model.%d.weight",c*2);
+            String bias = String.format("model.%d.bias",c*2);
+            
+            JsonArray arrWeights = obj.get(weight).asArray();
+            JsonArray arrBias = obj.get(bias).asArray();
+            
+            //System.out.printf(" layer %d : weights size = %d, bias size = %d\n",c*2,arrWeights.size(),arrBias.size());            
+            List<double[]> vList = new ArrayList<>();
+            
+            for(int w = 0; w < arrWeights.size(); w++){                
+                JsonArray arrItems = arrWeights.get(w).asArray();               
+                //System.out.printf("\t weights %d : size = %d\n",w,arrItems.size());
+                double[] buffer = new double[arrItems.size()];
+                for(int b = 0; b < buffer.length; b++) buffer[b] = arrItems.get(b).asDouble();
+                vList.add(buffer);
+            }
+            
+            int rows = vList.get(0).length;
+            int cols = vList.size();
+            String hline = String.format("%d,%d", rows,cols);
+            System.out.println("file: " + hline);
+            writer.writeString(hline);
+            for(int k = 0; k < rows; k++){
+                StringBuilder str = new StringBuilder();
+                for(int ct = 0; ct < cols; ct++){
+                    if(ct!=0) str.append(",");
+                    str.append(String.format("%e", vList.get(ct)[k]));
+                }
+                System.out.println("file: " + str.toString());
+                writer.writeString(str.toString());
+            }
+            
+            StringBuilder str = new StringBuilder();
+            for(int b = 0; b < arrBias.size(); b++){
+                if(b!=0) str.append(",");
+                str.append(String.format("%e", arrBias.get(b).asDouble()));                
+            }
+            System.out.println("file: " + str.toString());
+            writer.writeString(str.toString());
+        }
+        writer.close();
+    }
+    
     public static void main(String[] args) {
+        //EJMLModel.torchToEjml("torch_weights.json", "ejml_rich.network", 4);
+       EJMLModel model = new EJMLModel("ejml_rich.network",ModelType.TANH_LINEAR);
+        
+       float[] out = new float[1];
+       
+       model.feedForwardTanhLinear(new float[]{0.50793f,0.56494f,0.31774f,0.56008f,0.93249f,0.62549f,0.41117f,0.41584f}, out);
+       System.out.println(out[0]);
+       model.feedForwardTanhLinear(new float[]{0.50793f,0.56494f,0.31774f,0.56008f,0.93249f,0.62549f,0.4285f,0.6712f},out);
+       System.out.println(out[0]);
+        /*
         //EJMLModelEvaluator model = new EJMLModelEvaluator("model.csv");
         EJMLModel model = new EJMLModel("network/5038/default/trackClassifier.network");
         //float[] in = new float[]{0.1161f, 0.0000f, 0.1403f, 0.1607f, 0.2604f, 0.2783f};
@@ -353,6 +421,6 @@ public class EJMLModel {
         model.feedForward(new float[]{0.26339f, 0.30208f, 0.23214f, 0.25298f, 0.15051f, 0.15689f}, out);
         System.out.println(Arrays.toString(out));
         model.feedForward(new float[]{0.73393f, 0.73661f, 0.78036f, 0.79911f, 0.15051f, 0.15689f}, out);
-        System.out.println(Arrays.toString(out));                
+        System.out.println(Arrays.toString(out));                */
     }
 }
