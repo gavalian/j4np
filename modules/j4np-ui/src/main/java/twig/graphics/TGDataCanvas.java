@@ -500,6 +500,30 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             }
         }
         
+        if(e.getActionCommand().compareTo("axis_grid_x")==0){
+            if(popupProvider.region!=null){     
+                TGRegion reg = popupProvider.region;
+                if(reg.getAxisFrame().getAxisX().getAttributes().getAxisGridDraw()==false){
+                    reg.getAxisFrame().getAxisX().getAttributes().setAxisGridDraw(true);
+                } else {
+                    reg.getAxisFrame().getAxisX().getAttributes().setAxisGridDraw(false);
+                }                
+                this.repaint();
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("axis_grid_y")==0){
+            if(popupProvider.region!=null){     
+                TGRegion reg = popupProvider.region;
+                if(reg.getAxisFrame().getAxisY().getAttributes().getAxisGridDraw()==false){
+                    reg.getAxisFrame().getAxisY().getAttributes().setAxisGridDraw(true);
+                } else {
+                    reg.getAxisFrame().getAxisY().getAttributes().setAxisGridDraw(false);
+                }                
+                this.repaint();
+            }
+        }
+        
         if(e.getActionCommand().compareTo("hide_region_stats")==0){
             if(popupProvider.region!=null){                
                 TGRegion reg = popupProvider.region;
@@ -630,6 +654,14 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                         "show_region_stats","hide_region_stats","edit_region_stats",
                         "add_region_text","add_region_line","edit_region_widgets",
                         "set_log_y_true","set_log_y_false"}
+            );
+            
+            this.addMenu(menu, "Axis", 
+                    new String[]{"Grid X" ,"Grid Y","Log X", "Log Y",
+                        "Lin X", "Lin Y"}, 
+                    
+                    new String[]{"axis_grid_x", "axis_grid_y", 
+                    "axis_log_x","axis_log_y","axis_lin_x","axis_lin_y"}
             );
             
             menu.add(new JSeparator());

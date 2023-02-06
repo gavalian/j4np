@@ -42,8 +42,7 @@ public class DataCanvasEditorDialog extends JPanel {
     }
         
     public static JFrame  openOptionsPanel(TGDataCanvas canvas){
-        
-        
+                
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         DataCanvasEditorDialog dialog = new DataCanvasEditorDialog(canvas);
@@ -76,7 +75,7 @@ public class DataCanvasEditorDialog extends JPanel {
         //DataCanvasEditorDialog dialog = new DataCanvasEditorDialog(canvas);
         DataAttributesEditorPanel p = 
                 new DataAttributesEditorPanel(c,
-                        r.getAxisFrame().getDataNodes().get(0).getDataSet().attr());
+                        r.getAxisFrame().getDataNodes().get(0));
         frame.add(p);
 
         frame.setSize(500, 500);

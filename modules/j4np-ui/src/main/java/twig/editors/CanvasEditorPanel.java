@@ -72,7 +72,7 @@ public class CanvasEditorPanel extends JPanel {
             DataSet ds = dn.get(i).getDataSet();
             if(ds instanceof GraphErrors) icon = manager.getIcon("linechart",iconSizeX,iconSizeY);
             if(ds instanceof H2F) icon = manager.getIcon("scatter",iconSizeX,iconSizeY);
-            DataAttributesEditorPanel daep = new DataAttributesEditorPanel(canvas,dn.get(i).getDataSet().attr());
+            DataAttributesEditorPanel daep = new DataAttributesEditorPanel(canvas,dn.get(i));
             tabbedPane.addTab("", icon, daep);
         }
         //ImageIcon icon = manager.getIcon("dimensions",iconSizeX,iconSizeY);

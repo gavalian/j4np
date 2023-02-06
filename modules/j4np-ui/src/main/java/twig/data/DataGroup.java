@@ -14,7 +14,7 @@ import twig.graphics.TGDataCanvas;
 import twig.math.F1D;
 
 /**
- *
+ * 
  * @author gavalian
  */
 public class DataGroup {

@@ -84,7 +84,7 @@ public class CompositeNode extends BaseHipoStructure {
     public int getRowsSize(){
         return dataDescriptor.structureLength;
     }
-        
+    
     private boolean testTypeForEntry(int entry, int type){
         if(dataDescriptor.getEntryType(entry)==type) return true;
         //.warn("error : the type for entry " + entry + " is not " + type);
@@ -103,7 +103,7 @@ public class CompositeNode extends BaseHipoStructure {
     }
     
     public CompositeNode putLong(int row, int entry, long number){
-        if(testTypeForEntry(entry,3)==true){
+        if(testTypeForEntry(entry,8)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
@@ -165,6 +165,17 @@ public class CompositeNode extends BaseHipoStructure {
         }
     }
     
+    public long getLong(int row, int entry){
+        int offset = getDataOffset() + 
+                row * dataDescriptor.structureLength + 
+                dataDescriptor.getEntryOffset(entry);
+        int type = dataDescriptor.getEntryType(entry);
+        if(type==8) return structBuffer.getLong(offset);
+        
+        System.out.printf("structure::get : error expected type = %d (type was %d)\n",8,type);
+        return 0L;       
+    }
+    
     public double getDouble(int row, int entry){
         int offset = getDataOffset() +
                 row * dataDescriptor.structureLength + 
@@ -177,11 +188,41 @@ public class CompositeNode extends BaseHipoStructure {
         }
     }
     
+    @Override
     protected ByteBuffer getByteBuffer(){ return structBuffer; }
 
     public void show(){
         System.out.printf(" structure : size = %d\n",structBuffer.capacity());
         this.dataDescriptor.show();
+    }
+    
+    protected String rowToString(int entry){
+        
+        StringBuilder str = new StringBuilder();
+        int nrows = this.getRows();
+        int type = this.getEntryType(entry);
+        str.append(String.format("%3d : ", type));
+        for(int row = 0; row < nrows; row++){
+
+            switch(type){
+                case 1: str.append(String.format(" %8d", this.getInt(row, entry))); break;
+                case 2: str.append(String.format(" %8d", this.getInt(row, entry))); break;
+                case 3: str.append(String.format(" %8d", this.getInt(row, entry))); break;
+                case 4: str.append(String.format(" %8.4f", this.getDouble(row, entry))); break;
+                case 5: str.append(String.format(" %8.4f", this.getDouble(row, entry))); break;
+                case 8: str.append(String.format(" %8d", this.getLong(row, entry))); break;
+                default: break;
+            }
+        }
+        return str.toString();
+    }
+    
+    public void print(){
+        int    nrows = this.getRows();
+        int nentries = this.getEntries();
+        for(int entry = 0; entry < nentries; entry++){
+            System.out.println(this.rowToString(entry));
+        }
     }
     /**
      * Descriptor class is used in data Structure to define
@@ -374,6 +415,27 @@ public class CompositeNode extends BaseHipoStructure {
             System.out.println();
             
         }
+    }
+    
+    
+    public static CompositeNode random(int nrows){
+
+        CompositeNode node = new CompositeNode(144,15,"bsssffl",nrows);
+        int nentries = node.getEntries();
+        for(int i = 0; i < nrows; i++){
+            for(int e = 0; e < nentries; e++){
+                int type = node.getEntryType(e);
+                switch(type){
+                    case 1: node.putByte(i, e,(byte) ( i+1)); break;
+                    case 2: node.putShort(i, e, (short) (i+1)); break;
+                    case 3: node.putInt(i, e, i+1); break;
+                    case 4: node.putFloat(i, e, i+1); break;
+                    case 8: node.putLong(i, e, (i+1)*10); break;
+                    default: break;
+                }
+            }
+        }
+        return node;
     }
     
     public static void main(String[] args){

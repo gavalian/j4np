@@ -19,7 +19,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import net.miginfocom.swing.MigLayout;
 import twig.config.TDataAttributes;
+import twig.data.H1F;
 import twig.studio.StudioWindow;
+import twig.graphics.TDataNode2D;
+import twig.graphics.TGH1F;
 
 /**
  *
@@ -29,16 +32,26 @@ public class DataAttributesEditorPanel extends JPanel {
     
     private TDataAttributes   attr = null;
     private JComponent      parent = null;
+    private TDataNode2D   dataNode = null;
     
         
     public DataAttributesEditorPanel(TDataAttributes __a){
         attr = __a; initUI();
     }
     
+    public DataAttributesEditorPanel(TDataNode2D __a){
+        dataNode = __a;
+        attr = dataNode.getDataSet().attr(); initUI();
+    }
+    
     public DataAttributesEditorPanel(JComponent jc,TDataAttributes __a){
         attr = __a; parent = jc; initUI();
     }
     
+    public DataAttributesEditorPanel(JComponent jc,TDataNode2D __a){
+        dataNode = __a;
+        attr = dataNode.getDataSet().attr(); parent = jc; initUI();
+    }
     private void initUI(){
         this.setLayout(new MigLayout("","",""));
         this.initLine();
@@ -188,6 +201,8 @@ public class DataAttributesEditorPanel extends JPanel {
     
     private void initTF(){
         JTextField tf_so = DataEditorUtils.makeTextField(attr.getStatOptions(), 7);
+        JTextField tf_do = DataEditorUtils.makeTextField(attr.getDrawOptions(), 7);
+        
         tf_so.addActionListener(new ActionListener() {
       //capture the event on JTextField
             public void actionPerformed(ActionEvent e) {
@@ -196,15 +211,36 @@ public class DataAttributesEditorPanel extends JPanel {
                 System.out.println("Text=" + tf.getText());
             }
         });
-        this.add(new JLabel("Option Stats : ",SwingConstants.RIGHT));        
+        
+        tf_do.addActionListener(new ActionListener() {
+      //capture the event on JTextField
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //get and display the contents of JTextField in the console
+                JTextField tf = (JTextField) e.getSource();
+                System.out.println(" yes - drawing options = " + tf.getText());
+                if(dataNode!=null){
+                    dataNode.setOptions(tf.getText());
+                    if(parent!=null) parent.repaint();
+                    System.out.println("changing it now");
+                }
+                //System.out.println("Text=" + tf.getText());
+            }
+        });
+        this.add(new JLabel("Option Stats : ",SwingConstants.RIGHT)); 
         this.add(tf_so,"wrap");
+        
+        this.add(new JLabel("Draw Options : ",SwingConstants.RIGHT)); 
+        this.add(tf_do,"wrap");
     }
     
     public static void main(String[] args){
         StudioWindow.changeLook();
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
+        //TGH1F h = new TGH1F(new H1F());
         DataAttributesEditorPanel panel = new DataAttributesEditorPanel(new TDataAttributes());
+        
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);

@@ -307,7 +307,7 @@ public class EJMLModel {
             results[i] = (float) matrix.get(0, i);
     }
     
-    private void feedForwardTanhLinear(float[] input, float[] results) {
+    public void feedForwardTanhLinear(float[] input, float[] results) {
         assert input.length == inputSize;
 
         SimpleMatrix matrix = new SimpleMatrix(new float[][] {input});
@@ -404,8 +404,10 @@ public class EJMLModel {
     }
     
     public static void main(String[] args) {
-        //EJMLModel.torchToEjml("torch_weights.json", "ejml_rich.network", 4);
-       EJMLModel model = new EJMLModel("ejml_rich.network",ModelType.TANH_LINEAR);
+        EJMLModel.torchToEjml("torch_weights.json", "ejml_rich.network", 4);
+      
+        
+        /*EJMLModel model = new EJMLModel("ejml_rich.network",ModelType.TANH_LINEAR);
         
        float[] out = new float[1];
        
@@ -413,6 +415,7 @@ public class EJMLModel {
        System.out.println(out[0]);
        model.feedForwardTanhLinear(new float[]{0.50793f,0.56494f,0.31774f,0.56008f,0.93249f,0.62549f,0.4285f,0.6712f},out);
        System.out.println(out[0]);
+        */
         /*
         //EJMLModelEvaluator model = new EJMLModelEvaluator("model.csv");
         EJMLModel model = new EJMLModel("network/5038/default/trackClassifier.network");

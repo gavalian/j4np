@@ -10,6 +10,7 @@ import j4np.data.base.DataNode;
 import j4np.hipo5.data.Schema.SchemaBuilder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -305,6 +306,25 @@ public class Event implements DataEvent {
         return node;
     }
     
+    protected void read(CompositeNode node, int position){
+        
+    }
+    public void read(CompositeNode node){
+        int group = node.getGroup();
+        int  item = node.getItem();
+        try{
+            int position = this.scan(group, item);
+            if(position>0){
+                read(node,position);
+            } else {
+                node.reset();
+            }
+        } catch (Exception e){
+            System.out.printf("(corruption error) : failure to scan event size = %d\n",
+                    this.getEventBufferSize());
+            node.reset();
+        }
+    }
     public Node read(int group, int item){
         int position = this.scan(group, item);
         if(position>=8){
@@ -317,7 +337,7 @@ public class Event implements DataEvent {
             //System.out.println(" TYPE ID = " + type_p + "  TYPE = " + type);
             Node        n = new Node();
             n.allocate(size_p+8, type);
-        
+            
             System.arraycopy(eventBuffer.array(), position, n.getBufferData(), 0, size_p+8);
             return n;
         }
@@ -444,6 +464,30 @@ public class Event implements DataEvent {
         //return -1;
     }
     
+    public List<String> scanLeafs(){
+        List<String> leafs = new ArrayList<>();
+        int    position = EVENT_HEADER_SIZE;
+        int eventLength = this.eventBuffer.getInt(EVENT_LENGTH_OFFSET);
+        //this.eventNodesMap.reset();
+        System.out.println("\n" + getEventHeaderString()+"\n");
+        while(position +NODE_HEADER_LENGTH <eventLength){
+            short group = eventBuffer.getShort( position    );
+            //System.out.println(" group = " + group);
+            byte  item  = eventBuffer.get(      position + 2);
+            byte  type  = eventBuffer.get(      position + 3);
+            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
+            String data = String.format("node [%4d, %3d], type = %3d, length = %d", group,item,type,size);
+            //System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , size = %4d\n",
+            //        group,item, position, type, size&0x00FFFFFF);
+            //if(__group==group&&__item==item)    return position;
+            leafs.add(data);
+            position += size + NODE_HEADER_LENGTH;
+        }
+        return leafs;
+        //return -1;
+    }
+    
+    
     public int scanLengthAt(int __group, int __item, int position){
          short group = eventBuffer.getShort( position    );
          byte  item  = eventBuffer.get(      position + 2);
@@ -499,6 +543,11 @@ public class Event implements DataEvent {
     public void initFrom(byte[] buffer, int length){
         require(length);
         System.arraycopy(buffer, 0, this.eventBuffer.array(), 0, length);
+    }
+    
+    public void initFrom(byte[] buffer, int position, int length){
+        require(length);
+        System.arraycopy(buffer, position, this.eventBuffer.array(), 0, length);
     }
     
     protected void init(){
