@@ -37,6 +37,7 @@ public class DataFrame<T extends DataEvent> {
     public int  getCount(){ return eventList.size();}
     
     public DataEvent getEvent(int index){ return eventList.get(index);}
+    public List<T>   getList(){ return eventList;}
     public Stream<T> getStream(){ return eventList.stream();};
     public Stream<T> getParallelStream(){ return eventList.parallelStream();};
     

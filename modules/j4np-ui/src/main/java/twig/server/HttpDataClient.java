@@ -17,6 +17,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -39,7 +40,7 @@ import twig.studio.TreeProvider;
  *
  * @author gavalian
  */
-public class HttpDataClient {
+public class HttpDataClient implements TreeProvider {
     
     private HttpClient              httpClient = null;
     private HttpServerConfig        httpConfig = null;
@@ -133,11 +134,31 @@ public class HttpDataClient {
         return String.format("data rate %s byte/sec, uncompressed %s byte/sec, time %.2f msec",
                 nf.format((int)dataRate),nf.format((int)dataRateUn),timeRate);
     }
-     
+    
+    public static void start(){
+        HttpServerConfig   conf = new HttpServerConfig();                
+        HttpDataClient   client = new HttpDataClient();
+        StudioWindow.changeLook();
+        StudioWindow frame = new StudioWindow();
+        frame.getStudioFrame().setTreeProvider(client);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 500);
+        frame.setVisible(true);
+    }
+    
     public static void main(String[] args){
         
         HttpServerConfig   conf = new HttpServerConfig();
+        
+        
         HttpDataClient   client = new HttpDataClient();
+        StudioWindow.changeLook();
+        StudioWindow frame = new StudioWindow();
+        frame.getStudioFrame().setTreeProvider(client);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 500);
+        frame.setVisible(true);
+        /*
         List<String> dataList = client.getDataList();
         
         for(String data : dataList){
@@ -145,9 +166,9 @@ public class HttpDataClient {
         }
         
         for(int i = 0; i < 20; i++){
-                        
-            client.getDataSet(dataList);
             
+            List<DataSet> dList = client.getDataSet(dataList);
+            //System.out.println(dList.size());
             System.out.println(client.getStats());
             
             try {
@@ -155,7 +176,31 @@ public class HttpDataClient {
             } catch (InterruptedException ex) {
                 Logger.getLogger(HttpDataClient.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }*/
+    }
+
+    @Override
+    public void draw(String path, TGDataCanvas canvas) {
+        System.out.println("drawing path : " + path);
+        List<DataSet> dList = this.getDataSet(Arrays.asList(path));
+        System.out.println(dList.size());
+        if(dList.size()>0){
+            canvas.region().draw(dList.get(0));
+            canvas.next();
         }
+    }
+
+    @Override
+    public void configure() {
+        
+    }
+
+    @Override
+    public TreeModel getTreeModel() {
+        List<String> objects = this.getDataList();
+        TreeModelMaker tmm = new TreeModelMaker();
+        tmm.setList(objects);
+        return new DefaultTreeModel(tmm.getTreeModel());        
     }
 
 }

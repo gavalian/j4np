@@ -101,7 +101,7 @@ public class HttpDataConfig implements TreeProvider {
         
         HttpServerConfig conf = new HttpServerConfig();
         conf.serverHost = "localhost";
-        conf.serverPort = 8020;        
+        conf.serverPort = 8020;  
         
         StudioWindow.changeLook();
         

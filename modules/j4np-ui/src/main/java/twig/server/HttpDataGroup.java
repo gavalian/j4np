@@ -41,7 +41,7 @@ public class HttpDataGroup {
     public  long      updateInterval = 5000;
     private HttpClient           httpClient = null;
     private String                 httpHost = "localhost";
-    private int                    httpPort = 8020;
+    private int                    httpPort = 8525;
     private String                groupName = "/default/generic";
     private int                  layoutCols = 1;
     private int                  layoutRows = 1;

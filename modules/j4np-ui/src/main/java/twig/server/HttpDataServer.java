@@ -206,6 +206,10 @@ public class HttpDataServer {
       }
     }
     
+    public TDirectory getDirectory(){
+        return this.serverDirectory;
+    }
+    
     public void start(){
         System.out.println("[HttpDataServer] -> started twig data server....");
         this.httpServer.start();
@@ -239,7 +243,7 @@ public class HttpDataServer {
                 counter++;
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
                 LocalDateTime now = LocalDateTime.now();
-                //System.out.printf("[HTTP:data:server] (%s) execution counter = %8d\n",dtf.format(now),counter);
+                System.out.printf("[HTTP:data:server] (%s) execution counter = %8d\n",dtf.format(now),counter);
             }
         }, 100,5000);
     }
