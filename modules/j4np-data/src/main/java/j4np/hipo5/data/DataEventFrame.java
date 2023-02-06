@@ -12,7 +12,7 @@ import java.nio.ByteOrder;
  * @date 10/30/2018
  * @author gavalian
  */
-public class DataFrame {
+public class DataEventFrame {
     /*
     * main buffer that keeps the Data frame events indexed
     * in the lower bytes (ints) of the buffer.
@@ -35,11 +35,11 @@ public class DataFrame {
     private    final int  dataFrameSignature    = 0x46445048; // represents "HPDF"
     //private    final int  dataFrameSignature    = 0x66647068; // represents "hpdf"
     
-    public DataFrame(ByteBuffer buffer){
+    public DataEventFrame(ByteBuffer buffer){
         dataFrameBuffer = buffer;
     }
     
-    public DataFrame(int sizeBytes){
+    public DataEventFrame(int sizeBytes){
         allocate(sizeBytes);
     }
     /**
@@ -73,7 +73,7 @@ public class DataFrame {
     
     protected int getDataOffset(){
         int count = getEntries();
-        return count*4 + DataFrame.HEADER_SIZE;
+        return count*4 + DataEventFrame.HEADER_SIZE;
     }
     
     public int getEventPosition(int index){
@@ -81,15 +81,15 @@ public class DataFrame {
         if(index==0){
             return dataOffset;
         }
-        return dataOffset + dataFrameBuffer.getInt(DataFrame.HEADER_SIZE + (index-1)*4);
+        return dataOffset + dataFrameBuffer.getInt(DataEventFrame.HEADER_SIZE + (index-1)*4);
     }
     
     public int getEventLength(int index){
         int dataOffset = getDataOffset();
-        if(index==0) return dataFrameBuffer.getInt(DataFrame.HEADER_SIZE);
+        if(index==0) return dataFrameBuffer.getInt(DataEventFrame.HEADER_SIZE);
         return  (
-                dataFrameBuffer.getInt(DataFrame.HEADER_SIZE + index*4) 
-                - dataFrameBuffer.getInt(DataFrame.HEADER_SIZE + (index-1)*4)
+                dataFrameBuffer.getInt(DataEventFrame.HEADER_SIZE + index*4) 
+                - dataFrameBuffer.getInt(DataEventFrame.HEADER_SIZE + (index-1)*4)
                 );
     }
     

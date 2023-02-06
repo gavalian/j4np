@@ -147,10 +147,10 @@ public class DataFrameBuilder {
      * in DataFrame object.The resulting DataFrame is uncompressed.
      * @return 
      */
-    public DataFrame build(){
-        int      offset = DataFrame.HEADER_SIZE;
+    public DataEventFrame build(){
+        int      offset = DataEventFrame.HEADER_SIZE;
         int  bufferSize = indexSize*4 + eventSize;
-        DataFrame frame = new DataFrame(bufferSize+offset);
+        DataEventFrame frame = new DataEventFrame(bufferSize+offset);
         System.arraycopy(recordIndex.array(), 0, 
                 frame.getFrameBuffer().array(), offset, indexSize*4);
         System.arraycopy(recordEvents.array(), 0, frame.getFrameBuffer().array(), 
@@ -161,7 +161,7 @@ public class DataFrameBuilder {
         return frame;
     }
     
-    public DataFrame build(DataFrameBuffer dfb, int compressionType){
+    public DataEventFrame build(DataFrameBuffer dfb, int compressionType){
         
         int  bufferSize = indexSize*4 + eventSize;        
         dfb.require(bufferSize*2);
@@ -198,9 +198,9 @@ public class DataFrameBuilder {
         System.out.println(
                 String.format(" DATA SIZE = %8d, COMPRESSED SIZE = %8d",
                         bufferSize,compressedSize));
-        int offset = DataFrame.HEADER_SIZE;
+        int offset = DataEventFrame.HEADER_SIZE;
         
-        DataFrame frame = new DataFrame(offset+compressedSize);
+        DataEventFrame frame = new DataEventFrame(offset+compressedSize);
         
         return frame;
     }
@@ -254,11 +254,11 @@ public class DataFrameBuilder {
         //builder.show();
         
         
-        DataFrame  frame = builder.build();
+        DataEventFrame  frame = builder.build();
         
         DataFrameBuffer data = new DataFrameBuffer(600*1024);
         
-        DataFrame  cframe = builder.build(data, 1);
+        DataEventFrame  cframe = builder.build(data, 1);
         cframe.show();
         
         frame.show();
