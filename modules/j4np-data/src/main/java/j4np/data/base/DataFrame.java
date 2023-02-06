@@ -30,6 +30,9 @@ public class DataFrame<T extends DataEvent> {
         if(numberOfThreads==0) numberOfThreads = 1;
     }
     
+    public void reset(){this.eventList.clear();}
+    public void addEvents(List<T> list){ this.eventList.addAll(list);}
+    
     public void addEvent(T event){ eventList.add(event);}
     public int  getCount(){ return eventList.size();}
     
