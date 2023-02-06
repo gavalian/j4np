@@ -76,7 +76,7 @@ public class RecordFrame {
         int     counter = 0;
         while(goOn==true){
             int length = recordBuffer.getInt(position+4);
-            System.out.printf(" event length [%5d] = %d, list size = %d\n", counter, length, evList.size());
+            //System.out.printf(" event length [%5d] = %d, list size = %d\n", counter, length, evList.size());
             if((counter+1)>evList.size()){
                 Event e = new Event(length+64);
                 e.initFrom(recordBuffer.array(), position, length);
