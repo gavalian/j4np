@@ -16,6 +16,7 @@ import java.util.List;
 import twig.config.TAxisAttributes.AxisType;
 import twig.config.TStyle;
 import twig.data.DataRange;
+import twig.data.H2F;
 import twig.widgets.StyleNode;
 import twig.widgets.Widget;
 
@@ -107,6 +108,9 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         /**
          * Calculate the axis range by iterating over the 
          */
+        //System.out.println("drawgin axis Z");
+        //this.axisZ.draw(g2d, r, axisFrameRange);
+        
         if(dataNodes.size()>0){
             
             axisX.getAttributes().setAxisTitle(dataNodes.get(0).dataSet.attr().getTitleX());
@@ -148,7 +152,11 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             g2d.setClip(null);
             axisX.draw(g2d, r, axisFrameRange);
             axisY.draw(g2d, r, axisFrameRange);
-            axisZ.draw(g2d, r, axisFrameRange);
+            
+            if(this.dataNodes.get(0).getDataSet() instanceof H2F){
+                axisZ.draw(g2d, r, axisFrameRange);
+            }
+            
         }
         
         //this.setLimits(axisFrameRange., layer, layer, layer)

@@ -77,7 +77,8 @@ public class VectorOperator {
             default: return 0.0;
         }
     }
-    public void parse(String oper){
+    public final void parse(String oper){
+        
         List<Integer>   pid = new ArrayList<>();
         List<Integer> order = new ArrayList<>();
         List<Integer>  sign = new ArrayList<>();
@@ -161,6 +162,7 @@ public class VectorOperator {
         return str.toString();
     }
     public static void main(String[] args){
+        //VectorOperator op = new VectorOperator(new LorentzVector(),"- [11] + [22] + [22,0] + [2212,1]");
         VectorOperator op = new VectorOperator(new LorentzVector(),"- [11] + [22] + [22,0] + [2212,1]");
         
     }

@@ -413,20 +413,21 @@ public class TGRegion extends Node2D implements StyleNode {
             this.axisFrame.clear();
         }
         
+        String optionsData = options.replaceAll("same", "");
         if(ds instanceof H1F){
-            axisFrame.addDataNode(new TGH1F((H1F) ds,options)); return this;
+            axisFrame.addDataNode(new TGH1F((H1F) ds,optionsData)); return this;
         }
         
         if(ds instanceof H2F){
-            axisFrame.addDataNode(new TGH2F( (H2F) ds,options)); return this;
+            axisFrame.addDataNode(new TGH2F( (H2F) ds,optionsData)); return this;
         }
         
         if(ds instanceof GraphErrors){
-            axisFrame.addDataNode(new TGENode2D((GraphErrors) ds,options)); return this;
+            axisFrame.addDataNode(new TGENode2D((GraphErrors) ds,optionsData)); return this;
         }
         
         if(ds instanceof Func1D){
-            axisFrame.addDataNode(new TGF1D((Func1D) ds,options)); return this;
+            axisFrame.addDataNode(new TGF1D((Func1D) ds,optionsData)); return this;
         }
         System.out.println(" unknown type of data set : " + ds.getClass().getName());
         return this;

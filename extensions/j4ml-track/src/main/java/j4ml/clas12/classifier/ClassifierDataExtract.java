@@ -5,6 +5,8 @@
  */
 package j4ml.clas12.classifier;
 
+import j4ml.clas12.networks.TrackNetworkTrainer;
+import j4ml.clas12.networks.TrackNetworkValidator;
 import j4ml.clas12.track.ClusterCombinations;
 import j4ml.clas12.track.ClusterStore;
 import j4ml.clas12.track.Track;
@@ -23,6 +25,7 @@ import j4np.utils.io.OptionStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import twig.data.AsciiPlot;
 import twig.data.H2F;
 import twig.data.Range;
@@ -36,13 +39,17 @@ public class ClassifierDataExtract extends OptionApplication {
         
         //implements OptionExecutor {
 
-    HipoWriter writer = new HipoWriter();
+    //HipoWriter writer = new HipoWriter();
+    HipoWriter[] writers = new HipoWriter[2];
+    
+    Random     r = new Random();
     
     Bank    tbCL = null;
     Bank    hbCL = null;
     Bank    tbTR = null;
-
+    
     String  outputFileName = "data_extract_classifier.hipo";
+    
     public int     binMaxWrite    = 75000;
     int[]   occupancy = new int[40];
     H2F     occupancy2D = null;
@@ -56,8 +63,20 @@ public class ClassifierDataExtract extends OptionApplication {
     public Range  particleAngleRange = new Range(5.0,35.0);
     
     public ClassifierDataExtract(){
-        super("clas12-ml");
-        OptionStore store = this.getOptionStore();
+        
+        super("clas12ml");
+        OptionStore store = this.getOptionStore().setName("clas12ml");        
+        
+        store.addCommand("-train", "train network");
+        store.getOptionParser("-train")
+                .addRequired("-t", "training data file (hipo)")
+                .addRequired("-v", "validation data file (hipo)")
+                .addRequired("-a", "archive file name")
+                .addRequired("-r", "run number")
+                .addOption("-vertex", "-15.0:5.0", "vertex range for the tracks to train")
+                .addOption("-e", "125", " number of epochs to train")
+                .addOption("-max", "45000", "maximum number of tracks for training");
+        
         store.addCommand("-extract", "extract data for track ml algorithms");
         store.getOptionParser("-extract").addRequired("-o",
                  "output file name to write training data");   
@@ -67,9 +86,16 @@ public class ClassifierDataExtract extends OptionApplication {
         
         for(int i = 0; i < occupancy.length; i++) occupancy[i] = 0;
     }
-        
+    
+    
     public void init(HipoReader chain){
-        writer.open(this.outputFileName);
+        //writer.open(this.outputFileName);
+        writers[0] = new HipoWriter();
+        writers[1] = new HipoWriter();
+        
+        writers[0].open(outputFileName+"_tr.h5");
+        writers[1].open(outputFileName+"_va.h5");
+        
         tbTR = chain.getBank("TimeBasedTrkg::TBTracks");
         //tbCL = chain.getBank("TimeBasedTrkg::TBClusters");
         tbCL = chain.getBank("HitBasedTrkg::HBClusters");
@@ -280,11 +306,12 @@ public class ClassifierDataExtract extends OptionApplication {
     }
     
     public void write(Event event, int tag){
-        this.writer.addEvent(event,tag);
+        double p = r.nextDouble();
+        if(p<0.5) writers[0].addEvent(event,tag); else writers[1].addEvent(event,tag);
     }
     
     public void close(){
-        writer.close();
+        writers[0].close(); writers[1].close();
     }
     
     public static void processFiles(List<String> files, String output, double min, double max, int nevents){
@@ -317,7 +344,7 @@ public class ClassifierDataExtract extends OptionApplication {
                     if(nodes.size()>0){
                         outEvent.reset();
                     for(Node node : nodes)
-                        outEvent.write(node);                    
+                        outEvent.write(node);
                     ce.write(outEvent, ce.getActiveTag());
                     
                     counterWrite++;
@@ -388,6 +415,59 @@ public class ClassifierDataExtract extends OptionApplication {
         
         ClassifierDataExtract.processFiles(inputs, pmin,  pmax, nevents);
     }*/
+    
+    public static void trainClassifier(String file_tr, String file_ev, String networkArchive, int run, double vertexmin, double vertexmax, int max, int epochs){
+        TrackNetworkTrainer t = new TrackNetworkTrainer();
+
+        t.nEpochs = epochs;
+
+        t.maxBinsRead = max;
+
+        t.getConstrain().momentum.set(0.5,10.5);
+        //t.getConstrain().vertex.set( -15.0,  5.0); // RG-A
+        t.getConstrain().vertex.set( vertexmin,vertexmax); // RG-F
+        t.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+
+        t.getConstrain().show();
+
+        t.classifierTrain( file_tr,networkArchive,run,"temp");
+        t.classifierTest(  file_ev,networkArchive,run,"temp");
+
+        TrackNetworkValidator v = new TrackNetworkValidator();
+
+        v.archiv     = networkArchive;
+        v.network    = "network/" + run + "/temp/trackClassifier.network";
+        v.outputFile = "validation_postprocess.h5";
+        v.getConstrain().momentum.set(0.5,10.5);
+        v.getConstrain().vertex.set(vertexmin,vertexmax); // RG-A 
+        v.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+
+        v.getConstrain().show();
+        v.processFile(file_tr);
+
+        t.nEpochs = epochs;
+        t.classifierTrain("validation_postprocess.h5",networkArchive,run,"default");
+        t.classifierTest(   file_ev,networkArchive,run,"default");
+    }
+    
+    public static void trainAutoEncoder(String file_tr, String file_ev, String networkArchive, int run, double vertexmin, double vertexmax, int max, int epochs){
+         TrackNetworkTrainer t = new TrackNetworkTrainer();
+         t.nEpochs = epochs;
+         t.maxBinsRead = max;
+         
+         //String    trainFile = "training_sample_max150000_012922-012925.hipo";
+         //String     testFile = "testing_sample_max150000_012930-012932.hipo";
+         String       flavor = "default";
+         //String  networkFile = "clas12rgf.network";
+         //int       runNumber = 12922;
+         
+         t.getConstrain().momentum.set(0.5,10.5);
+         t.getConstrain().vertex.set( -35.0, 25.0); // RG-F
+         t.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+         
+         t.encoderTrain(file_tr,networkArchive,run,"default");
+         t.encoderTest(file_ev,networkArchive,run,"default");
+    }
     
     public static void main(String[] args){
         List<String> files = new ArrayList<>();
@@ -530,8 +610,7 @@ public class ClassifierDataExtract extends OptionApplication {
 
     @Override
     public String getDescription() {
-        return "Applications to deal with CLAS12 AI/ML needs\n"
-                + "  inclding extracting data for training, training and testing....."; 
+        return "AI utilities for DC tracking for CLAS12"; 
     }
 
     @Override
@@ -551,6 +630,34 @@ public class ClassifierDataExtract extends OptionApplication {
                     store.getOptionParser("-extract").getInputList(),
                     store.getOptionParser("-extract").getOption("-max").intValue());*/
         }
+        
+        if(store.getCommand().compareTo("-train")==0){
+            String[] tokens = store.getOptionParser("-train").getOption("-vertex").stringValue().split(":");
+            double min = Double.parseDouble(tokens[0]);
+            double max = Double.parseDouble(tokens[1]);
+            
+            ClassifierDataExtract.trainClassifier(
+                    store.getOptionParser("-train").getOption("-t").stringValue(),
+                    store.getOptionParser("-train").getOption("-v").stringValue(),
+                    store.getOptionParser("-train").getOption("-a").stringValue(),
+                    store.getOptionParser("-train").getOption("-r").intValue(),
+                    min,max,store.getOptionParser("-train").getOption("-max").intValue(),
+                    store.getOptionParser("-train").getOption("-e").intValue());
+            
+            
+             ClassifierDataExtract.trainAutoEncoder(
+                    store.getOptionParser("-train").getOption("-t").stringValue(),
+                    store.getOptionParser("-train").getOption("-v").stringValue(),
+                    store.getOptionParser("-train").getOption("-a").stringValue(),
+                    store.getOptionParser("-train").getOption("-r").intValue(),
+                    min,max,store.getOptionParser("-train").getOption("-max").intValue(),
+                    store.getOptionParser("-train").getOption("-e").intValue());
+                    /*.extract(
+                    store.getOptionParser("-extract").getOption("-o").stringValue(), 
+                    store.getOptionParser("-extract").getInputList(),
+                    store.getOptionParser("-extract").getOption("-max").intValue());*/
+        }
+        
         return true;
     }
 

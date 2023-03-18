@@ -202,7 +202,7 @@ public class OptionStore {
     public static List<String> scanClasses(){
         List<String> j4npList = OptionStore.scanClasses("j4np");
         List<String> j4mlList = OptionStore.scanClasses("j4ml");
-        System.out.println("scanning : j4np = "+ j4npList.size() + " , j4ml = " + j4mlList.size());
+        //System.out.println("scanning : j4np = "+ j4npList.size() + " , j4ml = " + j4mlList.size());
         j4npList.addAll(j4mlList);
         return j4npList;
     }

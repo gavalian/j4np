@@ -94,8 +94,19 @@ public class HipoWriter implements DataSync {
     public void addConfig(String jsonString){
         Node n = new Node(HipoUtilsIO.HEADER_NODE_GROUP,
                 HipoUtilsIO.HEADER_NODE_ITEM,jsonString);
+        
         Event e = new Event();
         e.write(n);
+        headerEvents.add(e);
+    }
+    
+    public void addConfig(String key, String jsonString){
+        Node n = new Node(HipoUtilsIO.HEADER_NODE_GROUP,
+                HipoUtilsIO.HEADER_NODE_ITEM,jsonString);
+        Node nkey = new Node(HipoUtilsIO.HEADER_NODE_GROUP,
+                HipoUtilsIO.HEADER_NODE_ITEM_KEY,key);
+        Event e = new Event();
+        e.write(n); e.write(nkey);
         headerEvents.add(e);
     }
     

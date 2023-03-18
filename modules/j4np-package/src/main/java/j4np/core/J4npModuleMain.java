@@ -5,6 +5,7 @@
  */
 package j4np.core;
 
+
 import j4np.utils.dsl.DSLModuleManager;
 import j4np.utils.io.OptionApplication;
 import j4np.utils.io.OptionExecutor;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import j4np.utils.asciitable.Table;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 /**
@@ -117,14 +119,18 @@ public class J4npModuleMain {
         AnsiConsole.out().println(a.fgDefault());
         */
         Map<String,OptionApplication>  appMap = new HashMap<>();
+        
+        
+        //List<String>  configList = J4npModuleMain.getClassConfig();
+        
+        
         for(String clazzName : clazzList){
             try {
                 Class clazz = Class.forName(clazzName);
                 OptionApplication app = (OptionApplication) clazz.newInstance();
-                System.out.println(":: "  );
-                System.out.println("---> " + clazz);
-                System.out.printf("\n%s : %s \n" , app.getAppName(), app.getDescription());
-                
+                //System.out.println(":: "  );
+                //System.out.println("---> " + clazz);
+                //System.out.printf("\n%s : %s \n" , app.getAppName(), app.getDescription());              
                 appMap.put(app.getAppName(), app);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -143,11 +149,11 @@ public class J4npModuleMain {
                 
                 Class clazz = Class.forName(clazzName);
                 OptionApplication app = (OptionApplication) clazz.newInstance();
-                System.out.println(":: "  );
-                System.out.println("---> " + clazz);
-                System.out.printf("\n%s : %s \n" , app.getAppName(), app.getDescription());
-                
+                //System.out.println(":: "  );
+                //System.out.println("---> " + clazz);
+                           
                 appMap.put(app.getAppName(), app);
+            
             } catch (ClassNotFoundException ex) {
                 //Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InstantiationException ex) {
@@ -155,12 +161,35 @@ public class J4npModuleMain {
             } catch (IllegalAccessException ex) {
                 //Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            
         }
+        
+
+   
         return appMap;
     }
     
-    public static void show(){
+    public static void show(Map<String,OptionApplication> appMap){
+        String[] header = new String[]{"module","decsription"};
+
+        String[][] data = new String[appMap.size()][2]; 
         
+        //IRender render = new Render();
+        //IContextBuilder builder = render.newBuilder();
+        //builder.width(62).height(7);
+        //Table table = new Table(2, appMap.size()+1);
+        int counter = 0;
+        
+        for(Map.Entry<String,OptionApplication> entry : appMap.entrySet()){
+            data[counter][0] = entry.getKey();
+            data[counter][1] = entry.getValue().getDescription();
+            //System.out.printf(" element %d %d = %s | %s\n",1, counter, entry.getKey(),entry.getValue().getDescription());
+            counter++;
+        }
+        
+        String table = Table.getTable(header, data);
+        System.out.println(table);
     }
     
     
@@ -205,7 +234,10 @@ public class J4npModuleMain {
         if(args.length>0){
             J4npModuleMain.execute(appMap, args[0], args);
             //J4npModuleMain.test();return;      
-        } 
+        } else {
+            J4npModuleMain.printWelcome();
+            J4npModuleMain.show(appMap);
+        }
         
         //J4npModuleMain.execute(args);
         

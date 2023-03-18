@@ -142,6 +142,7 @@ public class EventFilter {
         int    result = nnegative*1000 + npositive * 100 + nneutral;
         return result;
     }
+    public String getFilterString(){ return this.filterString;}
     
     public String summary(){
         StringBuilder str = new StringBuilder();

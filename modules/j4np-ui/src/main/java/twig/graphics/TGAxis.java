@@ -104,7 +104,51 @@ public class TGAxis implements StyleNode {
             g2d.drawLine(x1, ypos, x2, ypos);
         }
     }
+    
+    public void drawAxisZ(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        
+        TStyle style = getStyle();
+        int x1 = ( int ) r.getX();
+        int x2 = ( int ) (r.getWidth()+r.getX()) + 4;
+        int y1 = ( int ) (r.getY()+r.getHeight());
+        int y2 = ( int ) (r.getY());
+        int ncolors = style.getPalette().palette2d().getPaletteSize();
+                
 
+        g2d.setColor(Color.yellow);
+        g2d.fillRect(x2, y2, 20, 20);
+        
+        int     step = (int) (Math.abs(y2-y1)/ncolors);
+        
+        int leftover = Math.abs(y2-y1) - step*ncolors;
+        //System.out.println("y2 = " + y2 + " y1 = " + y1 + " step = " 
+        //        + step + " , leftover = " + leftover + " ncolors = " + ncolors);
+        int       ypos = (int) (y2);
+        //System.out.println(" RECT = " + r);
+        
+        
+        for(int i = 0; i < ncolors; i++){
+            Color c = style.getPalette().palette2d().getColor(ncolors-1-i);
+            g2d.setColor(c);
+            if(i>leftover){
+                g2d.fillRect(x2, ypos, 20, (int) (step));
+                ypos = ypos + step;
+            } else {
+                g2d.fillRect(x2, ypos, 20, (int) (step+1));
+                ypos = ypos + step+1;
+            }
+            
+            //System.out.printf(" n = %4d, ypos = %5d\n",i,ypos);
+        }
+        
+        g2d.setColor(Color.BLACK);
+        g2d.drawRect(x2, y2, 20, Math.abs(y2-y1));
+        
+        //g2d.drawLine(x1,y1,x2,y2);
+        //g2d.drawRect(x1,y2,Math.abs(x2-x1-10),Math.abs(y2-y1));
+    }
+    
+    
     public void drawAxisX(Graphics2D g2d, Rectangle2D r, Translation2D tr){
         
         TStyle style = getStyle();
@@ -356,6 +400,14 @@ public class TGAxis implements StyleNode {
         if(attributes.getAxisType()==AxisType.AXIS_Y){
             if(this.attributes.getAxisGridDraw()==true) drawAxisGridY(g2d, r, tr);
             drawAxisY(g2d,r,tr);
+        }
+        
+        if(attributes.getAxisType()==AxisType.AXIS_Z){
+            //if(this.attributes.getAxisGridDraw()==true) drawAxisGridY(g2d, r, tr);
+            if(this.attributes.getAxisBoxDraw()==true){
+                //System.out.println(" >>>> drawing axis Z");
+                drawAxisZ(g2d,r,tr);
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import twig.widgets.LatexText;
 import twig.widgets.Legend;
 import twig.widgets.Line;
 import twig.widgets.MuPaveText;
+import twig.widgets.MultiPaveText;
 import twig.widgets.PaveText;
 
 /**
@@ -134,10 +135,43 @@ public class PaveTextDebug {
         c.view().region().draw(pt);
     }
     
+    public static void paveTextMulti(){
+        TGCanvas c = new TGCanvas();
+        c.view().region().setDebugMode(true);
+        
+        MultiPaveText pt = new MultiPaveText(0.1,0.90);
+        pt.setFont(new Font("Times New Roman",Font.PLAIN,18));
+        pt.addText(new String[] {
+            "conventional",
+            "tracking",
+            "4.134#pm0.0046",
+        } 
+        );
+        
+        pt.addText(new String[] {
+            "ai",
+            "track",
+            "4.13467#pm0.046",
+        } 
+        );
+        pt.addText(new String[] {
+            "dn-ai",
+            "track",
+            "4.13467#pm0.046",
+        } 
+        );
+        
+        c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitle("#theta-#gamma");
+        c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitle("#pi-#eta");
+        //pt.setTexAlign(LatexText.TextAlign.LEFT);
+        //pt.setSpacing(0.01);
+        c.view().region().draw(pt);
+    }
+    
     public static void main(String[] args){
         //PaveTextDebug.example1();
         //PaveTextDebug.exmapleLegend();
         //PaveTextDebug.paveAlign();
-        PaveTextDebug.paveTextNuevo();
+        PaveTextDebug.paveTextMulti();
     }
 }

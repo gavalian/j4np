@@ -14,6 +14,7 @@ import j4np.physics.store.EventModifierStore.EventModifierForward;
 import j4np.physics.store.ReactionConfiguration;
 import java.util.ArrayList;
 import java.util.List;
+import twig.data.DataGroup;
 import twig.data.H1F;
 import twig.graphics.TGCanvas;
 import twig.tree.Tree;
@@ -301,6 +302,83 @@ public class PhysicsReaction extends Tree {
         public String toString(){
             return String.format("->>> %14s , %8d, type = %s", entryName,entryOrder,entryType);
         }
+    }
+    
+    public DataGroup process(){
+        return null;
+    }
+    
+    public static DataGroup getParticle(String file, double beamEnergy, 
+            EventModifier modifier,String filter,  String operator, String value, int bins, double min, double max){
+        H1F h = new H1F("reaction",bins,min, max);
+        
+        h.attr().setTitleX(String.format("%s(%s)",value.toLowerCase(),operator));
+        h.attr().setLegend(String.format("%s(%s)",value.toLowerCase(),operator));
+        h.attr().setFillColor(3);
+        
+        DataGroup group = new DataGroup(1,1);
+        group.add(h, 0, "");
+        PhysicsReaction r = new PhysicsReaction(filter,beamEnergy);
+        r.setDataSource(new HipoReader(file),"REC::Particle");
+        r.addModifier(modifier);
+        if(operator.startsWith("[b]+[t]")==true){
+           String op2 = operator.replace("[b]+[t]", "");
+           r.addVector(r.getVector(),op2);
+        } else {
+            r.addVector(operator);
+        }
+        r.addEntry("value", 0, OperatorType.valueOf(value));
+        while(r.next()==true){
+            h.fill(r.getValue(0));
+        }
+        return group;
+    }
+    
+    public static DataGroup statistics(String file, EventModifier modifier, String[] filters){
+        EventFilter[] list = new EventFilter[filters.length];
+        for(int i = 0; i < filters.length; i++){            
+            list[i] = new EventFilter(filters[i]);
+        }
+        return PhysicsReaction.statistics(file, modifier, list);
+    }
+    
+    public static DataGroup statistics(String file, EventModifier modifier){
+        EventFilter[] list = new EventFilter[]{
+            new EventFilter("11:X+:X-:Xn"),
+            new EventFilter("11:1+:X+:X-:Xn"),
+            new EventFilter("11:1-:X+:X-:Xn")
+        };
+        return PhysicsReaction.statistics(file, modifier, list);
+    }
+    
+    public static DataGroup statistics(String file, EventModifier modifier, EventFilter[] filters){        
+        
+        DataGroup group = new DataGroup(1,1);
+        //H1F[] topology = new H1F[filters.length];        
+        //new H1F("topology_"+(i+1),filters.length,0.5,filters.length+0.5);
+        H1F topology = new H1F("topology",filters.length,0.5,filters.length+0.5);
+        topology.attr().setFillColor(3);
+        group.add(topology, 0, "");
+        
+        PhysicsReaction r = new PhysicsReaction("X+:X-:Xn",10.5);
+        r.setDataSource(new HipoReader(file),"REC::Particle");
+        r.addModifier(modifier);
+        int counter = 0;
+        while(r.next()==true){
+            for(int i = 0; i < filters.length; i++){
+                if(filters[i].isValid(r.getPhysicsEvent())==true) 
+                    topology.incrementBinContent(i);
+            }
+            counter++;
+        }
+        
+        System.out.printf(">>> statisctics (processed = %9d)\n",counter);
+        for(int k = 0; k < filters.length; k++){
+            System.out.printf("%2d >> %24s : %6d %8.5f\n",
+                    k,filters[k].getFilterString(),(int) topology.getBinContent(k),topology.getBinContent(k)/counter);
+        }
+        System.out.println();
+        return group;
     }
     
     public static void main(String[] args){

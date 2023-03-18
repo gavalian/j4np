@@ -4,6 +4,7 @@
  */
 package j4np.hipo5.data;
 
+import j4np.utils.asciitable.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class BankGroup {
         for(Bank b : dataBanks) event.read(b);
     }
     
+    public List<Bank> getBanks(){ return dataBanks;}
     public final void init(SchemaFactory f){
         List<String>  names = f.getSchemaKeys();
         Collections.sort(names);
@@ -38,10 +40,35 @@ public class BankGroup {
     }
     
     public void show(){
+    
         for(Bank b : dataBanks){
             if(b.getRows()>0)
                 System.out.println(b.getSummary());
             //b.show();
         }
+    }
+    
+    public static String getTable(List<Bank> banks, boolean skipEmpty){
+        int nrows = 0;
+        for(int i = 0; i < banks.size(); i++){
+            if(banks.get(i).getRows()>0) nrows++;
+        }
+        if(nrows==0) return "";
+        String[]  header = new String[]{"order", "bank name","group","item","rows", "size"};
+        String[][]  data = new String[nrows][6];
+        int counter = 0;
+        for(int i = 0; i < banks.size(); i++){
+            if(banks.get(i).getRows()>0){
+                data[counter][0] = "" + (i+1);
+                data[counter][1] = banks.get(i).getSchema().getName();
+                data[counter][2] = "" + banks.get(i).getSchema().getGroup();
+                data[counter][3] = "" + banks.get(i).getSchema().getItem();
+                data[counter][4] = "" + banks.get(i).getRows();
+                data[counter][5] = "" + banks.get(i).getNodeLength();
+                counter++;
+            }
+        }
+        return Table.getTable(header,data, new Table.ColumnConstrain(1,32));
+        
     }
 }

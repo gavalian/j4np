@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Random;
 import twig.config.TDataAttributes;
 
-
-
 /**
  * Defines the class to create a basic 1D Histogram
  * @author Gagik Gavalian
@@ -78,6 +76,17 @@ public class H1F  implements DataSet {
     	set(binHeights.length, xMin, xMax);
     	for (int i = 0; i < binHeights.length; i++) {
     		histogramData[i] = binHeights[i];
+                histogramDataError[i] = Math.sqrt(Math.abs(binHeights[i]));
+    	}
+        this.initAttributes();
+    	setName(name);
+    }
+    
+    public H1F(String name, double xMin, double xMax, double[] binHeights) {
+    	set(binHeights.length, xMin, xMax);
+    	for (int i = 0; i < binHeights.length; i++) {
+    		histogramData[i] = binHeights[i];
+                histogramDataError[i] = Math.sqrt(Math.abs(binHeights[i]));
     	}
         this.initAttributes();
     	setName(name);

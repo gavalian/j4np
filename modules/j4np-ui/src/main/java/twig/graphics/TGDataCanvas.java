@@ -21,8 +21,10 @@ import java.util.Timer;
 import javax.imageio.ImageIO;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import org.jfree.pdf.PDFDocument;
 import org.jfree.pdf.PDFGraphics2D;
 import org.jfree.pdf.Page;
@@ -562,12 +564,71 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                 List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
                 TGCanvas c = new TGCanvas("canvas",500,500,false);                
                 for( TDataNode2D dn : obj){
-                    c.view().region().draw(dn.getDataSet(),"same");                   
+                    c.view().region().draw(dn.getDataSet(),"same"+dn.getOptions());                   
                 }
             }
         }
         
+        if(e.getActionCommand().compareTo("axis_titles")==0){
+            if(popupProvider.region!=null){          
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                if(obj.size()>0){
+                    JTextField titleX = new JTextField();
+                    JTextField titleY = new JTextField();
+                    titleX.setText(obj.get(0).getDataSet().attr().getTitleX());
+                    titleY.setText(obj.get(0).getDataSet().attr().getTitleY());
+                    Object[] message = {
+                        "Axis Min:", titleX,
+                        "Axis Max:", titleY
+                    };
+                    
+                    int option = JOptionPane.showConfirmDialog(null, 
+                            message, "Login", JOptionPane.OK_CANCEL_OPTION);
+                    if (option == JOptionPane.OK_OPTION) {
+                        obj.get(0).getDataSet().attr().setTitleX(titleX.getText());
+                        obj.get(0).getDataSet().attr().setTitleY(titleY.getText());
+                    }
+                } else {System.out.println("no data in the region");}
+            }
+        }
         
+        if(e.getActionCommand().compareTo("axis_limits_x")==0){
+            if(popupProvider.region!=null){        
+                JTextField min = new JTextField();
+                JTextField max = new JTextField();
+                Object[] message = {
+                    "Axis Min:", min,
+                    "Axis Max:", max
+                };
+        
+                int option = JOptionPane.showConfirmDialog(null, 
+                        message, "Login", JOptionPane.OK_CANCEL_OPTION);
+                if (option == JOptionPane.OK_OPTION) {
+                    double _min = Double.parseDouble(min.getText());
+                    double _max = Double.parseDouble(max.getText());
+                    popupProvider.region.axisLimitsX(_min, _max);
+                }
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("axis_limits_y")==0){
+            if(popupProvider.region!=null){        
+                JTextField min = new JTextField();
+                JTextField max = new JTextField();
+                Object[] message = {
+                    "Axis Min:", min,
+                    "Axis Max:", max
+                };
+        
+                int option = JOptionPane.showConfirmDialog(null, 
+                        message, "Login", JOptionPane.OK_CANCEL_OPTION);
+                if (option == JOptionPane.OK_OPTION) {
+                    double _min = Double.parseDouble(min.getText());
+                    double _max = Double.parseDouble(max.getText());
+                    popupProvider.region.axisLimitsY(_min, _max);
+                }
+            }
+        }
         
     }
     
@@ -657,10 +718,10 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             );
             
             this.addMenu(menu, "Axis", 
-                    new String[]{"Grid X" ,"Grid Y","Log X", "Log Y",
+                    new String[]{"Grid X" ,"Grid Y","Limits X", "Limits Y", "Titles", "Log X", "Log Y",
                         "Lin X", "Lin Y"}, 
                     
-                    new String[]{"axis_grid_x", "axis_grid_y", 
+                    new String[]{"axis_grid_x", "axis_grid_y", "axis_limits_X","axis_limits_y","axis_titles",
                     "axis_log_x","axis_log_y","axis_lin_x","axis_lin_y"}
             );
             

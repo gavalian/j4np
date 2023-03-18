@@ -9,6 +9,7 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -28,7 +29,8 @@ public class TPalette2D {
     
     
     public TPalette2D(){
-        this.setPalette(PaletteName.kRainBow);
+        //this.setPalette(PaletteName.kRainBow);
+        this.setPalette(PaletteName.kPaw);
     }
     
     public TPalette2D(String name ){
@@ -82,30 +84,31 @@ public class TPalette2D {
         kMint(89),
         kNeon(90),
         kPastel(91),
-        kPearl(92),
-        kPigeon(93),
-        kPlum(94),
-        kRedBlue(95),
-        kRose(96),
-        kRust(97),
-        kSandyTerrain(98),
-        kSienna(99),
-        kSolar(100),
-        kSouthWest(101),
-        kStarryNight(102),
-        kSunset(103),
-        kTemperatureMap(104),
-        kThermometer(105),
-        kValentine(106),
-        kVisibleSpectrum(107),
-        kWaterMelon(108),
-        kCool(109),
-        kCopper(110),
-        kGistEarth(111),
-        kViridis(112);
+        kPaw(92),
+        kPearl(93),
+        kPigeon(94),
+        kPlum(95),
+        kRedBlue(96),
+        kRose(97),
+        kRust(98),
+        kSandyTerrain(99),
+        kSienna(100),
+        kSolar(101),
+        kSouthWest(102),
+        kStarryNight(103),
+        kSunset(104),
+        kTemperatureMap(105),
+        kThermometer(106),
+        kValentine(107),
+        kVisibleSpectrum(108),
+        kWaterMelon(109),
+        kCool(110),
+        kCopper(111),
+        kGistEarth(112),
+        kViridis(113);
 
         private int value;
-        private static final Map<Object, PaletteName> map = new HashMap<>();
+        private static final Map<Object, PaletteName> map = new TreeMap<>();
 
         private PaletteName(int value) {
             this.value = value;
@@ -128,12 +131,14 @@ public class TPalette2D {
         }
         public static String[] getNames(){
             Set<Object> set = map.keySet();
+            
             String[] data = new String[set.size()];
             int counter = 0;
             for(Object item : set){
                 data[counter] = item.toString();
                 counter++;
             }
+            
             return data;
         }
         
@@ -169,6 +174,9 @@ public class TPalette2D {
 
      public Color getColor3D(double value, double max, boolean islog) {
          return getColor3D(value, 0, max, islog);
+     }
+     public Color getColor(int index) {
+         return this.paletteColors[index];
      }
      
      public Color getColor3D(double value, double min, double max, boolean islog) {
@@ -612,7 +620,16 @@ public class TPalette2D {
                 CreateGradientColorTable(red, green, blue);
             }
             break;
-
+            case kPaw: {
+                double red[] = {0,13,33,52,72,92,92,92,92,92,92,116,141,171,204,198,193,189,188,0};
+                double green[] = {0,40,80,120,161,201,201,201,201,201,201,201,202,203,204,165,126,89,57,0};
+                double blue[] = {196,196,197,198,200,202,165,130,97,71,59,60,61,63,66,54,43,34,28,0};
+                this.paletteColors = new Color[red.length];
+                for(int i = 0; i < this.paletteColors.length;i++)
+                    this.paletteColors[i] = new Color((int) red[i], (int) green[i], (int) blue[i]);
+                //CreateGradientColorTable(red, green, blue);
+            } 
+            break;
             // Pearl
             case kPearl: {
                 double red[] = {225., 183., 162., 135., 115., 111., 119., 145., 211.};

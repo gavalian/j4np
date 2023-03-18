@@ -21,6 +21,14 @@ public class PhotoProductionClas6 extends PhysicsReaction {
         this.setDataSourcePhoto(r, "EVENT::particle", "TAGGER::tagr");
     }
     
+    
+    public PhotoProductionClas6(String file, String particleBank){
+        super("2212:211:-211:X+:X-:Xn",0.0);
+        initialize();
+        HipoReader r = new HipoReader(file);
+        this.setDataSourcePhoto(r, particleBank, "TAGGER::tagr");
+    }
+    
     public PhotoProductionClas6(){
         super("2212:211:-211:X+:X-:Xn",0.0);
         initialize();

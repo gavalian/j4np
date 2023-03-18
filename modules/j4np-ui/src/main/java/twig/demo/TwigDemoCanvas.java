@@ -20,6 +20,7 @@ import twig.studio.StudioWindow;
  */
 
 public class TwigDemoCanvas extends JFrame {
+    
     public List<TwigDemo> demos = new ArrayList<>();
     
     public TwigDemoCanvas(){
@@ -60,7 +61,8 @@ public class TwigDemoCanvas extends JFrame {
         TwigDemoCanvas td = new TwigDemoCanvas();
         td.addDemo(new HistogramDemo())
                 .addDemo(new GraphErrorsDemo())
-                .addDemo(new FittingExample());
+                .addDemo(new FittingExample())
+                .addDemo(new HistDemo2D());
         td.initUI();
         td.showFrame();
     }

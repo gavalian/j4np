@@ -31,6 +31,7 @@ public class Range {
     }
     
     public double translate(double x){
+        if(x<this.rangeMin||x>this.rangeMax) return -1000.00;        
         return (x - rangeMin)/(rangeMax-rangeMin);
     }
     

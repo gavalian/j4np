@@ -455,9 +455,11 @@ public class Event implements DataEvent {
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
-            System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , size = %4d\n",
-                    group,item, position, type, size&0x00FFFFFF);
+            int   sizeWord  = eventBuffer.getInt(   position + 4);
+            int   size  = sizeWord&0x00FFFFFF;
+            int   format = (sizeWord>>24)&0x000000FF;
+            System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , format length = %4d, size = %4d\n",
+                    group,item, position, type, format, size);
             //if(__group==group&&__item==item)    return position;
             position += size + NODE_HEADER_LENGTH;
         }
@@ -475,8 +477,10 @@ public class Event implements DataEvent {
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
-            String data = String.format("node [%4d, %3d], type = %3d, length = %d", group,item,type,size);
+            int   sizeWord  = eventBuffer.getInt(   position + 4);
+            int     size = sizeWord&0x00FFFFFF;
+            int   format = (sizeWord>>24)&0x000000FF;
+            String data = String.format("node [%4d, %3d], type = %3d, format = %d, length = %d", group,item,type, format,size);
             //System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , size = %4d\n",
             //        group,item, position, type, size&0x00FFFFFF);
             //if(__group==group&&__item==item)    return position;
@@ -486,7 +490,6 @@ public class Event implements DataEvent {
         return leafs;
         //return -1;
     }
-    
     
     public int scanLengthAt(int __group, int __item, int position){
          short group = eventBuffer.getShort( position    );

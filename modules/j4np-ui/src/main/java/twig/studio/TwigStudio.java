@@ -15,6 +15,7 @@ import twig.data.H1F;
 import twig.data.H2F;
 import twig.data.TDataFactory;
 import twig.data.TDirectory;
+import twig.data.TGroupDirectory;
 import twig.graphics.TGCanvas;
 
 /**
@@ -91,6 +92,7 @@ public class TwigStudio {
         window.getStudioFrame().setTreeProvider(tp);
     }
     
+        
     public static void browser(String filename){
         
         StudioWindow.changeLook();
@@ -102,6 +104,21 @@ public class TwigStudio {
         window.setVisible(true);
         
         TDirectory dir = new TDirectory();
+        dir.read(filename);
+        
+        window.getStudioFrame().setTreeProvider(dir);
+    }
+    
+    public static void groupBrowser(String filename){
+         StudioWindow.changeLook();
+        
+        StudioWindow window = new StudioWindow();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        window.setSize(1200, 900);
+        window.setVisible(true);
+        
+        TGroupDirectory dir = new TGroupDirectory();
         dir.read(filename);
         
         window.getStudioFrame().setTreeProvider(dir);

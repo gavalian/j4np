@@ -18,6 +18,7 @@ import j4np.utils.base.ArchiveUtils;
 import java.util.Arrays;
 import java.util.List;
 import twig.data.AsciiPlot;
+import twig.data.DataGroup;
 import twig.data.DataSetSerializer;
 import twig.data.H1F;
 import twig.data.H2F;
@@ -164,6 +165,15 @@ public class TrackNetworkTrainer {
         dir.add("/"+dataDir, h2);
         dir.write(archive);
         
+        DataGroup group = new DataGroup(2,3);
+        group.setName("autoencoder");
+        group.add(h2, 0, "");
+        for(int i = 0; i < 5; i++){
+            H1F h = h2.sliceX(i);
+            h.setName("region_"+(i+1));
+            group.add(h, i+1, "");
+        }
+        DataSetSerializer.exportDataGroup(group, archive, dataDir);
         if(this.drawAscii == true){
            /* for(int bin = 0; bin < h2.getXAxis().getNBins(); bin++){
                 H1F h = h2.sliceX(bin);
@@ -212,10 +222,20 @@ public class TrackNetworkTrainer {
         model.setType(EJMLModel.ModelType.SOFTMAX);
         
         H1F  hTruePositive = new H1F(  "hTruePositive",40,0.5,40.5);
-        H1F hFalsePositive = new H1F( "hFalsePositive",40,0.5,40.5);
+        H1F  hTrue = new H1F(  "hTrue",40,0.5,40.5);
+        H1F  hTrueNegative = new H1F(    "hTrueNegative",40,0.5,40.5);
+        H1F hFalsePositive = new H1F(   "hFalsePositive",40,0.5,40.5);
+        H1F  hFalseNegative = new H1F(  "hFalseNegative",40,0.5,40.5);
         
         hTruePositive.attr().set("fc=2,fs=2,lc=2");
         hFalsePositive.attr().set("fc=4,fs=12,lc=4");
+        hTrueNegative.attr().set("fc=2,fs=2,lc=2");
+        hFalseNegative.attr().set("fc=4,fs=12,lc=4");
+        
+        
+        hTrue.attr().set("lc=1");
+        
+        
         long candidateCount = 0L;
         long readTime = 0L;
         long normTime = 0L;
@@ -225,6 +245,7 @@ public class TrackNetworkTrainer {
             long then = System.currentTimeMillis();
             List<DataList> dataList = DataProvider.readClassifierDataWithTagEvents(hipoFile, 
                     constrain, i, maxBinsRead);
+            
             long now = System.currentTimeMillis();
             
             readTime += (now-then);
@@ -232,7 +253,9 @@ public class TrackNetworkTrainer {
             for(int k = 0; k < dataList.size(); k++){
                 
                 DataList list = dataList.get(k);
+                
                 candidateCount += list.getList().size();
+                
                 long t1 = System.nanoTime();
                 
                 DataList.normalizeInput(list, dc6normalizer);
@@ -248,6 +271,10 @@ public class TrackNetworkTrainer {
                 evalTime += (n2-t1);
                 int maxIndex = highestIndex(list);
                 
+                if(trueIndex>=0){
+                    hTrue.incrementBinContent(i);
+                }
+                
                 if(trueIndex>=0&&maxIndex>=0){
                     double[] meansTrue = list.getList().get(trueIndex).getFirst();
                     double[] meansHigh = list.getList().get(maxIndex).getFirst();
@@ -261,31 +288,55 @@ public class TrackNetworkTrainer {
                     //}
                    
                 //} else {
-
-                    
-                  if(trueIndex==maxIndex){
+                
+                if(trueIndex==maxIndex){
                     hTruePositive.incrementBinContent(i); 
-                  } else {
+                } else {
                     //System.out.println("event # " + k);
                     //System.out.println("::: true index = " + trueIndex 
                     //        + " high index = " + maxIndex + "  share = " + shareCount);
                     //list.show();
-                    if(shareCount>0) hFalsePositive.incrementBinContent(i);
-                  }
-                }
+                    if(shareCount>0){
+                        hFalsePositive.incrementBinContent(i);
+                    } else { hTrueNegative.incrementBinContent(i);}
+                    
+                } 
+                
+                
+              }
             }
         }
         System.out.printf("timess = read %d norm %.1f eval %.1f, count = %d\n",
                 readTime,normTime*1e-6,evalTime*1e-6,candidateCount);
-        H1F hEfficiency = H1F.divide(hFalsePositive, hTruePositive);
-        hEfficiency.attr().set("fc=5,fs=14,lc=5");
-        hEfficiency.setName("hEffciency");
-        TDirectory dir = new TDirectory();
         
-        dir.add(dataDir, hFalsePositive);
-        dir.add(dataDir, hTruePositive);
-        dir.add(dataDir, hEfficiency);
-        dir.write(archive);
+        H1F hEfficiencyPos = H1F.divide(hFalsePositive, hTruePositive);
+        hEfficiencyPos.attr().set("fc=5,fs=14,lc=5");
+        hEfficiencyPos.setName("hEffciencyPos");
+        
+         H1F hEfficiencyNeg = H1F.divide(hFalseNegative, hTruePositive);
+        hEfficiencyNeg.attr().set("fc=5,fs=14,lc=5");
+        hEfficiencyNeg.setName("hEffciencyNeg");
+        
+        TDirectory dir = new TDirectory();
+        DataGroup group = new DataGroup(2,2);
+        group.setName("classifier");
+        
+        group.add(hEfficiencyPos, 3, "");
+        //group.add(hEfficiencyNeg, 5, "");
+        
+        group.add(hTrue, 0, "");
+        group.add( hTruePositive, 0, "same");
+        
+        group.add(hFalsePositive, 1, "");
+        group.add( hTrueNegative, 2, "same");
+       // group.add(hFalseNegative, 2, "");
+        //group.add( hTrueNegative, 3, "");
+        
+        DataSetSerializer.exportDataGroup(group, archive, dataDir);
+        //dir.add(dataDir, hFalsePositive);
+        //dir.add(dataDir, hTruePositive);
+        //dir.add(dataDir, hEfficiency);
+        //dir.write(archive);
     }
 
     private int highestIndex(DataList list){
@@ -309,7 +360,7 @@ public class TrackNetworkTrainer {
         }
         return index;
     }
-         
+    
     private void classifierEvaluate(EJMLModel model, DataList dl){
         for(int i = 0; i < dl.getList().size(); i++){
             float[] result = new float[3];

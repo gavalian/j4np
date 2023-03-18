@@ -44,7 +44,21 @@ public class Table {
 		return getTable(headerCol, data);
 	}
 	
-	/** Returns a formatted table string. */
+        /** Returns a formatted table string.
+         * @param header
+         * @param data
+         * @return  */
+	public static String getTable(String[] header, String[][] data, ColumnConstrain... constrains) {
+		Column[] headerCol = Arrays.asList(header).stream()
+				.map(h -> new Column(h))
+				.collect(Collectors.toList())
+				.toArray(new Column[header.length]);
+		
+		return getTable(headerCol, data, constrains);
+	}
+	/** Returns a formatted table string.
+         * @param headerObjs
+         */
 	public static String getTable(Column[] headerObjs, String[][] data) {
 		if (data == null || data.length == 0) {
 			throw new IllegalArgumentException("Please provide valid data : " + data);
@@ -111,6 +125,82 @@ public class Table {
 		return tableBuf.toString();
 	}
 	
+        public static String getTable(Column[] headerObjs, String[][] data, ColumnConstrain... constrains) {
+		if (data == null || data.length == 0) {
+			throw new IllegalArgumentException("Please provide valid data : " + data);
+		}
+		
+		/**
+		 * Table String buffer
+		 */
+		StringBuilder tableBuf = new StringBuilder();
+		
+		/**
+		 * Get maximum number of columns across all rows
+		 */
+		String[] header = getHeaders(headerObjs);
+		int colCount = getMaxColumns(header, data);
+
+		/**
+		 * Get max length of data in each column
+		 */
+		List<Integer> colMaxLenList = getMaxColLengths(colCount, header, data);
+		for(int i = 0; i < constrains.length; i++){
+                    int  order = constrains[i].column;
+                    int length = constrains[i].length;
+                    int    max = colMaxLenList.get(order);
+                    if(max<length)
+                        colMaxLenList.set(order, length);
+                }
+		/**
+		 * Check for the existence of header
+		 */
+		if (header != null && header.length > 0) {
+			/**
+			 * 1. Row line
+			 */
+			tableBuf.append(getRowLineBuf(colCount, colMaxLenList, data));
+			
+			/**
+			 * 2. Header line
+			 */
+			tableBuf.append(getRowDataBuf(colCount, colMaxLenList, header, headerObjs, true));
+		}
+		
+		/**
+		 * 3. Data Row lines
+		 */
+		tableBuf.append(getRowLineBuf(colCount, colMaxLenList, data));
+		String[] rowData = null;
+		
+		//Build row data buffer by iterating through all rows
+		for (int i = 0 ; i < data.length ; i++) {
+			
+			//Build cell data in each row
+			rowData = new String [colCount];
+			for (int j = 0 ; j < colCount ; j++) {
+				
+				if (j < data[i].length) {
+					rowData[j] = data[i][j];	
+				} else {
+					rowData[j] = "";
+				}
+			}
+			
+			tableBuf.append(getRowDataBuf(colCount, colMaxLenList, rowData, headerObjs, false));
+		}
+		
+		/**
+		 * 4. Row line
+		 */
+		tableBuf.append(getRowLineBuf(colCount, colMaxLenList, data));
+		return tableBuf.toString();
+	}
+        
+        public static String getTable(List<String> headerObjs, List< List<String>> data) {
+            return "undefined";
+        }
+        
 	private static String getRowDataBuf(int colCount, List<Integer> colMaxLenList, 
 			String[] row, Column[] headerObjs, boolean isHeader) {
 		
@@ -262,4 +352,16 @@ public class Table {
 		
 		return header;
 	}
+        
+        public static class ColumnConstrain {
+            int column = 0;
+            int length = 12;
+            public ColumnConstrain(int __column, int __length){ column = __column; length = __length;}
+        }
+        
+        public static void main(String[] args){
+            String[]   header = new String[]{"a","b"};
+            String[][]   data = new String[][]{ {"1","2"},{"11","22"}};
+            System.out.println(Table.getTable(header, data, new ColumnConstrain(0,12)) );
+        }
 }

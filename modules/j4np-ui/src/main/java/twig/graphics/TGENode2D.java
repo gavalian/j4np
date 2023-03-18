@@ -33,7 +33,7 @@ public class TGENode2D extends TDataNode2D {
     public TGENode2D(GraphErrors gr, String options){
         dataSet = gr; 
         if(options.length()<1){
-            setOptions("PE");
+            setOptions("PE"+options);
         } else {
             setOptions(options);
         }

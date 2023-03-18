@@ -7,12 +7,14 @@ package j4np.hipo5.utils;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.BankGroup;
 import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Node;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -63,6 +65,8 @@ public class HipoDump {
         
         factory = reader.getSchemaFactory().reduce(selection);
         group.init(factory);
+        System.out.printf("DUMP : factory disctionaries %d, reduced size = %d\n",
+                reader.getSchemaFactory().getSchemaList().size(), factory.getSchemaList().size());
     }
     
     public void rewind(){
@@ -101,7 +105,13 @@ public class HipoDump {
         System.out.println();
         System.out.println("CURRENT EVENT: " + this.currentEvent + "\n"); 
         group.read(event);
-        group.show();
+        //group.show();
+        System.out.println(BankGroup.getTable(group.getBanks(), true));
+    }
+    
+    public void gotoEvent(int index){
+        System.out.printf("CURRENT EVENT %d, GOTO %d\n",this.currentEvent,index);
+        reader.getEvent(event, index);
     }
     
     public void show(String bank){
@@ -113,10 +123,36 @@ public class HipoDump {
         }
     }
     
+    public void show(int order){
+        try {
+            Bank b = group.getBanks().get(order);
+            b.show();
+        } catch (Exception e){
+            System.out.println("::: bank not found : " + order);
+        }
+    }
+    public void describe(String bank){
+        Bank b = reader.getBank(bank);
+        b.getSchema().show();
+    }
+    
+    public void show(int group, int item){
+        try {
+            Map<Integer,Node> nodes = this.event.readNodes(group);
+            if(nodes.containsKey(item)==true){
+                nodes.get(item).show();
+            } else {
+                System.out.printf("::: can not find node %d/%d\n",group,item);
+            }
+        } catch (Exception e){
+            System.out.printf("::: can not find node %d/%d\n",group,item);
+        }
+    }
+    
     public void showRaw(){
         System.out.println();
         System.out.println("CURRENT EVENT: " + this.currentEvent + "\n"); 
-       event.scanShow();
+        event.scanShow();
     }
     
     public void markEvent(){

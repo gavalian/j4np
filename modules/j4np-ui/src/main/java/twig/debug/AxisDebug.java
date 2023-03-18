@@ -81,8 +81,28 @@ public class AxisDebug {
         frame.setVisible(true);
     }
     
+    public static void zAxisDebug(){
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        TGDataCanvas dc = new TGDataCanvas();
+        
+        TGRegion af = new TGRegion(true);
+        
+        af.getAxisFrame().getAxisZ().getAttributes().setAxisBoxDraw(Boolean.TRUE);
+        
+        //af.getAxisFrame().setLogY(true);
+        
+        dc.addNode(af);
+        frame.add(dc);
+
+        frame.pack();
+        frame.setSize(500, 500);
+        frame.setVisible(true);
+        
+    }
     public static void main(String[] args){
         //AxisDebug.logarithmic();
-        AxisDebug.linear();
+        //AxisDebug.linear();
+        AxisDebug.zAxisDebug();
     }
 }

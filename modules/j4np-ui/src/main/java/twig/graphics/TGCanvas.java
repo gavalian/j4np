@@ -32,16 +32,18 @@ public class TGCanvas extends JFrame implements ActionListener {
     
     private JPanel     canvasPane = null;
 
-    private StatusPane statusPane = null;
+    private StatusPane      statusPane = null;
     private String     dataCanvasTitle = "canvas";
 
     public TGCanvas(){
         StudioWindow.changeLook();
+        dataCanvasTitle = "canvas1";
         initUI(true);
     }
 
     public TGCanvas(int xsize, int ysize){
         StudioWindow.changeLook();
+        dataCanvasTitle = "canvas1";
         CANVAS_DEFAULT_WIDTH  = xsize;
         CANVAS_DEFAULT_HEIGHT = ysize;
         initUI(true);
@@ -196,6 +198,7 @@ public class TGCanvas extends JFrame implements ActionListener {
     public TGCanvas cd(int pad){ this.view().cd(pad); return this;}
     
     public TGCanvas draw(String data){ return this.draw(data, "");}
+    
     public TGCanvas draw(String data, String option){
         if(data.contains("/")==false){
             DataSet ds = TwigStudio.getInstance().dir().get("/studio",data);

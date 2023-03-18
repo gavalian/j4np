@@ -70,6 +70,7 @@ public class HipoReader implements DataSource {
     
     private SchemaFactory  schemaFactory = new SchemaFactory();
     private List<String>   configFactory = new ArrayList<>();
+    private Map<String,String>  userConfiguration = new HashMap<>();
     
     private ProgressPrintout      progress = new ProgressPrintout();
     private boolean          progressPrint = true;
@@ -165,6 +166,17 @@ public class HipoReader implements DataSource {
                         System.out.printf("content  : %s\n\n", schemaNode.getString());
                     }
                 }
+                
+                int configKeyPos = dictionaryEvent.scan(32555,1);
+                int configStringPos = dictionaryEvent.scan(32555,2);
+                
+                if(configKeyPos>0&&configStringPos>0){
+                    Node   ckn = new Node(32555,1,DataType.STRING,20);
+                    Node   csn = new Node(32555,2,DataType.STRING,20);
+                    ckn = dictionaryEvent.read(ckn,configKeyPos);
+                    csn = dictionaryEvent.read(csn,configStringPos);
+                    userConfiguration.put(ckn.getString(), csn.getString());
+                }
             }
             
             this.scanFileTrailer();
@@ -193,6 +205,16 @@ public class HipoReader implements DataSource {
             Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public boolean hasConfig(String name){
+        return userConfiguration.containsKey(name);
+    }
+    
+    public String getConfig(String name){
+        return userConfiguration.get(name);
+    }
+    
+    public Map<String,String> getUserConfigurations(){ return this.userConfiguration;}
     
     public void showRecords(){
         System.out.println("--------> size = " + recordPositions.size());

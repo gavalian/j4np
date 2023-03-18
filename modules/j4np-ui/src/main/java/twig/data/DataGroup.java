@@ -295,6 +295,20 @@ public class DataGroup {
        }
     }
     
+    public static DataGroup projectionY(H2F h2){
+        int nbinsX = h2.getXAxis().getNBins();
+        int nPads = (int) Math.sqrt(nbinsX);
+        DataGroup group = new DataGroup(nPads,nPads);
+        for(int i = 0; i < nbinsX; i++){
+            H1F h = h2.sliceX(i);
+            h.attr().setFillColor(4);
+            h.attr().setTitleX(String.format("%.4f", h2.getXAxis().getBinCenter(i)));
+            if(i<nPads*nPads){
+                group.add(h, i, "");
+            }
+        }
+        return group;
+    }
     
     public static DataGroup fronJson(String archive, String directory, String json){
         

@@ -52,6 +52,17 @@ public class GraphErrors implements DataSet {
         initAttributes();
     }
 
+    public GraphErrors(String name, DataVector grX, DataVector grY, DataVector erY) {
+        //setName(name);
+        graphName = name;
+        for (int i = 0; i < grX.getSize(); i++) {
+            double errX = 0.0;
+            //if (erX != null) errX = erX.getValue(i);
+            this.addPoint(grX.getValue(i), grY.getValue(i), 0.0, erY.getValue(i));
+        }
+        initAttributes();
+    }
+    
     public GraphErrors(String name, DataVector grY) {
         //setName(name);
         for (int i = 0; i < grY.getSize(); i++) {
@@ -199,7 +210,14 @@ public class GraphErrors implements DataSet {
     }
     
     public GraphErrors  divide(GraphErrors gr){
-            throw new UnsupportedOperationException("graph divide to graph not implemented yet");
+        
+        GraphErrors g = new GraphErrors();
+        for(int i = 0; i < this.dataX.size(); i++){
+            double y = getVectorY().getValue(i)/gr.getVectorY().getValue(i);
+            g.addPoint(this.getVectorX().getValue(i), y);
+        }
+        return g;
+        //throw new UnsupportedOperationException("graph divide to graph not implemented yet");
 
        /* if(this.getDataSize(0)!=gr.getDataSize(0)){
             System.out.println("[graph:divide] error , graphs have different sizes");

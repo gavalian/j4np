@@ -20,7 +20,7 @@ for(int i = 0; i < lines.size();i++){
    h.setBinError(i,Double.parseDouble(tokens[2]));
 }
 h.attr().setLineWidth(1);
-h.attr().setFillColor(6);
+h.attr().setFillColor(4);
 
 
 H1F h2 = new H1F("h",100,0.0,3.0);
@@ -43,7 +43,7 @@ for(int i = 0; i < lines.size();i++){
    h11.setBinError(i,Double.parseDouble(tokens[2]));
 }
 
-h11.attr().setFillColor(6);
+h11.attr().setFillColor(7);
 //h11.setFillColor(0);
 
 H1F h12 = new H1F("h",100,0.0,3.0);
@@ -88,8 +88,8 @@ graph.attr().setMarkerColor(2);
 
 GraphErrors graph2 = h13.getGraph();
 graph2.attr().setMarkerSize(8);
-graph2.attr().setLineColor(2);
-graph2.attr().setMarkerColor(2);
+graph2.attr().setLineColor(7);
+graph2.attr().setMarkerColor(7);
 
 h2.setTitleX("Mx(e#rarrowe'#pi^+X) [GeV]");
 h12.setTitleX("Mx(e#rarrowe'#pi^+#pi^-X) [GeV]");
@@ -102,11 +102,30 @@ graph2.attr().setTitleY("Ratio");
 
 Line l1 = new Line(0.0,1.0,3.0,1.0);
 
+Line l20 = new Line(0.0,1.2,3.0,1.2);
+Line l35 = new Line(0.0,1.35,3.0,1.35);
+
+l20.setStyle(3); l20.setWidth(2);
+l35.setStyle(3); l35.setWidth(2);
+
+h2.attr().setLegend("with AI");
+h.attr().setLegend("conventional");
+h12.attr().setLegend("with AI");
+h11.attr().setLegend("conventional");
+
+h2.attr().set("fc=4");
+h.attr().set("fc=7");
+
+h12.attr().set("fc=4");
+h11.attr().set("fc=7");
+
+graph.attr().set("mc=7,lc=7");
+graph2.attr().set("mc=7,lc=7");
 c.view().cd(0).region().draw(h2).draw(h,"same");
 c.view().cd(2).region().draw(h12).draw(h11,"same");
 
-c.view().cd(1).region().draw(graph).draw(l1);
-c.view().cd(3).region().draw(graph2).draw(l1);
+c.view().cd(1).region().draw(graph,"PE").draw(l1).draw(l20);
+c.view().cd(3).region().draw(graph2,"PE").draw(l1).draw(l35);
 
 c.view().cd(1).region().getAxisFrame().getAxisX().setFixedLimits(0.0,3.0);
 c.view().cd(1).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
@@ -116,6 +135,8 @@ c.view().cd(3).region().getAxisFrame().getAxisY().setFixedLimits(0.8,1.6);
 
 //c.view().addLabels(0.9,0.98);
 c.repaint();
+c.repaint();
+
 c.view().export("physics_scan.pdf","pdf");
 
 /*

@@ -8,12 +8,14 @@ import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
+import j4np.hipo5.io.HipoDoctor;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
 import j4np.utils.ProgressPrintout;
 import j4np.utils.io.OptionApplication;
 import j4np.utils.io.OptionParser;
 import j4np.utils.io.OptionStore;
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +27,13 @@ public class HipoUtilities extends OptionApplication {
     
     public HipoUtilities(){
         
-        super("hipoutils");
+        super("h5utils");
         OptionStore parser = this.getOptionStore();
-        parser.setName("hipoUtils");
+        parser.setName("h5utils");
         
         parser.addCommand("-filter", " filter banks from the input files");
+        parser.addCommand("-info", " printout information about the file");
+        parser.addCommand("-doctor", " fix corrupt hipo file");
         
         parser.getOptionParser("-filter").addRequired("-o", " output file name ")
                 .addOption("-t", "0", " tag of the events to filter. other tags are written as is.")
@@ -48,6 +52,10 @@ public class HipoUtilities extends OptionApplication {
         
         parser.addCommand("-merge", "merge input files into one big output file");
         
+        
+        parser.addCommand("-dump", " show content of the hipo file");
+        parser.getOptionParser("-dump").addOption("-b","*", "show only banks give by the list")
+                .addOption("-e", "*", "advance to events where given banks exist");
     }
 
     public static void filter(List<String> inputFile, String outputFile, String regEx, 
@@ -142,10 +150,102 @@ public class HipoUtilities extends OptionApplication {
         writer.close();
     }
 
+    public static void fileInfo(String file){
+        HipoReader r = new HipoReader(file);
+        r.showInfo();
+        //r.showRecords();
+    }
     
     @Override
     public String getDescription() {
         return "Utilities to manipulated hipo files";
+    }
+    
+    
+    public static String waitForInput(){
+        String line = "";
+        Console c = System.console();
+        if (c != null) {
+            // printf-like arguments
+            //c.format(message, args);
+            c.format("\nChoose (n=next,p=previous, q=quit, h=help, s=show banks, r=show raw), Type Bank Name or id : ");
+            line = c.readLine();
+        }
+        return line;
+    }
+    
+    public static void printHelpScreen(){
+        System.out.println("HELP\n");
+        System.out.println("\t    n: next event and show bank content");
+        System.out.println("\t    s: show banks for current event");
+        System.out.println("\t    r: show raw node info for current event");
+        System.out.println("\t    c: show user configurations of the file");
+        System.out.println("\t    q: quit");
+        System.out.println("\t    d: describe the bank [give bank name]");
+        System.out.println("\t  g/i: show data for node group=g and item=i");
+        
+        System.out.println("\n\nthis is the way...\n");
+        
+        
+    }
+    
+    public static void hipoDump(String file, String banksShow, String banksExist){
+        HipoDump hd = new HipoDump(file,banksShow,banksExist);
+        boolean exitLoop = false;
+        
+        while(exitLoop==false){
+            String response = "n";
+            
+            response = HipoUtilities.waitForInput();
+            
+            if(response.equals("q")||response.equals("Q")) {
+                exitLoop=true; break;
+            }
+            
+            if(response.equals("s")){
+                hd.show();
+            }
+            
+            if(response.equals("h")){
+               HipoUtilities.printHelpScreen();
+            }
+            
+            if(response.equals("n")){
+                hd.advance();
+                hd.show();
+            }
+            
+            if(response.equals("r")){
+                //hd.advance();
+                System.out.println();
+                hd.showRaw();
+            }
+            
+            if(response.contains("/")==true){
+                String[] tokens = response.split("/");
+                if(tokens[0].startsWith("d")==true){
+                    hd.describe(tokens[1].trim());
+                } else {
+                    hd.show(Integer.parseInt(tokens[0].trim()), Integer.parseInt(tokens[1].trim()));
+                }
+            } else {
+            
+                if(response.startsWith("goto")){
+                    String[] tokens = response.split("\\s+");
+                    Integer order = Integer.parseInt(tokens[1]);
+                    hd.gotoEvent(order);
+                }
+                if(response.trim().matches("-?\\d+(\\.\\d+)?")==true){
+                    hd.show(Integer.parseInt(response.trim())-1);
+                } else {
+                    if(response.length()>2&&response.startsWith("goto")==false){
+                        String   bankName = response.trim();
+                        hd.show(bankName);
+                    }
+                }
+            }
+        }
+        
     }
     
     public static void replicate(String input, String output, int start, int nEvents, int nExpand){
@@ -190,6 +290,24 @@ public class HipoUtilities extends OptionApplication {
             int      nevt = p.getOption("-n").intValue();
             int      nrep = p.getOption("-r").intValue();
             HipoUtilities.replicate(p.getInputList().get(0), output, start, nevt, nrep);
+        }
+        
+        if(parser.getCommand().compareTo("-dump")==0){
+            OptionParser p = parser.getOptionParser("-dump");
+            
+            HipoUtilities.hipoDump(p.getInputList().get(0), p.getOption("-b").stringValue(),p.getOption("-e").stringValue());
+        }
+        
+        if(parser.getCommand().compareTo("-info")==0){
+            OptionParser p = parser.getOptionParser("-info");
+            
+            HipoUtilities.fileInfo(p.getInputList().get(0));
+        }
+        
+        if(parser.getCommand().compareTo("-doctor")==0){
+            OptionParser p = parser.getOptionParser("-doctor");
+            HipoDoctor doctor = new HipoDoctor();
+            doctor.scanCure(p.getInputList().get(0));
         }
         return true;
     }

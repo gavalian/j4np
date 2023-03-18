@@ -103,7 +103,7 @@ public class TextFileReader {
             } 
         return nextLines;
     }
-    
+           
     public boolean readNext(List<String> lines, String regEx){
         boolean stopReading = false;
         String  itemRegEx = regEx.replace("*", ".*");
@@ -153,7 +153,7 @@ public class TextFileReader {
             return false;
         }
         return true;
-    }
+    }        
     
     public String getString(){
         StringBuilder str = new StringBuilder();
@@ -244,5 +244,34 @@ public class TextFileReader {
             System.out.print(token + ":");
         }
         System.out.println();
+    }
+    
+    
+    public static float[] getColumn(String file, int column){
+        List<Float> data = new ArrayList<>();
+        
+        TextFileReader r = new TextFileReader();
+        r.open(file);
+        while(r.readNext()==true){
+            String tokens[] = r.getString().split("\\s+");
+            data.add(Float.parseFloat(tokens[column]));
+        }
+        float[]  buffer = new float[data.size()];
+        for(int k = 0; k < buffer.length; k++) buffer[k] = data.get(k);
+        return buffer;
+    }
+    
+    public static float[] getRow(String file, int column){
+        List<Float> data = new ArrayList<>();
+        
+        TextFileReader r = new TextFileReader();
+        r.open(file);
+        while(r.readNext()==true){
+            String tokens[] = r.getString().split("\\s+");
+            data.add(Float.parseFloat(tokens[column]));
+        }
+        float[]  buffer = new float[data.size()];
+        for(int k = 0; k < buffer.length; k++) buffer[k] = data.get(k);
+        return buffer;
     }
 }
