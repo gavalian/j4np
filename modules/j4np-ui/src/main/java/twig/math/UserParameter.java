@@ -11,6 +11,7 @@ package twig.math;
 public class UserParameter {
     
     String pName;
+    String pLabel;
     double pValue;
     double pMin;
     double pMax;
@@ -33,6 +34,7 @@ public class UserParameter {
     public UserParameter(String name, double value)
     {
         pName  = name;
+        pLabel = name;
         pValue = value;
         pMin   = -1e10;
         pMax   = 1e10;
@@ -51,6 +53,8 @@ public class UserParameter {
     public void setStep(double step){ this.pStep = step;}
     public void setError(double error){ pError = error;}
     public void setName(String name) { pName = name;}
+    public void setLabel(String label) { pLabel = label;}
+    
     public void setLimits(double min, double max){pMin = min; pMax=max; isRangeLimited = true;}
     public boolean isLimited(){ return this.isRangeLimited;}
     
@@ -76,6 +80,7 @@ public class UserParameter {
     public void setValue(double value) { pValue = value; };
     public double value(){ return pValue;}
     public String name() { return pName;}
+    public String label(){ return pLabel;}
     public double min()  { return pMin;}
     public double max()  { return pMax;}
     public double error() { return pError;}

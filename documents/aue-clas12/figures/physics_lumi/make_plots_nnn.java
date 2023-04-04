@@ -69,14 +69,14 @@ c.view().divide(new double[][]{{0.05,0.28,0.28,0.28,0.13}});
 c.view().region(0).setBlank();
 
 c.view().region(1).draw(h45_2).draw(h45_1,"same").draw(h00_0,"EPsame").joinX().wrapX();
-c.view().region(1).draw(leg45);
+///c.view().region(1).draw(leg45);
 c.view().region(1).addLabel(0.0,0.95,"b)").addLabel(0.0,0.8,"45 nA");
 c.view().region(2).draw(h95_2).draw(h95_1,"same").draw(h00_0,"EPsame").joinX().wrapX();
-c.view().region(2).draw(leg95);
+///c.view().region(2).draw(leg95);
 c.view().region(2).addLabel(0.0,0.95,"c)").addLabel(0.0,0.8,"95 nA");
 
 c.view().region(3).draw(h150_2).draw(h150_1,"same").draw(h00_0,"EPsame").wrapX();
-c.view().region(3).draw(leg150);
+///c.view().region(3).draw(leg150);
 c.view().region(3).addLabel(0.0,0.95,"d)").addLabel(0.0,0.8,"150 nA");
 
 c.region(4).setBlank();
@@ -136,7 +136,7 @@ cr.region(2).setBlank();
 cr.view().cd(1).region().getAxisFrame().getAxisY().setFixedLimits(0.0,1.01);
 cr.view().cd(1).region().getAxisFrame().getAxisX().setFixedLimits(38.0,162);
 cr.view().cd(1).region().addLabel(0.9,0.98,"a)");
-cr.view().region(1).draw(leg);
+///cr.view().region(1).draw(leg);
 cr.repaint();
 //c.view().cd(0).region().getAxisFrame().getAxisX().setFixedLimits(0.0,160.0);
 //cr.view().region().axisLimitsY(0.0,1.2);

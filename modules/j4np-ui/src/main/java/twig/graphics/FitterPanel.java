@@ -13,4 +13,5 @@ import javax.swing.JDialog;
 public class FitterPanel extends JDialog {
     TGRegion region = null;
     
+    
 }

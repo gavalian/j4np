@@ -97,9 +97,12 @@ public class ClassifierDataExtract extends OptionApplication {
         writers[1].open(outputFileName+"_va.h5");
         
         tbTR = chain.getBank("TimeBasedTrkg::TBTracks");
-        //tbCL = chain.getBank("TimeBasedTrkg::TBClusters");
-        tbCL = chain.getBank("HitBasedTrkg::HBClusters");
-        hbCL = chain.getBank("HitBasedTrkg::HBClusters");        
+        tbCL = chain.getBank("TimeBasedTrkg::TBClusters");
+        
+        hbCL = chain.getBank("TimeBasedTrkg::TBClusters");
+        
+        //tbCL = chain.getBank("HitBasedTrkg::HBClusters");
+        //hbCL = chain.getBank("HitBasedTrkg::HBClusters");        
     }
     
     

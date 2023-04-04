@@ -8,9 +8,12 @@ package twig.graphics;
 import j4np.graphics.Background2D;
 import j4np.graphics.Canvas2D;
 import j4np.graphics.Node2D;
+import j4np.graphics.NodeInsets;
+import j4np.graphics.NodeRegion2D;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -23,6 +26,7 @@ import twig.data.H2F;
 import twig.math.Func1D;
 import twig.widgets.LatexText;
 import twig.widgets.Legend;
+import twig.widgets.MultiPaveText;
 import twig.widgets.PaveText;
 import twig.widgets.PaveText.PaveTextStyle;
 import twig.widgets.StyleNode;
@@ -62,8 +66,21 @@ public class TGRegion extends Node2D implements StyleNode {
     
     @Override
     public void drawLayer(Graphics2D g2d, int layer){ 
-        //Color background = this.getBackgroundColor();
+        Color background = this.getBackgroundColor();
+
+       
         
+        if(background!=null){
+            g2d.setColor(background);
+            NodeRegion2D r = this.getBounds();
+            NodeInsets   i = this.getInsets();
+            g2d.fillRect( (int) (r.getX()-i.getLeft()), 
+                    (int) (r.getY()-i.getTop()),
+                    (int) (r.getWidth()+i.getLeft()+i.getRight()),
+                    (int) (r.getHeight()+i.getTop()+i.getBottom()));
+            //System.out.println(">>> t-region : draw : " + this.getInsets());
+        }
+
         if(this.isInDebugMode==false){
             if(axisFrame.dataNodes.size()>0||axisFrame.widgetNodes.size()>0){
                 axisFrame.drawLayer(g2d, layer);
@@ -190,6 +207,7 @@ public class TGRegion extends Node2D implements StyleNode {
     }
     
     public PaveText getStats(double x, double y, String options){
+        
         PaveText stats = new PaveText(x,y);
         stats.setStyle(PaveTextStyle.STATS_MULTILINE);
         stats.setNDF(true);
@@ -198,10 +216,36 @@ public class TGRegion extends Node2D implements StyleNode {
         stats.setAlign(LatexText.TextAlign.TOP_RIGHT);
         //stats.setBorderColor(Color.black);
         List<String> statsStrings = new ArrayList<>();
+        
         for(TDataNode2D dn : axisFrame.dataNodes){
+            //List<String> lines = dn.getDataSet().getStats(options);
             statsStrings.addAll(dn.getDataSet().getStats(options));
         }
         stats.addLines(statsStrings);
+        return stats;
+    }
+    
+    public MultiPaveText getStatsMulti(double x, double y, String options){
+        
+        MultiPaveText stats = new MultiPaveText(x,y);
+
+        //stats.setStyle(PaveTextStyle.STATS_MULTILINE);
+        //stats.setNDF(true);
+        //stats.fillBox = true;
+        //stats.drawBox = true;
+        //stats.setAlign(LatexText.TextAlign.TOP_RIGHT);
+        //stats.setBorderColor(Color.black);
+        
+        
+        for(TDataNode2D dn : axisFrame.dataNodes){
+            List<String> lines = dn.getDataSet().getStats(options);
+            for(String line : lines) stats.addText(line.split(":"));
+        }
+        stats.getBorder().borderAlign = LatexText.TextAlign.TOP_RIGHT;
+        stats.getBorder().padding.setLocation(5, 5);
+        stats.setAlignments("lrr");
+        //stats.addLines(statsStrings);
+        stats.setFont(TStyle.getInstance().getDefaultPaveTextFont());
         return stats;
     }
     
@@ -217,7 +261,10 @@ public class TGRegion extends Node2D implements StyleNode {
             statsStrings.addAll(dn.getDataSet().getStats(options));
         }
         stats.addLines(statsStrings);*/
-        PaveText stats = this.getStats(x, y, options);
+        //PaveText stats = this.getStats(x, y, options);
+        MultiPaveText stats = this.getStatsMulti(x, y, options);
+        //MultiPaveText stats = this.getStatsMulti(0.05, 0.05, options);
+        //stats.getBorder().borderAlign = LatexText.TextAlign.BOTTOM_LEFT;
         this.draw(stats);
         return this;
     }

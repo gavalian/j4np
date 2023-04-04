@@ -431,6 +431,15 @@ public class H1F  implements DataSet {
         return integral;
     }
     
+    public double integralRange(double xmin, double xmax){
+        double integral = 0.0;
+        for(int loop = 0; loop < this.xAxis.getNBins(); loop++){
+            double xc = this.xAxis.getBinCenter(loop);
+            if(xc>=xmin&&xc<=xmax) integral += this.histogramData[loop];
+        }
+        return integral;
+    }
+    
     public double area(double min, double max){
         double integral = 0.0;
         for(int loop = 0; loop < xAxis.getNBins(); loop++){
@@ -781,6 +790,9 @@ public class H1F  implements DataSet {
         return 0.0;
     }
     
+    public Axis getAxisX(){ return this.xAxis;}
+    public Axis getAxisY(){ return this.yAxis;}
+    
     public Axis getXaxis(){return this.xAxis;}
     public Axis getYaxis(){ return this.yAxis;}
     /**
@@ -1058,8 +1070,8 @@ public class H1F  implements DataSet {
     public List<String> getStats(String options){
         List<String> stats = new ArrayList<>();
         stats.add(String.format("entries : %d", this.getEntries()));
-        stats.add(String.format("mean : %.3f", this.getMean()));
-        stats.add(String.format("rms : %.3f", this.getRMS()));
+        stats.add(String.format("mean : %.4f", this.getMean()));
+        stats.add(String.format("rms : %.4f", this.getRMS()));
         return stats;
     }
     

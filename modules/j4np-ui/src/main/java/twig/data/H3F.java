@@ -99,10 +99,9 @@ public class H3F {
         addBinContent(bin,1.0);
     }
     
-    public Axis getXAxis(){ return xAxis;}
-    public Axis getYAxis(){ return yAxis;}
-    public Axis getZAxis(){ return zAxis;}
-    
+    public Axis getAxisX(){ return xAxis;}
+    public Axis getAxisY(){ return yAxis;}
+    public Axis getAxisZ(){ return zAxis;}
     
     public void setBinContent(int bx, int by, int bz, double value){
         if (isValidBins(bx, by, bz)) {
@@ -155,6 +154,11 @@ public class H3F {
             h1.setBinContent(i, h3.getDataBufferBin(i));
         }
         return h1;
+    }
+    
+    public H2F sliceY(int yBin){
+        
+        return null;
     }
     
     public H2F sliceZ(int zBin){

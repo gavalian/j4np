@@ -43,7 +43,7 @@ public class Node2D {
     private int    oW = 280;
     private int    oH = 50;
     
-    protected Color        nodeBackground = new Color(255,255,255,255);
+    protected Color        nodeBackground = null;//new Color(255,255,255,255);
     protected Color            nodeBorder = new Color(185,185,185,255);
     /*
     private Point2D           objectPosition = new Point2D.Double();    
@@ -112,7 +112,7 @@ public class Node2D {
     public void drawLayer(Graphics2D g2d, int layer){ 
         
         if(this.nodeBackground!=null){
-            g2d.setColor(this.nodeBackground);
+            g2d.setColor(this.nodeBackground);            
         } /*else {
             g2d.setColor(Color.WHITE);
         }*/

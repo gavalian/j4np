@@ -136,31 +136,44 @@ public class PaveTextDebug {
     }
     
     public static void paveTextMulti(){
+        
         TGCanvas c = new TGCanvas();
         c.view().region().setDebugMode(true);
         
         MultiPaveText pt = new MultiPaveText(0.1,0.90);
-        pt.setFont(new Font("Times New Roman",Font.PLAIN,18));
+        
+        pt.getBorder().attrLine.setLineStyle(0);
+        pt.getBorder().attrLine.setLineWidth(1);
+        pt.getBorder().attrLine.setLineColor(2);
+        pt.getBorder().attrFill.setFillColor(42);
+        
+        pt.getBorder().padding.setLocation(10, 10);
+        
         pt.addText(new String[] {
             "conventional",
             "tracking",
-            "4.134#pm0.0046",
-        } 
+            "4.134#pm0.0046657",
+        }
         );
         
         pt.addText(new String[] {
             "ai",
-            "track",
-            "4.13467#pm0.046",
-        } 
-        );
-        pt.addText(new String[] {
-            "dn-ai",
-            "track",
+            "best track",
             "4.13467#pm0.046",
         } 
         );
         
+        pt.addText(new String[] {
+            "dn-ai",
+            "track",
+            "413#pm0.046",
+        } 
+        );        
+        
+        pt.setAlignments("lrr");
+        pt.getBorder().borderAlign = LatexText.TextAlign.TOP_LEFT;
+        //pt.setFont(new Font("Palatino",Font.PLAIN,24)); 
+        pt.setFont(new Font("Times New Roman",Font.BOLD,24));
         c.view().region().getAxisFrame().getAxisY().getAttributes().setAxisTitle("#theta-#gamma");
         c.view().region().getAxisFrame().getAxisX().getAttributes().setAxisTitle("#pi-#eta");
         //pt.setTexAlign(LatexText.TextAlign.LEFT);

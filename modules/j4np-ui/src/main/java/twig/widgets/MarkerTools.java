@@ -224,23 +224,28 @@ public class MarkerTools {
             //g2d.drawRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
         }
     }
+    
     public static void drawMarkerTriangle(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
+        
         g2d.setColor(fillColor);
         //g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
         
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
-        yPoints[0] = (int) (y-fillSize/2);
+        
+        int yoffset = (fillSize*2)/6-(fillSize)/2;
+        
+        yPoints[0] = (int) (y-fillSize/2) + yoffset;
         xPoints[0] = (int) (x);
         
         //System.out.println(" x = " + x + " y = " + y);
-        xPoints[1] = (int) (x - fillSize/2);
-        yPoints[1] = (int) (y + fillSize/2) ;//(x - fillSize/2);
+        xPoints[1] = (int) (x - fillSize/2) ;
+        yPoints[1] = (int) (y + fillSize/2) + yoffset ;//(x - fillSize/2);
         
         xPoints[2] = (int) (x + fillSize/2);
-        yPoints[2] = (int) (y + fillSize/2) ;//(x - fillSize/2);
+        yPoints[2] = (int) (y + fillSize/2) + yoffset;//(x - fillSize/2);
         
-        yPoints[3] = (int) (y-fillSize/2);
+        yPoints[3] = (int) (y-fillSize/2) + yoffset;
         xPoints[3] = (int) (x);
         g2d.fillPolygon(xPoints, yPoints, 4);
         

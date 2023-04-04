@@ -274,18 +274,18 @@ public class Func1D implements DataSet {
             StringBuilder str = new StringBuilder();
             for(int i = 0; i < np; i++){
                 if(i!=0) str.append(", ");
-                str.append(String.format("%s="+format, this.parameter(i).name(),
+                str.append(String.format("%s:"+format, this.parameter(i).label(),
                         this.parameter(i).value()));
                 //if(options.contains("F")==true)
-                    str.append(String.format("+/-%.4f",this.parameter(i).error()));
+                    str.append(String.format("#pm%.4f",this.parameter(i).error()));
             }
             stats.add(str.toString());
         } else {
             for(int i = 0; i < np; i++){
                 
-                String par = String.format("%s="+format, this.parameter(i).name(),
+                String par = String.format("%s:"+format, this.parameter(i).label(),
                         this.parameter(i).value());                
-                String parError = String.format("+/-%.4f",this.parameter(i).error());
+                String parError = String.format("#pm%.4f",this.parameter(i).error());
                 //if(options.contains("F")==true){
                     stats.add(par+parError);
                 //} else {

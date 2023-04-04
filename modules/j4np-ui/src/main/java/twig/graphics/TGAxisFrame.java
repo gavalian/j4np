@@ -40,6 +40,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
     
     private DataRange             axisDataRange = new DataRange();
     private DataRange             tempDataRange = new DataRange();
+    
     private DataRange            fixedDataRange = null;
     private Color                axisBackgroundColor = new Color(240,240,240);
     
@@ -48,7 +49,10 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         
         super(0,0,500,500);
         TStyle style = TStyle.getInstance();
-        if(style!=null) this.axisBackgroundColor = style.getDefaultAxisBackgroundColor();
+        if(style!=null) {
+            this.axisBackgroundColor = style.getDefaultAxisBackgroundColor();
+            this.nodeBackground = style.getDefaultAxisBackgroundColor();
+        }
         /*
         axisX.getAttributes().getAxisTicksPosition().add(0.2);
         axisX.getAttributes().getAxisTicksPosition().add(0.45);
@@ -97,8 +101,8 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         Rectangle2D r = parent.getBounds().getBounds();
         
         //System.out.println("axis frame bounds = " + r);
-        if(this.axisBackgroundColor!=null){
-            g2d.setColor(this.axisBackgroundColor);
+        if(this.nodeBackground!=null){
+            g2d.setColor(this.nodeBackground);
             g2d.fill(r);
         }
         
@@ -189,6 +193,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         
     }
     
+    public List<Widget> getWidgets(){ return this.widgetNodes;}
     public  List<TDataNode2D>  getDataNodes(){return this.dataNodes;}
     
     private void updateLimits(){

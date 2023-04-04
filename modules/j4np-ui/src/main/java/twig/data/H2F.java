@@ -177,6 +177,8 @@ public class H2F implements DataSet {
         return hName;
     }
     
+    public Axis getAxisX(){ return this.xAxis;}
+    public Axis getAxisY(){ return this.yAxis;}
     /**
      *
      * @return the x-axis of the 2D Histogram
