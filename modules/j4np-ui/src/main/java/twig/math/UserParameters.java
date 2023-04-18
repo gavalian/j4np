@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author gavalian
  */
-public class UserParameters {
+public class UserParameters implements Cloneable {
     
     List<UserParameter>  parameters = new ArrayList<UserParameter>();
     
@@ -59,6 +59,15 @@ public class UserParameters {
         }        
     }
     
+    
+    @Override
+    public UserParameters clone(){
+        UserParameters up = new UserParameters();
+        int npars = this.getParameters().size();
+        for(int i = 0; i < npars; i++) up.parameters.add(parameters.get(i).clone());
+        return up;
+    }
+    
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder();
@@ -68,5 +77,26 @@ public class UserParameters {
             str.append("\n");
         }
         return str.toString();
+    }
+    
+    public void randomize(){
+        for(UserParameter p : this.parameters) p.setRandom();
+    }
+    
+    public static void main(String[] args){
+        UserParameters up = new UserParameters();
+        up.getParameters().add(new UserParameter("p0",1.2));
+        up.getParameters().add(new UserParameter("p1",1.4));
+        up.getParameters().add(new UserParameter("p2",1.6));
+        
+        
+        UserParameters up2 = up.clone();
+        
+        up2.getParameter(1).setValue(2.4);
+
+        
+        System.out.println(up);
+        System.out.println(up2);
+        
     }
 }

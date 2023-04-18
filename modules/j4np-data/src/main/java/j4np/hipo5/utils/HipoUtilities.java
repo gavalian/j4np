@@ -11,6 +11,7 @@ import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.io.HipoDoctor;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
+import j4np.utils.FileUtils;
 import j4np.utils.ProgressPrintout;
 import j4np.utils.io.OptionApplication;
 import j4np.utils.io.OptionParser;
@@ -161,6 +162,55 @@ public class HipoUtilities extends OptionApplication {
         return "Utilities to manipulated hipo files";
     }
     
+    public static void reduce(List<String> files, String output){
+        
+        HipoReader reader = new HipoReader();
+        reader.open(files.get(0));
+        
+        HipoWriter writer = HipoWriter.create(output, reader);
+       
+        Bank[] banks = reader.getBanks("REC::Particle","RECAI::Particle");
+        Event e = new Event();
+        for(int k = 0; k < files.size(); k++){
+            reader = new HipoReader(files.get(k));
+            while(reader.hasNext()==true){
+                reader.next(e);
+                e.read(banks);
+                boolean writeEvent = false;
+                for(int j = 0; j < banks.length; j++){
+                    if(banks[j].getRows()>0){
+                        int pid = banks[j].getInt("pid", 0);
+                        int status = banks[j].getInt("status", 0);
+                        if(pid==11&&Math.abs(status)>=2000&&Math.abs(status)<3000){
+                            int ipos = 0; int ineg = 0;
+                            for(int t = 1; t < banks[j].getRows();t++){
+                                int charge = banks[j].getInt("charge", t);
+                                int  pstat = banks[j].getInt("status", t);
+                                if(Math.abs(pstat)>=2000&&Math.abs(pstat)<3000){
+                                    if(charge>0) ipos++;
+                                    if(charge<0) ineg++;
+                                }
+                            }
+                            if(ipos>0&&ineg>0) writeEvent = true;
+                        }
+                    }
+                }
+                
+                if(writeEvent==true) writer.addEvent(e);
+            }
+        }
+        writer.close();
+    }
+    
+    public static void reduceDir(String directory, String output){
+        List<String> files = FileUtils.dir(directory,"*.hipo");
+        HipoUtilities.reduce(files, output);
+    }
+    
+    public static void reduceDir(String directory, String regex, String output){
+        List<String> files = FileUtils.dir(directory,regex);
+        HipoUtilities.reduce(files, output);
+    }
     
     public static String waitForInput(){
         String line = "";

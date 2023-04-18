@@ -1,0 +1,39 @@
+[
+    {
+	"name"    : "rich::particle",
+	"group"   : 21800,
+	"item"    : 51,
+	"info"    : "particle properties that intersects with rich",
+	"entries" : [
+            {"name":"pid",      "type":"S", "info":"particle id "},
+            {"name":"px",       "type":"F", "info":"x component of momentum at the vertex"},
+	    {"name":"py",       "type":"F", "info":"y component of momentum at the vertex"},
+	    {"name":"pz",       "type":"F", "info":"z component of momentum at the vertex"},
+	    {"name":"x",        "type":"F", "info":"x coordinate of particle intersection with aerogel"},
+	    {"name":"y",        "type":"F", "info":"y coordinate of particle intersection with aerogel"},
+	    {"name":"z",        "type":"F", "info":"z coordinate of particle intersection with aerogel"},
+	    {"name":"cx",       "type":"F", "info":"direction cosine with x axis at aerogel"},
+	    {"name":"cy",       "type":"F", "info":"direction cosine with y axis at aerogel"},
+	    {"name":"cz",       "type":"F", "info":"direction cosine with z axis at aerogel"},
+            {"name":"status",   "type":"S", "info":"status word to describe various parameters" }
+	]
+    },
+    {
+	"name"   : "rich::hits",
+	"group"  : 21800,
+	"item"   : 52,
+	"info"   : "hits produced in RICH detector",
+	"entries": [
+	    {"name":"index",     "type":"S", "info":"index of the hit"},
+	    {"name":"pindex",    "type":"S", "info":"particle index"},
+	    {"name":"sector",    "type":"B", "info":"sector"},
+	    {"name":"layer",     "type":"S", "info":"layer"},
+	    {"name":"component", "type":"S", "info":"component"},
+	    {"name":"time",      "type":"F", "info":"time of the hit"},
+	    {"name":"energy",    "type":"F", "info":"energy of the hit"},
+	    {"name":"x",         "type":"F", "info":"x coordinate of the hit"},
+	    {"name":"y",         "type":"F", "info":"y coordinate of the hit"},
+	    {"name":"z",         "type":"F", "info":"z coordinate of the hit"}
+	]
+    }
+]

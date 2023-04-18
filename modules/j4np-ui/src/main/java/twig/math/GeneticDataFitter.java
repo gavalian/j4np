@@ -25,11 +25,29 @@ import twig.widgets.PaveText;
 public class GeneticDataFitter {
     
     private F1D func = null;
+
     private int initialPopulation = 5000;
-    public GenFunction gfunc = null;
+    private double evolveFraction = 0.25;
+    private int           nEpochs = 100;
+    
+    public GenParameters gfunc = null;
+
     
     public GeneticDataFitter(){
         
+    }
+    
+    
+    public GeneticDataFitter population(int count){ 
+        this.initialPopulation = count;return this;
+    }
+    
+    public GeneticDataFitter epochs(int count){ 
+        this.nEpochs= count;return this;
+    }
+    
+    public GeneticDataFitter fraction(double evfr){ 
+        this.evolveFraction = evfr;return this;
     }
     
     public void initFunction(double min, double max){
@@ -41,26 +59,80 @@ public class GeneticDataFitter {
         
     }
     
-    public static class GenFitness implements Fitness<GenFunction, Double> {
+    public static class GenFitness implements Fitness<GenParameters, Double> {
         
-        private H1F histo = null;
+        private H1F        histo = null;
+        private Func1D  function = null;
         
-        public GenFitness(H1F h){
+        public GenFitness(Func1D func, H1F h){
+            function = func;
             histo = h;
         }
         
         @Override
-        public Double calculate(GenFunction chromosome) {
-            double chi2 = Func1D.calcChiSquare(chromosome.function, histo);
+        public Double calculate(GenParameters chromosome) {
+            function.setParameters(chromosome.userPars);
+            double chi2 = Func1D.calcChiSquare(function, histo);
             return chi2;
-        }
-        
+        }        
     }
     
+    
+    public static class GenParameters implements Chromosome<GenParameters>, Cloneable {
+        private static final   Random random = new Random();
+        protected    UserParameters userPars = null;
+        
+        public GenParameters(UserParameters upar){
+            this.userPars = upar;
+        }
+        
+        @Override
+        public GenParameters clone(){
+            UserParameters upars = this.userPars.clone();
+            return new GenParameters(upars);
+        }
+
+        @Override
+        public List<GenParameters> crossover(GenParameters other) {
+            GenParameters thisClone = this.clone();
+           GenParameters otherClone = other.clone();
+           int np = thisClone.userPars.getParameters().size();
+           
+           int index = random.nextInt( np - 1);
+           
+           for (int i = index; i < np; i++) {
+               double tmp = thisClone.userPars.getParameter(index).value();
+               thisClone.userPars.getParameter(i).setValue(otherClone.userPars.getParameter(i).value());
+               otherClone.userPars.getParameter(i).setValue(tmp);
+           }
+           return Arrays.asList(thisClone, otherClone);
+        }
+
+        @Override
+        public GenParameters mutate() {
+             GenParameters gen = this.clone();
+            int par = random.nextInt(gen.userPars.getParameters().size());
+            double value = 
+                    gen.userPars.getParameter(par).min()+ 
+                    random.nextDouble()*(
+                    gen.userPars.getParameter(par).max()-gen.userPars.getParameter(par).min());            
+            gen.userPars.getParameter(par).setValue(value);
+            return gen;
+        }
+        
+        @Override
+        public String toString(){
+            StringBuilder str = new StringBuilder();
+            for(int i = 0; i < userPars.getParameters().size(); i++)
+                str.append(String.format("%9.6f,", userPars.getParameter(i).value()));
+            return str.toString();
+        }
+    }
+    /*
     public static class GenFunction implements Chromosome<GenFunction>, Cloneable {
 
         private static final Random random = new Random();
-        public F1D  function = null;
+        public Func1D  function = null;
         
         public GenFunction(String expression, double min, double max){
             function = new F1D("a",expression, min, max);
@@ -71,6 +143,11 @@ public class GeneticDataFitter {
             function.setParLimits(4, 0, 1.0);
             function.setParLimits(5, 0, 1.0);
             function.setParLimits(6, 0, 1.0);
+        }
+        
+        
+        public GenFunction(Func1D func){
+            function = func;
         }
         
         @Override
@@ -114,6 +191,7 @@ public class GeneticDataFitter {
         
         @Override
         protected GenFunction clone() {
+            
             GenFunction f = new GenFunction(function.getExpression(),
                     function.getMin(), function.getMax());
             
@@ -136,6 +214,24 @@ public class GeneticDataFitter {
                 str.append(String.format("%e ",function.getParameter(i)));
             return str.toString();
         }
+    }
+    */
+    /*
+    private Population<GenFunction> createInitialPopulationWithFunc(Func1D func, int populationSize) {
+        
+        Population<GenFunction> population = new Population<GenFunction>();
+        
+        GenFunction base = new GenFunction(func);
+        for (int i = 0; i < populationSize; i++) {
+            // each member of initial population
+            // is mutated clone of base chromosome
+            //GenFunction chr = base.mutate();
+            GenFunction chr = base.random();
+            //System.out.println(chr);
+            population.addChromosome(chr);
+        }                
+        
+        return population;
     }
     
     private Population<GenFunction> createInitialPopulation(int populationSize,
@@ -173,22 +269,22 @@ public class GeneticDataFitter {
             //list.add(chr);
         }                        
         return list;
-    }
+    }*/
 /*
     private List<GenFunction>  reduce(List<GenFunction> list){
         
     }
 */
     
-    public void addListener(GeneticAlgorithm<GenFunction, Double> ga ){
-        ga.addIterationListener(new IterartionListener<GenFunction, Double>() {
+    public void addListener(GeneticAlgorithm<GenParameters, Double> ga ){
+        ga.addIterationListener(new IterartionListener<GenParameters, Double>() {
 
             private final double threshold = 1e-5;
             
             @Override
-            public void update(GeneticAlgorithm<GenFunction, Double> ga) {
+            public void update(GeneticAlgorithm<GenParameters, Double> ga) {
                 
-                GenFunction best = ga.getBest();
+                GenParameters best = ga.getBest();
                 double bestFit = ga.fitness(best);
                 int iteration = ga.getIteration();
                 
@@ -203,9 +299,45 @@ public class GeneticDataFitter {
         });
         
     }
+    public void fit(Func1D func, H1F h){
+        
+        Random r = new Random();
+        Population<GenParameters> population = new Population<>();
+                
+        for(int loop = 0; loop < this.initialPopulation; loop++){
+            UserParameters upar = func.userPars.clone();
+            upar.randomize();
+            population.addChromosome(new GenParameters(upar));
+        }
+        
+        
+       //System.out.println(" " + func.userPars);
+       
+       //UserParameters u2 = func.userPars.clone();
+       
+       //System.out.println(" and now \n" + u2);
+        
+        
+       Fitness<GenParameters,Double> fitness = new GenFitness(func,h);
+         
+        
+         
+       GeneticAlgorithm<GenParameters, Double> ga = new GeneticAlgorithm<GenParameters, Double>(population, fitness);
+       
+       this.addListener(ga);
+       
+       int nEvolve = (int) (this.initialPopulation*this.evolveFraction);
+       ga.evolveCrop(nEvolve,nEpochs);
+         
+       this.gfunc = ga.getBest();
+       
+       func.setParameters(this.gfunc.userPars);
+    }
     
-    
+    /*
     public void fit(H1F h, double min, double max){
+        
+        
          Population<GenFunction> population = createInitialPopulation(
                  this.initialPopulation, min, max
                  );
@@ -224,7 +356,8 @@ public class GeneticDataFitter {
          
          ga.evolveCrop(1500,100);
          this.gfunc = ga.getBest();
-    }/*
+    }*/
+    /*
         private static Population<MyVector> createInitialPopulation(int populationSize) {
                 Population<MyVector> population = new Population<MyVector>();
                 MyVector base = new MyVector();
@@ -238,6 +371,9 @@ public class GeneticDataFitter {
         }
     }
   */      
+    
+    
+
     public static void main(String[] args){
         
         H1F hl = TDataFactory.createH1F(8200, 240, 0.0, 1.0, 0.25, 0.15);
@@ -261,16 +397,16 @@ public class GeneticDataFitter {
         c.draw(h,"").draw(f,"same");
         
         GeneticDataFitter gf = new GeneticDataFitter();
-        gf.fit(h, 0.0,1.0);
+        //gf.fit(h, 0.0,1.0);
         
-        gf.gfunc.function.attr().set("lc=5,lw=3,ls=1");
-        F1D func = gf.gfunc.function;
+        //gf.gfunc.function.attr().set("lc=5,lw=3,ls=1");
+        /*Func1D func = gf.gfunc.function;
         List<String>  lines = func.getStats("M");
         PaveText pt = new PaveText(lines,0.05,0.95);
         //func.attr().setLineColor(5);
         c.draw(func,"same").draw(pt);
         f.show();     
         
-        func.show();
+        func.show();*/
     }
 }

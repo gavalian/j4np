@@ -78,6 +78,17 @@ public class Func1D implements DataSet {
         this.userPars.setParameters(values);
     }
     
+    public void setParameters(UserParameters upars){
+        int npars = upars.getParameters().size();
+        if(npars!=this.getNPars()){
+            System.err.println("\nERROR in Func1D setPArameters\n");
+            return;
+        }
+        
+        for(int loop = 0; loop < npars; loop++) this.setParameter(loop, upars.getParameter(loop).value());
+        //this.userPars.setParameters(values);
+    }
+    
     public void setParameter(int i, double value){
         userPars.getParameter(i).setValue(value);
     }
@@ -183,8 +194,8 @@ public class Func1D implements DataSet {
 		return this.getAttributes().getOptStat();
 	}
 	*/
-	public void estimateParameters(){};
-	public double[] getParameterEstimate(){return null;}
+    public void estimateParameters(){};
+    public double[] getParameterEstimate(){return null;}
 
     @Override
     public void reset() {
@@ -216,7 +227,7 @@ public class Func1D implements DataSet {
         } catch (IOException e) {
         }
     }
-
+    
     @Override
     public int getSize(int dimention) {
         return this.defaultDrawingPoints;

@@ -8,7 +8,7 @@ package twig.math;
  *
  * @author gavalian
  */
-public class UserParameter {
+public class UserParameter implements Cloneable {
     
     String pName;
     String pLabel;
@@ -23,6 +23,7 @@ public class UserParameter {
     public UserParameter()
     {
         pName  = "p0";
+        pLabel = "p0";
         pValue = 0.;
         //pMin   = -Double.MAX_VALUE/4000.0;
         //pMax   = Double.MAX_VALUE/4000.0;
@@ -106,10 +107,19 @@ public class UserParameter {
     }
     
     @Override
+    public UserParameter clone(){
+        UserParameter up = new UserParameter(pName,pValue,pMin,pMax);
+        up.pError = pError;
+        up.pLabel = pLabel;
+        up.pStep  = pStep;
+        up.isRangeLimited = isRangeLimited;
+        return up;
+    }
+    @Override
     public String toString()
     {
         StringBuilder str = new StringBuilder();
-        str.append(String.format("%18s : %18e %18e %18e %18e", this.name(),
+        str.append(String.format("%12s (%12s) : %18e %18e %18e %18e", this.name(), this.label(),
                 this.value(),this.error(),this.min(),this.max()));
         return str.toString();
     }

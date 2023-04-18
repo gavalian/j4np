@@ -270,15 +270,13 @@ public class TGRegion extends Node2D implements StyleNode {
     }
     
     public TGRegion hideStats(){
-        PaveText l = null;
+        
         for(Widget w : this.axisFrame.widgetNodes){
-            if(w instanceof PaveText) {
-                PaveText pt = (PaveText) w;
-                if(pt.getStyle()==PaveTextStyle.STATS_MULTILINE)
-                    l = pt;
+            if(w instanceof MultiPaveText) {
+                axisFrame.widgetNodes.remove(w);
             }
         }
-        if(l!=null) axisFrame.widgetNodes.remove(l);
+
         return this;
     }
     

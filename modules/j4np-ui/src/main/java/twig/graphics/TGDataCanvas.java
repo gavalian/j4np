@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import javax.imageio.ImageIO;
@@ -450,6 +452,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                 case "divide_c_2x3": this.divide(2, 3); break;
                 case "divide_c_3x2": this.divide(3, 2); break;
                 case "divide_c_3x3": this.divide(3, 3); break;
+                case "divide_c_4x2": this.divide(4, 2); break;
                 default: this.divide(1, 1);
             }
         }
@@ -497,7 +500,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         if(e.getActionCommand().compareTo("show_region_stats")==0){
             if(popupProvider.region!=null){                
                 TGRegion reg = popupProvider.region;
-                reg.showStats(0.985, 0.975);
+                reg.showStats(1.03, 1.03);
                 this.repaint();
             }
         }
@@ -559,6 +562,14 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             }
         }
         
+        if(e.getActionCommand().compareTo("region_clear_data")==0){
+            if(popupProvider.region!=null){
+                popupProvider.region.getAxisFrame().getDataNodes().clear();
+                popupProvider.region.getAxisFrame().getWidgets().clear();
+                this.repaint();
+            }
+        }
+        
         if(e.getActionCommand().compareTo("region_duplicate")==0){
             if(popupProvider.region!=null){                
                 List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
@@ -566,6 +577,16 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                 for( TDataNode2D dn : obj){
                     c.view().region().draw(dn.getDataSet(),"same"+dn.getOptions());                   
                 }
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("fitter_panel_genetic")==0){
+            if(popupProvider.region!=null){                
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                List<DataSet> datasets = new ArrayList<>();
+                for(TDataNode2D dn : obj) datasets.add(dn.getDataSet());
+                FitterPanel panel = new FitterPanel(datasets,null);
+                panel.showDialog();
             }
         }
         
@@ -694,28 +715,36 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
 
             menu.add(new JSeparator());
             this.addMenu(menu, "Divide", 
-                    new String[]{"1x1","1x2", "2x1","2x2","3x1","1x3","2x3","3x3"}, 
+                    new String[]{"1x1","1x2", "2x1","2x2","3x1","1x3","2x3","3x3","4x2"}, 
                     new String[]{"divide_c_1x1","divide_c_1x2", "divide_c_2x1",
                         "divide_c_2x2","divide_c_3x1","divide_c_1x3",
-                        "divide_c_2x3","divide_c_3x3"}
+                        "divide_c_2x3","divide_c_3x3","divide_c_4x2"}
                     );
             
             menu.add(new JSeparator());
             
             //addMenuItem(menu, "New Canvas");
             
+            this.addMenu(menu, "Widgets", new String[]{"Add Text","Add Line","Edit"},
+                    new String[]{"add_region_text","add_region_line","edit_region_widgets"});
+            this.addMenu(menu, "Fit", 
+                    new String[]{"Fitter Panel"}, 
+                    new String[]{"fitter_panel_genetic"}
+            );
+            menu.add(new JSeparator());
             this.addMenu(menu, "Region", 
                     new String[]{"Duplicate" ,"Show Legend","Hide Legend",
                         "Edit Legend",
                         "Show Stats","Hide Stats","Edit Stats",
-                        "Add Text","Add Line","Edit Widgets",                        
+                        "Clear",                        
                         "Log Y", "Lin Y"}, 
                     new String[]{"region_duplicate", 
                         "show_region_legend", "hide_region_legend","edit_region_legend",
                         "show_region_stats","hide_region_stats","edit_region_stats",
-                        "add_region_text","add_region_line","edit_region_widgets",
+                        "region_clear_data",
                         "set_log_y_true","set_log_y_false"}
             );
+                       
             
             this.addMenu(menu, "Axis", 
                     new String[]{"Grid X" ,"Grid Y","Limits X", "Limits Y", "Titles", "Log X", "Log Y",
@@ -739,7 +768,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         public JPopupMenu createMenu(Node2D node){
             region = (TGRegion) node;
             return menu;
-        }        
+        }  
     }
     
 }

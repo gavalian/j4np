@@ -77,6 +77,16 @@ public class ClassifierDataExtract extends OptionApplication {
                 .addOption("-e", "125", " number of epochs to train")
                 .addOption("-max", "45000", "maximum number of tracks for training");
         
+        store.addCommand("-regression", "train regression network");
+        store.getOptionParser("-regression")
+                .addRequired("-t", "training data file (hipo)")
+                .addRequired("-v", "validation data file (hipo)")
+                .addRequired("-a", "archive file name")
+                .addRequired("-r", "run number")
+                .addOption("-vertex", "-15.0:5.0", "vertex range for the tracks to train")
+                .addOption("-e", "125", " number of epochs to train")
+                .addOption("-max", "45000", "maximum number of tracks for training");
+        
         store.addCommand("-extract", "extract data for track ml algorithms");
         store.getOptionParser("-extract").addRequired("-o",
                  "output file name to write training data");   
@@ -453,6 +463,41 @@ public class ClassifierDataExtract extends OptionApplication {
         t.classifierTest(   file_ev,networkArchive,run,"default");
     }
     
+    
+    public static void trainRegression(String file_tr, String file_ev, String networkArchive, int run, double vertexmin, double vertexmax, int max, int epochs){
+        
+        TrackNetworkTrainer t = new TrackNetworkTrainer();
+        t.nEpochs = epochs;
+
+        t.maxBinsRead = max;
+
+        t.getConstrain().momentum.set(0.5,10.5);
+        //t.getConstrain().vertex.set( -15.0,  5.0); // RG-A
+        t.getConstrain().vertex.set( vertexmin,vertexmax); // RG-F
+        t.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+
+        t.getConstrain().show();
+
+        t.regressionTrain(file_tr, file_ev,networkArchive,run,"temp");
+        //t.classifierTest(  file_ev,networkArchive,run,"temp");
+
+        /*TrackNetworkValidator v = new TrackNetworkValidator();
+
+        v.archiv     = networkArchive;
+        v.network    = "network/" + run + "/temp/trackClassifier.network";
+        v.outputFile = "validation_postprocess.h5";
+        v.getConstrain().momentum.set(0.5,10.5);
+        v.getConstrain().vertex.set(vertexmin,vertexmax); // RG-A 
+        v.getConstrain().chiSquare.set(0,10);// the chi2 is normalized to NDF
+
+        v.getConstrain().show();
+        v.processFile(file_tr);
+
+        t.nEpochs = epochs;
+        t.classifierTrain("validation_postprocess.h5",networkArchive,run,"default");
+        t.classifierTest(   file_ev,networkArchive,run,"default");*/
+    }
+    
     public static void trainAutoEncoder(String file_tr, String file_ev, String networkArchive, int run, double vertexmin, double vertexmax, int max, int epochs){
          TrackNetworkTrainer t = new TrackNetworkTrainer();
          t.nEpochs = epochs;
@@ -471,6 +516,8 @@ public class ClassifierDataExtract extends OptionApplication {
          t.encoderTrain(file_tr,networkArchive,run,"default");
          t.encoderTest(file_ev,networkArchive,run,"default");
     }
+    
+    
     
     public static void main(String[] args){
         List<String> files = new ArrayList<>();
@@ -655,6 +702,24 @@ public class ClassifierDataExtract extends OptionApplication {
                     store.getOptionParser("-train").getOption("-r").intValue(),
                     min,max,store.getOptionParser("-train").getOption("-max").intValue(),
                     store.getOptionParser("-train").getOption("-e").intValue());
+                    /*.extract(
+                    store.getOptionParser("-extract").getOption("-o").stringValue(), 
+                    store.getOptionParser("-extract").getInputList(),
+                    store.getOptionParser("-extract").getOption("-max").intValue());*/
+        }
+        
+        if(store.getCommand().compareTo("-regression")==0){
+             String[] tokens = store.getOptionParser("-regression").getOption("-vertex").stringValue().split(":");
+            double min = Double.parseDouble(tokens[0]);
+            double max = Double.parseDouble(tokens[1]);
+            
+                    ClassifierDataExtract.trainRegression(
+                    store.getOptionParser("-regression").getOption("-t").stringValue(),
+                    store.getOptionParser("-regression").getOption("-v").stringValue(),
+                    store.getOptionParser("-regression").getOption("-a").stringValue(),
+                    store.getOptionParser("-regression").getOption("-r").intValue(),
+                    min,max,store.getOptionParser("-regression").getOption("-max").intValue(),
+                    store.getOptionParser("-regression").getOption("-e").intValue());
                     /*.extract(
                     store.getOptionParser("-extract").getOption("-o").stringValue(), 
                     store.getOptionParser("-extract").getInputList(),

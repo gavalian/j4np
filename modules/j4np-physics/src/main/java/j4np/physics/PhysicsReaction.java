@@ -7,6 +7,7 @@ package j4np.physics;
 
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
+import j4np.hipo5.io.HipoWriter;
 import j4np.physics.VectorOperator.OperatorType;
 import j4np.physics.data.PhotoDataEvent;
 import j4np.physics.data.PhysDataEvent;
@@ -54,6 +55,16 @@ public class PhysicsReaction extends Tree {
         }
     };
     
+    public static  EventModifier FORWARD_CENTRAL = new EventModifier(){
+        @Override
+        public void modify(PhysicsEvent event) {
+            int counter = event.count();
+            
+            for(int i = 0; i < counter ; i++){                
+                    event.status(i, 1);               
+            }
+        }
+    };
     public  PhysicsReaction(String filter){
         eventFilter = new EventFilter(filter);
     }
@@ -298,6 +309,7 @@ public class PhysicsReaction extends Tree {
             }
             return true;
         }
+        
         @Override
         public String toString(){
             return String.format("->>> %14s , %8d, type = %s", entryName,entryOrder,entryType);
@@ -307,8 +319,11 @@ public class PhysicsReaction extends Tree {
     public DataGroup process(){
         return null;
     }
-    
     public static DataGroup getParticle(String file, double beamEnergy, 
+            EventModifier modifier,String filter,  String operator, String value, int bins, double min, double max){
+        return PhysicsReaction.getParticle(file, beamEnergy, "REC::Particle",modifier, filter, operator, value, bins, min, max);
+    }
+    public static DataGroup getParticle(String file, double beamEnergy, String bank,
             EventModifier modifier,String filter,  String operator, String value, int bins, double min, double max){
         H1F h = new H1F("reaction",bins,min, max);
         
@@ -319,7 +334,7 @@ public class PhysicsReaction extends Tree {
         DataGroup group = new DataGroup(1,1);
         group.add(h, 0, "");
         PhysicsReaction r = new PhysicsReaction(filter,beamEnergy);
-        r.setDataSource(new HipoReader(file),"REC::Particle");
+        r.setDataSource(new HipoReader(file),bank);
         r.addModifier(modifier);
         if(operator.startsWith("[b]+[t]")==true){
            String op2 = operator.replace("[b]+[t]", "");
@@ -334,12 +349,16 @@ public class PhysicsReaction extends Tree {
         return group;
     }
     
-    public static DataGroup statistics(String file, EventModifier modifier, String[] filters){
+    public static DataGroup statistics(String file, EventModifier modifier, String[] filters){        
+        return PhysicsReaction.statistics(file, "REC::Particle", modifier, filters);
+    }
+    
+    public static DataGroup statistics(String file, String bank, EventModifier modifier, String[] filters){
         EventFilter[] list = new EventFilter[filters.length];
         for(int i = 0; i < filters.length; i++){            
             list[i] = new EventFilter(filters[i]);
         }
-        return PhysicsReaction.statistics(file, modifier, list);
+        return PhysicsReaction.statistics(file, bank, modifier, list);
     }
     
     public static DataGroup statistics(String file, EventModifier modifier){
@@ -351,7 +370,11 @@ public class PhysicsReaction extends Tree {
         return PhysicsReaction.statistics(file, modifier, list);
     }
     
-    public static DataGroup statistics(String file, EventModifier modifier, EventFilter[] filters){        
+    public static DataGroup statistics(String file, EventModifier modifier, EventFilter[] filters){         
+       return PhysicsReaction.statistics(file, "REC::Particle", modifier, filters);
+    }
+    
+     public static DataGroup statistics(String file, String bank,  EventModifier modifier, EventFilter[] filters){        
         
         DataGroup group = new DataGroup(1,1);
         //H1F[] topology = new H1F[filters.length];        
@@ -361,7 +384,7 @@ public class PhysicsReaction extends Tree {
         group.add(topology, 0, "");
         
         PhysicsReaction r = new PhysicsReaction("X+:X-:Xn",10.5);
-        r.setDataSource(new HipoReader(file),"REC::Particle");
+        r.setDataSource(new HipoReader(file),bank);
         r.addModifier(modifier);
         int counter = 0;
         while(r.next()==true){
@@ -379,6 +402,47 @@ public class PhysicsReaction extends Tree {
         }
         System.out.println();
         return group;
+    }
+     
+     public static void filter(List<String> files, EventModifier modifier, String[] filters){
+         PhysicsReaction.filter(files, "filter_output", "REC::Particle", modifier, filters);
+     }
+     
+     public static void filter(List<String> files, String[] filters){
+         PhysicsReaction.filter(files, "filter_output", "REC::Particle", PhysicsReaction.FORWARD_CENTRAL, filters);
+     }
+     
+    public static void filter(List<String> files, String pattern, String bank, EventModifier modifier, String[] filters){
+        HipoReader r = new HipoReader(files.get(0));
+        HipoWriter[]     w = new HipoWriter[filters.length];
+        EventFilter[] list = new EventFilter[filters.length];
+        
+        for(int i = 0; i < filters.length; i++){            
+            list[i] = new EventFilter(filters[i]);
+            w[i] = HipoWriter.create(String.format("%s_%d.h5",pattern, i), r);
+        }
+        Event event = new Event();
+        
+        for(String file : files){
+            
+            HipoReader reader = new HipoReader(file);
+            PhysDataEvent phys = new PhysDataEvent(reader.getBank(bank));
+            
+            PhysicsReaction fr = new PhysicsReaction("X+:X-:Xn",10.5);
+            fr.setDataSource(new HipoReader(file),bank);
+            fr.addModifier(modifier);
+            int counter = 0;
+            while(reader.hasNext()==true){
+                reader.nextEvent(event);
+                phys.read(event);
+                modifier.modify(phys);
+                for(int i = 0; i < list.length; i++){
+                    if(list[i].isValid(phys)==true) w[i].add(event);
+                }
+            }                                                                     
+            
+        }
+        for(HipoWriter item : w){item.close();}
     }
     
     public static void main(String[] args){

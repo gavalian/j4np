@@ -395,26 +395,49 @@ public class TrackNetworkTrainer {
     }
      
     public void regressionTrain(String hipoFile, String testFile,  String archive, int run, String flavor){
-                
-        for(int sector = 1; sector <= 1; sector++){
-            DataList data = DataProvider.readRegressionPositive(hipoFile, constrain, sector, maxBinsRead);
-            data.show();
-            DataList.normalizeInput(data, dc6normalizer);
-            DataList.normalizeOutput(data, regression3normalizer);
-            data.shuffle();
-            data.shuffle();
-            data.show();
-            data.scan();
-            DeepNettsRegression net = new DeepNettsRegression(ActivationType.TANH, ActivationType.LINEAR);
-            net.init(new int[]{6,12,12,12,12,12,3});
-            net.train(data, nEpochs);                
-            net.evaluate(data);        
-            data.show();
-            
-            List<String>  networkContent = net.getNetworkStream();
-            String archiveFile = String.format("network/%d/%s/trackRegression_pos_%d.network",run,flavor,sector);
-            ArchiveUtils.writeFile(archive, archiveFile, networkContent);
-        }
+        int sector = 2;        
+        //for(int sector = 1; sector <= 1; sector++){
+        DataList data = DataProvider.readRegressionPositive(hipoFile, constrain, sector, maxBinsRead);
+        data.show();
+        DataList.normalizeInput(data, dc6normalizer);
+        DataList.normalizeOutput(data, regression3normalizer);
+        
+        data.shuffle();
+        data.shuffle();
+        data.show();
+        data.scan();
+        DeepNettsRegression net = new DeepNettsRegression(ActivationType.TANH, ActivationType.LINEAR);
+        net.init(new int[]{6,12,12,12,12,12,3});
+        net.train(data, nEpochs);                
+        net.evaluate(data);        
+        data.show();
+        
+        List<String>  networkContent = net.getNetworkStream();
+        String archiveFile = String.format("network/%d/%s/regression_pos.network",run,flavor,sector);
+        ArchiveUtils.writeFile(archive, archiveFile, networkContent);
+        
+
+        //for(int sector = 1; sector <= 1; sector++){
+        DataList data2 = DataProvider.readRegressionNegative(hipoFile, constrain, sector, maxBinsRead);
+        data2.show();
+        DataList.normalizeInput(data2, dc6normalizer);
+        DataList.normalizeOutput(data2, regression3normalizer);
+        
+        data2.shuffle();
+        data2.shuffle();
+        data2.show();
+        data2.scan();
+        DeepNettsRegression net2 = new DeepNettsRegression(ActivationType.TANH, ActivationType.LINEAR);
+        net2.init(new int[]{6,12,12,12,12,12,3});
+        net2.train(data2, nEpochs);                
+        net2.evaluate(data);        
+        data2.show();
+        
+        List<String>  networkContent2 = net.getNetworkStream();
+        String archiveFile2 = String.format("network/%d/%s/regression_neg.network",run,flavor,sector);
+        ArchiveUtils.writeFile(archive, archiveFile2, networkContent);
+        
+        
         /*
             DataList data2 = DataProvider.readRegressionNegative(hipoFile, constrain, 2, maxBinsRead);
             data2.show();
