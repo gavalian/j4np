@@ -1,6 +1,6 @@
 [
     {
-	"name"    : "rich::particle",
+	"name"    : "richx::particle",
 	"group"   : 21800,
 	"item"    : 51,
 	"info"    : "particle properties that intersects with rich",
@@ -19,7 +19,7 @@
 	]
     },
     {
-	"name"   : "rich::hits",
+	"name"   : "richx::hits",
 	"group"  : 21800,
 	"item"   : 52,
 	"info"   : "hits produced in RICH detector",
@@ -33,7 +33,8 @@
 	    {"name":"energy",    "type":"F", "info":"energy of the hit"},
 	    {"name":"x",         "type":"F", "info":"x coordinate of the hit"},
 	    {"name":"y",         "type":"F", "info":"y coordinate of the hit"},
-	    {"name":"z",         "type":"F", "info":"z coordinate of the hit"}
+	    {"name":"z",         "type":"F", "info":"z coordinate of the hit"},
+	    {"name":"status",    "type":"S", "info":"status word"}
 	]
     }
 ]
