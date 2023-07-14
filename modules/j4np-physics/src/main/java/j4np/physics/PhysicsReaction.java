@@ -55,6 +55,20 @@ public class PhysicsReaction extends Tree {
         }
     };
     
+    public static  EventModifier MC_FORWARD_ONLY = new EventModifier(){
+        @Override
+        public void modify(PhysicsEvent event) {
+            int counter = event.count();
+            Vector3 v = new Vector3();
+            for(int i = 0; i < counter ; i++){
+                event.vector(v, i);
+                double theta = Math.toDegrees(v.theta());
+                if(theta>5&&theta<35) event.status(i, 1); else event.status(i, -1);
+            }
+                
+        }
+    };
+    
     public static  EventModifier FORWARD_CENTRAL = new EventModifier(){
         @Override
         public void modify(PhysicsEvent event) {
@@ -65,6 +79,14 @@ public class PhysicsReaction extends Tree {
             }
         }
     };
+    
+    public static  EventModifier EMPTY = new EventModifier(){
+        @Override
+        public void modify(PhysicsEvent event) {
+            
+        }
+    };
+    
     public  PhysicsReaction(String filter){
         eventFilter = new EventFilter(filter);
     }
@@ -160,6 +182,10 @@ public class PhysicsReaction extends Tree {
             if(entry.isValid(value)==false) return false;
         }
         return true;
+    }
+    
+    public VectorOperator operator(int index){
+        return this.vecOprators.get(index);
     }
     
     public void    apply(PhysicsEvent event){

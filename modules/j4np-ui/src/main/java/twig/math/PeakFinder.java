@@ -23,6 +23,8 @@ public class PeakFinder {
     protected  List<Func1D>        fittedFunc = new ArrayList<>();
     protected  List<Func1D> fittedFuncGenetic = new ArrayList<>();
     public int nEpochs = 100;
+    public int nPopulation = 5000;
+    public double mutateFraction = 0.45;
     private double rangeMin = 0.0;
     private double rangeMax = 0.0;
     
@@ -109,7 +111,7 @@ public class PeakFinder {
     public void fit(int backOrder, int nPeaks){
         
         GeneticDataFitter gfitter = new GeneticDataFitter();
-        gfitter.fraction(0.45).population(7000).epochs(nEpochs);
+        gfitter.fraction(mutateFraction).population(nPopulation).epochs(nEpochs);
         
         
         pdfFunc = this.createFinderPDF(backOrder, nPeaks);

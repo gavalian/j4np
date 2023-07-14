@@ -32,7 +32,7 @@ public class TrackNetworkTrainer {
 
     DataNormalizer dc6normalizer = new DataNormalizer(
             new double[]{0.0,0.0,0.0,0.0,0.0,0.0},
-            new double[]{112,112,112,112,112,112});    
+            new double[]{112,112,112,112,112,112});
     
     DataNormalizer regression3normalizer = new DataNormalizer(
             new double[]{ 0.5, 0.0, 40.0},
@@ -106,7 +106,7 @@ public class TrackNetworkTrainer {
         
         list.shuffle();
         
-        encoder.init(new int[]{6,12,12,6,12,12,6});        
+        encoder.init(new int[]{6,12,12,6,12,12,6});
         encoder.train(list, nEpochs);
         
         List<String>  networkContent = encoder.getNetworkStream();
@@ -407,7 +407,7 @@ public class TrackNetworkTrainer {
         data.show();
         data.scan();
         DeepNettsRegression net = new DeepNettsRegression(ActivationType.TANH, ActivationType.LINEAR);
-        net.init(new int[]{6,12,12,12,12,12,3});
+        net.init(new int[]{6,6,6,6,6,6,3});
         net.train(data, nEpochs);                
         net.evaluate(data);        
         data.show();
@@ -428,14 +428,14 @@ public class TrackNetworkTrainer {
         data2.show();
         data2.scan();
         DeepNettsRegression net2 = new DeepNettsRegression(ActivationType.TANH, ActivationType.LINEAR);
-        net2.init(new int[]{6,12,12,12,12,12,3});
-        net2.train(data2, nEpochs);                
-        net2.evaluate(data);        
+        net2.init(new int[]{6,6,6,6,6,6,3});
+        net2.train(data2, nEpochs);
+        net2.evaluate(data2);        
         data2.show();
         
-        List<String>  networkContent2 = net.getNetworkStream();
+        List<String>  networkContent2 = net2.getNetworkStream();
         String archiveFile2 = String.format("network/%d/%s/regression_neg.network",run,flavor,sector);
-        ArchiveUtils.writeFile(archive, archiveFile2, networkContent);
+        ArchiveUtils.writeFile(archive, archiveFile2, networkContent2);
         
         
         /*
@@ -457,16 +457,14 @@ public class TrackNetworkTrainer {
         ArchiveUtils.writeFile(archive, archiveFile2, networkContent2);
         //this.regressionTestDebug(net, testFile, archive, run, flavor);*/
     }
-    
-    public void regressionTest(String hipoFile, String archive, int run, String flavor){
+    public void regressionTestPos(String hipoFile, String archive, int run, String flavor){
         
         
-        for(int sector = 1; sector <= 1; sector++){
-            String archiveFile = String.format("network/%d/%s/trackRegression_pos_%d.network",run,flavor,sector); 
+        int sector = 2;
+            String archiveFile = String.format("network/%d/%s/regression_pos.network",run,flavor,sector); 
             String     dataDir = String.format("network/%d/%s",run,flavor);
         
             List<String> networkContent = ArchiveUtils.getFileAsList(archive,archiveFile);
-        
         
             EJMLModel model = EJMLModel.create(networkContent);
             model.setType(EJMLModel.ModelType.TANH_LINEAR);
@@ -492,9 +490,9 @@ public class TrackNetworkTrainer {
             
             list.show();
         
-            H2F hmom = new H2F("hmom_"+sector,80,0.5,10.5,80,-0.2,0.2);
-            H2F hthe = new H2F("hthe_"+sector,80,0.0,40.0,80,-2.5,2.5);
-            H2F hphi = new H2F("hphi_"+sector,80,40,80,80,-4.5,4.5);
+            H2F hmom = new H2F("hmom_pos",80,0.5,10.5,80,-0.2,0.2);
+            H2F hthe = new H2F("hthe_pos",80,0.0,40.0,80,-2.5,2.5);
+            H2F hphi = new H2F("hphi_pos",80,40,80,80,-4.5,4.5);
             
             DataList.denormalizeOutput(  list, regression3normalizer);
             DataList.denormalizeInfered( list, regression3normalizer);
@@ -503,9 +501,10 @@ public class TrackNetworkTrainer {
                 float[] output = list.getList().get(loop).floatSecond();
                 float[] infered = list.getList().get(loop).getInfered();
                 hmom.fill(output[0], (output[0]-infered[0])/output[0]);
-                hthe.fill(
-                        Math.acos(output[1])*57.29, 
-                        (Math.acos(output[1])-Math.acos(infered[1]))*57.29);
+                hthe.fill(DCUtils.consine2degree(output[1])*57.29,
+                       (DCUtils.consine2degree(output[1])-
+                               DCUtils.consine2degree(infered[1]))*57.29);
+                
                 hphi.fill(output[2], (output[2]-infered[2]));
             }
             TDirectory dir = new TDirectory();
@@ -513,7 +512,65 @@ public class TrackNetworkTrainer {
             dir.add("/"+dataDir, hthe);
             dir.add("/"+dataDir, hphi);
             dir.write(archive);            
-        }
+            
+    
+    }
+    public void regressionTestNeg(String hipoFile, String archive, int run, String flavor){
+        
+        
+        int sector = 2;
+            String archiveFile = String.format("network/%d/%s/regression_neg.network",run,flavor,sector); 
+            String     dataDir = String.format("network/%d/%s",run,flavor);
+        
+            List<String> networkContent = ArchiveUtils.getFileAsList(archive,archiveFile);
+        
+            EJMLModel model = EJMLModel.create(networkContent);
+            model.setType(EJMLModel.ModelType.TANH_LINEAR);
+            
+            
+            DataList list = DataProvider.readRegressionNegative(hipoFile, constrain, sector, maxBinsRead);
+            list.show();
+            DataList.normalizeInput(list, dc6normalizer);
+            DataList.normalizeOutput(list, this.regression3normalizer);
+            list.show();
+            list.scan();
+        
+            long then = System.nanoTime();
+
+            for(int loop = 0; loop < list.getList().size(); loop++){
+                float[] input = list.getList().get(loop).floatFirst();
+                float[] result = new float[3];
+                model.getOutput(input, result);
+                list.getList().get(loop).setInfered(result);
+            }
+            
+            long now = System.nanoTime();
+            
+            list.show();
+        
+            H2F hmom = new H2F("hmom_neg",80,0.5,10.5,80,-0.2,0.2);
+            H2F hthe = new H2F("hthe_neg",80,0.0,40.0,80,-2.5,2.5);
+            H2F hphi = new H2F("hphi_neg",80,40,80,80,-4.5,4.5);
+            
+            DataList.denormalizeOutput(  list, regression3normalizer);
+            DataList.denormalizeInfered( list, regression3normalizer);
+            
+            for(int loop = 0; loop < list.getList().size(); loop++){
+                float[] output = list.getList().get(loop).floatSecond();
+                float[] infered = list.getList().get(loop).getInfered();
+                hmom.fill(output[0], (output[0]-infered[0])/output[0]);
+                hthe.fill(DCUtils.consine2degree(output[1])*57.29,
+                       (DCUtils.consine2degree(output[1])-
+                               DCUtils.consine2degree(infered[1]))*57.29);
+                
+                hphi.fill(output[2], (output[2]-infered[2]));
+            }
+            TDirectory dir = new TDirectory();
+            dir.add("/"+dataDir, hmom);
+            dir.add("/"+dataDir, hthe);
+            dir.add("/"+dataDir, hphi);
+            dir.write(archive);            
+        
     
     }
     

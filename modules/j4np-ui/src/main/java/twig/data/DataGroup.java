@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import twig.graphics.TGCanvas;
 import twig.graphics.TGDataCanvas;
+import twig.graphics.TTabDataCanvas;
 import twig.math.F1D;
 
 /**
@@ -208,6 +209,15 @@ public class DataGroup {
             c.next();
         }*/
         c.repaint();
+    }
+    
+    public void draw(TTabDataCanvas c){
+        c.addCanvas(this.groupName, true);
+        this.draw(c.activeCanvas(), true);
+    }
+    
+    public static void draw(List<DataGroup> list, TTabDataCanvas c){
+       for(DataGroup g : list) g.draw(c);
     }
     
     public void draw(TGCanvas c){

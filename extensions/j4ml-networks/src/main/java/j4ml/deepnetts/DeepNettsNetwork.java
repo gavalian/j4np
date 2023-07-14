@@ -34,6 +34,7 @@ public class DeepNettsNetwork {
     
     ActivationType hiddenActivation = ActivationType.RELU;
     ActivationType   lastActivation = ActivationType.SIGMOID;
+    LossType           lossFunction = LossType.MEAN_SQUARED_ERROR;
     
     public DeepNettsNetwork(){
         
@@ -41,6 +42,10 @@ public class DeepNettsNetwork {
     
     public final DeepNettsNetwork outputActivation(ActivationType type){
         this.lastActivation = type; return this;
+    }
+    
+    public final DeepNettsNetwork lossType(LossType type){
+        this.lossFunction = type; return this;
     }
     
     public final DeepNettsNetwork activation(ActivationType type){
@@ -58,7 +63,7 @@ public class DeepNettsNetwork {
         }
         
         b.addOutputLayer(layers[layers.length-1], this.lastActivation)
-                .lossFunction(LossType.MEAN_SQUARED_ERROR)
+                .lossFunction(lossFunction)
                 .randomSeed(456);
         
         neuralNet = b.build();

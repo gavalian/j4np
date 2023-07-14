@@ -24,7 +24,7 @@ public class Func1D implements DataSet {
     UserParameters      userPars = new UserParameters();
     String              funcName = "f1d";
     private int   defaultDrawingPoints = 250;
-    private Dimension1D  functionRange = new Dimension1D();
+    protected Dimension1D  functionRange = new Dimension1D();
     private TDataAttributes   funcAttr      = new TDataAttributes();
     private double      funcChi2       = 0.0;
     private int         funcNDF        = 0;
@@ -133,6 +133,10 @@ public class Func1D implements DataSet {
     
     public Dimension1D getRange(){
         return this.functionRange;
+    }
+    
+    public boolean isInRange(double x){
+        return (x>=functionRange.getMin()&&x<=functionRange.getMax());
     }
     
     public double getMin(){

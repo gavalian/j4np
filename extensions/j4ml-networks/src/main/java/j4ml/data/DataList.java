@@ -59,6 +59,12 @@ public class DataList extends Tree {
         r.open(file);
         return r.getData();
     }
+    public static int[] range(int start, int end){
+        int size = end-start;
+        int[] index = new int[size];
+        for(int i = 0 ; i < size; i++) index[i] = start + i;
+        return index;
+    }
     
     public void  turnClassifier(int nclasses){
         for(int i = 0; i < getList().size(); i++){

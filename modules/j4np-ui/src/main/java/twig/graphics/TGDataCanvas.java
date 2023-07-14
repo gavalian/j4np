@@ -580,12 +580,54 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             }
         }
         
+                
+        if(e.getActionCommand().compareTo("2d_viewer_panel_X")==0){
+            if(popupProvider.region!=null){                
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                if(obj.get(0).getDataSet() instanceof H2F){
+                    H2F h2 = (H2F) obj.get(0).getDataSet();
+                    ViewPanel2D vp2d = new ViewPanel2D(h2,null,"X");
+                    vp2d.showDialog();
+                }
+                /*List<DataSet> datasets = new ArrayList<>();
+                for(TDataNode2D dn : obj) datasets.add(dn.getDataSet());
+                FitterPanel panel = new FitterPanel(datasets,null);
+                panel.showDialog();*/
+            }
+        }
+        if(e.getActionCommand().compareTo("2d_viewer_panel_Y")==0){
+            if(popupProvider.region!=null){                
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                if(obj.get(0).getDataSet() instanceof H2F){
+                    H2F h2 = (H2F) obj.get(0).getDataSet();
+                    ViewPanel2D vp2d = new ViewPanel2D(h2,null,"Y");
+                    vp2d.showDialog();
+                }
+                /*List<DataSet> datasets = new ArrayList<>();
+                for(TDataNode2D dn : obj) datasets.add(dn.getDataSet());
+                FitterPanel panel = new FitterPanel(datasets,null);
+                panel.showDialog();*/
+            }
+        }
         if(e.getActionCommand().compareTo("fitter_panel_genetic")==0){
             if(popupProvider.region!=null){                
                 List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
                 List<DataSet> datasets = new ArrayList<>();
                 for(TDataNode2D dn : obj) datasets.add(dn.getDataSet());
                 FitterPanel panel = new FitterPanel(datasets,null);
+                panel.showDialog();
+            }
+        }
+        
+        if(e.getActionCommand().compareTo("operations_1D")==0){
+            if(popupProvider.region!=null){                
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                List<H1F> datasets = new ArrayList<>();
+                for(TDataNode2D dn : obj) {
+                    if(dn.getDataSet() instanceof H1F)
+                        datasets.add((H1F) dn.getDataSet());
+                }
+                HistogramOperations panel = new HistogramOperations(datasets,null);
                 panel.showDialog();
             }
         }
@@ -727,9 +769,13 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             
             this.addMenu(menu, "Widgets", new String[]{"Add Text","Add Line","Edit"},
                     new String[]{"add_region_text","add_region_line","edit_region_widgets"});
-            this.addMenu(menu, "Fit", 
-                    new String[]{"Fitter Panel"}, 
-                    new String[]{"fitter_panel_genetic"}
+           
+            
+            this.addMenu(menu, "Operations", 
+                    new String[]{"Fitter Panel","2D Viewer X","2D Viewer Y","Operations"}, 
+                    new String[]{"fitter_panel_genetic"
+                            ,"2d_viewer_panel_X","2d_viewer_panel_Y","operations_1D"
+                    }
             );
             menu.add(new JSeparator());
             this.addMenu(menu, "Region", 

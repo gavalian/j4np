@@ -45,6 +45,15 @@ public class TTabDataCanvas extends JPanel {
         add(tabbedPane,BorderLayout.CENTER);
     }
     
+    public void addCanvas(String name, boolean focused){
+        TGDataCanvas c = new TGDataCanvas();
+        this.canvases.add(c);
+        tabbedPane.addTab(name, null, c, "canvas("+name+")");
+        if(focused==true){
+            tabbedPane.setSelectedIndex(canvases.size()-1);
+        }
+    }
+    public TGDataCanvas activeCanvas(){ return this.canvases.get(tabbedPane.getSelectedIndex());}
     public List<TGDataCanvas> getCanvases(){
         return canvases;
     } 

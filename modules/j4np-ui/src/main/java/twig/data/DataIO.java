@@ -30,7 +30,36 @@ public class DataIO {
         }
         return vectors;
     }
+    public static boolean contains(int n, int[] array){
+        for(int i = 0; i < array.length; i++) if(n==array[i]) return true;
+        return false;
+    }
     
+    public static DataVector axisVector(DataVector v){
+        DataVector a = new DataVector();
+        for(int i = 0; i < v.getSize(); i++){ a.add(i);}
+        return a;
+    }
+    
+    public static List<DataVector> readRows(String file, String delim, int... rows){
+        List<DataVector> vectors = new ArrayList<>();
+        int count = 0;
+        int   row = 0;
+        TextFileReader r = new TextFileReader(file);
+        while(r.readNext()==true&&count<rows.length){
+            if(DataIO.contains(row, rows)==true){
+                String[] tokens = r.getString().split(delim);
+                DataVector v = new DataVector();
+                for(int k = 0; k < tokens.length; k++ ){
+                    v.add(Double.parseDouble(tokens[k]));
+                }
+                count++;
+                vectors.add(v);
+            }
+            row++;
+        }
+        return vectors;
+    }
     
     
 }

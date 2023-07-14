@@ -129,6 +129,7 @@ public class H3F {
     
     
     public void export(String filename){
+        
         TextFileWriter writer = new TextFileWriter();
         writer.open(filename);
         writer.writeString("NRRD0001");
@@ -155,6 +156,8 @@ public class H3F {
         }
         return h1;
     }
+    
+    
     
     public H2F sliceY(int yBin){
         
@@ -185,4 +188,6 @@ public class H3F {
         }
         return slicesZ;
     }
+    
+    
 }

@@ -34,7 +34,7 @@
 	    {"name":"x",         "type":"F", "info":"x coordinate of the hit"},
 	    {"name":"y",         "type":"F", "info":"y coordinate of the hit"},
 	    {"name":"z",         "type":"F", "info":"z coordinate of the hit"},
-	    {"name":"status",    "type":"S", "info":"status word"}
+	    {"name":"status",    "type":"I", "info":"status word"}
 	]
     }
 ]

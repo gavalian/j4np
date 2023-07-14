@@ -478,7 +478,9 @@ public class ClassifierDataExtract extends OptionApplication {
 
         t.getConstrain().show();
 
-        t.regressionTrain(file_tr, file_ev,networkArchive,run,"temp");
+        t.regressionTrain(file_tr, file_ev,networkArchive,run,"default");
+        t.regressionTestPos( file_ev,networkArchive,run,"default");
+        t.regressionTestNeg( file_ev,networkArchive,run,"default");
         //t.classifierTest(  file_ev,networkArchive,run,"temp");
 
         /*TrackNetworkValidator v = new TrackNetworkValidator();

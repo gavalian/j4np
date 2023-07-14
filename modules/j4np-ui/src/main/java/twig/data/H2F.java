@@ -90,7 +90,7 @@ public class H2F implements DataSet {
         offset = new MultiIndex(bx, by);
         hBuffer = new double[offset.getArraySize()];          
         initAttributes();
-        attr().setTitle(title);
+        this.setTitle(title);
     }
     
     public H2F(String name, double[] binsX, double[] binsY){
@@ -939,7 +939,24 @@ public class H2F implements DataSet {
     public TDataAttributes attr() {
         return this.dataAttr;
     }
-
+    /* set Title of the histogram
+     * @param title new title
+     */
+    public final void setTitle(String title){
+        
+        if(title.contains(";")==true){
+           String[] tokens = title.split(";");
+           if(tokens.length>0)
+               this.attr().setTitle(tokens[0]);
+           if(tokens.length>1)
+               this.attr().setTitleX(tokens[1]);
+           if(tokens.length>2)
+               this.attr().setTitleY(tokens[2]);
+        } else {
+            this.attr().setTitle(title);
+        }
+    }
+    
     @Override
     public List<String> getStats(String options) {
         List<String> stats = new ArrayList<>();

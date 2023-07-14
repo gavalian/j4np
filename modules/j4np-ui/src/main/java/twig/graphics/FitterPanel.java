@@ -5,7 +5,7 @@
 package twig.graphics;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +20,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -56,7 +57,9 @@ public class FitterPanel extends JDialog implements ActionListener {
     JComboBox cbPeaks;
     JTextField tfMin;
     JTextField tfMax;
-    
+    JSpinner population ;
+    JSpinner epochs;
+    JSlider fraction;
     TTabDataCanvas c;
     
     public FitterPanel(List<DataSet> datalist, Frame parent){
@@ -92,7 +95,7 @@ public class FitterPanel extends JDialog implements ActionListener {
         
         controls.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         
-        int numPairs = 2;
+        int numPairs = 3;
         
        
         cbDataset = createComboBox();
@@ -104,6 +107,23 @@ public class FitterPanel extends JDialog implements ActionListener {
         
         cbPeaks = new JComboBox(new String[]{"1","2","3"});
         this.addWitLabel(controls, "Peaks:", cbPeaks);
+        
+        
+        population = DataEditorUtils.makeSpinnerWide(5000, 50, 500000);
+        epochs = DataEditorUtils.makeSpinnerWide(100, 5, 5000);
+        
+        population.setMaximumSize(new Dimension(50,5));
+        fraction = new JSlider(JSlider.HORIZONTAL,
+                0, 100, 2);
+        fraction.setValue(45);
+        fraction.setMajorTickSpacing(25);
+        fraction.setMinorTickSpacing(5);
+        fraction.setPaintTicks(true);
+        //fraction.setPaintLabels(true);
+        
+        this.addWitLabel(controls, "Population", population);
+        this.addWitLabel(controls, "Epochs", epochs);
+        this.addWitLabel(controls, "Fraction", fraction);
         
         tfMin = new JTextField(10);
         tfMax = new JTextField(10);
@@ -164,7 +184,7 @@ public class FitterPanel extends JDialog implements ActionListener {
         this.setLocationRelativeTo(this.getParent());
         this.setTitle("Genetic Fitting Panel");
         this.pack();
-        this.setSize(600, 550);
+        this.setSize(800, 750);
         this.setVisible(true);
         //int result = this.showConfirmDialog(c, "Genetic Fitter Panel");
         //System.out.println(" result = " + result);
@@ -194,10 +214,16 @@ public class FitterPanel extends JDialog implements ActionListener {
            PeakFinder pf = new PeakFinder(h);
            
            pf.setRange(min, max);
+           double mutate =  ((double) fraction.getValue()/100.0);
            
-           
+           pf.nEpochs = (Integer) epochs.getModel().getValue();
+           pf.nPopulation = (Integer) population.getModel().getValue();;
+           pf.mutateFraction = mutate;
+           System.out.println("Fraction = " + mutate);
            this.c.getCanvases().get(0).region().draw(h,"EP");
-           pf.fit(2, 1);
+           pf.fit(background, npeaks);
+           
+           
            c.getCanvases().get(0).region().draw(pf.getFittedFunctions().get(0),"same");
            
            c.getCanvases().get(1).region().draw(pf.getDerived(),"EP");
