@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import twig.data.AsciiPlot;
 import twig.data.H2F;
 import twig.data.Range;
@@ -74,7 +75,8 @@ public class ClassifierDataExtract extends OptionApplication {
                 .addRequired("-a", "archive file name")
                 .addRequired("-r", "run number")
                 .addOption("-vertex", "-15.0:5.0", "vertex range for the tracks to train")
-                .addOption("-e", "125", " number of epochs to train")
+                .addOption("-ec", "125", " number of epochs to train")
+                .addOption("-e", "250", " number of epochs to train")
                 .addOption("-max", "45000", "maximum number of tracks for training");
         
         store.addCommand("-regression", "train regression network");
@@ -278,6 +280,12 @@ public class ClassifierDataExtract extends OptionApplication {
         
         List<Track>  trkSector = this.getTracksForSector(trkList, sector);
         
+        
+        /*List<Track> aa = trkList.stream()
+                .filter(t -> t.sector==3&&t.charge>0&&t.vector.mag()<0.75)
+                .collect(Collectors.toList());
+        */
+        
         if(trkSector.size()==1){
             List<Track> trkSelect = this.getTracksSelected(trkSector);
             
@@ -443,13 +451,15 @@ public class ClassifierDataExtract extends OptionApplication {
 
         t.getConstrain().show();
 
-        t.classifierTrain( file_tr,networkArchive,run,"temp");
-        t.classifierTest(  file_ev,networkArchive,run,"temp");
+        t.classifierTrain( file_tr,networkArchive,run,"default");
+        t.classifierTest(  file_ev,networkArchive,run,"default");
 
+        /*
         TrackNetworkValidator v = new TrackNetworkValidator();
 
         v.archiv     = networkArchive;
         v.network    = "network/" + run + "/temp/trackClassifier.network";
+        
         v.outputFile = "validation_postprocess.h5";
         v.getConstrain().momentum.set(0.5,10.5);
         v.getConstrain().vertex.set(vertexmin,vertexmax); // RG-A 
@@ -461,6 +471,7 @@ public class ClassifierDataExtract extends OptionApplication {
         t.nEpochs = epochs;
         t.classifierTrain("validation_postprocess.h5",networkArchive,run,"default");
         t.classifierTest(   file_ev,networkArchive,run,"default");
+        */
     }
     
     
@@ -694,7 +705,7 @@ public class ClassifierDataExtract extends OptionApplication {
                     store.getOptionParser("-train").getOption("-a").stringValue(),
                     store.getOptionParser("-train").getOption("-r").intValue(),
                     min,max,store.getOptionParser("-train").getOption("-max").intValue(),
-                    store.getOptionParser("-train").getOption("-e").intValue());
+                    store.getOptionParser("-train").getOption("-ec").intValue());
             
             
              ClassifierDataExtract.trainAutoEncoder(

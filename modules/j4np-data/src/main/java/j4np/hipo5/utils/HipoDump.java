@@ -6,6 +6,7 @@ package j4np.hipo5.utils;
 
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.BankGroup;
+import j4np.hipo5.data.CompositeNode;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Node;
 import j4np.hipo5.data.Schema;
@@ -142,7 +143,14 @@ public class HipoDump {
             if(nodes.containsKey(item)==true){
                 nodes.get(item).show();
             } else {
-                System.out.printf("::: can not find node %d/%d\n",group,item);
+                CompositeNode cn = new CompositeNode(1024*1024*6);
+                this.event.read(cn, group, item);
+                if(cn.getGroup()!=group){
+                    System.out.printf("::: can not find node %d/%d\n",group,item);
+                } else {
+                    cn.show();
+                    cn.print();
+                }
             }
         } catch (Exception e){
             System.out.printf("::: can not find node %d/%d\n",group,item);

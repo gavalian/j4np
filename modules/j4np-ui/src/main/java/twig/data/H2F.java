@@ -706,7 +706,7 @@ public class H2F implements DataSet {
      *         object onto the x-axis
      */
     public H1F projectionX() {
-        String name = "X Projection";
+        String name = this.hName + "_projection_X";
         double xMin = xAxis.min();
         double xMax = xAxis.max();
         int xNum = xAxis.getNBins();
@@ -745,7 +745,7 @@ public class H2F implements DataSet {
      *         object onto the y-axis
      */
     public H1F projectionY() {
-        String name = "Y Projection";
+        String name = this.hName + "_projection_Y";
         double yMin = yAxis.min();
         double yMax = yAxis.max();
         int yNum = yAxis.getNBins() ;

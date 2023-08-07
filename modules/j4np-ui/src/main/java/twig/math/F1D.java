@@ -23,6 +23,11 @@ public class F1D extends Func1D {
     Expression expr = null;
     private String expressionString = "";
     private List<String> expressionVariables = new ArrayList<String>();
+    protected double scaleX = 1.0;
+    protected double shiftX = 0.0;
+    protected double scaleY = 1.0;
+    protected double shiftY = 0.0;
+    
     
     Function funcLogb = new Function("logb", 2) {
             @Override
@@ -67,6 +72,14 @@ public class F1D extends Func1D {
         super(name,min,max);
         parse(expression);
     }
+    
+    protected F1D setScaleX(double xs){ this.scaleX = xs;return this;}
+    protected F1D setScaleY(double ys){ this.scaleY = ys;return this;}
+    protected F1D setShiftX(double xs){ this.shiftX = xs;return this;}
+    protected F1D setShiftY(double ys){ this.shiftY = ys;return this;}
+    
+    public double getScaleY(){ return this.scaleY;}
+    public double getScaleX(){ return this.scaleX;}
     
     public final void parse(String str){
         expressionString = str;
@@ -120,12 +133,15 @@ public class F1D extends Func1D {
     
     @Override
     public double evaluate(double x){
-        expr.setVariable("x", x);
+        double xx = x*scaleX - shiftX*scaleX;
+        
+        expr.setVariable("x", xx);
         for(int i = 0; i < this.getNPars(); i++){
             UserParameter par = this.parameter(i);
             expr.setVariable(par.name(),par.value());
         }
-        return expr.evaluate();
+        //System.out.printf(" %f %f\n",expr.evaluate(),scaleY);
+        return expr.evaluate()*scaleY+shiftY;
     }
     
     public static void main(String[] args){

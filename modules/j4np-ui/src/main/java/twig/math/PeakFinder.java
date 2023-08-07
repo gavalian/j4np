@@ -19,12 +19,17 @@ public class PeakFinder {
     protected  H1F    reference = null;
     protected  H1F      derived = null;
     protected  Func1D   pdfFunc = null;
+    protected  PDF1D    outputPDF = null;
     
     protected  List<Func1D>        fittedFunc = new ArrayList<>();
     protected  List<Func1D> fittedFuncGenetic = new ArrayList<>();
     public int nEpochs = 100;
     public int nPopulation = 5000;
     public double mutateFraction = 0.45;
+    
+    
+    private double actualRangeMin = 0;
+    private double actualRangeMax = 0;
     private double rangeMin = 0.0;
     private double rangeMax = 0.0;
     
@@ -49,9 +54,15 @@ public class PeakFinder {
     public H1F getDerived(){return this.derived;}
     
     public List<Func1D> getFittedFunctions(){ return this.fittedFunc;}
+    public PDF1D        getFittedPDF(){ return this.outputPDF;}
+    
     public List<Func1D> getGeneticFunctions(){ return this.fittedFunc;}
     
     public final PeakFinder setRange(double min, double max){
+        
+        this.actualRangeMin = min;
+        this.actualRangeMax = max;
+        
         double scale = this.reference.getAxisX().max()
                 -this.reference.getAxisX().min();
         this.rangeMin = (min - this.reference.getAxisX().min())/scale;
@@ -111,14 +122,15 @@ public class PeakFinder {
     public void fit(int backOrder, int nPeaks){
         
         GeneticDataFitter gfitter = new GeneticDataFitter();
-        gfitter.fraction(mutateFraction).population(nPopulation).epochs(nEpochs);
-        
+        gfitter.fraction(mutateFraction).population(nPopulation).epochs(nEpochs);        
         
         pdfFunc = this.createFinderPDF(backOrder, nPeaks);
+        
         for(int i = 0; i < pdfFunc.getNPars(); i++){
             pdfFunc.setParameter(i, 0.5);
             pdfFunc.setParLimits(i, -5.0, 5.0);
         }
+                
         pdfFunc.setParLimits(backOrder+1, 0.0, 1.0);
         pdfFunc.setParLimits(backOrder+2, 0.0, 1.0);
         pdfFunc.setParLimits(backOrder+3, 0.0, 1.0);
@@ -127,13 +139,32 @@ public class PeakFinder {
         gfitter.fit(pdfFunc, derived);
         
         double scale = reference.getAxisX().max()-reference.getAxisX().min();
-        double min = reference.getAxisX().min() + this.rangeMin*(scale);
-        double max = reference.getAxisX().min() + this.rangeMax*(scale);
+        double   min = reference.getAxisX().min() + this.rangeMin*(scale);
+        double   max = reference.getAxisX().min() + this.rangeMax*(scale);
 
-        F1D func = new F1D("fit("+reference.getName()+")","[amp]*gaus(x,[mean],[sigma])",min,max);        
-        func.setParameter(0, reference.getMax()*pdfFunc.getParameter(backOrder+1));
-        func.setParameter(1, reference.getAxisX().min()+scale*pdfFunc.getParameter(backOrder+2));
-        func.setParameter(2, scale*pdfFunc.getParameter(backOrder+3));
+        F1D func = new F1D("fit("+reference.getName()+")","[amp]*gaus(x,[mean],[sigma])",rangeMin, rangeMax); 
+        
+        func.setParameter(0, pdfFunc.getParameter(backOrder+1));
+        func.setParameter(1, pdfFunc.getParameter(backOrder+2));
+        func.setParameter(2, pdfFunc.getParameter(backOrder+3));
+        
+        double scaleY = reference.getMax();
+        
+        func.setScaleX(scale);
+        func.setShiftX(this.reference.getAxisX().min());
+        func.setScaleY(scaleY);
+        //F1D  back = new F1D("back("+reference.getName()+")",);
+        F1D  back = new F1D("back("+reference.getName()+")",background[backOrder],rangeMin, rangeMax);
+        
+        back.setScaleX(scale);
+        back.setScaleY(scaleY);
+        back.setShiftX(this.reference.getAxisX().min());
+        
+        this.outputPDF = new PDF1D("pdf",this.actualRangeMin,this.actualRangeMax);
+        this.outputPDF.add(func).add(back);
+        
+        for(int tt = 0; tt < backOrder+1; tt++) back.setParameter(tt, pdfFunc.getParameter(tt));
+        
         func.attr().set("lc=5,lw=2,ls=3");
         System.out.println("SCALE = " + scale + " MAX = " + reference.getMax());
         
@@ -157,12 +188,14 @@ public class PeakFinder {
         H1F h = (H1F) dir.get("/rgb/conv");
         
         PeakFinder pf = new PeakFinder(h);
+        
         pf.createDerived();
-        pf.nEpochs = 25;
-        TGCanvas c = new TGCanvas();
+        
+        pf.nEpochs = 100;
+        TGCanvas c = new TGCanvas("c",500,500);
         c.draw(pf.derived,"EP");
         
-        pf.setRange(0.8, 1.2);
+        pf.setRange(0.4, 1.25);
         pf.fit(2, 1);
         
         c.draw(pf.getPdf(),"same");
@@ -170,10 +203,14 @@ public class PeakFinder {
         
         TGCanvas c2 = new TGCanvas();
         c2.draw(h,"EP");
-        c2.draw(pf.fittedFunc.get(0),"same");
+        List<Func1D>  funcs = pf.getFittedPDF().list();
+        for(Func1D f : funcs){
+            f.show();
+            c2.draw(f,"same");
+        }
         
-         TGCanvas c3 = new TGCanvas();
-         c3.draw(h,"EP");
-         for(Func1D f : pf.getGeneticFunctions()) c3.draw(f,"same");
+        // TGCanvas c3 = new TGCanvas();
+        // c3.draw(h,"EP");
+        // for(Func1D f : pf.getGeneticFunctions()) c3.draw(f,"same");
     }
 }

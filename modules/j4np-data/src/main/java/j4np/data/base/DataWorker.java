@@ -28,7 +28,7 @@ public  abstract class DataWorker<R extends DataSource,T extends DataEvent> impl
     }
     
     public abstract boolean init(R src);
-    public abstract void execute(T e);
+    public abstract void    execute(T e);
         
     public boolean  parse(String json){
         return true;

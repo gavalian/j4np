@@ -15,6 +15,7 @@ import deepnetts.util.Tensor;
 import j4ml.data.DataEntry;
 import j4ml.data.DataList;
 import j4ml.ejml.EJMLModel;
+import j4np.utils.io.TextFileWriter;
 import j4np.utils.json.Json;
 import j4np.utils.json.JsonArray;
 import j4np.utils.json.JsonObject;
@@ -34,6 +35,7 @@ public class DeepNettsNetwork {
     
     ActivationType hiddenActivation = ActivationType.RELU;
     ActivationType   lastActivation = ActivationType.SIGMOID;
+    
     LossType           lossFunction = LossType.MEAN_SQUARED_ERROR;
     
     public DeepNettsNetwork(){
@@ -239,6 +241,15 @@ public class DeepNettsNetwork {
         EJMLModel              model = EJMLModel.create(networkContent);
         return model;
     } 
+    public void save(String filename){
+        TextFileWriter writer = new TextFileWriter();
+        writer.open(filename);
+        List<String> dataLines = this.getNetworkStream();
+        for(String line : dataLines){
+            writer.writeString(line);
+        }
+        writer.close();
+    }
     public void fromJson(String json){
         
         JsonObject jsonObject = (JsonObject) Json.parse(json);

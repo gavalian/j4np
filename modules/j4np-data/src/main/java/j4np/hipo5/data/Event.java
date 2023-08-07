@@ -234,6 +234,7 @@ public class Event implements DataEvent {
     
     public void read(CompositeNode node, int group, int item){
         int position = scan(group,item);
+        if(position<0) { node.reset(); return;}
         int   length = this.scanLengthAt(group,item, position);
         node.initFromBuffer(this.eventBuffer.array(), position, length+8);
     }
@@ -325,6 +326,7 @@ public class Event implements DataEvent {
             node.reset();
         }
     }
+    
     public Node read(int group, int item){
         int position = this.scan(group, item);
         if(position>=8){

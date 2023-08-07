@@ -4,7 +4,7 @@
 
     <groupId>j4ml</groupId>
     <artifactId>j4ml-classifier</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -12,13 +12,13 @@
       <dependency>
 	<groupId>j4ml</groupId>
 	<artifactId>j4ml-networks</artifactId>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.7-SNAPSHOT</version>
       </dependency>
 
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-physics</artifactId>
-        <version>1.0.6-SNAPSHOT</version>
+        <version>1.0.7-SNAPSHOT</version>
       </dependency>
       
     </dependencies>

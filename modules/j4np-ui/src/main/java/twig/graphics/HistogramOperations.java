@@ -84,8 +84,11 @@ public class HistogramOperations extends DatasetActionPanel implements ActionLis
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().compareTo("Subtract")==0){
+            
             H1F one = this.dataList.get(cbOne.getSelectedIndex());
-            H1F two = this.dataList.get(cbTwo.getSelectedIndex());            
+            H1F two = this.dataList.get(cbTwo.getSelectedIndex());
+            
+            
             H1F hsub = one.copy();
             hsub.sub(two);
             this.getCanvas().activeCanvas().region().draw(hsub);
@@ -105,6 +108,11 @@ public class HistogramOperations extends DatasetActionPanel implements ActionLis
         if(e.getActionCommand().compareTo("Divide")==0){
             H1F one = this.dataList.get(cbOne.getSelectedIndex());
             H1F two = this.dataList.get(cbTwo.getSelectedIndex());
+            System.out.println("DEBUG:: selected index 1 = " 
+                    + cbOne.getSelectedIndex() + " 2 = " + cbTwo.getSelectedIndex());
+            
+            System.out.println("DEBUG:: integral index 1 = "  + one.integral() + " 2 = " 
+                    + two.getIntegral());
             
             H1F hsub = H1F.divide(one, two);
             this.getCanvas().activeCanvas().region().draw(hsub);

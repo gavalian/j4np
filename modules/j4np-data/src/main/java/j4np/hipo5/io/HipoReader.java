@@ -795,7 +795,7 @@ public class HipoReader implements DataSource {
         int   counter = 0;
         
         for(int i = 0; i < frameSize; i++){
-            Event event = (Event) frame.getEvent(i);        
+            Event event = (Event) frame.getEvent(i);
             if(this.hasNext()==true){
                 this.nextEvent(event);
                 counter++;

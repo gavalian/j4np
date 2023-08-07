@@ -39,17 +39,23 @@ public class PDF1D extends Func1D {
         this.add(list);
     }
     
-    public PDF1D add(Func1D f){ funcList.add(f); return this;}
+    public PDF1D add(Func1D f){ 
+        funcList.add(f); 
+        this.updateParameters();
+        return this;
+    }
     
     public PDF1D add(List<Func1D> funcs){
         this.userPars.clear();
         for(Func1D f : funcs){
             int n = f.getNPars();
             for(int i = 0; i < n; i++){
-                this.addParameter(
+                UserParameter up = 
                         new UserParameter(f.parameter(i).name(),
-                                f.parameter(i).value()
-                        ));
+                                f.parameter(i).value());
+                up.setLimits(f.parameter(i).min(),f.parameter(i).max());
+                        
+                this.addParameter(up);
             }
             funcList.add(f);
         } 
@@ -112,7 +118,7 @@ public class PDF1D extends Func1D {
         updateParameters();
         double value = 0.0;
         for(int i = 0; i < funcList.size();i++){            
-            value+= funcList.get(i).evaluate(x);
+            value += funcList.get(i).evaluate(x);
         }
         return value;
     }

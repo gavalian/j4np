@@ -202,6 +202,7 @@ public class DataAttributesEditorPanel extends JPanel {
     private void initTF(){
         JTextField tf_so = DataEditorUtils.makeTextField(attr.getStatOptions(), 7);
         JTextField tf_do = DataEditorUtils.makeTextField(attr.getDrawOptions(), 7);
+        JTextField tf_nm = DataEditorUtils.makeTextField(this.dataNode.getDataSet().getName(), 7);
         
         tf_so.addActionListener(new ActionListener() {
       //capture the event on JTextField
@@ -227,11 +228,30 @@ public class DataAttributesEditorPanel extends JPanel {
                 //System.out.println("Text=" + tf.getText());
             }
         });
+        
+        tf_nm.addActionListener(new ActionListener() {
+      //capture the event on JTextField
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //get and display the contents of JTextField in the console
+                JTextField tf = (JTextField) e.getSource();                
+                if(dataNode!=null){
+                    dataNode.getDataSet().setName(tf.getText());
+                    if(parent!=null) parent.repaint();
+                    //System.out.println("changing it now");
+                }
+                //System.out.println("Text=" + tf.getText());
+            }
+        });
+        
         this.add(new JLabel("Option Stats : ",SwingConstants.RIGHT)); 
         this.add(tf_so,"wrap");
         
         this.add(new JLabel("Draw Options : ",SwingConstants.RIGHT)); 
         this.add(tf_do,"wrap");
+        
+        this.add(new JLabel("Dataset Name : ",SwingConstants.RIGHT)); 
+        this.add(tf_nm,"wrap");
     }
     
     public static void main(String[] args){

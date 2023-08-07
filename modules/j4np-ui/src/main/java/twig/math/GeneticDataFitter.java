@@ -37,7 +37,6 @@ public class GeneticDataFitter {
         
     }
     
-    
     public GeneticDataFitter population(int count){ 
         this.initialPopulation = count;return this;
     }
@@ -91,32 +90,59 @@ public class GeneticDataFitter {
             UserParameters upars = this.userPars.clone();
             return new GenParameters(upars);
         }
-
+        
+        private void swap(GenParameters g1, GenParameters g2, int par){
+            double tmp = g1.userPars.getParameter(par).value();
+            g1.userPars.getParameter(par).setValue(g2.userPars.getParameter(par).value());
+            g2.userPars.getParameter(par).setValue(tmp);                        
+        }
+        
         @Override
         public List<GenParameters> crossover(GenParameters other) {
-            GenParameters thisClone = this.clone();
+           GenParameters thisClone = this.clone();
            GenParameters otherClone = other.clone();
            int np = thisClone.userPars.getParameters().size();
-           
+           /*for(int k = 0; k < np; k++){
+             double a =  thisClone.userPars.getParameter(k).value();
+             double b =  otherClone.userPars.getParameter(k).value();
+             
+             thisClone.userPars.getParameter(k).setValue((a+b)/2);
+             otherClone.userPars.getParameter(k).setValue((a+b)/2);
+           }*/
+           int    index = random.nextInt( np - 1);
+           double  side = random.nextDouble();
+           if(side>0.5){
+               for(int i = index; i < np; i++){               
+                   swap(thisClone,otherClone,i);
+               }
+           } else {
+               for(int i = 0; i < index; i++){
+                   int idx = np-1-i;
+                   swap(thisClone,otherClone,idx);
+               }
+           }
+           /*
            int index = random.nextInt( np - 1);
-           
            for (int i = index; i < np; i++) {
                double tmp = thisClone.userPars.getParameter(index).value();
                thisClone.userPars.getParameter(i).setValue(otherClone.userPars.getParameter(i).value());
                otherClone.userPars.getParameter(i).setValue(tmp);
-           }
+           }*/
            return Arrays.asList(thisClone, otherClone);
         }
 
         @Override
         public GenParameters mutate() {
              GenParameters gen = this.clone();
-            int par = random.nextInt(gen.userPars.getParameters().size());
-            double value = 
-                    gen.userPars.getParameter(par).min()+ 
-                    random.nextDouble()*(
-                    gen.userPars.getParameter(par).max()-gen.userPars.getParameter(par).min());            
-            gen.userPars.getParameter(par).setValue(value);
+             int npars = random.nextInt(gen.userPars.getParameters().size()-2)+1;
+             for(int k = 0; k < npars; k++){
+                 int par = random.nextInt(gen.userPars.getParameters().size());
+                 double value = 
+                         gen.userPars.getParameter(par).min()+ 
+                         random.nextDouble()*(
+                         gen.userPars.getParameter(par).max()-gen.userPars.getParameter(par).min());           
+                 gen.userPars.getParameter(par).setValue(value);
+             }
             return gen;
         }
         
@@ -327,7 +353,9 @@ public class GeneticDataFitter {
        this.addListener(ga);
        
        int nEvolve = (int) (this.initialPopulation*this.evolveFraction);
+       System.out.println(" NEVOLVE = " + nEvolve);
        ga.evolveCrop(nEvolve,nEpochs);
+       //ga.evolveCrop(2000,200);
          
        this.gfunc = ga.getBest();
        

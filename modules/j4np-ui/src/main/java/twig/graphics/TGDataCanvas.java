@@ -245,7 +245,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         return this;
     }
     
-    public TGDataCanvas ticksSizeY(int tsY){        
+    public TGDataCanvas ticksSizeY(int tsY){
         for(Node2D node : getGraphicsComponents()){
             ((TGRegion) node).getAxisFrame().getAxisY().getAttributes().setAxisTickMarkSize(tsY);
         }
@@ -796,7 +796,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                     new String[]{"Grid X" ,"Grid Y","Limits X", "Limits Y", "Titles", "Log X", "Log Y",
                         "Lin X", "Lin Y"}, 
                     
-                    new String[]{"axis_grid_x", "axis_grid_y", "axis_limits_X","axis_limits_y","axis_titles",
+                    new String[]{"axis_grid_x", "axis_grid_y", "axis_limits_x","axis_limits_y","axis_titles",
                     "axis_log_x","axis_log_y","axis_lin_x","axis_lin_y"}
             );
             

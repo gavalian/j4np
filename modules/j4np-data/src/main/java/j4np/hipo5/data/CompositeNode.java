@@ -92,7 +92,7 @@ public class CompositeNode extends BaseHipoStructure {
         return false;
     }
     
-    public CompositeNode putInt(int row, int entry, int number){
+    public CompositeNode putInt( int entry,int row, int number){
         if(testTypeForEntry(entry,3)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -102,7 +102,7 @@ public class CompositeNode extends BaseHipoStructure {
         return this;
     }
     
-    public CompositeNode putLong(int row, int entry, long number){
+    public CompositeNode putLong(int entry, int row, long number){
         if(testTypeForEntry(entry,8)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -112,7 +112,7 @@ public class CompositeNode extends BaseHipoStructure {
         return this;
     }
     
-    public CompositeNode putByte(int row, int entry, byte number){
+    public CompositeNode putByte(int entry, int row, byte number){
         if(testTypeForEntry(entry,1)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -121,7 +121,7 @@ public class CompositeNode extends BaseHipoStructure {
         }
         return this;
     }
-    public CompositeNode putShort(int row, int entry, short number){
+    public CompositeNode putShort(int entry, int row,  short number){
         if(testTypeForEntry(entry,2)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -131,7 +131,7 @@ public class CompositeNode extends BaseHipoStructure {
         return this;
     }
     
-    public CompositeNode putFloat(int row, int entry, float number){
+    public CompositeNode putFloat(int entry, int row, float number){
         if(testTypeForEntry(entry,4)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -141,7 +141,7 @@ public class CompositeNode extends BaseHipoStructure {
         return this;
     }
     
-    public CompositeNode putDouble(int row, int entry, double number){
+    public CompositeNode putDouble(int entry, int row, double number){
         if(testTypeForEntry(entry,5)==true){
             int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -151,7 +151,7 @@ public class CompositeNode extends BaseHipoStructure {
         return this;
     }
     
-    public int getInt(int row, int entry){
+    public int getInt( int entry, int row){
         int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
@@ -165,7 +165,7 @@ public class CompositeNode extends BaseHipoStructure {
         }
     }
     
-    public long getLong(int row, int entry){
+    public long getLong(int entry, int row){
         int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
@@ -176,7 +176,7 @@ public class CompositeNode extends BaseHipoStructure {
         return 0L;       
     }
     
-    public double getDouble(int row, int entry){
+    public double getDouble( int entry, int row){
         int offset = getDataOffset() +
                 row * dataDescriptor.structureLength + 
                 dataDescriptor.getEntryOffset(entry);
@@ -196,21 +196,42 @@ public class CompositeNode extends BaseHipoStructure {
         this.dataDescriptor.show();
     }
     
-    protected String rowToString(int entry){
+    protected String rowToString(int row){
+        
+        StringBuilder str = new StringBuilder();
+        int nrows = this.getRows();
+
+        //str.append(String.format("%3d : ", type));
+        int nentries = this.getEntries();
+        for(int entry = 0; entry < nentries; entry++){
+            int type = this.getEntryType(entry);
+            switch(type){
+                case 1: str.append(String.format(" %8d", this.getInt(entry,row))); break;
+                case 2: str.append(String.format(" %8d", this.getInt(entry,row))); break;
+                case 3: str.append(String.format(" %8d", this.getInt( entry,row))); break;
+                case 4: str.append(String.format(" %8.4f", this.getDouble(entry,row))); break;
+                case 5: str.append(String.format(" %8.4f", this.getDouble(entry,row))); break;
+                case 8: str.append(String.format(" %8d", this.getLong(entry,row))); break;
+                default: break;
+            }
+        }
+        return str.toString();
+    }
+    
+    protected String columnToString(int entry){
         
         StringBuilder str = new StringBuilder();
         int nrows = this.getRows();
         int type = this.getEntryType(entry);
         str.append(String.format("%3d : ", type));
         for(int row = 0; row < nrows; row++){
-
             switch(type){
-                case 1: str.append(String.format(" %8d", this.getInt(row, entry))); break;
-                case 2: str.append(String.format(" %8d", this.getInt(row, entry))); break;
-                case 3: str.append(String.format(" %8d", this.getInt(row, entry))); break;
-                case 4: str.append(String.format(" %8.4f", this.getDouble(row, entry))); break;
-                case 5: str.append(String.format(" %8.4f", this.getDouble(row, entry))); break;
-                case 8: str.append(String.format(" %8d", this.getLong(row, entry))); break;
+                case 1: str.append(String.format(" %8d", this.getInt(entry,row))); break;
+                case 2: str.append(String.format(" %8d", this.getInt(entry,row))); break;
+                case 3: str.append(String.format(" %8d", this.getInt( entry,row))); break;
+                case 4: str.append(String.format(" %8.4f", this.getDouble(entry,row))); break;
+                case 5: str.append(String.format(" %8.4f", this.getDouble(entry,row))); break;
+                case 8: str.append(String.format(" %8d", this.getLong(entry,row))); break;
                 default: break;
             }
         }
@@ -220,8 +241,8 @@ public class CompositeNode extends BaseHipoStructure {
     public void print(){
         int    nrows = this.getRows();
         int nentries = this.getEntries();
-        for(int entry = 0; entry < nentries; entry++){
-            System.out.println(this.rowToString(entry));
+        for(int row = 0; row < nrows; row++){
+            System.out.println(this.rowToString(row));
         }
     }
     /**

@@ -31,7 +31,9 @@ import twig.data.H1F;
 import twig.data.TDataFactory;
 import twig.editors.DataEditorUtils;
 import twig.math.Func1D;
+import twig.math.PDF1D;
 import twig.math.PeakFinder;
+import twig.math.PeakFinder2;
 import twig.utils.SpringUtilities;
 
 /**
@@ -211,7 +213,23 @@ public class FitterPanel extends JDialog implements ActionListener {
            int selected = this.cbDataset.getSelectedIndex();
            System.out.println(">>> " + selected + "  size = " + this.regionData.size());
            H1F h = (H1F) this.regionData.get(selected);
-           PeakFinder pf = new PeakFinder(h);
+           
+           double mutate =  ((double) fraction.getValue()/100.0);
+           
+           PeakFinder2 pf = new PeakFinder2(h);
+           pf.nEpochs = (Integer) epochs.getModel().getValue();
+           pf.nPopulation = (Integer) population.getModel().getValue();;
+           pf.mutateFraction = mutate;
+           
+           PDF1D pdf = pf.cratePdf(background, npeaks, min, max);
+           pf.fit(pdf);
+           
+           c.getCanvases().get(0).region().draw(h).draw(pf.getFitterPdf(), "same");
+           c.getCanvases().get(0).region().draw(pf.getFitterPdf().list(), "same");
+           c.getCanvases().get(0).region().showStats(1.01, 1.01);
+           c.getCanvases().get(0).repaint();
+           
+           /*PeakFinder pf = new PeakFinder(h);
            
            pf.setRange(min, max);
            double mutate =  ((double) fraction.getValue()/100.0);
@@ -229,13 +247,17 @@ public class FitterPanel extends JDialog implements ActionListener {
            c.getCanvases().get(1).region().draw(pf.getDerived(),"EP");
            c.getCanvases().get(1).region().draw(pf.getPdf(),"same");
            //for(Func1D f : pf.getGeneticFunctions()) c.getCanvases().get(1).region().draw(f,"same");
+           */
        }
     }
     
     public static void main(String[] args){
         JFrame fr = new JFrame();
         fr.setVisible(true);
-        H1F h = TDataFactory.createH1F(8200, 240, 0.0, 1.0, 0.25, 0.05);
+        H1F h1 = TDataFactory.createH1F(8200, 240, 0.0, 1.0, 0.25, 0.05);
+        H1F h2 = TDataFactory.createH1F(4200, 240, 0.0, 1.0, 0.55, 0.07);
+        
+        H1F h = H1F.add(h1, h2);
         FitterPanel panel = new FitterPanel(Arrays.asList(h),fr);
         panel.showDialog();
     }

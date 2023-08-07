@@ -53,6 +53,21 @@ public class FuncHist1D extends Func1D {
         }
     }
     
+    public List<Func1D> getFunctions(){
+        List<Func1D> list = new ArrayList<>();
+        for(int i = 0; i < this.histograms.size(); i++){
+            FuncHist1D f = new FuncHist1D(histograms.get(i).getName(),this.getMin(),this.getMax());
+            H1F h = histograms.get(i).copy();
+            h.attr().setLineColor(2+i);
+            //System.out.println("setting the color " + (i+2));
+            f.addHisto(h);
+            f.setParameter(0, this.getParameter(i));
+            f.attr().setLineColor(i+2);
+            list.add(f);
+        }
+        return list;
+    }
+    
     @Override
     public double evaluate(double x){
         double agregate = 0.0;

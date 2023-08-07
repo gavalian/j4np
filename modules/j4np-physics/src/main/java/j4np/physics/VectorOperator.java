@@ -18,7 +18,10 @@ import java.util.logging.Logger;
 public class VectorOperator {
     
     public enum OperatorType {
-      MASS,MASS2,THETA,PHI,P,E,THETA_DEG,PHI_DEG,PX,PY,PZ, PT
+      MASS,MASS2,THETA,PHI,P,E,THETA_DEG,PHI_DEG,PX,PY,PZ, PT, 
+      DOCA, 
+      DIST, 
+      COLL // collinearity between two particles
     };
     
     protected LorentzVector      vec = new LorentzVector();

@@ -36,6 +36,11 @@ public class HipoWriter implements DataSync {
     private int     maximumRecordEvents = 100000;
     private int         compressionType = 1;
     
+     private boolean    splitOutputFiles = false;
+    private long      maxOutputFileSize = -1L;
+    private int         outputFileCount = -1;
+    private String       outputFileName = "";
+    
     private final SchemaFactory schemaFactory = new SchemaFactory();
 
     private List<Event>   headerEvents = new ArrayList<>();
@@ -51,6 +56,8 @@ public class HipoWriter implements DataSync {
     private long            statsTimeCompression = 0L;
     private long              statsTimeEventCopy = 0L;
     private long             statsNumberOfEvents = 0L;
+
+    private long     statsBytesCompressedCurrent = 0L;
 
     public HipoWriter(){
         
@@ -100,6 +107,14 @@ public class HipoWriter implements DataSync {
         headerEvents.add(e);
     }
     
+    public HipoWriter setSplitSize(long bytes){
+        this.splitOutputFiles  = true;
+        this.maxOutputFileSize = bytes;
+        this.outputFileCount   = 0;
+        System.out.println("\n>>>writer:: set split size " + bytes + " [bytes]\n");
+        return this;
+    }
+    
     public void addConfig(String key, String jsonString){
         Node n = new Node(HipoUtilsIO.HEADER_NODE_GROUP,
                 HipoUtilsIO.HEADER_NODE_ITEM,jsonString);
@@ -112,7 +127,7 @@ public class HipoWriter implements DataSync {
     
     @Override
     public final boolean open(String filename){
-        
+        this.outputFileName = filename;
         writer = new Writer( HeaderType.HIPO_FILE, // this write HIPO in the 
                 // first bytes of the file
                 ByteOrder.LITTLE_ENDIAN,  // Use LITTLE_ENDIAN by default
@@ -179,7 +194,65 @@ public class HipoWriter implements DataSync {
         outStream.getHeader().setUserRegisterFirst(id);
         outputStreams.put(id, outStream);
     }
-    
+    public void addEvent(Event event, long eventTag){
+        
+        if(event.getEventBufferSize()<=16) return;
+        if(eventTag==0){
+            int size = event.getEventBufferSize();
+            boolean status = 
+                    defaultOutputStream.addEvent(event.getEventBuffer().array(), 0, size);
+            if(status==false){
+                this.statsBytesWritten += defaultOutputStream.getUncompressedSize();
+                long then = System.nanoTime();
+                int bytesWritten = writer.writeRecord(defaultOutputStream);
+                defaultOutputStream.reset();
+                defaultOutputStream.getHeader().setUserRegisterFirst(0);
+                defaultOutputStream.addEvent(event.getEventBuffer().array(), 0, size);
+                long now  = System.nanoTime();
+                this.statsTimeCompression += now-then;
+                this.statsBytesCompressed += bytesWritten;
+                this.statsBytesCompressedCurrent += bytesWritten;
+                if(this.splitOutputFiles==true){
+                    if(this.statsBytesCompressedCurrent>this.maxOutputFileSize){
+                        writer.close();
+                        this.statsBytesCompressedCurrent = 0L;
+                        this.outputFileCount++;
+                        String previousFile = this.outputFileName;
+                        String newFileName  = String.format("%s.%06d", previousFile,this.outputFileCount);
+                        this.open(newFileName);
+                        this.outputFileName = previousFile;
+                    }
+                }
+                
+            }
+            //return;
+        } else {
+            
+            if(outputStreams.containsKey(eventTag)==false){
+                System.out.println("[sorted-writer] ---->>>> adding output stream with tag = " + eventTag);
+                addOutputStream(eventTag);
+            }
+            
+            int tag = (int) eventTag;
+            
+            event.setEventTag(tag);
+            
+            RecordOutputStream stream = outputStreams.get(eventTag);
+            long streamTag = stream.getHeader().getUserRegisterFirst();
+            int size = event.getEventBufferSize();
+            boolean status = stream.addEvent(event.getEventBuffer().array(), 0, size);
+            if(status==false){
+                long then = System.nanoTime();
+                writer.writeRecord(stream);
+                stream.reset();
+                stream.getHeader().setUserRegisterFirst(streamTag);
+                stream.addEvent(event.getEventBuffer().array(), 0, size);
+                long now  = System.nanoTime();
+                this.statsTimeCompression += now-then;
+            }
+        }
+    }
+    /*
     public void addEvent(Event event, long eventTag){
         
         if(event.getEventBufferSize()<=16) return;
@@ -224,7 +297,7 @@ public class HipoWriter implements DataSync {
                 this.statsTimeCompression += now-then;
             }
         }
-    }
+    }*/
     
     public void addEvent(Event event){
         //long eventTag = 0L;

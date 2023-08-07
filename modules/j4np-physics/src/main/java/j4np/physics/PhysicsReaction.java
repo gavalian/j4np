@@ -55,6 +55,49 @@ public class PhysicsReaction extends Tree {
         }
     };
     
+    
+    public static  EventModifier FORWARD_ONLY_CHI2PID = new EventModifier(){
+        @Override
+        public void modify(PhysicsEvent event) {
+            int counter = event.count();
+            for(int i = 0; i < counter ; i++){
+                int status = event.status(i);
+                if(Math.abs(status)>=2000&&Math.abs(status)<3000){
+                    event.status(i, 1);
+                } else { event.status(i, -1);}
+            }
+        }
+    };
+    
+    public static  EventModifier FORWARD_ONLY_MESONX = new EventModifier(){
+        @Override
+        public void modify(PhysicsEvent event) {
+            int counter = event.count();
+            
+            int    pid0 = event.pid(0);
+            if(pid0==11){
+                for(int i = 0; i < counter ; i++){
+                    event.status(i, -1);
+                }
+                return;
+            }
+            
+            for(int i = 0; i < counter ; i++){
+                int status = event.status(i);
+                int    pid = event.pid(i);
+                if(Math.abs(status)>=2000&&Math.abs(status)<3000){
+                    event.status(i, 1);
+                } else { 
+                    if(pid==11&&Math.abs(status)>=1000&&Math.abs(status)<2000){
+                        event.status(i, 1);
+                    } else {
+                        event.status(i, -1);
+                    }
+                }
+            }
+        }
+    };
+    
     public static  EventModifier MC_FORWARD_ONLY = new EventModifier(){
         @Override
         public void modify(PhysicsEvent event) {
@@ -159,6 +202,11 @@ public class PhysicsReaction extends Tree {
     
     public PhysicsReaction addVector(String oper){
         vecOprators.add(new VectorOperator(LorentzVector.withPxPyPzM(0.0, 0.0, 0.0, 0.0),oper));
+        return this;
+    }
+    
+    public PhysicsReaction addVector(VectorOperator oper){
+        vecOprators.add(oper);
         return this;
     }
     
@@ -281,8 +329,9 @@ public class PhysicsReaction extends Tree {
         physicsEvent.read(reactionEvent);
         
         for(EventModifier m : modifiers) m.modify(physicsEvent);
-        
-        apply(physicsEvent);
+        if(eventFilter.isValid(physicsEvent)==true){
+            apply(physicsEvent);
+        }
         
         return true;
     }
