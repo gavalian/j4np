@@ -5,6 +5,7 @@
 package j4ml.clas12.networks;
 
 import deepnetts.net.layers.activation.ActivationType;
+import deepnetts.net.loss.LossType;
 import j4ml.data.DataList;
 import j4ml.data.DataNormalizer;
 import j4ml.deepnetts.DeepNettsNetwork;
@@ -80,6 +81,7 @@ public class RegressionNetwork {
         DeepNettsNetwork encoder = new DeepNettsNetwork();
         encoder.activation(ActivationType.TANH)
                 .outputActivation(ActivationType.LINEAR);
+        
         encoder.init(new int[]{6,12,12,12,3});
         
         

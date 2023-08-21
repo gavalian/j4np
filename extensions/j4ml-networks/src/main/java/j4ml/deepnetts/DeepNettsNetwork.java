@@ -108,7 +108,9 @@ public class DeepNettsNetwork {
         for(int i = 0; i < ds.getList().size(); i++){
             float[]  input  = ds.getList().get(i).floatFirst();
             float[]  output = neuralNet.predict(input);
-            ds.getList().get(i).setInfered(output);
+            float[]  result = new float[output.length];
+            for(int r = 0; r < result.length; r++) { result[r] = output[r];}
+            ds.getList().get(i).setInfered(result);
         }
        /* DataList p = new DataList();
         DataSet set = this.convert(ds);

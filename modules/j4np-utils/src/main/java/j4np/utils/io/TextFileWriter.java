@@ -86,4 +86,11 @@ public class TextFileWriter {
             Logger.getLogger(TextFileWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void writeFile(String filename, List<String> lines){
+        TextFileWriter w = new TextFileWriter();
+        w.open(filename);
+        for(String line : lines) w.writeString(line);
+        w.close();
+    }
 }

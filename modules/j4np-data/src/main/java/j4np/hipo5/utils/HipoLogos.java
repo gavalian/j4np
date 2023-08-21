@@ -102,12 +102,23 @@ public class HipoLogos {
 	 };*/
      
      
-     public static String shrugIcon   = "¯\\_(ツ)_/¯";
-     public static String thisIcon    = "( ͡° ͜ʖ ͡°)_/¯";
-     public static String lennyStrongIcon = "ᕦ( ͡° ͜ʖ ͡°)ᕤ";
-     public static String blushIcon   = "(˵͡° ͜ʖ͡°˵)";
-     public static String sleepIcon   = "(҂◡_◡)";
-
+        public static String[] HIPO_ASCII_1 = new String[]{
+            "┊┊┊╭╮▂▂▂╭╮",
+            "┊┊┊╱━╮╭━╮╲",
+            "┊┊▕┊▉┊┊▉┊┈╲",
+            "┊╱▔┈▔┈┈▔┈┈┈▔▔▔╲",
+            "▕╭╮┈╭╮┈┈╱┈▕┈┈┈┈╲",
+            "▕╰╯┈╰╯┈▕┈┈▕┈┈┈┈▕",
+            "┈╲▂▂▂▂▂╱┈┈╱┈┈┈┈▕",
+            "┈┈╲▂▂▂▂╱▂╱┈┈┈┈┈╱"
+        };
+        
+        public static String shrugIcon   = "¯\\_(ツ)_/¯";
+        public static String thisIcon    = "( ͡° ͜ʖ ͡°)_/¯";
+        public static String lennyStrongIcon = "ᕦ( ͡° ͜ʖ ͡°)ᕤ";
+        public static String blushIcon   = "(˵͡° ͜ʖ͡°˵)";
+        public static String sleepIcon   = "(҂◡_◡)";
+        
     public static String  emptyCircle = "\u25CB";
     public static String  fullCircle = "\u25CF";
     

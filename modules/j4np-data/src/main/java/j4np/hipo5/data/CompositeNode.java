@@ -25,6 +25,7 @@ public class CompositeNode extends BaseHipoStructure {
     public CompositeNode(int size){
         super(size);
     }
+    
     public CompositeNode(String format){
         dataDescriptor = new DataStructureDescriptor();
         dataDescriptor.parse(format);
@@ -196,7 +197,7 @@ public class CompositeNode extends BaseHipoStructure {
         this.dataDescriptor.show();
     }
     
-    protected String rowToString(int row){
+    public String rowToString(int row){
         
         StringBuilder str = new StringBuilder();
         int nrows = this.getRows();
@@ -245,6 +246,8 @@ public class CompositeNode extends BaseHipoStructure {
             System.out.println(this.rowToString(row));
         }
     }
+    
+    
     /**
      * Descriptor class is used in data Structure to define
      * the format of the internal buffer.

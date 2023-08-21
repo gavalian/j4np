@@ -191,7 +191,7 @@ public class HipoReader implements DataSource {
                 System.out.println(String.format("reader:: ***** dictionary entries : %12d", recordEntries));
             }*/
             
-            System.out.printf("[hipo5] >> records %9d, event %9d, schemas %5d << f = %s\n",
+            if(this.debugMode>0) System.out.printf("[hipo5] >> records %9d, event %9d, schemas %5d << f = %s\n",
                     recordPositions.size(),eventIndex.getMaxEvents(),schemaFactory.getSchemaKeys().size(), filename);
             
             /*for(int i = 0; i < recordPositions.size(); i++){

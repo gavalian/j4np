@@ -169,10 +169,11 @@ public class BaseHipoStructure {
         int   group = this.getGroup();
         int    item = this.getItem();
         int    type = this.getType();
+        
         this.require(hdrSize+8+size+this.DATA_BUFFER_PADDING);
         this.setGroup(group).setItem(item).setType(type);
-        
-        structBuffer.putInt(BUFFERSIZE_POSITION, size); 
+        int sizeWord = ((hdrSize<<24)&0xFF000000)|(size&0x00FFFFFF);
+        structBuffer.putInt(BUFFERSIZE_POSITION, sizeWord); 
         return this;
     }
     
@@ -197,17 +198,20 @@ public class BaseHipoStructure {
     
     public static void main(String[] args){
         
-        BaseHipoStructure struct = new BaseHipoStructure(145,12,11,"ciss", new byte[]{5,6,7,8,9,12,14});
-        
-                
+        BaseHipoStructure struct = new BaseHipoStructure(145,12,11,"ciss", new byte[]{5,6,7,8,9,12,14});                        
         struct.info();
-        
         struct.setGroup(1245);
         struct.setItem(23);
         struct.setType(11);
         
         struct.info();
         
+        System.out.println(struct.getHeaderLength());
+        
+        struct.setSize(20);
+        System.out.println(struct.getHeaderLength());
+        
+        struct.info();
         /*
         struct.setIdentifier(0xC0DA).setSize(1024);
         struct.info();

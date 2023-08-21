@@ -108,6 +108,7 @@ public class ArchiveProvider {
      */
     public void copyFile(int srcRun, String srcFlavor, 
             int dstRun, String dstFlavor, String file){
+        
         int      realRun = this.findEntry(srcRun);
         String   srcFile = String.format("%s/%d/%s/%s", 
                 system,realRun,srcFlavor,file);
@@ -121,6 +122,29 @@ public class ArchiveProvider {
             ArchiveUtils.writeFile(archiveFile, dstFile, content);
             System.out.printf("\n\n copy success : \n %s ==> %s\n",srcFile,dstFile);
         }
+    }
+    
+    /**
+     * Copy a file into a new run range
+     * @param srcRun source run number
+     * @param srcFlavor source flavor
+     * @param dstRun destination run number
+     * @param dstFlavor destination flavor
+     * @param file filename to copy
+     */
+    protected void copyFileToFile(int srcRun, String srcFlavor, 
+            int dstRun, String dstFlavor, String file, String newArchiveFile){
+        
+        int      realRun = this.findEntry(srcRun);
+        String   srcFile = String.format("%s/%d/%s/%s", 
+                system,realRun,srcFlavor,file);
+        String   dstFile = String.format("%s/%d/%s/%s", 
+                system,dstRun,dstFlavor,file);
+            
+        List<String> content = ArchiveUtils.getFileAsList(archiveFile, srcFile);
+        ArchiveUtils.writeFile(newArchiveFile, dstFile, content);
+        System.out.printf("\n\n copy success : \n %s ==> %s\n",srcFile,dstFile);
+        
     }
     
     public void copy(int srcRun, int dstRun){
@@ -146,6 +170,31 @@ public class ArchiveProvider {
             //System.out.println("copy file -> " + fn + "  : " + file);
             this.copyFile(srcRun, srcFlavor, dstRun, dstFlavor, file);
         }
+    }
+    
+    public void copyToFile(int srcRun, String srcFlavor, String newArchiveFile){
+        int  realRun = this.findEntry(srcRun);        
+        String directory = this.findDirectory(srcRun, srcFlavor);
+        //System.out.printf("\nrun %d search... entry found %d\n\n",srcRun,realRun);
+        List<String> fileList = ArchiveUtils.getList(archiveFile, directory);
+        for(String fn : fileList){
+            String file = fn.replace(directory+"/", "");
+            //System.out.println("copy file -> " + fn + "  : " + file);
+            this.copyFileToFile(srcRun, srcFlavor, realRun, srcFlavor, file, newArchiveFile);
+            System.out.printf(":::: copy run = %8d (%8d) to new archive : %s\n",
+                    srcRun, realRun, newArchiveFile);
+        }        
+    }
+    
+    public void copyToFile(int runStart, int runEnd, String srcFlavor, String newArchiveFile){
+        List<Integer> runList = this.getRunList();
+        Collections.sort(runList);
+        
+        for(Integer run : runList){
+            if(run>=runStart&&run<=runEnd)
+            this.copyToFile(run, srcFlavor, newArchiveFile);
+        }
+
     }
     
     public void removeFile(int run, String file){
@@ -174,6 +223,7 @@ public class ArchiveProvider {
             System.out.println("\t removing file : " + fn);
         }
     }
+    
     public List<Integer> getRunList(){
        String         filter = String.format(".*/.*/%s", flavor); 
        List<String> directories = ArchiveUtils.getList(archiveFile, filter);
@@ -264,6 +314,11 @@ public class ArchiveProvider {
             System.out.println("\t -> " + fn);
         }
     }
+    
+    /*public List<Integer>  getRunList(){
+        List<Integer> runList = new ArrayList<>();
+        
+    }*/
     /**
      * Shows list of runs for for given flavor. The flavor can be
      * specified in the constructor.

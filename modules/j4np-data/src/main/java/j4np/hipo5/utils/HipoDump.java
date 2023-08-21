@@ -31,6 +31,7 @@ public class HipoDump {
     int              currentEvent = 0;
     List<Event>       markedEvent = new ArrayList<>();
     BankGroup               group = new BankGroup();
+    long[]                   tags = new long[0];
     
     public HipoDump(){
         
@@ -44,10 +45,18 @@ public class HipoDump {
         this.init(file, selection, "*");
     }
     
+    public HipoDump(String file, String selection, String exists, long[] t){
+        this.setTags(t);
+        this.init(file, selection, exists);
+    }
+    
     public HipoDump(String file, String selection, String exists){
         this.init(file, selection, exists);
     }
     
+    public final void setTags(long[] t){
+        this.tags = t;
+    }
     public boolean exist(Event event){
         if(require.getSchemaList().isEmpty()) return true;
         for(Schema sch : require.getSchemaList()){
@@ -57,8 +66,11 @@ public class HipoDump {
     }
     
     public final void init(String file, String selection, String exists){
-        reader = new HipoReader(file);
-        
+        reader = new HipoReader();
+        if(tags.length>0){
+            reader.setTags(tags);
+        }
+        reader.open(file);
         if(exists.compareTo("*")!=0){
             require.copy(reader.getSchemaFactory());
             require = reader.getSchemaFactory().reduce(exists);

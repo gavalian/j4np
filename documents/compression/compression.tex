@@ -1,0 +1,53 @@
+\documentclass[preprint,12pt]{elsarticle}
+%\documentclass[preprint,12pt]{article}
+\usepackage{graphicx}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{color, colortbl}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{lineno}
+
+%\linenumbers
+% \usepackage[affil-it]{authblk}
+\usepackage{subcaption}
+\newcommand{\note}[1]{\textcolor{blue}{#1}}
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\definecolor{LightRose}{rgb}{1,0.88,0.88}
+\definecolor{LightGreen}{rgb}{0.88,1,0.88}
+
+\title{Data Compression using Auto-Encoders for CLAS12 Online}
+\author[1]{Gagik Gavalian}
+
+\address[1]{Jefferson Lab, Newport News, VA, USA}
+%\address[2]{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
+
+
+\begin{document}
+
+%\begin{titlepage}
+\begin{abstract}
+In this article, we present the results of using Auto-Encoders for compressing the pulse data from CLAS12 detector systems.
+The raw pulse form from Analog to Digital Convertors (ADC) is compressed to decrease raw data size. The results show that the pulses
+can be compressed by a factor of 4, without significant loss in the pulse integral (about $1.4\%$).
+\end{abstract}
+%\end{titlepage}
+\maketitle
+
+
+\input{introduction}
+\input{motivation}
+\input{synthetic_studies}
+\input{rawdata_studies}
+\include{compressionfactor}
+\include{summary}
+
+\section{Acknowledgments}
+
+This material is based upon work supported by the U.S. Department of Energy, Office of Science,
+Office of Nuclear Physics under contract DE-AC05-06OR23177, and NSF grant no. CCF-1439079 and
+the Richard T. Cheng Endowment. 
+ 
+\bibliography{references}
+\bibliographystyle{ieeetr}
+
+\end{document}

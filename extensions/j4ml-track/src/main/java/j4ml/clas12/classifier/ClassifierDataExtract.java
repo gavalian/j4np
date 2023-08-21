@@ -296,6 +296,7 @@ public class ClassifierDataExtract extends OptionApplication {
                 Vector3 trkVec = trkSelect.get(0).vector;
                 
                 int bin = ClassifierDataExtract.getTrackBin(trkSelect.get(0),this.pMinimum,this.pMaximum);
+                
                 int chargeBin = bin+1;
                 if(charge<0) chargeBin += 20;
                 int thetaBin = this.occupancy2D.getYAxis().getBin(

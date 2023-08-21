@@ -56,7 +56,8 @@ public class HipoUtilities extends OptionApplication {
         
         parser.addCommand("-dump", " show content of the hipo file");
         parser.getOptionParser("-dump").addOption("-b","*", "show only banks give by the list")
-                .addOption("-e", "*", "advance to events where given banks exist");
+                .addOption("-e", "*", "advance to events where given banks exist")
+                .addOption("-tags", "-1", "tags from the file to read");
     }
 
     public static void filter(List<String> inputFile, String outputFile, String regEx, 
@@ -239,8 +240,14 @@ public class HipoUtilities extends OptionApplication {
         
     }
     
-    public static void hipoDump(String file, String banksShow, String banksExist){
-        HipoDump hd = new HipoDump(file,banksShow,banksExist);
+    public static void hipoDump(String file, String banksShow, String banksExist, List<Long> tagsList){
+        
+        
+        long[] tags = new long[tagsList.size()];
+        for(int i = 0; i < tags.length; i++) tags[i] = tagsList.get(i);
+        
+        HipoDump hd = new HipoDump(file,banksShow,banksExist, tags);
+        
         boolean exitLoop = false;
         
         while(exitLoop==false){
@@ -345,7 +352,14 @@ public class HipoUtilities extends OptionApplication {
         if(parser.getCommand().compareTo("-dump")==0){
             OptionParser p = parser.getOptionParser("-dump");
             
-            HipoUtilities.hipoDump(p.getInputList().get(0), p.getOption("-b").stringValue(),p.getOption("-e").stringValue());
+            String tags = p.getOption("-tags").stringValue();
+            List<Long>  filetags = new ArrayList<>();
+            if(tags.compareTo("-1")!=0){
+                String[] tokens = tags.split(":");
+                for(int i = 0; i < tokens.length; i++) filetags.add(Long.parseLong(tokens[i]));
+            }
+            
+            HipoUtilities.hipoDump(p.getInputList().get(0), p.getOption("-b").stringValue(),p.getOption("-e").stringValue(), filetags);
         }
         
         if(parser.getCommand().compareTo("-info")==0){
