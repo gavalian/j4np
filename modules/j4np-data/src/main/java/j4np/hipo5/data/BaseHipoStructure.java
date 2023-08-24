@@ -118,7 +118,7 @@ public class BaseHipoStructure {
     }
     
     public final int getHeaderLength(){
-        return this.structBuffer.getInt(this.DATA_LENGTH_OFFSET)>>24&0x000000FF;
+        return (this.structBuffer.getInt(this.DATA_LENGTH_OFFSET)>>24)&0x000000FF;
     }
     
     public final int getDataOffset(){

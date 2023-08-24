@@ -55,7 +55,7 @@ public class CompositeNode extends BaseHipoStructure {
     
     public final void setRows(int rows){
         int rowLength = dataDescriptor.getStructureLength();
-        int size = rowLength*rows;
+        int size = rowLength*rows + this.getHeaderLength();
         setSize(size);
     }
     

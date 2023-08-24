@@ -133,16 +133,18 @@ public class Event implements DataEvent {
             eventBuffer.putInt(EVENT_LENGTH_OFFSET, 16);
         }
     }
+    
     public void write(CompositeNode node){
         if(node.getLength()>0){
             int totalLength = node.getLength() + 8;            
-            int  position = eventBuffer.getInt(EVENT_LENGTH_OFFSET);
+            int    position = eventBuffer.getInt(EVENT_LENGTH_OFFSET);
             this.require(position+totalLength + 24);
             System.arraycopy(node.getByteBuffer().array(), 0, 
                 eventBuffer.array(), position, totalLength);
             eventBuffer.putInt(EVENT_LENGTH_OFFSET, position+totalLength);
         }
     }
+    
     public void write(Node node){
         int bufferSize = node.getBufferSize();
         if(bufferSize<=8) return;
@@ -310,6 +312,7 @@ public class Event implements DataEvent {
     protected void read(CompositeNode node, int position){
         
     }
+    
     public void read(CompositeNode node){
         int group = node.getGroup();
         int  item = node.getItem();
@@ -452,12 +455,12 @@ public class Event implements DataEvent {
         int eventLength = this.eventBuffer.getInt(EVENT_LENGTH_OFFSET);
         //this.eventNodesMap.reset();
         System.out.println("\n" + getEventHeaderString()+"\n");
-        while(position +NODE_HEADER_LENGTH <eventLength){
+        while(position + NODE_HEADER_LENGTH < eventLength){
             short group = eventBuffer.getShort( position    );
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   sizeWord  = eventBuffer.getInt(   position + 4);
+            int   sizeWord  = eventBuffer.getInt( position + 4);
             int   size  = sizeWord&0x00FFFFFF;
             int   format = (sizeWord>>24)&0x000000FF;
             System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , format length = %4d, size = %4d\n",
@@ -685,14 +688,24 @@ public class Event implements DataEvent {
 
         Event event = new Event();
         
-        CompositeNode node1 = new CompositeNode(12,1,"sssi",15);
+        CompositeNode node1 = new CompositeNode(12,1,"sssi",1);
         event.write(node1);
         
-        CompositeNode node2 = new CompositeNode(12,2,"fflf",15);
+        event.scanShow();
+        
+        CompositeNode node2 = new CompositeNode(12,2,"fflf",1);
+        node2.setRows(4);
         event.write(node2);
+        
+        node1.info();
+        
+        
+        
         node2.info();
-        CompositeNode node3 = new CompositeNode(12,3,"2b4f2l",15);
+        
+        CompositeNode node3 = new CompositeNode(12,3,"2b4f2l",1);
         event.write(node3);
+        
         
         event.scanShow();
         

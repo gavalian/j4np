@@ -146,14 +146,14 @@ public class J4npModuleMain {
         for(String clazzName : configList){
             
             try {
-                
+                System.out.println("looking for : " + clazzName);
                 Class clazz = Class.forName(clazzName);
                 OptionApplication app = (OptionApplication) clazz.newInstance();
                 //System.out.println(":: "  );
                 //System.out.println("---> " + clazz);
                            
                 appMap.put(app.getAppName(), app);
-            
+                System.out.println("success");
             } catch (ClassNotFoundException ex) {
                 //Logger.getLogger(J4npModuleMain.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InstantiationException ex) {
