@@ -5,6 +5,7 @@
  */
 package j4np.hipo5.data;
 
+import j4np.hipo5.io.HipoReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -464,6 +465,39 @@ public class CompositeNode extends BaseHipoStructure {
     
     public static void main(String[] args){
         
+        Event e = new Event();
+        Node n1 = new Node(5,1,new float[15]);
+        HipoReader r = new HipoReader("/Users/gavalian/Work/DataSpace/trigger/clas_005630.h5_000000_daq.h5");
+        
+        CompositeNode n = new CompositeNode(5,5,"f",12);
+        
+        n.show();
+        n.info();
+        n.print();
+        
+        n.setRows(7);
+        for(int i = 0; i < 7; i++) n.putFloat(0, i, (float) (i*0.1));
+        n.show();
+        n.info();
+        n.print();
+        
+        System.out.println(n.getLength());
+        
+        e.write(n1);
+        e.scanShow();
+        e.write(n);
+        
+        e.scanShow();
+        
+        
+        r.getEvent(e, 25);
+        
+        e.scanShow();
+        
+        e.write(n);
+        
+        e.scanShow();
+        /*
         CompositeNode struct = new CompositeNode(12,1,"ssb",5);
         for(int i = 0; i < 5; i++) struct.putShort(i, 1, (short) ((i+1)*4));
         struct.info();
@@ -480,7 +514,7 @@ public class CompositeNode extends BaseHipoStructure {
         System.out.println(" entries = " + entries + " rows = " + rows);
         for(int r = 0; r < rows; r++){
             System.out.printf("%3d %8d\n",r,struct.getInt(r, 1));
-        }
+        }*/
         /*DataStructureDescriptor desc = new DataStructureDescriptor();
         desc.init(new int[]{4,4,2,2,1,1},new int[]{4,4,2,2,1,1});
         desc.show();        

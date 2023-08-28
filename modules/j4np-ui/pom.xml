@@ -95,9 +95,16 @@
 
     <repositories>
       <repository>
+        <!--<id>freehep</id>
+	    <url>https://java.freehep.org/maven2</url>-->
+        <id>freehep-repo-public</id>
+        <url>https://srs.slac.stanford.edu/nexus/content/groups/freehep-maven2-public/</url>
+      </repository>
+      <!--      <repository>
         <id>freehep</id>
         <url>https://java.freehep.org/maven2</url>
-      </repository>
+	</repository>
+	-->
     </repositories>
 
     <build>
