@@ -492,11 +492,14 @@ public class CompositeNode extends BaseHipoStructure {
         
         r.getEvent(e, 25);
         
-        e.scanShow();
+        Event evt = new Event();
+        evt.copyFrom(e);
         
-        e.write(n);
+        evt.scanShow();
         
-        e.scanShow();
+        evt.write(n);
+        
+        evt.scanShow();
         /*
         CompositeNode struct = new CompositeNode(12,1,"ssb",5);
         for(int i = 0; i < 5; i++) struct.putShort(i, 1, (short) ((i+1)*4));

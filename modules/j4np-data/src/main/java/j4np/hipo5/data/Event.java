@@ -127,7 +127,13 @@ public class Event implements DataEvent {
     
     public void require(int size){
         if(this.eventBuffer.capacity()<size){
+            //------------------------- fix this here, this should be copying the existing buffer
+            //-----------------------------
+            System.out.printf("::: event buffer resizing from %d to %d\n",
+                    this.eventBuffer.capacity(),size);
+            int occupied = this.getEventBufferSize();
             byte[] bytes = new byte[size+64];
+            System.arraycopy(eventBuffer.array(), 0, bytes, 0, occupied);
             eventBuffer  = ByteBuffer.wrap(bytes);
             eventBuffer.order(ByteOrder.LITTLE_ENDIAN);
             eventBuffer.putInt(EVENT_LENGTH_OFFSET, 16);
@@ -538,10 +544,16 @@ public class Event implements DataEvent {
     
     public Event copy(){
         int size  = getEventBufferSize();
-        Event evt = new Event(size+56);
+        Event evt = new Event(size+2);
         evt.initFrom(this.getBuffer().array(), size);
         return evt;
     }
+    
+    public void copyFrom(Event e){
+        int size = e.getEventBufferSize();
+        require(size);
+        System.arraycopy(e.eventBuffer.array(), 0, this.eventBuffer.array(), 0, size);
+    }    
     
     public void initFrom(byte[] buffer){
         require(buffer.length);
