@@ -149,12 +149,12 @@ public class TGCanvas extends JFrame implements ActionListener {
         themeMenu.add(theme_DL);
         themeMenu.add(theme_SL);
         themeMenu.add(theme_SD);
-         JMenu paletteMenu = this.createMenu("Color Palette", 
-                new String[]{"Gold","Tab"},new String[]{"gold10","tab10"}
-                );
-         
-         themeMenu.addSeparator();
-         themeMenu.add(paletteMenu);
+        JMenu paletteMenu = this.createMenu("Color Palette", 
+                new String[]{"Gold","Tab","Set","Bright"},new String[]{"gold10","tab10", "set1", "bright10"}
+        );
+        
+        themeMenu.addSeparator();
+        themeMenu.add(paletteMenu);
         
         JMenu resizeMenu = this.createMenu("Resize", 
                 new String[]{"600x500","800x400","500x900","Custom"}
@@ -173,7 +173,7 @@ public class TGCanvas extends JFrame implements ActionListener {
         editMenu.add(divideMenu);
         
         JMenuItem colAndLine = new JMenuItem("Colors and Lines");
-        JMenuItem colAndLineDark = new JMenuItem("Colors and Lines (dark)");
+        JMenuItem colAndLineDark = new JMenuItem("Dark Mode");
         
         colAndLine.addActionListener(this);
         colAndLineDark.addActionListener(this);
@@ -256,11 +256,26 @@ public class TGCanvas extends JFrame implements ActionListener {
             TGStyleFactory.markersAndColors(c.view());
         }
         
+        if(ac.compareTo("Dark Mode")==0){
+            TGCanvas c = new TGCanvas("canvasStyles",900,700,false);
+            TGStyleFactory.darkModeShow(c.view());
+        }
+        
         if(ac.compareTo("tab10")==0){
             TStyle.getInstance().getPalette().init("tab10");            
         }
         if(ac.compareTo("gold10")==0){
             TStyle.getInstance().getPalette().init("gold10");            
         }
+        if(ac.compareTo("bright10")==0){
+            TStyle.getInstance().getPalette().init("bright10");
+        }
+        if(ac.compareTo("set1")==0){
+            TStyle.getInstance().getPalette().init("set1");
+        }
+    }
+    
+    public static void main(String[] args){
+        TGCanvas c = new TGCanvas();
     }
 }

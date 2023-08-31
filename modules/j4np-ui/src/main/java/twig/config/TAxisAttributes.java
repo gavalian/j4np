@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author gavalian
  */
-public class TAxisAttributes {
+public class TAxisAttributes implements Cloneable {
 
     public int getAxisGridLineColor() {
         return axisGridLineColor;
@@ -59,6 +59,12 @@ public class TAxisAttributes {
             this.axisGridLineStyle = style.getDefaultGridLineStyle();
             this.axisGridLineWidth = style.getDefaultGridLineWidth();
         }
+    }
+    
+    
+    @Override
+    public TAxisAttributes clone() throws CloneNotSupportedException {
+        return (TAxisAttributes) super.clone();
     }
     
     public int getAxisTickMarkCount() {

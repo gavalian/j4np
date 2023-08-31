@@ -234,7 +234,7 @@ good track.
 
  \begin{figure}[!ht]
 \begin{center}
- \includegraphics[width=4.2in]{images/physics_scan.pdf}
+ \includegraphics[width=4.in]{images/physics_scan.pdf}
 \caption {Reconstructed missing mass distribution for $H(e,e'\pi^+X)$ and $H(e,e'\pi^+\pi^-X)$ 
 reactions (top row) using the conventional track reconstruction algorithm (filled histogram) and  
 AI-assisted track reconstruction (black line histogram). The ratios of the two histograms are shown 
@@ -255,15 +255,13 @@ $H(e,e'\pi^+X)$ and $H(e,e'\pi^+\pi^-X)$. In both cases, there is a visible peak
 in the missing mass distribution of the detected final state, which we can use to measure the impact 
 of efficiency on physics outcome. 
 
-
-
 The distributions of missing mass for both final state topologies are shown in Figure~\ref{physics:outcome}, where the plots 
 on the top row are missing mass of $H(e,e'\pi^-X)$ and $H(e,e'\pi^+\pi^-X)$, where the filled histogram is calculated from 
 particles reconstructed by the conventional tracking algorithm, and the histogram with a black outline is the same distributions 
 calculated from particles that were reconstructed using a suggestion from Artificial Intelligence. As can be seen from the figure, 
 there is a significant increase in the number of events in the region of the nucleon peak for AI-assisted
 tracking. The ratios of the two histograms (AI-assisted divided by conventional)
-Figure~\ref{physics:outcome} shows increase in statistics is uniform over the whole range of the 
+Figure~\ref{physics:outcome} shows the increase in statistics is uniform over the whole range of the 
 missing mass indicating no systematic abnormalities for AI-assisted tracking. The ratio also indicates that there is an increase 
 in the number of events of about $15\%$ for $H(e,e'\pi^+X)$ final state and $30-35\%$ for the $H(e,e'\pi^+\pi^-X)$
 final state. 
@@ -277,6 +275,7 @@ The charged particle tracking relies on isolating clusters in each DC super-laye
 Accidental hits in drift chambers can, which increase with the luminosity, can lead to decreased efficiency of cluster identification, which 
 in turn, leads to a decrease in track finding efficiency. A new approach with neural networks is used to clean raw data from drift chambers 
 prior to applying the clustering algorithm. 
+
 \begin{figure}[!h]
 \begin{center}
  \includegraphics[width=3.8in]{images/cnn_denoise_results.pdf}
@@ -292,7 +291,6 @@ of de-noiser performance can be found here~\cite{Thomadakis:2022zcd})}
 
 \subsection{Convolutional Auto-Encoder Method}
 \label{aue-method}
-
 
 The Convolutional Auto-Encoder is used to de-noise raw data from the CLAS12 drift chambers~\cite{Thomadakis:2022zcd}. 
 The input and output for the network are matrices of size 36x112 representing hits in one sector of drift chambers. 
@@ -353,8 +351,8 @@ AI without loss of track reconstruction efficiency.
 
 \begin{figure}[!h]
 \begin{center}
- \includegraphics[height=2.4in]{images/missing_mass.pdf}
- \includegraphics[height=2.4in]{images/luminosity_scan.pdf}
+ \includegraphics[height=2.in]{images/missing_mass.pdf}
+ \includegraphics[height=2.in]{images/luminosity_scan.pdf}
 \caption { 
 The de-noised data sample was reconstructed with an AI-assisted tracking 
 algorithm (triangles)  for $45~nA$, $95~nA$, and $150~nA$. a), b) and c) reconstructed missing mass distributions for 
@@ -362,7 +360,7 @@ background merged data set reconstructed with conventional tracking (filled hist
 reconstructed with AI-assisted algorithm (solid line histogram). Missing mass distribution for data sample before 
 background merging ($0~nA$) is shown (circles) for reference.
 The number of reconstructed protons from missing mass of $H(e \rightarrow e^\prime \pi^+ \pi^-) X$ 
-for background merged data set reconstructed with conventional tracking (squares) compared to de-noised data sample 
+for background merged data set reconstructed with conventional tracking (circles) compared to de-noised data sample 
 reconstructed with conventional algorithm (diamonds) d). }
  \label{physics::conv_dn_ai}
  \end{center}
@@ -374,7 +372,7 @@ show $48\%$ increase in statistics.
 
 \begin{figure}[!h]
 \begin{center}
- \includegraphics[height=2.4in]{images/rga_conv_vs_dnai.pdf}
+ \includegraphics[height=2.in]{images/rga_conv_vs_dnai.pdf}
 \caption { 
 The number of reconstructed protons from missing mass of $H(e \rightarrow e^\prime \pi^+ \pi^-) X$ from experimental data 
 , 45 nA beam incident on hydrogen target, is plotted to compare the number of reconstructed proton final stated from conventional tracking algorithm with 
@@ -391,7 +389,12 @@ The track reconstruction in CLAS12 currently uses AI to increase track reconstru
 and AI track identification leads to a $48\%$ increase in statistics in three particle final states in experimental data. The studies 
 with simulation show that upcoming experiments can be planned at higher luminosity to increase physics outcomes. 
 
+\section{Acknowledgments}
+\label{Acknowledgments}
 
+This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Nuclear Physics under contract DE-AC05-06OR23177, and
+ NSF grant no. CCF-1439079 and the Richard T. Cheng Endowment. This work was performed using the Turing and Wahab computing clusters at Old Dominion University.
+ 
 \begin{thebibliography}{}
 %
 % and use \bibitem to create references.
@@ -402,7 +405,7 @@ Burkert, V.D. and others, The CLAS12 Spectrometer at Jefferson Laboratory, Nucl.
 %Journal Author, Journal \textbf{Volume}, page numbers (year)
 % Format for books
 \bibitem{Mestayer:2020saf}
-    author = "Mestayer, M.D. and others", The CLAS12 drift chamber system, Nucl. Instrum. Meth. A",\textbf{959} 163518 (2020)
+ "Mestayer, M.D. and others", The CLAS12 drift chamber system, Nucl. Instrum. Meth. A",\textbf{959} 163518 (2020)
 \bibitem{Kalman1960}
   Kalman, R. E., A New Approach to Linear Filtering and Prediction Problems, Journal of Basic Engineering, \textbf{82}, 35-45 (1960)
 \bibitem{Gavalian:2020oxg}

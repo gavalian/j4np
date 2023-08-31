@@ -85,9 +85,11 @@ public class HttpDataClient implements TreeProvider {
             String dataJson = response.body();
             
             if(DataRequestProtocol.isSendData(dataJson)==true){
-                long then = System.nanoTime();                
+                long then = System.nanoTime();  
+                System.out.println(dataJson);
                 String   jsonBase64 = DataRequestProtocol.getSendDataPayload(dataJson);
                 String jsonUnBase64 = DataSetSerializer.deserializeDeflatedBase64(jsonBase64);
+                //System.out.println(jsonUnBase64);
                 JsonArray jsonArray = (JsonArray) Json.parse(jsonUnBase64);
                 List<DataSet> dataSetList = DataSetSerializer.deserializeJsonArray(jsonArray);
                 long now = System.nanoTime();
@@ -145,7 +147,31 @@ public class HttpDataClient implements TreeProvider {
         frame.setSize(800, 500);
         frame.setVisible(true);
     }
-    
+
+    @Override
+    public void draw(String path, TGDataCanvas canvas) {
+        System.out.println("drawing path : " + path);
+        List<DataSet> dList = this.getDataSet(Arrays.asList(path));
+        System.out.println(dList.size());
+        if(dList.size()>0){
+            canvas.region().draw(dList.get(0));
+            canvas.next();
+        }
+    }
+
+    @Override
+    public void configure() {
+        
+    }
+
+    @Override
+    public TreeModel getTreeModel() {
+        List<String> objects = this.getDataList();
+        TreeModelMaker tmm = new TreeModelMaker();
+        tmm.setList(objects);
+        return new DefaultTreeModel(tmm.getTreeModel());        
+    }
+
     public static void main(String[] args){
         
         HttpServerConfig   conf = new HttpServerConfig();
@@ -178,29 +204,4 @@ public class HttpDataClient implements TreeProvider {
             }
         }*/
     }
-
-    @Override
-    public void draw(String path, TGDataCanvas canvas) {
-        System.out.println("drawing path : " + path);
-        List<DataSet> dList = this.getDataSet(Arrays.asList(path));
-        System.out.println(dList.size());
-        if(dList.size()>0){
-            canvas.region().draw(dList.get(0));
-            canvas.next();
-        }
-    }
-
-    @Override
-    public void configure() {
-        
-    }
-
-    @Override
-    public TreeModel getTreeModel() {
-        List<String> objects = this.getDataList();
-        TreeModelMaker tmm = new TreeModelMaker();
-        tmm.setList(objects);
-        return new DefaultTreeModel(tmm.getTreeModel());        
-    }
-
 }

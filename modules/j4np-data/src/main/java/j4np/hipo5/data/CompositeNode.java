@@ -488,8 +488,7 @@ public class CompositeNode extends BaseHipoStructure {
         e.write(n);
         
         e.scanShow();
-        
-        
+                
         r.getEvent(e, 25);
         
         Event evt = new Event();

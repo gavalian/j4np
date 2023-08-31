@@ -70,7 +70,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         axisY.getAttributes().getAxisTicksString().add("0.35");
         axisY.getAttributes().getAxisTicksString().add("0.75");
         */
-        this.initDefaultFonts();
+        //this.initDefaultFonts();
     }
     
     public TGAxisFrame setLogY(boolean flag){ 

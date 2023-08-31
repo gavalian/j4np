@@ -540,6 +540,7 @@ public class DataSetSerializer {
     
     public static byte[] serializeDirectoryDeflate(TDirectory dir, List<String> dataList){
         String json = DataSetSerializer.serializeDirectory(dir, dataList);
+        //System.out.println(json);
         byte[]  input = json.getBytes();
         byte[] output = new byte[input.length];
         Deflater     deflater = new Deflater(); 

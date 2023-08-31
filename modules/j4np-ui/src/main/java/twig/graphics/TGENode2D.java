@@ -32,11 +32,17 @@ public class TGENode2D extends TDataNode2D {
     
     public TGENode2D(GraphErrors gr, String options){
         dataSet = gr; 
+        //System.out.println("What was passed is : " + options);
+        //setOptions("PEL");
+        
         if(options.length()<1){
             setOptions("PE"+options);
         } else {
             setOptions(options);
         }
+        
+        if(options.compareTo("*")==0) setOptions("PE");
+        
     }
     
     @Override

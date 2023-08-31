@@ -53,9 +53,11 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     
     public TGDataCanvas(){
         TStyle style = TStyle.getInstance();
-        Color color = TStyle.getInstance().getPalette().getColor(style.getCanvasBackgroundColor());
-        Background2D back = Background2D.createBackground(color.getRed(),color.getGreen(),color.getBlue());
-        setBackground(back);        
+        Color color = style.getDefaultCanvasColor();//TStyle.getInstance().getPalette().getColor(style.getCanvasBackgroundColor());
+        if(color!=null){
+            Background2D back = Background2D.createBackground(color.getRed(),color.getGreen(),color.getBlue());
+            setBackground(back);
+        }
         popupProvider = new CanvasPopupProvider(this);
         this.setPopupProvider(popupProvider);
         divide(1,1);

@@ -1,0 +1,144 @@
+[
+    
+    {
+        "name": "nnet::clusters",
+        "group": 4200,
+        "item" : 11,
+        "info": "clusters reconstructed from DC clustering algorithm",
+        "entries": [
+            {"name":"id",          "type":"S",  "info":"clusters identifier"},
+            {"name":"sector",      "type":"S",  "info":"sector of the cluster (1..6)"},
+            {"name":"superlayer",  "type":"S",  "info":"superlayer of the cluster (1..6)"},
+            {"name":"mean",        "type":"F",  "info":"mean value of the cluster"},
+            {"name":"slope",       "type":"F",  "info":"slope of the cluster"}
+        ]
+    },
+    
+    {
+	"name": "nnet::tracks",
+        "group": 4200,
+        "item" : 12,
+        "info": "tracks reconstructed by neural network",
+        "entries": [
+            {"name":"id",          "type":"S",  "info":"track identifier"},
+            {"name":"sector",      "type":"S",  "info":"sector of the cluster (1..6)"},
+	    {"name":"charge",      "type":"S",  "info":"charge of the particle"},
+	    {"name":"prob",        "type":"F",  "info":"probability assigned by neural network"},
+            {"name":"c1",          "type":"S",  "info":"cluster id in superlayer #1"},
+	    {"name":"c2",          "type":"S",  "info":"cluster id in superlayer #2"},
+	    {"name":"c3",          "type":"S",  "info":"cluster id in superlayer #3"},
+	    {"name":"c4",          "type":"S",  "info":"cluster id in superlayer #4"},
+	    {"name":"c5",          "type":"S",  "info":"cluster id in superlayer #5"},
+	    {"name":"c6",          "type":"S",  "info":"cluster id in superlayer #6"},
+	    {"name":"m1",          "type":"F",  "info":"mean of the cluster in superlayer #1"},
+	    {"name":"m2",          "type":"F",  "info":"mean of the cluster in superlayer #2"},
+	    {"name":"m3",          "type":"F",  "info":"mean of the cluster in superlayer #3"},
+	    {"name":"m4",          "type":"F",  "info":"mean of the cluster in superlayer #4"},
+	    {"name":"m5",          "type":"F",  "info":"mean of the cluster in superlayer #5"},
+	    {"name":"m6",          "type":"F",  "info":"mean of the cluster in superlayer #6"}
+        ]
+    },
+    {
+        "name": "nnet::particle",
+        "group": 4200,
+        "item" : 15,
+        "info": "clusters reconstructed from DC clustering algorithm",
+        "entries": [
+            {"name":"id",          "type":"S",  "info":"particle identifier"},
+            {"name":"charge",      "type":"S",  "info":"charge of the particle"},
+	    {"name":"sector",      "type":"S",  "info":"sector of the particle"},
+            {"name":"pid",         "type":"I",  "info":"pid for future use with AI"},
+            {"name":"px",          "type":"F",  "info":"particle mometum X component"},
+	    {"name":"py",          "type":"F",  "info":"particle mometum Y component"},
+	    {"name":"pz",          "type":"F",  "info":"particle mometum Z component"},
+            {"name":"vx",          "type":"F",  "info":"particle vertex X component"},
+            {"name":"vy",          "type":"F",  "info":"particle vertex Y component"},
+            {"name":"vz",          "type":"F",  "info":"particle vertex Z component"},
+	    {"name":"chi2",        "type":"F",  "info":"chi2 (neural network probability)"},
+	    {"name":"status",      "type":"S",  "info":"charge of the particle"}	    
+        ]
+    },
+	{
+        "name": "nn::clusters",
+        "group": 4200,
+        "item" : 7,
+        "info": "clusters reconstructed from DC clustering algorithm",
+        "entries": [
+            {"name":"id",          "type":"S",  "info":"clusters identifier"},
+            {"name":"sector",      "type":"S",  "info":"sector of the cluster (1..6)"},
+            {"name":"superlayer",  "type":"S",  "info":"superlayer of the cluster (1..6)"},
+            {"name":"mean",        "type":"F",  "info":"mean value of the cluster"},
+            {"name":"slope",       "type":"F",  "info":"slope of the cluster"}
+        ]
+    },
+
+    {
+        "name": "nn::tracks",
+        "group": 4200,
+        "item" : 1,
+        "info": "track parameters from neural network",
+        "entries": [
+            {"name":"id",   "type":"B",  "info":"track id"},
+            {"name":"x",    "type":"F",  "info":"x coordinate in tilted coordinates"},
+            {"name":"y",    "type":"F",  "info":"y coordinate in tilted coordinates"},
+            {"name":"tx",   "type":"F",  "info":"tx"},
+            {"name":"ty",   "type":"F",  "info":"ty"},
+            {"name":"qp",   "type":"F",  "info":"q over p"}
+        ]
+    },
+    {   "name": "nn::dchits",
+        "group": 4200,
+        "item" : 2,
+        "info": "index if the track hits in DC tdc bank.",
+        "entries": [
+            {"name":"id"    ,  "type":"B", "info":"track id"},
+            {"name":"index",   "type":"S", "info":"index of the row for DC::tdc bank"}
+        ]
+    },
+
+    {
+	"name": "ai::tracks",
+	"group": 4200,
+	"item" : 3,
+	"info" : "tracks identified with AI",
+	"entries": [
+	    {"name":"id",     "type":"B", "info":"id of the track"},
+	    {"name":"sector", "type":"B", "info":"sector of the track"},
+	    {"name":"charge", "type":"B", "info":"charge of the track"},
+	    {"name":"prob",   "type":"F", "info":"probability of inference"},
+	    {"name":"c1",     "type":"S", "info":"cluster ID in superlayer 1"},
+	    {"name":"c2",     "type":"S", "info":"cluster ID in superlayer 2"},
+	    {"name":"c3",     "type":"S", "info":"cluster ID in superlayer 3"},
+	    {"name":"c4",     "type":"S", "info":"cluster ID in superlayer 4"},
+	    {"name":"c5",     "type":"S", "info":"cluster ID in superlayer 5"},
+	    {"name":"c6",     "type":"S", "info":"cluster ID in superlayer 6"},
+	    {"name":"p",      "type":"F", "info":"momentum of the track"},
+	    {"name":"theta",  "type":"F", "info":"theta angle of the track"},
+	    {"name":"phi",    "type":"F", "info":"phi angle of the track"},
+	    {"name":"vz",     "type":"F", "info":"vertex Z component for predicted track"}
+	    ]
+    },
+
+    {
+	"name": "aidn::tracks",
+	"group": 4200,
+	"item" : 4,
+	"info" : "tracks identified with denoised AI",
+	"entries": [
+	    {"name":"id",     "type":"B", "info":"id of the track"},
+	    {"name":"sector", "type":"B", "info":"sector of the track"},
+	    {"name":"charge", "type":"B", "info":"charge of the track"},
+	    {"name":"prob",   "type":"F", "info":"probability of inference"},
+	    {"name":"c1",     "type":"S", "info":"cluster ID in superlayer 1"},
+	    {"name":"c2",     "type":"S", "info":"cluster ID in superlayer 2"},
+	    {"name":"c3",     "type":"S", "info":"cluster ID in superlayer 3"},
+	    {"name":"c4",     "type":"S", "info":"cluster ID in superlayer 4"},
+	    {"name":"c5",     "type":"S", "info":"cluster ID in superlayer 5"},
+	    {"name":"c6",     "type":"S", "info":"cluster ID in superlayer 6"},
+	    {"name":"p",      "type":"F", "info":"momentum of the track"},
+	    {"name":"theta",  "type":"F", "info":"theta angle of the track"},
+	    {"name":"phi",    "type":"F", "info":"phi angle of the track"},
+	    {"name":"vz",     "type":"F", "info":"vertex Z component for predicted track"}
+	    ]
+    }
+]

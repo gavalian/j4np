@@ -120,6 +120,21 @@ public class TPalette {
     }
     
     public void setColorScheme(String scheme){
+        
+        if(scheme.compareTo("set1")==0){
+            colorPalette.clear();
+            colorPalette.add(Color.WHITE);
+            colorPalette.add(Color.BLACK);
+            colorPalette.add(new Color( 56,126,184)); // BLUE - 2
+            colorPalette.add(new Color(227,25,28)); // ORANGE - 3
+            colorPalette.add(new Color(79,175,74));  // GREEN - 4
+            colorPalette.add(new Color(153,78,163));  // RED - 5
+            colorPalette.add(new Color(255,255,50));  // PURPLE - 6
+            colorPalette.add(new Color(166,86,40));  // BROWN - 7
+            colorPalette.add(new Color(248,129,191));  // PINK - 8
+            colorPalette.add(new Color(  27,190,207));  // CYAN  - 9            
+            colorPalette.add(new Color(189,189,33));  // OLIVE - 10
+        }
         if(scheme.compareTo("tab10")==0){
             colorPalette.clear();
             colorPalette.add(Color.WHITE);
@@ -131,10 +146,11 @@ public class TPalette {
             colorPalette.add(new Color(148,104,186));  // PURPLE - 6
             colorPalette.add(new Color(141, 86, 76));  // BROWN - 7
             colorPalette.add(new Color(227,119,190));  // PINK - 8
-            colorPalette.add(new Color(127,127,127));  // GRAY - 9
+
+            colorPalette.add(new Color(  0,188,203));  // CYAN  - 9
             colorPalette.add(new Color(186,185, 53));  // OLIVE - 10
-            colorPalette.add(new Color(  0,188,203));  // CYAN  - 11
-            colorPalette.add(new Color(  168,182,196));  // GRAY - 12
+            //colorPalette.add(new Color(127,127,127));  // GRAY - 11
+            //colorPalette.add(new Color(  168,182,196));  // GRAY - 12
             //colorPalette.add(new Color());
         }
         
@@ -146,13 +162,31 @@ public class TPalette {
             colorPalette.add(new Color( 37,118,117)); // TEAL - 3
             colorPalette.add(new Color( 255,195,114)); // GOLD 70 - 4
             colorPalette.add(new Color( 220,115,28)); // DARK GOLD - 5
-            colorPalette.add(new Color( 186,164,150)); // Neutral60 - 6
+            colorPalette.add(new Color( 209,65,36)); // Red - moved from 11 to 6 
+            //colorPalette.add(new Color( 186,164,150)); // Neutral60 - 6
+            
             colorPalette.add(new Color( 116,87,69)); // Dark Neutral - 7
             colorPalette.add(new Color( 220,156,191)); // Purple 50 - 8
             colorPalette.add(new Color( 160,27,104)); // Dark Purple - 9
             colorPalette.add(new Color( 231,158,142)); // Red 60 - 10
-            colorPalette.add(new Color( 209,65,36)); // Red - 11 
-            colorPalette.add(new Color( 50,50,50)); // 12 - gray
+            //colorPalette.add(new Color( 209,65,36)); // Red - 11 
+            //colorPalette.add(new Color( 186,164,150)); // Neutral60 - 6
+            //colorPalette.add(new Color( 50,50,50)); // 12 - gray
+        }
+        
+        if(scheme.compareTo("bright10")==0){
+            colorPalette.clear();
+            colorPalette.add(Color.WHITE); // white - 0
+            colorPalette.add(Color.BLACK); // black - 1
+            colorPalette.add(new Color( 65,155,249)); // BLUE - 2
+            colorPalette.add(new Color( 246,152,51)); // ORANGE - 3
+            colorPalette.add(new Color( 200,207,45)); // GREEN - 4
+            colorPalette.add(new Color( 238,103,35)); // RED - 5
+            colorPalette.add(new Color( 254,207,51)); // YELLOW - 6
+            colorPalette.add(new Color( 13,207,218)); // CYAN - 7
+            colorPalette.add(new Color( 227,119,190)); // PINK 50 - 8
+            colorPalette.add(new Color( 253,189,57)); // ORANGE - 9
+            colorPalette.add(new Color( 247,130,243)); //  - 10
         }
     }
 

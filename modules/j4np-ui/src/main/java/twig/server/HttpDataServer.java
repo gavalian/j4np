@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import twig.data.DataSet;
 import twig.data.DataSetSerializer;
+import twig.data.GraphErrors;
 import twig.data.H1F;
 import twig.data.TDirectory;
 
@@ -120,8 +121,8 @@ public class HttpDataServer {
         //if(DataRequestProtocol.isRequestData(request)==true){
         if(DataRequestProtocol.isRequestData(request)){
             //System.out.printf("---------> I'm Inside the if sattement\n");
+            //System.out.println();
             List<String>   dataList = DataRequestProtocol.getRequestDataList(request);
-            
             String dataStringBase64 = DataSetSerializer.serializeDirectoryDeflateBase64(HttpDataServer.getInstance().serverDirectory, dataList);
             //System.out.println("base 64 = " + dataStringBase64);
             String dataStringJson   = DataRequestProtocol.createSendData(dataStringBase64);
@@ -144,8 +145,8 @@ public class HttpDataServer {
       String response = "Hi there!";
       DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
       LocalDateTime now = LocalDateTime.now();
-      System.out.printf("[server] : recieved a request @ %s\n",dtf.format(now) );
-      
+      System.out.printf("[server] : recieved a request -- @ %s\n",dtf.format(now) );
+      //System.out.println(" request was : " + );
       //JsonObject json =
       StringBuilder sb = new StringBuilder();
       InputStream ios = exchange.getRequestBody();
@@ -181,6 +182,9 @@ public class HttpDataServer {
               DataSet  ds = HttpDataServer.getInstance().serverDirectory.get(item.asString());
               if(counter!=0) str.append(",");
               counter++;
+              if(ds instanceof GraphErrors){
+                  ((GraphErrors) ds).show();
+              }
               str.append(DataSetSerializer.toJson(ds));
           }
           str.append("]");
@@ -192,8 +196,9 @@ public class HttpDataServer {
       }
       
       if(what.startsWith("data:")==true){
-          
+
           String data = what.substring(5, what.length());
+          System.out.println("?? sending data : " + data);
           H1F h = (H1F) HttpDataServer.getInstance().serverDirectory.get(data);
           String dataJson = DataSetSerializer.toJson(h);
           System.out.println("[server::debug] what = " + what);
@@ -215,6 +220,12 @@ public class HttpDataServer {
         this.httpServer.start();
     }
     
+    
+    public void shutdown(){
+        System.out.println("\n\n[HttpDataServer] -> shutting down twig data server....");
+        this.httpServer.stop(120);
+    }
+    
     public void initDefault(){
         for(int i = 0; i < 5; i++){
             int id = 1001 + i;            
@@ -224,7 +235,8 @@ public class HttpDataServer {
             h.attr().setTitleY("counts");
             this.serverDirectory.add("/server/default", h);
         }
-        
+        GraphErrors graph = new GraphErrors("graph00001");
+        this.serverDirectory.add("/server/default", graph);
         timer.schedule(new TimerTask(){
             private long counter = 0;
             @Override
@@ -240,7 +252,9 @@ public class HttpDataServer {
                     h.attr().setTitleX(String.format("gaussian (#mu = %.2f, stats = %d)",
                             0.1*i,h.getEntries()));
                 }
+
                 counter++;
+                graph.addPoint(counter, counter%15+6.0);
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
                 LocalDateTime now = LocalDateTime.now();
                 System.out.printf("[HTTP:data:server] (%s) execution counter = %8d\n",dtf.format(now),counter);
@@ -249,6 +263,7 @@ public class HttpDataServer {
     }
     
     public static void main(String[] args){
+        
         HttpServerConfig config = new HttpServerConfig();
         config.serverPort = 8525;
         

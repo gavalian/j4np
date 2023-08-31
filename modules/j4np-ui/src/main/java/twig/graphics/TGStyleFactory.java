@@ -8,6 +8,7 @@ package twig.graphics;
 import java.util.ArrayList;
 import java.util.List;
 import twig.data.GraphErrors;
+import twig.data.H1F;
 import twig.data.TDataFactory;
 import twig.math.F1D;
 
@@ -51,6 +52,29 @@ public class TGStyleFactory {
         funcs.get(0).attr().setTitleY("Line Styles");
         canvas.cd(0).region().draw(funcs, "");
         canvas.cd(0).region().getAxisFrame().getAxisY().setFixedLimits(0, 16);
+        canvas.repaint();
+    }
+    
+    public static void darkModeShow(TGDataCanvas canvas){
+        canvas.divide(1, 1);
+        
+        canvas.region().setBackgroundColor(40, 45, 40);
+        canvas.region().getAxisFrame().setBackgroundColor(50, 55, 50);
+        canvas.region().getAxisFrame().getAxisX().getAttributes().setAxisLineColor(41);
+        canvas.region().getAxisFrame().getAxisX().getAttributes().setAxisLabelColor(41);
+        canvas.region().getAxisFrame().getAxisX().getAttributes().setAxisTitleColor(41);
+        canvas.region().getAxisFrame().getAxisX().getAttributes().setAxisGridLineColor(61);
+        
+        canvas.region().getAxisFrame().getAxisY().getAttributes().setAxisLineColor(41);
+        canvas.region().getAxisFrame().getAxisY().getAttributes().setAxisLabelColor(41);
+        canvas.region().getAxisFrame().getAxisY().getAttributes().setAxisTitleColor(41);
+        canvas.region().getAxisFrame().getAxisY().getAttributes().setAxisGridLineColor(61);
+        
+        for(int i = 2; i <= 10; i++){
+            H1F h = TDataFactory.createH1F(4200*(12-i), 240, 0.0, 1.0, 0.5, 0.12);
+            h.attr().setFillColor(i);
+            canvas.region().draw(h,"same");
+        }        
         canvas.repaint();
     }
     

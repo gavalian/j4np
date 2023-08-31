@@ -34,7 +34,7 @@ public class TAttributesFill {
         this.fillColorFade = fillColorFade; return this;
     }
     
-    private int fillColor =  0;
+    private int fillColor =  -1;
     private int fillStyle =  0;    
     private int fillColorFade = 0;
     

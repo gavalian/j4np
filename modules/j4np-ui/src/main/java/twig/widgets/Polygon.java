@@ -43,6 +43,10 @@ public class Polygon implements Widget {
         this.ndfCoord = ndf;
     }
     
+    
+    public TAttributesLine attrLine(){ return attrLine;}
+    public TAttributesFill attrFill(){ return attrFill;}
+    
     public final void addPoint(double x, double y){
         points.add(new Point2D.Double(x,y));
     }
@@ -138,9 +142,14 @@ public class Polygon implements Widget {
             g2d.fill(path);
         }
         
+        
+        if(fcolor>=0){
+            g2d.setColor(style.getPalette().getColor(fcolor));
+            g2d.fill(path);
+        }
         g2d.setColor(style.getPalette().getColor(lcolor));
         g2d.setStroke(style.getLineStroke(lstyle, lwidth));
-                
+        
         g2d.draw(path);
     }
     

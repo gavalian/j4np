@@ -12,6 +12,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import twig.config.TAxisAttributes;
 import twig.config.TAxisAttributes.AxisType;
 import twig.config.TStyle;
@@ -42,7 +44,26 @@ public class TGAxis implements StyleNode {
     
     public TGAxis(){}
     
-    public TGAxis(AxisType type){attributes.setAxisType(type);}
+    public TGAxis(AxisType type){
+        if(type == AxisType.AXIS_X){
+            try {
+                attributes = TStyle.getInstance().getAxisAttrX().clone();
+            } catch (CloneNotSupportedException ex) {
+                Logger.getLogger(TGAxis.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            attributes.setAxisType(type);
+        }
+        
+        if(type == AxisType.AXIS_Y){
+            try {
+                attributes = TStyle.getInstance().getAxisAttrY().clone();
+            } catch (CloneNotSupportedException ex) {
+                Logger.getLogger(TGAxis.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            attributes.setAxisType(type);
+        }
+        
+    }
     
     public TAxisAttributes getAttributes(){ return this.attributes;}
     

@@ -96,6 +96,16 @@ public class StudioFrame extends JPanel {
         return this.treeProvider;
     }
     
+    private ImageIcon getImageIcon(String path, int xsize, int ysize){
+        URL imgURL = StudioWindow.class.getResource(path);
+        ImageIcon imageIcon = new ImageIcon(imgURL);
+
+        Image image = imageIcon.getImage(); // transform it 
+        Image newimg = image.getScaledInstance(xsize, ysize,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+        imageIcon = new ImageIcon(newimg);
+        return imageIcon;
+    }
+    
     private void initUI(){
         
         JSplitPane pane = new JSplitPane();
@@ -157,7 +167,17 @@ public class StudioFrame extends JPanel {
         Image image = imageIcon.getImage(); // transform it 
         Image newimg = image.getScaledInstance(16, 16,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
         imageIcon = new ImageIcon(newimg);
-        renderer.setLeafIcon(imageIcon);
+        
+        
+        ImageIcon iconFolderClosed = this.getImageIcon("icons/icons8-folder-64.png", 16, 16);
+        ImageIcon   iconFolderOpen = this.getImageIcon("icons/icons8-opened-folder-64.png", 16, 16);
+        ImageIcon         iconLeaf = this.getImageIcon("icons/icons8-histogram-64.png", 16, 16);
+        
+        
+        renderer.setOpenIcon(iconFolderOpen);
+        renderer.setClosedIcon(iconFolderClosed);
+        renderer.setLeafIcon(iconLeaf);
+        //renderer.setLeafIcon(imageIcon);
         
         statusPane = new StatusPanel();
         

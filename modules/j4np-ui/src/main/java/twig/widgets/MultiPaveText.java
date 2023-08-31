@@ -252,7 +252,9 @@ public class MultiPaveText implements Widget {
         public Point2D padding    = new Point2D.Double();
         public TAttributesLine attrLine = new TAttributesLine();
         public TAttributesFill attrFill = new TAttributesFill();
-        public LatexText.TextAlign borderAlign = LatexText.TextAlign.TOP_LEFT;        
+        public LatexText.TextAlign borderAlign = LatexText.TextAlign.TOP_LEFT; 
+        
+        public PaveTextBorder(){ attrFill.setFillColor(0);}
     }
   
     public static class PaveTextRow {

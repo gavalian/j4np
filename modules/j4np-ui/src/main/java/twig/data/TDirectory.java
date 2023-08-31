@@ -5,6 +5,7 @@
 package twig.data;
 
 import j4np.utils.base.ArchiveUtils;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +48,20 @@ public class TDirectory implements TreeProvider {
         return  this.addToDirectory(dir, data);
     }
     
-    private TDirectory addToDirectory(String dir, DataSet data){
+    private String getDirectoryName(String path){
+        String dir = path;
+        if(dir.endsWith("/")==true){
+            while(dir.endsWith("/")==true) dir = dir.substring(0, dir.length()-1);
+        }
+        
+        if(dir.startsWith("/")==true)
+            while(dir.startsWith("/")==true) dir = dir.replaceFirst("/", "");
+        
+        return dir;
+    }
+    
+    private TDirectory addToDirectory(String dirPath, DataSet data){        
+        String dir = this.getDirectoryName(dirPath);
         if(dirList.containsKey(dir)==false){
             dirList.put(dir, new Directory(dir));
         }        
@@ -137,9 +151,10 @@ public class TDirectory implements TreeProvider {
     public DataSet get(String dir, String name){
         
         if(dirList.containsKey(dir)==false){
-            System.out.println("directory not found : " + dir); 
+            System.out.println("TDirectory:: directory not found : " + dir); 
+            this.list();
             return null;
-        }         
+        }
 
         for(DataSet item : dirList.get(dir).data){
             if(item.getName().compareTo(name)==0) return item;
@@ -152,16 +167,21 @@ public class TDirectory implements TreeProvider {
         int   index = fullname.lastIndexOf("/");
         String  dir = fullname.substring(0, index);
         String name = fullname.substring(index+1, fullname.length());
+        String path = this.getDirectoryName(dir);
         //System.out.printf(" dir [%s] \n name [%s]\n",dir,name);
-        return get(dir,name);
+        return get(path,name);
     }
     
-    public String list(){
+    protected String getObjectList(){
         StringBuilder str = new StringBuilder();
         for(Map.Entry<String,Directory> entry : this.dirList.entrySet() ){
             str.append(entry.getValue().list());
         }
         return str.toString();
+    }
+    
+    public void list(){
+        System.out.println(this.getObjectList());
     }
         
     public List<String>  getObjects(){
@@ -333,7 +353,38 @@ public class TDirectory implements TreeProvider {
     
     public static void main(String[] args){
         
-        TwigStudio.browser("myfile.twig");
+        
+        TDirectory dir = new TDirectory();
+        
+        H1F h1 = new H1F("h1f_1",120,0.0,1.0);
+        H1F h2 = new H1F("h1f_2",120,0.0,1.0);
+        H1F h3 = new H1F("h1f_3",120,0.0,1.0);
+        H1F h4 = new H1F("h1f_4",120,0.0,1.0);
+        
+        dir.add("/detector/ec", h1);
+        dir.add("/detector/ec", h2);
+        dir.add("detector/dc", h3);
+        dir.add("detector/dc/", h4);
+        
+        dir.list();
+        
+        dir.show();
+        
+        dir.write("mydir.twig");
+        
+        
+        TDirectory dir2 = new TDirectory("mydir.twig");
+        
+        dir2.list();
+        
+        String path = "/detector/ec";
+
+        System.out.println(" bool - " + path.startsWith("/"));
+        path = path.replaceFirst("/", "");
+        System.out.println(" bool - " + path.startsWith("/"));
+        //Path p = Path.of("/home/users/rgk/");
+        //System.out.println(p.getFileSystem());
+        //TwigStudio.browser("myfile.twig");
         //TDirectory d = new TDirectory("myfile.twig");
         //d.list();
         /*

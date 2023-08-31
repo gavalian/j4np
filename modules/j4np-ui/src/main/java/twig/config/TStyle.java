@@ -24,7 +24,8 @@ import java.util.logging.Logger;
 public class TStyle {
 
     public static enum TwigStyle {
-        PRESENTATION, MONITOR, MATPLOTLIB
+        PRESENTATION, PRESENTATION_DARK, PRESENTATION_BOLD, 
+        ARTICLE, MONITOR, MONITOR_DARK, MATPLOTLIB
     }
     
     public int getDefaultGridLineColor() {
@@ -94,15 +95,28 @@ public class TStyle {
     
     
     protected Font  defaultPaveTextFont = new Font("Avenir",Font.PLAIN,14);
+
+    public Color getDefaultCanvasColor() {
+        return defaultCanvasColor;
+    }
+
+    public void setDefaultCanvasColor(Color defaultCanvasColor) {
+        this.defaultCanvasColor = defaultCanvasColor;
+    }
     protected Font defaultAxisLabelFont = new Font("Avenir",Font.PLAIN,18);
     protected Font defaultAxisTitleFont = new Font("Avenir",Font.PLAIN,18);
     
     protected Color defaultAxisBackgroundColor = null;
+    protected Color defaultCanvasColor = Color.WHITE;
     
     protected int   defaultGridLineColor = 171;
     protected int   defaultGridLineStyle = 1;
     protected int   defaultGridLineWidth = 1;
+        
     
+    
+    protected TAxisAttributes attributeAxisX = new TAxisAttributes();
+    protected TAxisAttributes attributeAxisY = new TAxisAttributes();
     
     public Font getDefaultAxisLabelFont() {
         return defaultAxisLabelFont;
@@ -116,6 +130,10 @@ public class TStyle {
         return defaultAxisTitleFont;
     }
 
+    
+    public TAxisAttributes getAxisAttrX(){ return this.attributeAxisX;}
+    public TAxisAttributes getAxisAttrY(){ return this.attributeAxisY;}
+    
     public final void setDefaultAxisTitleFont(Font defaultAxisTitleFont) {
         this.defaultAxisTitleFont = defaultAxisTitleFont;
     }
@@ -158,11 +176,67 @@ public class TStyle {
         if(type == TwigStyle.PRESENTATION){
            style.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
            style.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           
+           style.getAxisAttrX().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.getAxisAttrY().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.getAxisAttrX().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           style.getAxisAttrY().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
            style.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));
         }
+        
+        if(type == TwigStyle.PRESENTATION_BOLD){           
+           
+           style.getAxisAttrX().setAxisLabelFont(new Font("Palatino",Font.BOLD,18));
+           style.getAxisAttrY().setAxisLabelFont(new Font("Palatino",Font.BOLD,18));
+           style.getAxisAttrX().setAxisTitleFont(new Font("Palatino",Font.BOLD,20));
+           style.getAxisAttrY().setAxisTitleFont(new Font("Palatino",Font.BOLD,20));
+           
+           style.setDefaultPaveTextFont(new Font("Palatino",Font.BOLD,20));
+        }
+        
+        if(type == TwigStyle.PRESENTATION_DARK){
+           style.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           
+           style.getAxisAttrX().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.getAxisAttrY().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.getAxisAttrX().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           style.getAxisAttrY().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           style.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));
+        }
+        
         if(type == TwigStyle.MONITOR){
            style.setDefaultAxisLabelFont(new Font("Avenir",Font.PLAIN,12));
            style.setDefaultPaveTextFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrX().setAxisLabelFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrY().setAxisLabelFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrX().setAxisTitleFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrY().setAxisTitleFont(new Font("Avenir",Font.PLAIN,12));
+           
+           style.setDefaultAxisTitleFont(new Font("Avenir",Font.PLAIN,14));
+           
+        }
+        
+        if(type == TwigStyle.MONITOR_DARK){
+           style.setDefaultAxisLabelFont(new Font("Avenir",Font.PLAIN,12));
+           style.setDefaultPaveTextFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrX().setAxisLabelFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrY().setAxisLabelFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrX().setAxisTitleFont(new Font("Avenir",Font.PLAIN,12));
+           style.getAxisAttrY().setAxisTitleFont(new Font("Avenir",Font.PLAIN,12));
+           
+           style.getAxisAttrX().setAxisGridLineColor(51);
+           style.getAxisAttrY().setAxisGridLineColor(51);
+           
+           style.getAxisAttrX().setAxisLineColor(31);
+           style.getAxisAttrY().setAxisLineColor(31);
+           style.getAxisAttrX().setAxisLabelColor(31);
+           style.getAxisAttrX().setAxisTitleColor(31);
+           style.getAxisAttrY().setAxisLabelColor(31);
+           style.getAxisAttrY().setAxisTitleColor(31);
+           style.setDefaultAxisBackgroundColor(new Color(50,53,50));
+           style.setDefaultCanvasColor(new Color(40,43,40));
+
            style.setDefaultAxisTitleFont(new Font("Avenir",Font.PLAIN,14));
            
         }
@@ -170,9 +244,13 @@ public class TStyle {
     
     public static void setStyle(int type){
         switch(type){
+
             case 1: TStyle.setStyle(TwigStyle.PRESENTATION); break;
-            case 2: TStyle.setStyle(TwigStyle.MATPLOTLIB); break;
-            case 3: TStyle.setStyle(TwigStyle.MONITOR); break;            
+            case 2: TStyle.setStyle(TwigStyle.PRESENTATION_DARK); break;
+            case 3: TStyle.setStyle(TwigStyle.MONITOR); break;
+            case 4: TStyle.setStyle(TwigStyle.MONITOR_DARK); break;
+            case 5: TStyle.setStyle(TwigStyle.MATPLOTLIB); break;
+
             default: TStyle.setStyle(TwigStyle.PRESENTATION); break;
         }
     }
