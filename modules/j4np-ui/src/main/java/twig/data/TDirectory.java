@@ -194,6 +194,17 @@ public class TDirectory implements TreeProvider {
         return obj;
     }
     
+    public List<String>  getDirectoryList(){
+        List<String> obj = new ArrayList<>();
+        for(Map.Entry<String,Directory> entry : dirList.entrySet()){
+            obj.add(entry.getKey());
+            //List<String> entryObj = entry.getValue().getObjects();
+            //obj.addAll(entryObj);
+        }
+        Collections.sort(obj);
+        return obj;
+    }
+    
     public void treeModel(){
         List<String> objects = this.getObjects();
         Set<String>     root = this.getChildren(objects, "", -1);

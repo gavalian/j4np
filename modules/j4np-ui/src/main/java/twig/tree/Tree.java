@@ -41,7 +41,7 @@ public abstract class Tree implements TreeProvider {
     
     private String         treeName = "tree";
     private int         defaultBins = 100;
-    private int    treeProcessLimit = -1;    
+    private int    treeProcessLimit = -1;
     private List<TreeCut>  treeCuts = new ArrayList<>();
 
 
@@ -71,8 +71,7 @@ public abstract class Tree implements TreeProvider {
     
     public final void    setName(String name){ treeName = name;}
     public final String  getName(){ return treeName;}
-    
-    
+        
     public void showBranches(){
         List<String> list = this.getBranches();
         System.out.printf("-- list of branches --\n");
@@ -195,16 +194,16 @@ public abstract class Tree implements TreeProvider {
         if(expression.contains(":")==true){
             H2F h = this.geth2undef(expression, cuts, 100,100);
             
-            TwigStudio.getInstance().getCanvas().view().region().draw(h, options);
+            TwigStudio.getInstance().getDataCanvas().region().draw(h, options);
             if(options.contains("same")==false)
-                TwigStudio.getInstance().getCanvas().view().next();
-            TwigStudio.getInstance().getCanvas().repaint();
+                TwigStudio.getInstance().getDataCanvas().next();
+            TwigStudio.getInstance().getDataCanvas().repaint();
         } else {
             H1F h = this.gethundef(expression, cuts, 100);
-            TwigStudio.getInstance().getCanvas().view().region().draw(h, options);
+            TwigStudio.getInstance().getDataCanvas().region().draw(h, options);
             if(options.contains("same")==false)
-                TwigStudio.getInstance().getCanvas().view().next();
-            TwigStudio.getInstance().getCanvas().repaint();
+                TwigStudio.getInstance().getDataCanvas().next();
+            TwigStudio.getInstance().getDataCanvas().repaint();
         }
     }
     
@@ -234,18 +233,20 @@ public abstract class Tree implements TreeProvider {
             H2F h2 = this.getByStringH2F(expression);
             geth2(exp, cuts, h2);
             TwigStudio.getInstance().dir().add("/studio", h2);
-            TwigStudio.getInstance().getCanvas().view().region().draw(h2, options);
+            TwigStudio.getInstance().updateBrowser();
+            TwigStudio.getInstance().getDataCanvas().region().draw(h2, options);
             if(options.contains("same")==false)
-                TwigStudio.getInstance().getCanvas().view().next();
-            TwigStudio.getInstance().getCanvas().repaint();
+                TwigStudio.getInstance().getDataCanvas().next();
+            TwigStudio.getInstance().getDataCanvas().repaint();
         } else {
             H1F h = this.getByStringH1F(expression);
             this.geth(exp, cuts, h);
             TwigStudio.getInstance().dir().add("/studio", h);
-            TwigStudio.getInstance().getCanvas().view().region().draw(h, options);
+            TwigStudio.getInstance().updateBrowser();
+            TwigStudio.getInstance().getDataCanvas().region().draw(h, options);
             if(options.contains("same")==false)
-                TwigStudio.getInstance().getCanvas().view().next();
-            TwigStudio.getInstance().getCanvas().repaint();
+                TwigStudio.getInstance().getDataCanvas().next();
+            TwigStudio.getInstance().getDataCanvas().repaint();
         }
         //System.out.println(" parsing " + exp);
         //H1F h = this.geth(expression, cuts, 0, 0, 0)        
@@ -282,6 +283,7 @@ public abstract class Tree implements TreeProvider {
         
         while(this.next()==true){
             counter++;
+            if(treeProcessLimit>0&&counter>=treeProcessLimit) break;
             if(cutExp.isValid(this)>0.5){ v.add(varExp.getValue(this));}
         }
         
@@ -339,24 +341,23 @@ public abstract class Tree implements TreeProvider {
         long    evaluate = 0L;
         long        read = 0L;
         boolean   isDone = false;
-        
+        long start = System.nanoTime();
         while(this.next()==true){
             //long then = System.nanoTime();
             //boolean status = this.next();
             //long now = System.nanoTime();
             //read += (now-then);            
             counter++;
-            if(treeProcessLimit>0&&counter>=treeProcessLimit) break;
-            long start = System.nanoTime();
+            if(treeProcessLimit>0&&counter>=treeProcessLimit) break;            
             if(cutExp.isValid(this)>0.5){
                 h.fill(varExp.getValue(this));
             }
-            long end = System.nanoTime();
-            evaluate += (end - start);
         }
+        long end = System.nanoTime();
+        evaluate += (end - start);
         System.out.printf("get::perf>> evaluated #%12d in %12d ms, read %12.4f ms\n", 
                 counter,(int) (evaluate/1000000.0), (read/1000000.0));
-    }    
+    }
     
     public final void geth2(String expression, String cut, H2F h){
         reset();
@@ -374,19 +375,17 @@ public abstract class Tree implements TreeProvider {
         long then = System.currentTimeMillis();
         while(this.next()==true){
             counter++;
-            long start = System.nanoTime();
+            if(treeProcessLimit>0&&counter>=treeProcessLimit) break;
             if(cutExp.isValid(this)>0.5){
                 double vX = varExpX.getValue(this);
                 double vY = varExpY.getValue(this);
                 h.fill(vX,vY);
             }
-            long end = System.nanoTime();
-            evaluate += (end - start);
         }
         long now = System.currentTimeMillis();
         System.out.printf("get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
                 counter,(int) (evaluate/1000000.0), now-then);
-    }        
+    }
     
     public final H2F geth2undef(String expression, String cut, int binsX, int binsY){
         reset();
@@ -405,14 +404,13 @@ public abstract class Tree implements TreeProvider {
         long then = System.currentTimeMillis();
         while(this.next()==true){
             counter++;
-            long start = System.nanoTime();
+            if(treeProcessLimit>0&&counter>=treeProcessLimit) break;
+            
             if(cutExp.isValid(this)>0.5){
                 double vX = varExpX.getValue(this);
                 double vY = varExpY.getValue(this);
                 vx.add(vX);vy.add(vY);
-            }
-            long end = System.nanoTime();
-            evaluate += (end - start);
+            }            
         }
         long now = System.currentTimeMillis();
         H2F h = H2F.create("h2000000", binsX, binsY, vx, vy);

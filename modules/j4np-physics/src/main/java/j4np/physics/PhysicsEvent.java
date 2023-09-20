@@ -125,6 +125,20 @@ public abstract class PhysicsEvent {
         return str.toString();
     }
     
+    private String particleString(int pid, Vector3 vec, Vector3 vrt){
+        PDGParticle part = PDGDatabase.getParticleById(pid);
+
+        if(part==null) return null;
+        LorentzVector lv = LorentzVector.withPxPyPzM(vec.x(), vec.y(), vec.z(), part.mass());
+        StringBuilder str = new StringBuilder();
+        str.append(String.format("%3.0f. %4d %6d %2d %2d %9.4f %9.4f %9.4f ", (float) part.charge(), 
+                (int) 1, pid, (int) 0, (int) 0,
+                vec.mag(), Math.toDegrees(vec.theta()), Math.toDegrees(vec.phi())));
+        
+        str.append(String.format("%9.4f %9.4f %11.4f %9.4f %9.4f", lv.e(), lv.mass(), vrt.x(), vrt.y(),
+                vrt.z()));
+        return str.toString();
+    }
     
     public PhysicsEvent maskAll(){
         int size = count();
@@ -155,6 +169,37 @@ public abstract class PhysicsEvent {
                         Math.toDegrees(v.theta()));
             }*/
         }
+    }
+    @Override
+    public String toString(){
+        
+        Vector3 vec = new Vector3();
+        Vector3 vrt = new Vector3();
+        StringBuilder str = new StringBuilder();
+        List<Integer> index = new ArrayList<>();
+        for(int i = 0; i < this.count(); i++){
+            if(status(i)>=0) index.add(i);
+        }
+        
+        int count = index.size();
+                        
+        str.append(String.format("%12d %2d. %2d. %2d %2d %5.3f %7.3f %7.3f %7.3f %7.3f\n", 
+                count, (int) 1, (int) 1, (int) 1,
+                (int) 1, (float) 0.0, (float) 0.0, 10.5,
+                (float) 0.0, (float) 0.0));
+        
+        for (int loop = 0; loop < count; loop++) {
+            this.vector(vec, index.get(loop));
+            this.vertex(vrt, index.get(loop));
+            
+            str.append(String.format("%5d", loop + 1));
+            String pLund = this.particleString(this.pid(index.get(loop)), vec, vrt);
+            if(pLund!=null) str.append(pLund);
+            if(loop!=count-1)str.append("\n");
+            //str.append("\n");
+        }
+
+        return str.toString();
     }
     
     public String toLundString(){

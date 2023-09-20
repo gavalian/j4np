@@ -31,6 +31,10 @@ public class NeuralApplication extends OptionApplication {
                 .addRequired("-r", "run number")
                 .addOption("-e", "125", "number of epochs to train")
                 .addOption("-max", "15000", "maximum number of tracks per momentum bin");
+        
+        store.addCommand("-convert", "extract data for track ml algorithms");
+        store.getOptionParser("-convert").addOption("-o", "output_converted.h5", "output file name");
+        
     }
 
     @Override
@@ -50,6 +54,12 @@ public class NeuralApplication extends OptionApplication {
             ext.maxEvents = store.getOptionParser("-extract").getOption("-max").intValue();
             List<String> files = store.getOptionParser("-extract").getInputList();
             ext.processFiles(files);
+        }
+        
+        if(store.getCommand().compareTo("-convert")==0){
+            Clas12DataConverter.convert(store.getOptionParser("-convert").getInputList().get(0), 
+                    store.getOptionParser("-convert")
+                    .getOption("-o").stringValue());
         }
         
         if(store.getCommand().compareTo("-regression")==0){

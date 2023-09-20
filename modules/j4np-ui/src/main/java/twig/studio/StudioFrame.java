@@ -44,11 +44,11 @@ import twig.graphics.TGDataCanvas;
  */
 public class StudioFrame extends JPanel {
     
-    JTree           objectTree = null;
-    TreeProvider  treeProvider = null;
-    JTabbedPane     tabbedPane = null;
-    TGDataCanvas        canvas = null;
-    StatusPanel     statusPane = null;
+    protected JTree           objectTree = null;
+    protected TreeProvider  treeProvider = null;
+    protected JTabbedPane     tabbedPane = null;
+    protected TGDataCanvas        canvas = null;
+    protected StatusPanel     statusPane = null;
     private int    canvasCount = 1;
     
     private String unicodeSquarePlus = "\u229E";
@@ -73,6 +73,10 @@ public class StudioFrame extends JPanel {
         TreeModel model = this.treeProvider.getTreeModel();
         System.out.println("UPDATING TREE MODEL : " + (model==null));
         objectTree.setModel(model);
+    }
+    
+    public TGDataCanvas getCanvas(){
+        return this.canvas;
     }
     
     public void setTreeProvider(String clazz){        

@@ -38,11 +38,13 @@
 
 \abstract{%
 In this paper, we present the results of charged particle track reconstruction in CLAS12 using artificial intelligence. 
-In our approach, we use neural networks working together to identify tracks based on the raw signals in the Drift Chambers (DC).
-A Convolutional Auto-Encoders  is used to de-noise raw data by removing the hits that do not satisfy the patterns for tracks, and
+In our approach, we use neural networks working together to identify tracks based on the raw signals in the Drift Chambers.
+A Convolutional Auto-Encoder is used to de-noise raw data by removing the hits that do not satisfy the patterns for tracks, and
 second Multi-Layer Perceptron is used to identify tracks from combinations of clusters in the drift chambers. 
-The increased efficiency of track identification yields to increase physics outcome from CLAS12 experiments up to $50\%$ for
-multi-particle final states and will allow running future experiments at higher luminosities due to better cluster identification after the de-noising procedure.
+Our method increases the tracking efficiency by $50\%$ for multi-particle final states already conducted experiments. The de-noising results indicate 
+that future experiments can run at higher luminosity without degradation of the data quality. This in turn will lead to significant benefits for the CLAS12 physics program.
+%The increased efficiency of track identification yields to increased physics outcome from CLAS12 experiments up to $50\%$ for
+%multi-particle final states and will allow running future experiments at higher luminosities due to better cluster identification after the de-noising procedure.
 %In this article, we present the results of using Convolutional Auto-Encoders for de-noising raw data for CLAS12 drift chambers.
 %The de-noising neural network provides increased efficiency in track reconstruction, also improved performance for high-luminosity experimental data collection. 
 %The de-noising neural network used in conjunction with the previously developed track 
@@ -91,7 +93,7 @@ three regions of the drift chambers in a given sector are reconstructed by track
 in each super-layer adjacent wires with a signal are grouped together into clusters (called segments), 
 shown in Figure~\ref{dc:side_view}. The positions of these clusters (segments) in each super-layer 
 are used to fit the track trajectory to derive initial parameters, such as momentum and direction. 
-After the initial selection, good track candidates are passed through Kalman filter~\cite{Kalman1960} 
+After the initial selection, good track candidates are passed through a Kalman filter~\cite{Kalman1960} 
  to further refine measured parameters.
 
 \begin{figure}[!ht]
@@ -134,7 +136,7 @@ of all combinations of clusters that form 5-segment candidates.
  
  A Multi-Layer Perceptron neural network is used for the CLAS12 track identification  \cite{Gavalian:2020oxg}. 
  The implemented architecture is shown in Figure~\ref{mlp:architecture}, where an input layer with 6 
- nodes are used (each node representing the average wire position of the segment in the super-layer) and 3 
+ nodes is used (each node representing the average wire position of the segment in the super-layer) and 3 
  output nodes for the classes ``positive track'', ``negative track'' and ``false track''.
  
  \begin{figure}[!ht]
@@ -167,7 +169,7 @@ wire position is shown for all super-layers. The average accuracy of wire positi
 \end{figure}
 
 A second neural network was developed to fix the corruption in possible track candidates due to 
-inefficiencies of drift chambers. This network was used to identify track candidates which have one of 
+inefficiencies of the drift chambers. This network was used to identify track candidates which have one of 
 the segments missing. We used an auto-encoder architecture to implement the corruption-recovery 
 neural network \cite{Gavalian:2020xmc}. The structure of the network can be seen in 
 Figure~\ref{mlp:architecture}, with 6 input nodes and 6 output nodes.
@@ -272,7 +274,7 @@ final state.
 \label{dc-denoising}
 
 The charged particle tracking relies on isolating clusters in each DC super-layer to identify tracks from the combination of clusters.
-Accidental hits in drift chambers can, which increase with the luminosity, can lead to decreased efficiency of cluster identification, which 
+Accidental hits in drift chambers, which increase with the luminosity, can lead to decreased efficiency of cluster identification, which 
 in turn, leads to a decrease in track finding efficiency. A new approach with neural networks is used to clean raw data from drift chambers 
 prior to applying the clustering algorithm. 
 
@@ -293,7 +295,7 @@ of de-noiser performance can be found here~\cite{Thomadakis:2022zcd})}
 \label{aue-method}
 
 The Convolutional Auto-Encoder is used to de-noise raw data from the CLAS12 drift chambers~\cite{Thomadakis:2022zcd}. 
-The input and output for the network are matrices of size 36x112 representing hits in one sector of drift chambers. 
+The input and output for the network are matrices of size 36x112 representing hits in one sector of the drift chambers. 
 The training data was extracted from experimental data processed with CLAS12 reconstruction software. 
 The raw hits (converted into a matrix) are used as an input for the neural network and a matrix constructed 
 only from hits that belong to reconstructed tracks as an output. 
@@ -368,7 +370,7 @@ reconstructed with conventional algorithm (diamonds) d). }
 
 The AI-driven track reconstruction was tested on existing experimental data (shown in Figure~\ref{physics::conv_vs_dnai}. The same final state 
 was studied in experimental data (collected at standard experimental conditions of $45~nA$ beam incident on hydrogen target), and the results
-show $48\%$ increase in statistics.
+show a $48\%$ increase in statistics.
 
 \begin{figure}[!h]
 \begin{center}
@@ -385,9 +387,12 @@ number of protons from de-noised AI-assisted tracking.
 \section{Summary}
 \label{section-summary}
 
-The track reconstruction in CLAS12 currently uses AI to increase track reconstruction efficiency. The combination of De-Noising 
-and AI track identification leads to a $48\%$ increase in statistics in three particle final states in experimental data. The studies 
-with simulation show that upcoming experiments can be planned at higher luminosity to increase physics outcomes. 
+The track reconstruction in CLAS12 currently uses AI in data reconstruction workflow. "The increased efficiency of track reconstruction (identification) efficiency,
+using de-noising and tracking classifiers increases yields from CLAS12 experiments up to $50\%$ for multi-particle final states, improving physics outcomes and will allow running future experiments at higher luminosities due to better cluster identification after the de-noising procedure
+
+%to increase track reconstruction efficiency. The combination of De-Noising 
+%and AI track identification leads to a $50\%$ increase in statistics in three particle final states in experimental data. The studies 
+%with simulation show that upcoming experiments can be planned at higher luminosity to increase physics outcomes. 
 
 \section{Acknowledgments}
 \label{Acknowledgments}

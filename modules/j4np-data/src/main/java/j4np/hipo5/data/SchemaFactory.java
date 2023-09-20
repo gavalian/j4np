@@ -86,6 +86,16 @@ public class SchemaFactory {
         return new Bank(this.getSchema(name));
     }
     
+    public Bank getBank(String name, int rows){
+        if(this.hasSchema(name)==false){
+            SchemaBuilder builder = new SchemaBuilder("empty",0,0);            
+            builder.addEntry("dummy", "F", "dummy variable");
+            System.out.println("[schema factory] getBank erorr: there is no schema with name " + name);
+            return new Bank(builder.build());
+        }
+        return new Bank(this.getSchema(name),rows);
+    }
+    
     public List<Bank>    getBanks(){
         List<Bank>      bankList = new ArrayList<Bank>();
         List<Schema>  schemaList = getSchemaList();

@@ -277,8 +277,8 @@ public class TAxisAttributes implements Cloneable {
     private int        axisLabelColor = 1;
     private int        axisTitleColor = 1;
     
-    private int        axisGridLineColor = 1;
-    private int        axisGridLineStyle = 1;
+    private int        axisGridLineColor = 41;
+    private int        axisGridLineStyle = 8;
     private int        axisGridLineWidth = 1;
     /**
      * fonts for drawing axis Labels and titles.
@@ -297,5 +297,13 @@ public class TAxisAttributes implements Cloneable {
     
     private Boolean        axisLabelsDraw = true;
     private Boolean        axisTitlesDraw = true;
-    
+    private Boolean        axisEndPointSupress = true;
+
+    public Boolean getAxisEndPointSupress() {
+        return axisEndPointSupress;
+    }
+
+    public void setAxisEndPointSupress(Boolean axisEndPointSupress) {
+        this.axisEndPointSupress = axisEndPointSupress;
+    }
 }

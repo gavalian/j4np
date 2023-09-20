@@ -45,6 +45,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import twig.data.TDirectory;
 import twig.data.TGroupDirectory;
+import twig.graphics.TGDataCanvas;
 import twig.tree.HipoTree;
 
 /**
@@ -188,6 +189,8 @@ public class StudioWindow extends JFrame implements ActionListener {
             }
         }
     }
+    
+    public TGDataCanvas getCanvas(){ return this.sFrame.getCanvas();}
     
     public static void changeLook(){
         //com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme.install();

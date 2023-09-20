@@ -103,9 +103,16 @@ public class MultiIndex implements Serializable {
 	 * @return				Whether the index at that dimension is valid
 	 */
 	private boolean checkIndex(int dim, int index) {
-        if((index >= 0) && (index<dimSizes[dim])) {
-        	return true; 
+            if((index >= 0) && (index<dimSizes[dim])) {
+                return true; 
+            }
+            return false;
         }
-        return false;
-    }
+        
+        public static void main(String[] args){
+            MultiIndex mi = new MultiIndex(120,6);
+            for(int i = 0; i < 120; i++){
+                System.out.println(i + " " + mi.getArrayIndex(i,0));
+            }
+        }
 }

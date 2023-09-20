@@ -818,6 +818,32 @@ public class H2F implements DataSet {
         return sliceY;
     }
     
+    /**
+     * Creates a 1-D Histogram slice of the specified x Bin
+     *
+     * @param yBin the bin on the x axis to create a slice of
+     * @return 	a slice of the y bins on the specified x bin as a 1-D Histogram
+     */
+    public H2F sliceY(int yBinMin, int yBinMax) {
+        
+        String name = String.format("%s:slice(%d,%d)",this.getName(),yBinMin,yBinMax);
+        double xMin = xAxis.min();
+        double xMax = xAxis.max();
+        int    xNum = xAxis.getNBins();
+        H2F sliceY = new H2F(name, name, xNum, xMin, xMax, 
+                yBinMax-yBinMin + 1,
+                this.getAxisY().getBinCenter(yBinMin)-this.getAxisY().getBinWidth(yBinMin)*0.5,
+                this.getAxisY().getBinCenter(yBinMax)-this.getAxisY().getBinWidth(yBinMax)*0.5
+        );
+        
+        for (int x = 0; x < xNum; x++) {
+            for(int y = yBinMin; y <= yBinMax; y++){
+                sliceY.setBinContent(x,y-yBinMin, this.getBinContent(x,y));
+            }
+        }       
+        return sliceY;
+    }
+    
     public float[] offset() {
         float[] f = new float[hBuffer.length];
         for(int i = 0; i < hBuffer.length; i++) f[i] = (float) hBuffer[i];

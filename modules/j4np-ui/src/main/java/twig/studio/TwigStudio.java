@@ -17,6 +17,7 @@ import twig.data.TDataFactory;
 import twig.data.TDirectory;
 import twig.data.TGroupDirectory;
 import twig.graphics.TGCanvas;
+import twig.graphics.TGDataCanvas;
 
 /**
  *
@@ -30,10 +31,15 @@ public class TwigStudio {
     private StudioWindow         studioWindow = null;
     
     private long   twigDataSetCounter = 1000L;
-    private List<TGCanvas>       studioCanvas = new ArrayList<>();    
+    
+    private List<TGCanvas>       studioCanvas = new ArrayList<>();
+    private List<TGDataCanvas>   studioDataCanvas = new ArrayList<>();
+    
+    private TGDataCanvas         studioActiveCanvas = null;
     private TDirectory       defaultDirectory = new TDirectory();
     
     private List<DataSet>       copiedDataset = new ArrayList<>();
+    private TBrowser            studioBrowser = null;
     
     private Map<String,TreeProvider> providerStore = 
             new HashMap<>();
@@ -73,7 +79,37 @@ public class TwigStudio {
     
     public TGCanvas getCanvas(){
         if(studioCanvas.size()==0){ studioCanvas.add(new TGCanvas(650,550));}
+        this.studioActiveCanvas = studioCanvas.get(0).view();
         return studioCanvas.get(0);
+    }
+    
+    protected void setActiveCanvas(TGDataCanvas cview){
+        this.studioActiveCanvas = cview;
+    }
+    
+    public static void browser(){
+        StudioWindow.changeLook();
+        
+       /* StudioWindow window = new StudioWindow();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setSize(1200, 900);
+        window.setVisible(true);
+        window.getStudioFrame().setTreeProvider(TwigStudio.getInstance().dir());
+        */
+        TBrowser b = new TBrowser(TwigStudio.getInstance().dir());
+        TwigStudio.getInstance().studioBrowser = b;        
+        TwigStudio.getInstance().setActiveCanvas(b.window.getCanvas());
+
+    }
+    
+    public void updateBrowser(){
+        if(this.studioBrowser!=null) this.studioBrowser.update();
+    }
+    
+    public TGDataCanvas getDataCanvas(){
+        if(this.studioActiveCanvas==null)
+            TwigStudio.browser();
+        return this.studioActiveCanvas;
     }
     
     public DataSet getDataSet(long uid){

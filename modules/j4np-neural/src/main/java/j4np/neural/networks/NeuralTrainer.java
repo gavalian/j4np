@@ -4,6 +4,7 @@
  */
 package j4np.neural.networks;
 
+import j4np.neural.classifier.NeuralClassifier;
 import j4np.neural.data.Tracks;
 import j4np.neural.data.TrackReader;
 

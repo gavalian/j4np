@@ -51,7 +51,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         TStyle style = TStyle.getInstance();
         if(style!=null) {
             this.axisBackgroundColor = style.getDefaultAxisBackgroundColor();
-            this.nodeBackground = style.getDefaultAxisBackgroundColor();
+            this.nodeBackground      = style.getDefaultAxisBackgroundColor();
         }
         /*
         axisX.getAttributes().getAxisTicksPosition().add(0.2);
@@ -158,7 +158,11 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             axisY.draw(g2d, r, axisFrameRange);
             
             if(this.dataNodes.get(0).getDataSet() instanceof H2F){
+                //System.out.println(" drawing Z axis with type = " + axisZ.getStyle());
+                H2F h = (H2F) this.dataNodes.get(0).getDataSet();
+                axisZ.setLimits(0, h.getMaximum());
                 axisZ.draw(g2d, r, axisFrameRange);
+                
             }
             
         }

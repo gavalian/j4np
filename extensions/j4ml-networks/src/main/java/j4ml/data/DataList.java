@@ -5,11 +5,14 @@
  */
 package j4ml.data;
 
+import deepnetts.data.TabularDataSet;
+import j4ml.deepnetts.DataSetUtils;
 import j4np.utils.io.DataArrayUtils;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.visrec.ml.data.DataSet;
 import twig.data.DataVector;
 import twig.data.H1F;
 import twig.tree.Tree;
@@ -52,7 +55,21 @@ public class DataList extends Tree {
         }
         
     }
-    
+    public static DataSet convert(DataList list){
+        int  nInputs = list.getList().get(0).features().length;
+        int nOutputs = list.getList().get(0).labels().length;
+        
+        TabularDataSet  dataset = new TabularDataSet(nInputs,nOutputs);
+        int size = list.getList().size();
+        for(int r = 0; r < size; r++){
+            dataset.add(new TabularDataSet.Item(list.getList().get(r).features(),
+                    list.getList().get(r).labels()
+            ));
+        }
+        String[] names = DataSetUtils.generateNames(nInputs,nOutputs);
+        dataset.setColumnNames(names);
+        return dataset;
+    }
     public static DataList fromCSV(String file, int[] inputs, int[] outputs){
         CSVReader r = new CSVReader();
         r.setInputOutput(inputs, outputs);

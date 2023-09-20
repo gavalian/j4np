@@ -140,7 +140,9 @@ public class Clas12DataExtract {
                     int superlayer = b.getInt("superlayer", r);
                     int layer = b.getInt("layer", r);
                     int  wire = b.getInt("wire", r);
-                    int index = ((superlayer-1)*6 + layer)*112 + wire;
+                    
+                    int index = ((superlayer-1)*6 + layer-1)*112 + wire;
+                    
                     int row = dc.getRows();
                     dc.putShort(0, row, (short) index);
                     dc.setRows(row+1);
@@ -149,21 +151,41 @@ public class Clas12DataExtract {
         }
     }
     
+    public void makeHitsAll(CompositeNode dc, Bank b, int sector){
+        int      nrows = b.getRows();
+        int[] clusters = new int[6];
+        dc.setRows(0);
+        for(int r = 0; r < nrows; r++){
+            int sec = b.getInt("sector", r);
+            if(sec==sector){
+                int superlayer = b.getInt("superlayer", r);
+                    int layer = b.getInt("layer", r);
+                    int  wire = b.getInt("wire", r);
+                    int index = ((superlayer-1)*6 + layer-1)*112 + wire;
+                    int row = dc.getRows();
+                    dc.putShort(0, row, (short) index);
+                    dc.setRows(row+1);
+            }
+        }
+    }
     public void processEvent(Event e){
         
         Tracks  tracks = new Tracks(500);
         CompositeNode cnode = new CompositeNode(32144,1,"s",5000);
+        CompositeNode hnode = new CompositeNode(32144,2,"s",5000);
         
         Vector3 vector = new Vector3();
         Vector3 vertex = new Vector3();
         Event outEvent = new Event();
         e.read(dcBanks);
+        
         for(int s = 1; s <=6; s++){
             
             TrackReader.reco2tracksForSector(tracks, dcBanks[0], dcBanks[1],s);
             if(tracks.size()>0){
                 if(dcBanks[2].getRows()>0){
                     this.makeHits(cnode, tracks, dcBanks[2], s);
+                    this.makeHitsAll(hnode, dcBanks[2], s);
                     //cnode.print();
                 }
                 //tracks.dataNode().print();
@@ -178,6 +200,7 @@ public class Clas12DataExtract {
                     outEvent.write(tracks.dataNode());
                     //System.out.printf(" node ! size = %d tracks size = %d\n",cnode.getRows(),tracks.getRows());
                     outEvent.write(cnode);
+                    outEvent.write(hnode);
                     double which = rndm.nextDouble();
                     if(which>0.5){
                         if(this.recordBinsTr[tag-1]<this.maxEvents){
@@ -198,7 +221,7 @@ public class Clas12DataExtract {
         String file1 = "/Users/gavalian/Work/DataSpace/005342/rec_clas_005342.evio.00000-00004.hipo";
         String file2 = "/Users/gavalian/Work/DataSpace/005342/rec_clas_005342.evio.00070-00074.hipo";
         String file3 = "/Users/gavalian/Work/DataSpace/005342/rec_clas_005342.evio.00080-00084.hipo";
-        List<String> files = FileUtils.getFileListInDir("/Users/gavalian/Work/DataSpace/005342" ,"hipo");
+        List<String> files = FileUtils.getFileListInDir("/Users/gavalian/Work/DataSpace/neural" ,"hipo");
         Clas12DataExtract ext = new Clas12DataExtract();
         ///ext.processFiles(Arrays.asList(file1,file2,file3));
         System.out.println(Arrays.toString(files.toArray()));

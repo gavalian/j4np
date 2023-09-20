@@ -7,6 +7,7 @@ package j4np.physics;
 import j4np.hipo5.io.HipoReader;
 import j4np.physics.PhysicsReaction.ReactionEntry;
 import j4np.physics.VectorOperator.OperatorType;
+import j4np.physics.data.PhysDataEvent;
 import java.util.ArrayList;
 import java.util.List;
 import twig.data.H1F;
@@ -20,12 +21,15 @@ public class ReactionBuilder {
     private String filter = "";
     private double beamEnergy = 10.6;
     private String file   = "";
+    private PhysDataEvent physDataEvent = null;
     private List<String>         vectors = new ArrayList<>();
     private List<ReactionEntry>  entries = new ArrayList<>();
+    private boolean              rawBanks = false;
     
     private String     bank = "mc::event";
     
     public ReactionBuilder(){}
+    public ReactionBuilder raw(boolean f){ rawBanks = f; return this;}
     public ReactionBuilder filter(String f){ filter = f; return this;}
     public ReactionBuilder beam(double energy){ beamEnergy = energy; return this;}
     public ReactionBuilder file(String f){ file = f; return this;}
@@ -36,8 +40,12 @@ public class ReactionBuilder {
         entries.add(new ReactionEntry(name,order,oper));
         return this;
     }
+    public Reaction build(){
+        Reaction r = new Reaction();
+        return r;
+    }
     
-    public PhysicsReaction build(){
+    public PhysicsReaction buildPhysics(){
       PhysicsReaction react = new PhysicsReaction(filter,beamEnergy);
       for(int i = 0; i < vectors.size(); i++){
           String oper = vectors.get(i);
@@ -67,7 +75,7 @@ public class ReactionBuilder {
                 .vector("[cm]-[11]-[211]")
                 .branch("mxepipi", 0, "MASS")
                 .branch(  "mxepi", 1, "MASS")
-                .file("/Users/gavalian/Work/temp/rec_output_filtered.hipo").build();
+                .file("/Users/gavalian/Work/temp/rec_output_filtered.hipo").buildPhysics();
         //.file("/Users/gavalian/Work/temp/dis_fmc_n_1.hipo").build();
         
         

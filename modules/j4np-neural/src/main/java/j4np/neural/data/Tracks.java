@@ -9,7 +9,6 @@ import j4np.hipo5.data.CompositeNode;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Node;
 import j4np.hipo5.io.HipoReader;
-import j4np.neural.networks.NeuralClassifier;
 import j4np.neural.networks.NeuralDataList;
 import j4np.physics.Vector3;
 import java.util.ArrayList;
@@ -76,6 +75,9 @@ public class Tracks implements NeuralDataList {
     
     public double chi2(int row){ return bank.getDouble(4, row);}
     public int    charge(int row){return bank.getInt(3, row);}
+    public int    status(int row){ return bank.getInt(0, row);}
+    
+    public void setStatus(int row, int status){ bank.putShort(0, row, (short) status);}
     
     public int getHighestIndex(int start, int end){
         double  prob = probability(start);
@@ -83,6 +85,25 @@ public class Tracks implements NeuralDataList {
         for(int row = start; row <= end; row++){
             double p = probability(row);
             if(p>=prob){prob = p; index = row;}
+        }
+        return index;
+    }
+    
+    public int getHighestIndex(int start, int end, int[] statusTable){
+        //double  prob = probability(start);
+        //int    index = start;
+        double   prob = 0.0;
+        int     index = -1;
+        for(int row = start; row <= end; row++){
+            int status = this.dataNode().getInt(0, row);
+            boolean consider = false;
+            for(int s = 0; s < statusTable.length; s++){
+                if(status==statusTable[s]) consider = true;
+            }
+            if(consider){
+                double p = probability(row);
+                if(p>=prob){prob = p; index = row;}            
+            }
         }
         return index;
     }
@@ -108,6 +129,13 @@ public class Tracks implements NeuralDataList {
         return bin;
     }
     
+    public boolean match(int source, int row){
+        for(int i = 0; i < 6; i++){
+            if(dataNode().getInt(i+11, source)==
+                  dataNode().getInt(i+11, row)) return true;
+        }
+        return false;
+    }
     public CompositeNode dataNode(){return bank;}
     
     @Override

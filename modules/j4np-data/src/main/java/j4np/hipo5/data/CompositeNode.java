@@ -87,6 +87,12 @@ public class CompositeNode extends BaseHipoStructure {
         return dataDescriptor.structureLength;
     }
     
+    public int getRowOffset(int row){
+        int offset = getDataOffset() + 
+                row * dataDescriptor.structureLength; 
+            return offset;
+    }
+
     private boolean testTypeForEntry(int entry, int type){
         if(dataDescriptor.getEntryType(entry)==type) return true;
         //.warn("error : the type for entry " + entry + " is not " + type);
@@ -408,6 +414,7 @@ public class CompositeNode extends BaseHipoStructure {
         public int getEntryOffset(int entry){
             return dataOffset[entry];
         }
+                
         
         public int getStructureLength(){ return structureLength; }
                 
@@ -451,11 +458,11 @@ public class CompositeNode extends BaseHipoStructure {
             for(int e = 0; e < nentries; e++){
                 int type = node.getEntryType(e);
                 switch(type){
-                    case 1: node.putByte(i, e,(byte) ( i+1)); break;
-                    case 2: node.putShort(i, e, (short) (i+1)); break;
-                    case 3: node.putInt(i, e, i+1); break;
-                    case 4: node.putFloat(i, e, i+1); break;
-                    case 8: node.putLong(i, e, (i+1)*10); break;
+                    case 1: node.putByte(e,i,(byte) ( i+1)); break;
+                    case 2: node.putShort(e,i, (short) (i+1)); break;
+                    case 3: node.putInt(e,i, i+1); break;
+                    case 4: node.putFloat(e,i, i+1); break;
+                    case 8: node.putLong(e,i, (i+1)*10); break;
                     default: break;
                 }
             }
@@ -463,8 +470,54 @@ public class CompositeNode extends BaseHipoStructure {
         return node;
     }
     
-    public static void main(String[] args){
+    public void copyRow(CompositeNode node, int srcRow, int dstRow){
         
+        int dstrows = this.getRows();
+        int srcrows = node.getRows();
+        if(dstRow>=this.getRows()) { 
+            System.out.printf("comp-node::copy:: error, the destination has rows %d, requested %d\n",
+                    dstrows, dstRow);
+            return;
+        }
+        
+        if(srcRow>=node.getRows()) { 
+            System.out.printf("comp-node::copy:: error, the source has rows %d, requested %d, must be [0-%d]\n",
+                    srcrows, srcRow, srcrows-1);
+            return;
+        }
+        
+        
+        int rowLengthDst = this.getRowsSize();
+        int rowLengthSrc = node.getRowsSize();
+        if(rowLengthDst!=rowLengthSrc){
+            System.out.printf("comp-node::copy:: error, the format inconsistency src row length = %d, dst row length = %d\n",
+                    rowLengthSrc, rowLengthDst);
+            return;
+        }
+        
+        int rowOffsetDst = this.getRowOffset(dstRow);
+        int rowOffsetSrc = node.getRowOffset(srcRow);
+        System.arraycopy(node.structBuffer.array(), rowOffsetSrc,
+                this.structBuffer.array(), rowOffsetDst, rowLengthSrc);
+    }
+    
+    public static void main(String[] args){
+        CompositeNode node1 = CompositeNode.random(4);
+        CompositeNode node2 = CompositeNode.random(6);
+        
+        System.out.println("----------------------");
+        node1.print();
+        System.out.println("----------------------");
+        node2.print();
+        
+        node1.copyRow(node2, 5, 0);
+        node1.copyRow(node2, 4, 2);
+        
+        node1.copyRow(node2, 6, 2);
+        
+        System.out.println("----------------------");
+        node1.print();
+        /*
         Event e = new Event();
         Node n1 = new Node(5,1,new float[15]);
         HipoReader r = new HipoReader("/Users/gavalian/Work/DataSpace/trigger/clas_005630.h5_000000_daq.h5");
@@ -498,7 +551,8 @@ public class CompositeNode extends BaseHipoStructure {
         
         evt.write(n);
         
-        evt.scanShow();
+        evt.scanShow();*/
+        
         /*
         CompositeNode struct = new CompositeNode(12,1,"ssb",5);
         for(int i = 0; i < 5; i++) struct.putShort(i, 1, (short) ((i+1)*4));

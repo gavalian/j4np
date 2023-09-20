@@ -62,6 +62,14 @@ public class TGAxis implements StyleNode {
             }
             attributes.setAxisType(type);
         }
+        if(type == AxisType.AXIS_Z){
+             try {
+                attributes = TStyle.getInstance().getAxisAttrZ().clone();
+            } catch (CloneNotSupportedException ex) {
+                Logger.getLogger(TGAxis.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            attributes.setAxisType(type);
+        }
         
     }
     
@@ -251,9 +259,16 @@ public class TGAxis implements StyleNode {
                     int xpos = (int) tr.getX(axisTicksBuffer.get(i),r);
                     String xlabel = axisTextsBuffer.get(i);                    
                     textWidget.setText(xlabel);
-                    //textWidget.setFont(this.attributes.getAxisLabelFont());                    
-                    labelHeight = 
-                    textWidget.drawString(g2d, xpos, ytoplabel,TextAlign.CENTER,TextAlign.TOP,0);
+                    //textWidget.setFont(this.attributes.getAxisLabelFont());
+                    if(this.attributes.getAxisEndPointSupress()==true){
+                        if(Math.abs(xpos-x1)>4&&Math.abs(xpos-x2)>4){                                                    
+                            labelHeight = 
+                                    textWidget.drawString(g2d, xpos, ytoplabel,TextAlign.CENTER,TextAlign.TOP,0);
+                        }
+                    } else {
+                        labelHeight = 
+                                textWidget.drawString(g2d, xpos, ytoplabel,TextAlign.CENTER,TextAlign.TOP,0);
+                    }
                 }
             }            
         }
@@ -368,8 +383,15 @@ public class TGAxis implements StyleNode {
                 if(this.attributes.getAxisTicksDraw()==true) g2d.drawLine( x1, ypos, xend, ypos);
                 textWidget.setText(ylabel);
                 if(this.attributes.getAxisLabelsDraw()==true){
-                    int textWidth = textWidget.drawString( g2d, xrightlevel, ypos, TextAlign.RIGHT, TextAlign.CENTER ,1);                            
-                    if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
+                    if(this.attributes.getAxisEndPointSupress()==true){
+                        if(Math.abs(ypos-y1)>4&&Math.abs(ypos-y2)>3){
+                            int textWidth = textWidget.drawString( g2d, xrightlevel, ypos, TextAlign.RIGHT, TextAlign.CENTER ,1);                            
+                            if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
+                        }
+                    } else {
+                        int textWidth = textWidget.drawString( g2d, xrightlevel, ypos, TextAlign.RIGHT, TextAlign.CENTER ,1);                            
+                        if(textWidth>maximumLabelSize) maximumLabelSize = textWidth;
+                    }
                 }
             } 
             int xendminor = x1 + attributes.getAxisTickMarkSize()/2;

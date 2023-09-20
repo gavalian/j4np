@@ -17,6 +17,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import twig.config.TAttributeUtils;
+import twig.config.TAttributeUtils.ValuePair;
 import twig.config.TStyle;
 import twig.data.DataGroup;
 import twig.data.DataSet;
@@ -96,6 +98,57 @@ public class TGRegion extends Node2D implements StyleNode {
         this.tStyle = style;
         this.axisFrame.setStyle(style);
     }
+    
+    public TGRegion axis(String valuePairs){
+        List<ValuePair> vList = TAttributeUtils.parseOptions(valuePairs);
+        for(int i = 0; i < vList.size(); i++){
+            String option = vList.get(i).option;
+            String  value = vList.get(i).value;
+            switch (option){
+                case "labels": 
+                    this.getAxisFrame().getAxisX().getAttributes().setAxisLabelsDraw(value.contains("X"));
+                    this.getAxisFrame().getAxisY().getAttributes().setAxisLabelsDraw(value.contains("Y"));
+                    break;
+                case "titles":
+                    this.getAxisFrame().getAxisX().getAttributes().setAxisTitlesDraw(value.contains("X"));
+                    this.getAxisFrame().getAxisY().getAttributes().setAxisTitlesDraw(value.contains("Y"));
+                    break;
+                case "grid":
+                    this.getAxisFrame().getAxisX().getAttributes().setAxisGridDraw(value.contains("X"));
+                    this.getAxisFrame().getAxisY().getAttributes().setAxisGridDraw(value.contains("Y"));
+                    break;
+                case "box":
+                    this.getAxisFrame().getAxisX().getAttributes().setAxisBoxDraw(value.contains("X"));
+                    this.getAxisFrame().getAxisY().getAttributes().setAxisBoxDraw(value.contains("Y"));
+                    break;
+                case "divx":
+                    this.getAxisFrame().getAxisX().getAttributes().setAxisTickMarkCount(Integer.parseInt(value));
+                    break;
+                case "divy":
+                    this.getAxisFrame().getAxisY().getAttributes().setAxisTickMarkCount(Integer.parseInt(value));
+                    break;
+                default: System.out.println("? what did you mean by " + option + " = " + value); break;
+            }
+        }
+        return this;
+    }
+    
+    public TGRegion margins(String valuePairs){
+        List<ValuePair> vList = TAttributeUtils.parseOptions(valuePairs);
+        for(int i = 0; i < vList.size(); i++){
+            String option = vList.get(i).option;
+            String  value = vList.get(i).value;
+            switch (option){
+                case "top": this.getInsets().top(Integer.parseInt(value));break;
+                case "bottom": this.getInsets().bottom(Integer.parseInt(value));break;
+                case "left": this.getInsets().left(Integer.parseInt(value));break;
+                case "right": this.getInsets().right(Integer.parseInt(value));break;                
+                default: System.out.println("? what did you mean by " + option + " = " + value); break;
+            }
+        }
+        return this;
+    }
+    
     
     @Override
     public TStyle getStyle() {

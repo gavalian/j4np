@@ -12,6 +12,8 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -21,6 +23,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import twig.config.TAttributesLine;
 import twig.config.TPalette;
 import twig.config.TStyle;
@@ -99,6 +104,150 @@ public class Line implements Widget {
         JTextField endX = new JTextField();
         JTextField endY = new JTextField();
         
+        posX.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    xOrigin = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    xOrigin = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    xOrigin = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        });
+        
+        posY.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    yOrigin = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    yOrigin = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    System.out.println(">>>> Line Editor : x position changed to " + text);
+                    yOrigin = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        });
+        
+        endX.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+            try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    xEnd = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    xEnd = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    System.out.println(">>>> Line Editor : x position changed to " + text);
+                    xEnd = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        });
+        
+        endY.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+            try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    yEnd = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    yEnd = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                try {
+                    String text = e.getDocument().getText(0, e.getDocument().getLength()-1);
+                    System.out.println(">>>> Line Editor : x position changed to " + text);
+                    yEnd = Double.parseDouble(text);
+                    if(parent!=null) parent.repaint();
+                } catch (NumberFormatException | BadLocationException ex) {
+                    Logger.getLogger(Line.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        });
+        
         posX.setText(String.format("%.3f", this.xOrigin));
         posY.setText(String.format("%.3f", this.yOrigin));
         
@@ -106,6 +255,13 @@ public class Line implements Widget {
         endY.setText(String.format("%.3f", this.yEnd));
         
         JCheckBox drawBoxCheck = new JCheckBox();
+        drawBoxCheck.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                coordNDF = ((JCheckBox) e.getSource()).isSelected();
+                if(parent!=null) parent.repaint();
+            }
+        });
         drawBoxCheck.setSelected(this.coordNDF);
         
         JSpinner lstyle = DataEditorUtils.makeSpinner(this.lineStyle, 0, 15);
@@ -164,7 +320,7 @@ public class Line implements Widget {
         
         
         int option = JOptionPane.showConfirmDialog(null,                 
-                message, "Pave Text", JOptionPane.OK_CANCEL_OPTION);
+                message, "Line Editor", JOptionPane.OK_CANCEL_OPTION);
         
         if (option == JOptionPane.OK_OPTION) {
             this.coordNDF = drawBoxCheck.isSelected();

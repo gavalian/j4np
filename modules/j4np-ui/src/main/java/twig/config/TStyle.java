@@ -117,6 +117,7 @@ public class TStyle {
     
     protected TAxisAttributes attributeAxisX = new TAxisAttributes();
     protected TAxisAttributes attributeAxisY = new TAxisAttributes();
+    protected TAxisAttributes attributeAxisZ = new TAxisAttributes();
     
     public Font getDefaultAxisLabelFont() {
         return defaultAxisLabelFont;
@@ -133,6 +134,7 @@ public class TStyle {
     
     public TAxisAttributes getAxisAttrX(){ return this.attributeAxisX;}
     public TAxisAttributes getAxisAttrY(){ return this.attributeAxisY;}
+    public TAxisAttributes getAxisAttrZ(){ return this.attributeAxisZ;}
     
     public final void setDefaultAxisTitleFont(Font defaultAxisTitleFont) {
         this.defaultAxisTitleFont = defaultAxisTitleFont;
@@ -167,7 +169,15 @@ public class TStyle {
     public TStyle(){
         this.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
         this.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
-        this.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));
+        this.setDefaultPaveTextFont(new Font("PT Sans",Font.PLAIN,20));
+        
+        String fn = "PT Serif";
+        this.attributeAxisX.setAxisLabelFont(new Font(fn,Font.PLAIN,16) );
+        this.attributeAxisY.setAxisLabelFont(new Font(fn,Font.PLAIN,16) );
+        this.attributeAxisX.setAxisTitleFont(new Font(fn,Font.PLAIN,18) );
+        this.attributeAxisY.setAxisTitleFont(new Font(fn,Font.PLAIN,18) );        
+        this.attributeAxisZ.setAxisLabelFont(new Font(fn,Font.PLAIN,16) );
+        this.attributeAxisZ.setAxisTitleFont(new Font(fn,Font.PLAIN,18) );
     }
     
     

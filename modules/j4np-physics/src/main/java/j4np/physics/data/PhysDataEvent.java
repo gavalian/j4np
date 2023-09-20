@@ -27,7 +27,7 @@ public class PhysDataEvent extends PhysicsEvent {
     protected int  index_status = -1;
     protected int  index_charge = -1;
     protected PropertyList properties = new PropertyList();
-    
+    public PhysDataEvent(){}
     public PhysDataEvent(Bank b){
         Schema sc = b.getSchema().copy();
         dataBank  = new Bank(sc);

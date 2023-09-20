@@ -32,6 +32,7 @@ public class ArchiveProvider {
     private String    flavor = "default";
     private String    archiveFile = "";
     private String    system = "network";
+    private boolean   verbose = false;
     
     public ArchiveProvider(String file, String fl){
         this.archiveFile = file;
@@ -40,6 +41,10 @@ public class ArchiveProvider {
     
     public ArchiveProvider(String file){
         this.archiveFile = file;    
+    }
+    
+    public void setVerbose(boolean flag){
+        verbose = flag;
     }
     
     public void setFlavor(String __fl){
@@ -177,11 +182,13 @@ public class ArchiveProvider {
         String directory = this.findDirectory(srcRun, srcFlavor);
         //System.out.printf("\nrun %d search... entry found %d\n\n",srcRun,realRun);
         List<String> fileList = ArchiveUtils.getList(archiveFile, directory);
+        
+        
         for(String fn : fileList){
             String file = fn.replace(directory+"/", "");
             //System.out.println("copy file -> " + fn + "  : " + file);
             this.copyFileToFile(srcRun, srcFlavor, realRun, srcFlavor, file, newArchiveFile);
-            System.out.printf(":::: copy run = %8d (%8d) to new archive : %s\n",
+            if(verbose) System.out.printf(":::: copy run = %8d (%8d) to new archive : %s\n",
                     srcRun, realRun, newArchiveFile);
         }        
     }
@@ -328,6 +335,64 @@ public class ArchiveProvider {
         List<Integer>  items = this.getRunList();
         List<String>  comments = this.getComments(items);
         
+        String[] header = new String[]{"run","range", "comments"};
+
+        String[][] data = new String[items.size()][3]; 
+        
+        //IRender render = new Render();
+        //IContextBuilder builder = render.newBuilder();
+        //builder.width(120).height(items.size()*2+3);
+        //Table table = new Table(3, items.size()+1);
+        
+        ///table.setElement(1, 1, new Text(items.get(0)),true);
+        //table.setElement(1, 2, new Text(items.get(1)),true);
+        //table.setElement(1, 1, new Text(" RUN"),true);
+        //table.setElement(2, 1, new Text(" RANGE"),true);
+        //table.setElement(3, 1, new Text(" COMMENTS"),true);
+        if(items.size()==1){
+            data[0][0] = items.get(0).toString();
+            data[0][1] = String.format("%6d -    inf",0);
+            data[0][2] = comments.get(0);
+        } else {
+            for(int i = 0; i < items.size(); i++){
+                String range = "";
+                if(i==0){
+                    range = String.format("%6d - %6d", 0,items.get(i+1)-1);
+                } else {
+                    if(i==items.size()-1){
+                        range = String.format("%6d -    inf",items.get(i));
+                } else {
+                        range = String.format("%6d - %6d", items.get(i),items.get(i+1)-1);
+                    }
+                }
+                //Text t = new Text(items.get(i).toString());
+            
+                 data[i][0] = items.get(i).toString();
+                 data[i][1] = range;
+                 data[i][2] = comments.get(i);
+                 
+            }
+        }
+        
+        System.out.println("\n");
+        System.out.println("SUMMARY Archive : " + archiveFile);
+        System.out.println("SUMMARY  Flavor : " + flavor + "\n");
+        
+        String table = j4np.utils.asciitable.Table.getTable(header, data,
+                new j4np.utils.asciitable.Table.ColumnConstrain(0,8),
+                new j4np.utils.asciitable.Table.ColumnConstrain(1,15),
+                new j4np.utils.asciitable.Table.ColumnConstrain(2,55));
+        System.out.println(table);
+    }
+       /**
+     * Shows list of runs for for given flavor. The flavor can be
+     * specified in the constructor.
+     */
+    public void showRunListOld(){
+        
+        List<Integer>  items = this.getRunList();
+        List<String>  comments = this.getComments(items);
+        
         IRender render = new Render();
         IContextBuilder builder = render.newBuilder();
         builder.width(120).height(items.size()*2+3);
@@ -371,7 +436,6 @@ public class ArchiveProvider {
         
         System.out.println(s);
     }
-    
     public void addComment(int run, String... comments){
        List<String>  list = Arrays.asList(comments);
        String file = String.format("%s/%d/%s/comment.txt", system,run,flavor);

@@ -4,12 +4,14 @@
  */
 package j4np.neural.networks;
 
+import j4np.neural.regression.NeuralRegressionModel;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
+import j4np.neural.classifier.NeuralClassifier;
 import j4np.neural.data.Tracks;
 import j4np.neural.data.TrackReader;
 import j4np.neural.networks.TrackConstructor.CombinationCuts;
@@ -131,7 +133,7 @@ public class NeuralTrackFinder {
     }
     public static void main(String[] args){
         
-        NeuralRegression reg = new NeuralRegression();
+        NeuralRegressionModel reg = new NeuralRegressionModel();
         reg.loadFromFile("clas12default.network",1);
         SchemaFactory sf = new SchemaFactory();
         sf.readFile("etc/neuralnetwork.json");

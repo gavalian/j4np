@@ -161,6 +161,9 @@ public class PhysicsReaction extends Tree {
         this.modifiers.add(m); return this;
     }
     
+    public void setEventClass(PhysDataEvent pde){
+        this.physicsEvent = pde;
+    }
     
     public PhysicsReaction setDataSource(HipoReader r, String bank){
         reader = r; 
