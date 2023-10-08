@@ -544,7 +544,7 @@ public class Event implements DataEvent {
     
     public Event copy(){
         int size  = getEventBufferSize();
-        Event evt = new Event(size+2);
+        Event evt = new Event(size+size/2+24);
         evt.initFrom(this.getBuffer().array(), size);
         return evt;
     }

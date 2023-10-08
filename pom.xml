@@ -64,9 +64,10 @@
     <module>modules/j4np-package</module>
     
     <module>extensions/j4ml-networks</module>    
-    <module>extensions/j4ml-track</module>
-   
-    <module>extensions/j4ml-classifier</module>
+
+
+<!--    <module>extensions/j4ml-track</module>
+    <module>extensions/j4ml-classifier</module> -->
 <!--	 <module>extensions/j4np-analysis</module>
     -->
     <!--
