@@ -29,7 +29,7 @@ public class TwigExample2d {
         line2.setLineColor(Color.red);
         line2.setStyle(6);
         
-        c.view().region().draw(h);
+        c.view().region().draw(h,"");
         c.view().region().draw(line1).draw(line2);
         c.repaint();
     }
@@ -37,7 +37,7 @@ public class TwigExample2d {
     public static void draw2d2(){
         
         TGCanvas c = new TGCanvas(500,500);
-        H2F h = TDataFactory.createH2F(45000, 80);
+        H2F h = TDataFactory.createH2F(45000, 60);
         h.attr().setTitleX("random X");
         h.attr().setTitleY("random Y");
         
@@ -47,12 +47,12 @@ public class TwigExample2d {
         line2.setLineColor(Color.red);
         line2.setStyle(6);
         
-        c.view().region().draw(h);
+        c.view().region().draw(h,"F");
         c.view().region().draw(line1).draw(line2);
         
         //------ drawing text one the plot inside of box
         PaveText pave = new PaveText(0.05,0.95);
-        pave.setFont(new Font("Avenir Next",Font.BOLD,14));
+        pave.setFont(new Font("PT Serif",Font.BOLD,18));
         pave.setNDF(true).drawBox = true;
         pave.addLine("2d gassuaian example")
                 .addLine("g_1 - #mu = (-0.5,-0.6)")

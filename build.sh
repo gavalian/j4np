@@ -48,6 +48,6 @@ gzip j4np-${version}.tar
 echo 'copying local distribution to : ' ${PROJECT}
 cp -r j4np-${version} $PROJECT/.
 echo 'done....'
-jput -r j4np-${version}.tar.gz
+#jput -r j4np-${version}.tar.gz
 echo 'done copying to jlab'
 

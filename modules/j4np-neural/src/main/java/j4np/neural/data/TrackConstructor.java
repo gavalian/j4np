@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package j4np.neural.networks;
+package j4np.neural.data;
 
 import j4np.hipo5.data.CompositeNode;
 import j4np.neural.data.Tracks;
@@ -40,7 +40,7 @@ public class TrackConstructor {
         for(int i = 0; i < sectors.length; i++) {
             System.out.println("::: SECTOR " + i);
             sectors[i].show();
-        };
+        }
     }
     
     public static interface CombinationCuts {
@@ -90,8 +90,9 @@ public class TrackConstructor {
         }
         
         public void create(Tracks list, int sector){
+            
             create( list,  sector,null);
-        }
+        }                
         
         public void create(Tracks list, int sector, CombinationCuts cuts){
             list.dataNode().setRows(0);

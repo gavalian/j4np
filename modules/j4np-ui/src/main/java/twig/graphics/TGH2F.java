@@ -44,6 +44,7 @@ public class TGH2F extends TDataNode2D {
         }
     }
     
+    
     @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
         
@@ -63,7 +64,21 @@ public class TGH2F extends TDataNode2D {
         
         //double startX = r.getX() + tr.relativeX(dataRange.getRange().getX(), r);
         //double startY = r.getY() + r.getHeight() - tr.relativeY(dataRange.getRange().getY(), r);
-                
+        Color cZero = style.getPalette().palette2d().getColor(0);
+        
+        boolean drawBack = options.contains("F");
+        boolean drawLogZ = options.contains("Z");
+        
+        
+        if(options.contains("F")==true){
+           
+            g2d.setColor(cZero);
+            g2d.fillRect((int) r.getX(), (int) r.getY(), 
+                    (int) r.getWidth(), (int) r.getHeight());
+            //System.out.println(" Filling background with " + c + " rect : " + r);
+        }
+        
+        double histoMax = rfh.getMaximum();
         
         for(int xb = 0; xb < nBinsX; xb++){
                                                 
@@ -83,38 +98,25 @@ public class TGH2F extends TDataNode2D {
                 
                 //System.out.printf("start coordinate [%d,%d] at %5d x %5d %.2f %.2f\n", xb,yb,
                 //        (int) startX, (int) startY,xLen,yLen);
-                Color color = style.getPalette().palette2d().getColor3D(point.z, 
-                        0, rfh.getMaximum(), false);
+                //if(drawLogZ==false){
+                //    Color color = style.getPalette().palette2d().getColor3D(point.z, 0, rfh.getMaximum(), drawLogZ);
+                //    g2d.setColor(color);
+                //} else {
+                Color color = style.getPalette().palette2d().getColor3D(point.z, 0, histoMax, drawLogZ);
+                
+                if(point.z==0&&drawBack==true) color = cZero;
+                
                 g2d.setColor(color);
+               // }
+        
+                //System.out.println(xb + " " + yb + " " + color + " " + point.z);
+                //g2d.setColor(color);
                 g2d.fillRect((int) startX, (int) startY, (int) (xLen+1), (int) (yLen+1));
                 g2d.fillRect((int) Math.floor(startX-0.5), (int) Math.floor(startY-0.5), (int) (xLen+1), (int) (yLen+1));
                 //g2d.setColor(new Color(240,140,140));
                 //g2d.setStroke(new BasicStroke(2));                
                 //g2d.drawRect((int) startX, (int) startY, (int) xLen, (int) yLen);
             }
-        }
-            //g2d.drawRect((int) 60, (int) 60, (int) xLen, (int) yLen);
-            
-            /*
-        for(int xb = 0; xb < nBinsX; xb++){
-            double xLen = tr.getLengthX(point.xerror, r);
-            for(int yb = 0; yb < nBinsY; yb++){
-                dataSet.getPoint(point, xb,yb);
-                Color color = style.getPalette().palette2d().getColor3D(point.z, 
-                        0, rfh.getMaximum(), false);
-
-                g2d.setColor(color);
-                
-                double yLen = tr.getLengthY(point.xerror, r);
-                System.out.printf(" x = %5d , y= %5d , color = %s, x = %6d, y = %d , xlen = %9.2f, ylen = %9.2f\n"
-                        ,xb,yb,color,(int) startX,(int) startY,xLen,yLen);
-                g2d.fillRect((int) startX, (int) startY, (int) xLen, (int) yLen);
-                g2d.setColor(new Color(120,120,120));
-                g2d.drawRect((int) startX, (int) startY, (int) xLen, (int) yLen);
-                startY -= yLen;                
-            }
-            startY  = r.getY() + r.getHeight() - tr.relativeY(dataRange.getRange().getY(), r);
-            startX += xLen;
-        }*/
+        }               
     }
 }

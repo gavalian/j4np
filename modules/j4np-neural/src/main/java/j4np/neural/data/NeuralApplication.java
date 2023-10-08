@@ -4,6 +4,7 @@
  */
 package j4np.neural.data;
 
+import j4np.neural.finder.NeuralTrackFinder;
 import j4np.neural.trainers.RegressionTrainer;
 import j4np.utils.io.OptionApplication;
 import j4np.utils.io.OptionParser;
@@ -34,7 +35,9 @@ public class NeuralApplication extends OptionApplication {
         
         store.addCommand("-convert", "extract data for track ml algorithms");
         store.getOptionParser("-convert").addOption("-o", "output_converted.h5", "output file name");
-        
+
+        store.addCommand("-cook", "cook raw decoded file using ai");
+        store.getOptionParser("-cook").addOption("-run", "5197", "the reference run number");
     }
 
     @Override
@@ -60,6 +63,10 @@ public class NeuralApplication extends OptionApplication {
             Clas12DataConverter.convert(store.getOptionParser("-convert").getInputList().get(0), 
                     store.getOptionParser("-convert")
                     .getOption("-o").stringValue());
+        }
+        
+        if(store.getCommand().compareTo("-cook")==0){
+            NeuralTrackFinder.reconstruct(store.getOptionParser("-cook").getInputList());
         }
         
         if(store.getCommand().compareTo("-regression")==0){

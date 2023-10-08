@@ -279,7 +279,7 @@ public class J4npModuleMain {
     public static void main(String[] args){
         
         
-        J4npModuleMain.console();
+        //J4npModuleMain.console();
         
         Map<String,OptionApplication> appMap = J4npModuleMain.scan();
         

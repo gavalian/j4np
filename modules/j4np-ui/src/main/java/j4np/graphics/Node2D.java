@@ -389,25 +389,23 @@ public class Node2D {
     }
     
     public void applyMouseDrag(int x, int y, int xmove, int ymove){
+        
         //System.out.println("applying drag component " + getName());
         
+        /*
         NodeRegion2D  region = this.getScreenBounds();
-        //int xc = (int) (region.getX()-x);
-        //int yc = (int) (region.getY()-y);
+        
         double xpos = this.getLocalX(x);
         double ypos = this.getLocalY(y);
         System.out.println("DRAG : SCREEN BOUNDS : " + region);
         
-        //System.out.println(" move from " + x + " " + y + " to " + xmove + " " + ymove);
-        //System.out.println(" X = " + x + "  LOCAL X = " + this.getLocalX(x));
         System.out.println(" X / Y " + x + " " + y + " //// " + xpos + " " + ypos);
         if(canMove()==true){
             this.moveTo(x, y);
         }
         
         System.out.println(" AFTER MOVE = " + this.nodeRegion);
-        //this.setPosition(xmove, ymove);        
-        //this.objectPosition.setLocation(xmove, ymove);
+        */
     }
     
     public void drawChildren(Graphics2D g2d, int layer){

@@ -41,6 +41,8 @@ import twig.widgets.Widget;
 public class TGRegion extends Node2D implements StyleNode {
     
     protected TGAxisFrame  axisFrame = new TGAxisFrame();
+    protected Node2D       composite = null;
+    
     protected TStyle          tStyle = null;
     protected boolean  isInDebugMode = false;
     
@@ -66,12 +68,15 @@ public class TGRegion extends Node2D implements StyleNode {
         isInDebugMode = drawEmpty;
     }
     
+    public void replace(Node2D node){
+        this.composite = node;
+        this.composite.setParent(this);
+        this.axisFrame = null;
+    }
+    
     @Override
     public void drawLayer(Graphics2D g2d, int layer){ 
-        Color background = this.getBackgroundColor();
-
-       
-        
+        Color background = this.getBackgroundColor();               
         if(background!=null){
             g2d.setColor(background);
             NodeRegion2D r = this.getBounds();
@@ -83,15 +88,31 @@ public class TGRegion extends Node2D implements StyleNode {
             //System.out.println(">>> t-region : draw : " + this.getInsets());
         }
 
-        if(this.isInDebugMode==false){
-            if(axisFrame.dataNodes.size()>0||axisFrame.widgetNodes.size()>0){
+        if(axisFrame!=null){
+            if(this.isInDebugMode==false){
+                if(axisFrame.dataNodes.size()>0||axisFrame.widgetNodes.size()>0){
+                    axisFrame.drawLayer(g2d, layer);
+                }
+            } else {
                 axisFrame.drawLayer(g2d, layer);
             }
         } else {
-            axisFrame.drawLayer(g2d, layer);
+            /*this.composite.setBounds(
+                    this.getBounds().getX() + this.getInsets().getLeft(), 
+                    this.getBounds().getY() + this.getInsets().getTop(),
+                    this.getBounds().getWidth(),
+                    this.getBounds().getHeight()
+                    );*/
+            this.composite.drawLayer(g2d, layer);
         }
     }
     
+    public void applyMouseDrag(int x, int y, int xmove, int ymove){
+        
+        if(this.composite!=null){
+            this.composite.applyMouseDrag(x, y, xmove, ymove);
+        }
+    }
         
     @Override
     public void setStyle(TStyle style) {
@@ -188,7 +209,7 @@ public class TGRegion extends Node2D implements StyleNode {
     public TGRegion joinX(){
        axisFrame.getAxisX().getAttributes().setAxisLabelsDraw(Boolean.FALSE);
        axisFrame.getAxisX().getAttributes().setAxisTitlesDraw(Boolean.FALSE);       
-       return this;       
+       return this;
     }
     
     public TGRegion joinY(){

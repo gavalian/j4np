@@ -79,7 +79,7 @@ public class TGAxis implements StyleNode {
         if(this.fixedAxisRange==null)
             this.axisRange.set(min,max);
     }
-        
+    
     public void drawAxisGridX(Graphics2D g2d, Rectangle2D r, Translation2D tr){
         TStyle style = getStyle();
         int x1 = ( int ) r.getX();
@@ -102,7 +102,6 @@ public class TGAxis implements StyleNode {
         
         for(int i = 0; i < this.axisTicksBuffer.size(); i++){
             int xpos = (int) tr.getX(axisTicksBuffer.get(i),r);
-            
             g2d.drawLine(xpos, y1, xpos, y2);
         }
     }
@@ -464,6 +463,7 @@ public class TGAxis implements StyleNode {
     }
     
     public Range getRange(){ return axisRange;}
+    
     @Override
     public void setStyle(TStyle style) {
         tStyle = style;
@@ -473,6 +473,6 @@ public class TGAxis implements StyleNode {
     public TStyle getStyle() {
         if(tStyle==null){ return TStyle.getInstance();}
         return this.tStyle;
-    }    
+    }
     
 }

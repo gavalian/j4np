@@ -202,7 +202,7 @@ public class ExternalProcess  {
         config.add(new ProcessConfiguration("input:data_0002.bos:output:reco_0002.bos"));
         config.add(new ProcessConfiguration("input:data_0003.bos:output:reco_0003.bos"));
         config.add(new ProcessConfiguration("input:data_0004.bos:output:reco_0004.bos"));
-        config.add(new ProcessConfiguration("input:data_0005.bos:output:reco_0005.bos"));        
+        config.add(new ProcessConfiguration("input:data_0005.bos:output:reco_0005.bos"));
         
         proc.show(config);
         proc.startProcess(config);

@@ -30,7 +30,7 @@ public class TPalette2D {
     
     public TPalette2D(){
         //this.setPalette(PaletteName.kRainBow);
-        this.setPalette(PaletteName.kPaw);
+        this.setPalette(PaletteName.kLightTemperature);
     }
     
     public TPalette2D(String name ){
@@ -184,6 +184,7 @@ public class TPalette2D {
         if (max < min) {
             throw new UnsupportedOperationException("axis range is wrong: Maximum < Minimum");
         }
+        //I did not program this one in I do not know who did
         if (value == 0 && min >= 0) {
             return bgColor;
         }

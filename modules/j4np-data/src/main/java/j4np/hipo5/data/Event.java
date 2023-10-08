@@ -104,7 +104,7 @@ public class Event implements DataEvent {
     public void require(int size, boolean copy){
         int eventSize = getEventBufferSize();
         if(this.eventBuffer.capacity()<size){
-            byte[] bytes = new byte[size+64];            
+            byte[] bytes = new byte[size+128];            
             System.arraycopy(eventBuffer.array(), 0, bytes, 0, eventSize);
             eventBuffer  = ByteBuffer.wrap(bytes);
             eventBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -155,7 +155,7 @@ public class Event implements DataEvent {
         int bufferSize = node.getBufferSize();
         if(bufferSize<=8) return;
         int  position = eventBuffer.getInt(EVENT_LENGTH_OFFSET);
-        
+        this.require(position+bufferSize + 24);
         System.arraycopy(node.getBufferData(), 0, 
                 eventBuffer.array(), position, bufferSize);
         
@@ -554,6 +554,20 @@ public class Event implements DataEvent {
         require(size);
         System.arraycopy(e.eventBuffer.array(), 0, this.eventBuffer.array(), 0, size);
     }    
+    
+    public void copyNodeAt(Event e, int position, int length){        
+        int size = e.getEventBufferSize();
+        e.require(size+length+56); 
+        System.arraycopy(this.eventBuffer.array(), position, e.getEventBuffer().array(), size, length);
+        e.getEventBuffer().putInt(4, size+length);
+    }
+    
+    public void copyNode(Event e, int group, int item){
+        int position = this.scan(group, item);
+        if(position<16) return;
+        int length = this.scanLengthAt(group, item, position) + 8;
+        this.copyNodeAt(e, position, length);
+    }
     
     public void initFrom(byte[] buffer){
         require(buffer.length);

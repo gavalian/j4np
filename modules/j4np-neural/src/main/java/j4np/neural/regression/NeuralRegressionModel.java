@@ -34,6 +34,9 @@ public class NeuralRegressionModel {
     double[]   normalizeNegMin = new double[]{0.,  0.0 , -0.5};
     double[]   normalizeNegMax = new double[]{10., 1.0  , 1.5};
     
+    
+    NeuralVertexModel vertexModel = new NeuralVertexModel();
+    
     public NeuralRegressionModel(){
         
     }
@@ -65,6 +68,9 @@ public class NeuralRegressionModel {
                 }
             }
         }
+        
+        vertexModel.load(networkFile, run);
+        
     }
     
     private Vector3 getVector(int sector, int charge, float[] vec){
@@ -97,6 +103,9 @@ public class NeuralRegressionModel {
         
         float[] means = new float[6];
         float[] output = new float[3];
+        
+        float[] outputV = new float[1];
+        float[] inputV  = new float[9];
         //tnode.print();
         for(int i = 0; i < tnode.getRows(); i++){
 
@@ -123,6 +132,15 @@ public class NeuralRegressionModel {
             pnode.putFloat(5, i, (float) v.y());
             pnode.putFloat(6, i, (float) v.z());
             pnode.putShort( 11, i, (short) 2200);
+            
+            
+            if(sector==1&&charge<0){
+                for(int k = 0; k < 6; k++) inputV[k] = means[k];
+                for(int k = 0; k < 3; k++) inputV[6+k] = output[k];
+                vertexModel.getModel().feedForwardTanhLinear(inputV, outputV);
+                pnode.putFloat(9, i, outputV[0]);
+                //System.out.println( outputV[0]);
+            }
         }
         
         if(tnode.getRows()>0){

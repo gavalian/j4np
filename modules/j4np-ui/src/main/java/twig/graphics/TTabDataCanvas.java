@@ -17,13 +17,20 @@ import javax.swing.JTabbedPane;
 public class TTabDataCanvas extends JPanel {
     JTabbedPane tabbedPane = null;
     List<TGDataCanvas>  canvases = new ArrayList<>();
+    
     public TTabDataCanvas(){
         super();
-        init(new String[]{"default"});
+        init(null,new String[]{"default"});
     }
+    
+    public TTabDataCanvas(JPanel controls){
+        super();
+        init(null,new String[]{"default"});
+    }
+    
     public TTabDataCanvas(String[] names){
         super();
-        init(names);
+        init(null,names);
     }
     
     public int getSelected(){
@@ -34,7 +41,7 @@ public class TTabDataCanvas extends JPanel {
         tabbedPane.setSelectedIndex(index);
     }
     
-    public final void init(String[] names){
+    public final void init(JPanel controls, String[] names){
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
         for(int i = 0; i < names.length; i++){
@@ -43,6 +50,7 @@ public class TTabDataCanvas extends JPanel {
             tabbedPane.addTab(names[i], null, c, "canvas("+names[i]+")");
         }
         add(tabbedPane,BorderLayout.CENTER);
+        if(controls!=null) add(controls,BorderLayout.PAGE_END);
     }
     
     public void addCanvas(String name, boolean focused){

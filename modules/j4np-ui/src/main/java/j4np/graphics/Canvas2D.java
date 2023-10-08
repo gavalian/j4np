@@ -49,6 +49,8 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     private List<Node2D>   graphicsComponents = Collections.synchronizedList(new ArrayList<Node2D>());
     
     private Point2D             mousePosition = new Point2D.Double(0,0);
+    private Point2D              mousePressed = new Point2D.Double(0,0);
+    
     private int        currentAcviteComponent = -1;
     private Timer                 updateTimer = null;
     private Node2D                 activeNode = null;
@@ -57,6 +59,8 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     private PopupProvider       popupProvider = null;
     private Color             backgroundColor = null;
     
+    
+
     public Canvas2D(){
         
         /*this.graphicsComponents.add(new GraphicsObject2D(100,100));
@@ -322,43 +326,21 @@ public class Canvas2D extends JPanel implements MouseInputListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        /*
-        this.currentAcviteComponent = -1;
-        int icounter = 0;
-        this.activeNode = null;
-        for(Node2D object : this.graphicsComponents){
-            if(object.isClicked(e.getX(), e.getY())==true){
-                this.activeNode = object;
-            }
-            icounter++;
-        }
-        
-        if(activeNode!=null){
-            System.out.println(" Mouse Pressed : Active component = " + this.activeNode.getName());
-        }
-        */
-        /*
-        if(graphicsComponents.size()>0){
-            Node2D node = this.graphicsComponents.get(0).getClicked(e.getX(),e.getY());
-            if(node!=null){
-                System.out.printf(" MOUSE PRESSED : at (%6d, %6d) clicked component = %s\n " ,e.getX(),e.getY(), node.getName());
-                activeNode = node;
-                activeNode.setClickedPosition(e.getX(), e.getY());
-                activeNode.show();
-            }
-        }*/
-        boolean rePaint = false;
-        for(Node2D node : this.graphicsComponents){
-            if(node.mousePressed(e.getX(), e.getY())==true)
-                rePaint = true;
-        }
-        if(rePaint==true) this.repaint();
+        this.mousePressed.setLocation(e.getX(), e.getY());
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        //System.out.println(" mouse released...");
         activeNode = null;
+        for(Node2D node : this.graphicsComponents){
+            if(node.getBounds().contains(e.getX(), e.getY())){
+            //if(node.mousePressed(e.getX(), e.getY())==true){
+                this.activeNode = node;
+                //System.out.printf(" mouse released : well found an active node");
+            }
+        }
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -377,8 +359,13 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         //System.out.println("dragging detected");
         if(this.activeNode!=null){
             //System.out.println("dragging component " + activeNode.getName());
-            this.activeNode.applyMouseDrag(e.getX(), e.getY(), e.getX(), e.getY());
+            this.activeNode.applyMouseDrag((int) mousePosition.getX(), (int) mousePosition.getY(), e.getX(), e.getY());
+            //System.out.printf(" mouse dragged (some active) : %5d %5d -> %5d %5d\n",
+             //      (int) mousePressed.getX(),(int) mousePressed.getY(),e.getX(),e.getY());
             this.repaint();
+        } else {
+            //System.out.printf(" mouse dragged (no active) : %5d %5d -> %5d %5d\n",
+            //       (int) mousePressed.getX(),(int) mousePressed.getY(),e.getX(),e.getY());
         }
         //System.out.println("Dragged = " + e.getX() + " " + e.getY() + " " + mousePosition.toString());        
         //mousePosition.setLocation(e.getX() ,e.getY()  );        
@@ -388,13 +375,14 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     
     @Override
     public void mouseMoved(MouseEvent e) {
-        this.mousePosition.setLocation(e.getX(), e.getY());
+        mousePosition.setLocation(e.getX(), e.getY());
+       /* this.mousePosition.setLocation(e.getX(), e.getY());
         boolean rePaint = false;
         for(Node2D node : this.graphicsComponents){
             if(node.mouseMoved(e.getX(), e.getY())==true)
                 rePaint = true;
-        }
-        if(rePaint == true) this.repaint();
+        }*/
+        //if(rePaint == true) this.repaint();
         //System.out.println(" XY = " + mousePosition.toString());
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     } 

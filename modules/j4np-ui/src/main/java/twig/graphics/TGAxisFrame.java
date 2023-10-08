@@ -106,14 +106,6 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             g2d.fill(r);
         }
         
-        //axisX.draw(g2d, r, axisFrameRange);
-        //axisY.draw(g2d, r, axisFrameRange);
-        //axisZ.draw(g2d, r, axisFrameRange);
-        /**
-         * Calculate the axis range by iterating over the 
-         */
-        //System.out.println("drawgin axis Z");
-        //this.axisZ.draw(g2d, r, axisFrameRange);
         
         if(dataNodes.size()>0){
             
@@ -197,7 +189,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
         
     }
     
-    public List<Widget> getWidgets(){ return this.widgetNodes;}
+    public  List<Widget>       getWidgets(){ return this.widgetNodes;}
     public  List<TDataNode2D>  getDataNodes(){return this.dataNodes;}
     
     private void updateLimits(){

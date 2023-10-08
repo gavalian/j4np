@@ -43,7 +43,7 @@ public class AxisDebug {
         
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);        
-        TStyle.getInstance().setDefaultAxisBackgroundColor(new Color(85,85,85));
+        TStyle.getInstance().setDefaultAxisBackgroundColor(new Color(200,200,200));
         TStyle.getInstance().setCanvasBackgroundColor(81);
         TStyle.getInstance().setAxisLineColor(4);
         TStyle.getInstance().setAxisLabelColor(4);
@@ -102,7 +102,7 @@ public class AxisDebug {
     }
     public static void main(String[] args){
         //AxisDebug.logarithmic();
-        //AxisDebug.linear();
-        AxisDebug.zAxisDebug();
+        AxisDebug.linear();
+        //AxisDebug.zAxisDebug();
     }
 }

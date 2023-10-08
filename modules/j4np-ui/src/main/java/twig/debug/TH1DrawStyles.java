@@ -5,6 +5,9 @@
 package twig.debug;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import twig.config.TPalette;
 import twig.config.TStyle;
@@ -71,8 +74,44 @@ public class TH1DrawStyles {
         
     }
     
+    public static void drawBenchmarks(){
+        TGCanvas c = new TGCanvas();
+        H1F hb = new H1F("hb",9,0.5,9.5);
+        hb.setBinContent(0, 14);
+        hb.setBinContent(2, 18);
+        hb.setBinContent(4, 12);
+        hb.setBinContent(6, 22);
+        hb.setBinContent(8, 28);
+        hb.attr().set("lc=2,lw=25");
+        List<Double>   ticks = new ArrayList<>();
+        List<String> strings = new ArrayList<>();
+        
+        ticks.add(1.0);
+        ticks.add(3.0);
+        ticks.add(5.0);
+        ticks.add(7.0);
+        ticks.add(9.0);
+        
+        strings.add("1-");
+        strings.add("1+");
+        strings.add("1-:1+");
+        strings.add("1-:1-");
+        strings.add("1+:1+");
+        strings.add("1+:1+");
+        
+        c.draw(hb,"BR");
+        c.region().axisY().getAttributes().setAxisTicksPosition(
+               Arrays.asList(1.0,3.0,5.0,7.0,9.0)
+        );
+        
+        c.region().axisY().getAttributes().setAxisTicksString(
+                strings);
+        
+        c.repaint();
+    }
     public static void main(String[] args){
-        TH1DrawStyles.gradient();
+        //TH1DrawStyles.gradient();
+        TH1DrawStyles.drawBenchmarks();
     }
     
 }

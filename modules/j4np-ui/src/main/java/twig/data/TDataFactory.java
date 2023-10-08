@@ -173,10 +173,14 @@ public class TDataFactory {
     }
     
     public static H2F createH2F(int count, int bins){
+        return TDataFactory.createH2F(count, bins,bins);
+    }
+    
+    public static H2F createH2F(int count, int binsX, int binsY){
         
         //int bins =240;
         Random r = new Random();
-        H2F   rh = new H2F("rh",bins,-1.0,1.0,bins,-1.0,1.0);
+        H2F   rh = new H2F("rh",binsX,-1.0,1.0,binsY,-1.0,1.0);
         rh.attr().setTitleX("x-axis");
         rh.attr().setTitleY("y-axis");
         

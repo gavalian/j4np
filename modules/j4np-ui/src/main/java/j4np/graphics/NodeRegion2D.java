@@ -38,6 +38,10 @@ public class NodeRegion2D {
         this.set(reg.getX(), reg.getY(), reg.getWidth(), reg.getHeight());
     }
     
+    
+    public boolean contains(int x, int y){
+        return bounds.contains(x, y);
+    }
     public void updateRegion(NodeRegion2D region, NodeRegion2D bind, NodeInsets insets){
 
         double nw = bind.getWidth()*this.getWidth();

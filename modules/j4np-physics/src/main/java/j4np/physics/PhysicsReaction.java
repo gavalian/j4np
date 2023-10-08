@@ -171,6 +171,13 @@ public class PhysicsReaction extends Tree {
         return this;
     }
     
+    
+    public PhysicsReaction setDataSource(HipoReader r, PhysDataEvent physEvent){
+        reader = r; 
+        physicsEvent = physEvent;
+        return this;
+    }
+    
     public PhysicsReaction setDataSourcePhoto(HipoReader r, String bank, String tagr){
         reader = r; 
         physicsEvent = new PhotoDataEvent(reader.getBank(bank),reader.getBank(tagr));
@@ -199,13 +206,24 @@ public class PhysicsReaction extends Tree {
     }
     
     public PhysicsReaction addVector(LorentzVector vec, String oper){
-        vecOprators.add(new VectorOperator(vec,oper));
+        VectorOperator vv = VectorOperator.parseOperator(oper);
+        vv.setVector(this.getVector());
+        vv.show();
+        vecOprators.add(vv);
+        //vecOprators.add(new VectorOperator(vec,oper));
         return this;
+        //vecOprators.add(new VectorOperator(vec,oper));
+        //return this;
     }
     
     public PhysicsReaction addVector(String oper){
-        vecOprators.add(new VectorOperator(LorentzVector.withPxPyPzM(0.0, 0.0, 0.0, 0.0),oper));
+        VectorOperator vv = VectorOperator.parseOperator(oper);
+        vv.setVector(LorentzVector.withPxPyPzM(0.0, 0.0, 0.0, 0.0));
+        vv.show();
+        vecOprators.add(vv);
         return this;
+        //vecOprators.add(new VectorOperator(LorentzVector.withPxPyPzM(0.0, 0.0, 0.0, 0.0),oper));
+        //return this;
     }
     
     public PhysicsReaction addVector(VectorOperator oper){
@@ -519,6 +537,41 @@ public class PhysicsReaction extends Tree {
                 }
             }                                                                     
             
+        }
+        for(HipoWriter item : w){item.close();}
+    }
+    
+    public static void filter(List<String> files, String pattern, PhysDataEvent phys, EventModifier modifier, String[] filters){
+        HipoReader r = new HipoReader(files.get(0));
+        HipoWriter[]     w = new HipoWriter[filters.length];
+        EventFilter[] list = new EventFilter[filters.length];
+        
+        for(int i = 0; i < filters.length; i++){            
+            list[i] = new EventFilter(filters[i]);
+            w[i] = HipoWriter.create(String.format("%s_%d.h5",pattern, i), r);
+        }
+        Event event = new Event();
+        
+        for(String file : files){
+            
+            try { 
+                HipoReader reader = new HipoReader(file);
+                
+                PhysicsReaction fr = new PhysicsReaction("X+:X-:Xn",10.5);
+                fr.setDataSource(new HipoReader(file),phys);
+                fr.addModifier(modifier);
+                int counter = 0;
+                while(reader.hasNext()==true){
+                    reader.nextEvent(event);
+                    phys.read(event);
+                    modifier.modify(phys);
+                    for(int i = 0; i < list.length; i++){
+                        if(list[i].isValid(phys)==true) w[i].add(event);
+                    }
+                }                                                                     
+            } catch (Exception ex){
+                System.out.println("???? something went wrong with file : " + file);
+            }
         }
         for(HipoWriter item : w){item.close();}
     }

@@ -76,6 +76,17 @@ public class SchemaFactory {
         }
     }
     
+    public List<int[]> getIdentifiers(List<String> banks){
+        List<int[]> ids = new ArrayList<>();
+        for(String bank : banks){
+            if(this.hasSchema(bank)==true){
+                Schema sc = this.getSchema(bank);
+                ids.add(new int[]{sc.getGroup(),sc.getItem()});
+            }
+        }
+        return ids;
+    }
+    
     public Bank getBank(String name){
         if(this.hasSchema(name)==false){
             SchemaBuilder builder = new SchemaBuilder("empty",0,0);            

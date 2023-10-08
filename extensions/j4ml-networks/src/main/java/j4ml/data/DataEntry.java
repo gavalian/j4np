@@ -142,4 +142,13 @@ public class DataEntry {
         }
         return str.toString();
     }
+    
+    public static int getLabelClass(float[] output){
+        float maxval = output[0];
+        int   maxbin = 0;
+        for(int i = 0 ; i < output.length; i++){
+            if(output[i]>maxval){ maxval = output[i]; maxbin = i;}
+        }
+        return maxbin;
+    }
 }

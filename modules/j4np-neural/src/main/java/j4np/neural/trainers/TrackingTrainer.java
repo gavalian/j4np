@@ -4,6 +4,7 @@
  */
 package j4np.neural.trainers;
 
+import j4np.neural.classifier.ClassifierTrainer;
 import j4ml.data.DataEntry;
 import j4ml.data.DataList;
 import j4np.hipo5.data.Bank;
@@ -13,7 +14,7 @@ import j4np.hipo5.io.HipoReader;
 import j4np.neural.data.Tracks;
 import j4np.neural.data.TrackReader;
 import j4np.neural.networks.NeuralTrackFinder;
-import j4np.neural.networks.TrackConstructor;
+import j4np.neural.data.TrackConstructor;
 import j4np.physics.Vector3;
 import java.util.ArrayList;
 import java.util.List;

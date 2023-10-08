@@ -194,6 +194,7 @@ public class TDirectory implements TreeProvider {
         return obj;
     }
     
+    
     public List<String>  getDirectoryList(){
         List<String> obj = new ArrayList<>();
         for(Map.Entry<String,Directory> entry : dirList.entrySet()){
@@ -360,10 +361,21 @@ public class TDirectory implements TreeProvider {
         }
     }
     
+
+    public void reset(){
+        List<String> objects = this.getObjects();
+        int counter = 0;
+        for(String object : objects){
+            DataSet ds = this.get(object);
+            if(ds==null){
+                System.out.println("TDirectory: error, can not find dataset : " + object);
+            } else {ds.reset(); counter++;}
+        }
+        System.out.printf("TDirectory: succesfully executed reset on %d objects out of %d\n",
+                counter, objects.size());
+    }    
     
-    
-    public static void main(String[] args){
-        
+    public static void main(String[] args){ 
         
         TDirectory dir = new TDirectory();
         
@@ -383,6 +395,7 @@ public class TDirectory implements TreeProvider {
         
         dir.write("mydir.twig");
         
+        dir.reset();
         
         TDirectory dir2 = new TDirectory("mydir.twig");
         

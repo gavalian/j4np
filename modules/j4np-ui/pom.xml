@@ -15,9 +15,15 @@
     <packaging>jar</packaging>
 
     <dependencies>
+
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-data</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>j4np</groupId>
+        <artifactId>j4np-geometry</artifactId>
         <version>${revision}</version>
       </dependency>
       <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf -->

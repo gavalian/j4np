@@ -37,6 +37,7 @@ public class DeepNettsNetwork {
     ActivationType   lastActivation = ActivationType.SIGMOID;
     
     LossType           lossFunction = LossType.MEAN_SQUARED_ERROR;
+    double learningRate = 0.001;
     
     public DeepNettsNetwork(){
         
@@ -48,6 +49,10 @@ public class DeepNettsNetwork {
     
     public final DeepNettsNetwork lossType(LossType type){
         this.lossFunction = type; return this;
+    }
+    
+    public final DeepNettsNetwork learningRate(double rate){
+        this.learningRate = rate; return this;
     }
     
     public final DeepNettsNetwork activation(ActivationType type){
@@ -74,7 +79,7 @@ public class DeepNettsNetwork {
         
         trainer = neuralNet.getTrainer();
         trainer.setMaxError(0.000004f);
-        trainer.setLearningRate(0.001f);
+        trainer.setLearningRate((float) this.learningRate);
         trainer.setMomentum(0.9f);
         
         trainer.setOptimizer(OptimizerType.SGD);
@@ -162,10 +167,12 @@ public class DeepNettsNetwork {
         trainer.addListener(pl);
         System.out.println("*********");
         System.out.println("* Start Training Network with data set size = " + trSet.getItems().size());
+        System.out.println("* Trainer learning rate  = " + this.learningRate);
         System.out.println("*********");
         //trainer.setMaxEpochs(25);
-        //for(int k = 0; k < nEpochs/25; k++){        
+        //for(int k = 0; k < nEpochs/25; k++){ 
         trainer.train(trSet);       
+        
         System.out.println("*********");
         System.out.println("* Finished Training" );
         System.out.println("* " + pl.statusString(trainer));

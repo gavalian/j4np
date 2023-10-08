@@ -308,11 +308,14 @@ public class TGH1F extends TDataNode2D {
         
         Color mColor = style.getPalette().getColor(markerColor);
         Color lColor = style.getPalette().getColor(lineColor);
-
+        //Color fColor = style.getPalette().getColor(fillColor);
+        
         int nPoints = dataSet.getSize(0); 
         g2d.setColor(lColor);
         g2d.setStroke(new BasicStroke(lineWidth));
+        
         for(int p = 0; p < nPoints; p++){
+
             dataSet.getPoint(point, p);
             
             double xp = point.x;
@@ -324,12 +327,20 @@ public class TGH1F extends TDataNode2D {
                         
             
             if(reversed){
+                //xc = r.getY() + tr.relativeY(xp, r);
+                //yc = r.getX() + tr.relativeX(yp, r);
+                //yb = r.getX() + tr.relativeX(0.0, r);
+                //System.out.println("----------------------");
+                //System.out.println(r);
+                //System.out.printf(" relative [%3d]  = %9.6f %9.6f %9.6f\n", 
+                //        p,tr.relativeY(xp, r),tr.relativeX(yp, r),tr.relativeX(0.0, r));
                 xc = r.getY() + tr.relativeY(xp, r);
-                yc = r.getX() + tr.relativeX(yp, r);
-                yb = r.getX() + tr.relativeX(0.0, r);
-                g2d.drawLine( (int) (yc),(int) xc, 
-                        (int) (yb),(int) xc
-                );
+                
+                yc = (int) (r.getX() + tr.relativeX(yp, r));
+                yb = (int) (r.getX() + tr.relativeX(0.0, r));
+                if(yb-yc!=0) g2d.drawLine( (int) (yb),(int) xc, 
+                        (int) (yc),(int) xc);
+                
             } else {
                 g2d.drawLine( (int) (xc),(int) yc, 
                         (int) (xc),(int) yb

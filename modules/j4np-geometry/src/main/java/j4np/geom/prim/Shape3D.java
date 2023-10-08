@@ -288,6 +288,27 @@ public class Shape3D implements Transformable, Showable {
                 xd/2.0,-yd/2.0,-zd/2.0)
                 );
         
+        shapeBox.addFace(new Triangle3D(
+                 xd/2.0,-yd/2.0,zd/2.0,
+                 xd/2.0, yd/2.0,zd/2.0,
+                -xd/2.0, yd/2.0,zd/2.0)
+                );
+        shapeBox.addFace(new Triangle3D(
+                -xd/2.0, yd/2.0,zd/2.0,
+                -xd/2.0,-yd/2.0,zd/2.0,
+                xd/2.0,-yd/2.0,zd/2.0)
+                );
+        /*
+        shapeBox.addFace(new Triangle3D(
+                 xd/2.0,yd/2.0, zd/2.0,
+                 xd/2.0, yd/2.0,zd/2.0,
+                -xd/2.0, yd/2.0,zd/2.0)
+                );
+        shapeBox.addFace(new Triangle3D(
+                -xd/2.0, yd/2.0,zd/2.0,
+                -xd/2.0,-yd/2.0,zd/2.0,
+                xd/2.0,-yd/2.0,zd/2.0)
+                );*/
         return   shapeBox;
     }
     

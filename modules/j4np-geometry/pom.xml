@@ -20,13 +20,13 @@
         <artifactId>j4np-utils</artifactId>
         <version>${revision}</version>
       </dependency>
-
+<!--
       <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-ui</artifactId>
         <version>${revision}</version>
       </dependency>
-      
+    -->  
     </dependencies>
 
     <build>

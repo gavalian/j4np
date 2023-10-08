@@ -12,7 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import twig.config.TStyle;
 import twig.data.DataSet;
 import twig.studio.StudioWindow;
@@ -234,6 +236,23 @@ public class TGCanvas extends JFrame implements ActionListener {
         }
         if(aev.getActionCommand().compareTo("500x900")==0){
             this.setSize(500, 900);
+            //this.pack();
+        }
+        
+        if(aev.getActionCommand().compareTo("Custom")==0){
+            JTextField sizeX = new JTextField("600");
+            JTextField sizeY = new JTextField("500");
+            Object[] message = {
+                        "Width :", sizeX,
+                        "Height :", sizeY
+                    };
+                    
+                    int option = JOptionPane.showConfirmDialog(null, 
+                            message, "Canvas Size", JOptionPane.OK_CANCEL_OPTION);
+                    if (option == JOptionPane.OK_OPTION) {
+                        this.setSize(Integer.parseInt(sizeX.getText())
+                                , Integer.parseInt(sizeY.getText()));                        
+                    }
             //this.pack();
         }
         /**

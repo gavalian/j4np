@@ -18,6 +18,7 @@ import j4np.utils.io.OptionParser;
 import j4np.utils.io.OptionStore;
 import java.io.Console;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class HipoUtilities extends OptionApplication {
         parser.setName("h5utils");
         
         parser.addCommand("-filter", " filter banks from the input files");
+        parser.addCommand("-filter2", " filter banks from the input files (improved version)");
         parser.addCommand("-info", " printout information about the file");
         parser.addCommand("-doctor", " fix corrupt hipo file");
         
@@ -45,6 +47,15 @@ public class HipoUtilities extends OptionApplication {
                 .addOption("-c","2", " output compression level ( 0, 1 or 2)")
                 .addOption("-n","-1", " maximum events in the output file");
      
+        
+        parser.getOptionParser("-filter2").addRequired("-o", " output file name ")
+                .addOption("-t", "0", " tag of the events to filter. other tags are written as is.")
+                .addRequired("-b", " nodes to save in the output")
+                .addRequired("-nodes", "nodes to save in the output format \"12/1,32100/4,34/15\"")
+                .addOption("-c","2", " output compression level ( 0, 1 or 2)")
+                .addOption("-n","-1", " maximum events in the output file");
+
+        
         parser.addCommand("-replicate", "create a larger file with replicated events from input file");
         parser.getOptionParser("-replicate").addRequired("-o","output file name")
                 .addRequired("-r", "how many copies of events to create")
@@ -59,10 +70,106 @@ public class HipoUtilities extends OptionApplication {
                 .addOption("-e", "*", "advance to events where given banks exist")
                 .addOption("-tags", "-1", "tags from the file to read");
     }
+    
+    
+    public static void filter2(List<String> inputFile, String outputFile, 
+            String identifiers, String banks,
+            int[] tagsToFilter, 
+            boolean schemaFilter,
+            int maxEvents, 
+            int compression){
+        
+        
+        HipoReader reader = new HipoReader();
+        reader.setDebugMode(0);
+        reader.open(inputFile.get(0));                
+        
+        
+        
+        List<int[]> nodes = new ArrayList<>();
+        
+        if(banks.length()>2) {
+            String[] bankList = banks.split(",");
+            nodes.addAll(reader.getSchemaFactory().getIdentifiers(Arrays.asList(bankList)));
+        }
+        
+        String[]   tokens = identifiers.split(",");
+        
+        for(int t = 0; t < tokens.length; t++){
+            String[] ids = tokens[t].split("/");
+            if(ids.length==2){
+                nodes.add(new int[]{
+                    Integer.parseInt(ids[0]),
+                    Integer.parseInt(ids[1])
+                });
+            } else {
+                System.out.printf("---- error parsing entry [%s]\n",tokens[t]);
+            }
+        }
+        
+        HipoWriter writer = new HipoWriter();                        
 
-    public static void filter(List<String> inputFile, String outputFile, String regEx, 
-            String banksExist, String banksRemove,int tagToFilter, 
-            boolean schemaFilter, int maxEvents, int compression){
+        writer.setCompressionType(compression);        
+        writer.getSchemaFactory().copy(reader.getSchemaFactory());
+        writer.open(outputFile);
+        reader.close();
+        
+        Event   inputEvent = new Event();
+        Event   outEvent   = new Event();
+        System.out.println("\n\n LIST of nodes to Save: \n" + nodes.size());
+        System.out.printf("BANKS = %s\n",banks);
+        System.out.printf("NODES = %s\n",identifiers);
+        for(int[] items : nodes){
+            System.out.printf(" saving >>>>>> %5d, %5d\n",items[0],items[1]);
+        }
+        ProgressPrintout progress = new ProgressPrintout();
+        
+        for(int i = 0; i < inputFile.size(); i++){
+        
+            HipoReader ir = new HipoReader(); ir.setDebugMode(0);
+            ir.open(inputFile.get(i));
+            System.out.println(String.format("****>>>> openning file : %5d/%5d",i+1,inputFile.size()));
+            int counter = 0;
+            System.out.println("--> number of events = " + ir.getEventCount());
+            while(ir.hasNext()==true){
+                outEvent.reset();
+                ir.nextEvent(inputEvent);
+            
+                int tag = inputEvent.getEventTag();
+                outEvent.setEventTag(tag);
+
+                for(int j = 0; j < nodes.size();j++){
+                    inputEvent.copyNode(outEvent, 
+                            nodes.get(j)[0], 
+                            nodes.get(j)[1]
+                    );
+                }
+                
+                if(outEvent.getEventBufferSize()>16){
+                    writer.addEvent(outEvent,outEvent.getEventTag());
+                }
+                
+                counter++;
+                progress.updateStatus();
+                if(maxEvents>0){
+                    if(counter>maxEvents){
+                        writer.close();
+                        return;
+                    }
+                }
+            }
+            System.out.println("****>>>> processed events : " + counter);
+        }
+        writer.close();
+    }
+    
+    public static void filter(List<String> inputFile, String outputFile, 
+            
+            String regEx, String banksExist, String banksRemove,
+            int tagToFilter, 
+            boolean schemaFilter, 
+            int maxEvents, 
+            int compression){
         
         HipoReader reader = new HipoReader();
         reader.open(inputFile.get(0));
@@ -323,6 +430,24 @@ public class HipoUtilities extends OptionApplication {
     public boolean execute(String[] args) {
         OptionStore parser = this.getOptionStore();
         parser.parse(args);
+        
+        
+        if(parser.getCommand().compareTo("-filter2")==0){
+            
+            List<String>  inputFiles    = parser.getOptionParser("-filter2").getInputList();
+            String        outputFile    = parser.getOptionParser("-filter2").getOption("-o").stringValue();
+            String        regExpression = parser.getOptionParser("-filter2").getOption("-b").stringValue();
+            String        nodes = parser.getOptionParser("-filter2").getOption("-nodes").stringValue();
+            Integer       tagToFilter   = parser.getOptionParser("-filter2").getOption("-t").intValue();
+            Integer       maxEvents    = parser.getOptionParser("-filter2").getOption("-n").intValue();
+            Integer       compression    = parser.getOptionParser("-filter2").getOption("-c").intValue();
+            boolean       schemaFilter  = true;
+           // String    schemaFilterOption = parser.getOptionParser("-filter2").getOption("-s").stringValue();
+           // if(schemaFilterOption.contains("false")==true) schemaFilter = false;
+            
+            HipoUtilities.filter2(inputFiles, outputFile, 
+                    nodes,regExpression,new int[]{tagToFilter},schemaFilter,maxEvents,compression);            
+        }
         
         if(parser.getCommand().compareTo("-filter")==0){
             
