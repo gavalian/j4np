@@ -232,8 +232,10 @@ public class ArchiveProvider {
     }
     
     public List<Integer> getRunList(){
+        
        String         filter = String.format(".*/.*/%s", flavor); 
        List<String> directories = ArchiveUtils.getList(archiveFile, filter);
+       
        Set<Integer> runSet = new HashSet<>();
         for(String directory : directories){
             String[] tokens = directory.split("/");
@@ -333,6 +335,8 @@ public class ArchiveProvider {
     public void showRunList(){
         
         List<Integer>  items = this.getRunList();
+        System.out.println("size = " + items.size());
+        for(Integer i : items) System.out.println(i);
         List<String>  comments = this.getComments(items);
         
         String[] header = new String[]{"run","range", "comments"};
@@ -467,6 +471,12 @@ public class ArchiveProvider {
     
     
     public static void main(String[] args){        
+        ArchiveProvider p = new ArchiveProvider("clas12default.network");
+        //p.showRunList();
+        
+        List<String> directories = ArchiveUtils.getList("clas12default.netowrk");
+        System.out.println("size = directoryes " + directories.size());
+        /*
         ArchiveProvider provider = new ArchiveProvider("ejmlclas12.network");        
         boolean flag = provider.hasFileForRun(5048, "trackClassifier.network");
         System.out.println("has file = " + flag);
@@ -476,7 +486,7 @@ public class ArchiveProvider {
         provider.showRunList();
         
         ArchiveProvider.scan("ejmlclas12.network");
-        
+        */
         /*
         index = provider.findEntry(5);
         System.out.println("RUN = " + index);

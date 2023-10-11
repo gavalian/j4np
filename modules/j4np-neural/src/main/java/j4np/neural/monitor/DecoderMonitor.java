@@ -331,7 +331,7 @@ public class DecoderMonitor {
                         Math.toDegrees(vec.theta())
                         );
                 if(sector==1){
-                    this.hTracksVertex.get(0).fill(n.getDouble(9,r)*20.0-15.0);
+                    this.hTracksVertex.get(0).fill(n.getDouble(9,r)*7.0-6.0);
                 }
                 count_neg++;
             } else {                
@@ -506,6 +506,7 @@ public class DecoderMonitor {
     public static void main(String[] args){
         //String file = "/Users/gavalian/Work/Software/project-10.7/distribution/caos/coda/decoder/clas_pin_018302.evio.00001_dc.h5";
         String file = "/Users/gavalian/Work/Software/project-10.7/study/rgd/airec_018312_0.h5";
+        //String file = "clas_018369.evio.01185_dc.h5.rec.h5";
         HipoReader r = new HipoReader(file);
         
         DecoderMonitor mon = new DecoderMonitor();

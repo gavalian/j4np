@@ -118,21 +118,20 @@ public class NeuralVertexTrainer {
                     
                     tracks.vector(vec, 0);
                     tracks.vertex(vrt, 0);
-                    if(vrt.z()>-15&&vrt.z()<5){
+                    if(vrt.z()>-6&&vrt.z()<1){
                         //System.out.println("Z = " + vrt.z());
                         float[] vinput = this.getOutput(vec, 1, -1);
                         float[] cinput = new float[9];
                         for(int i = 0; i < 6; i++) cinput[i] = input[i];
                         for(int i = 0; i < 3; i++) cinput[6+i] = vinput[i];
-                        double vrtz = (vrt.z() + 20)/30.0;
+                        double vrtz = (vrt.z() + 6)/7.0;
                         boolean write = true;
                         for(int i = 0; i < 3; i++) if(vinput[i]<0||vinput[i]>1.0) write = false;
                         if(write) list.add(new DataEntry(cinput,new float[]{(float) vrtz}));
                     }
                     
                 }
-            }
-            
+            }            
             counter++;
         }
         return list;
@@ -162,7 +161,7 @@ public class NeuralVertexTrainer {
                     tracks.vertex(vrt, 0);
                     if(vrt.z()>-15&&vrt.z()<5){
                         //System.out.println("Z = " + vrt.z());
-                        double vrtz = (vrt.z() + 20)/30.0;
+                        double vrtz = (vrt.z() + 15)/20.0;
                         list.add(new DataEntry(input,new float[]{(float) vrtz}));
                     }
                     

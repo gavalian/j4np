@@ -63,6 +63,11 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
         if(numberOfThreads==0) numberOfThreads = 1;
     }
     
+    
+   // public void addWorker(DataWorker worker){
+   //     this.consumerStore.add(worker);
+   // }
+    
     public final void show(){
         System.out.println();
         System.out.printf(">>>>     system cores : %d\n",numberOfCores);
@@ -95,6 +100,26 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
         System.out.printf("[stream] ( %s ) : system cores %4d, threads initialized %4d\n",
                 formatter.format(date),numberOfCores,numberOfThreads);
         source.open(filename);
+    }
+    
+    private void initThreadPool(){
+        System.out.println("****************************************************************");
+        System.out.printf("* initializing stream poll with %d threads *\n",numberOfThreads);
+        System.out.println("****************************************************************");
+        streamPool = new ForkJoinPool(numberOfThreads);
+    }
+    
+    public void processFrameParallel(DataFrame<T> frame){
+        if(streamPool==null) initThreadPool();
+        try {
+            Stream<T> stream = frame.getParallelStream();
+            long then = System.nanoTime();
+            streamPool.submit(()-> stream.parallel().forEach(consumer)).get();
+            long now = System.nanoTime();
+            timeConsumer += (now-then);            
+        } catch (InterruptedException | ExecutionException ex) {
+            Logger.getLogger(DataStream.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void run(){
@@ -142,6 +167,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
         consumer.finilize();
         if(destination!=null) destination.close();
     }
+    
     
     
     public static void main(String[] args){

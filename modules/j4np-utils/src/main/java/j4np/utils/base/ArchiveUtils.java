@@ -159,6 +159,7 @@ public class ArchiveUtils {
             List<FileHeader> headers = zip.getFileHeaders();
             for(int i = 0; i < headers.size(); i++){
                 String name = headers.get(i).getFileName();
+                System.out.println(" name = " + name);
                 Matcher m = r.matcher(name);
                 if(m.find()==true){ files.add(name);}
                 //System.out.println("name : " + name + " has = " + name.compareTo(file));

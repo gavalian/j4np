@@ -155,7 +155,9 @@ public class NeuralTrackFinder {
         };*/
         String[] files = new String[]{
             //"/Users/gavalian/Work/Software/project-10.7/distribution/caos/coda/decoder/clas_005197.evio.00004.h5",
-            "/Users/gavalian/Work/Software/project-10.7/distribution/caos/coda/decoder/clas_005197.evio.00009.h5"};
+            //"/Users/gavalian/Work/Software/project-10.7/distribution/caos/coda/decoder/clas_005197.evio.00009.h5"
+            "/Users/gavalian/Work/DataSpace/rgd/clas_018369.evio.01185_dc.h5"
+        };
         for(String t : files){
             NeuralTrackFinder.reconstruct(t);
         }
