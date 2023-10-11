@@ -49,7 +49,7 @@ public class TGH2Node3D extends Node2D {
     public TGH2Node3D(H2F data, String opt){
         super(100,100);
         this.dataHist = data; options = opt;
-        dataHist.normalize(dataHist.getMaximum());
+        //dataHist.normalize(dataHist.getMaximum());
         dataMesh = new QuadMeshProviderH2F(dataHist);
         this.refreshCamera();
     }
@@ -204,7 +204,10 @@ public class TGH2Node3D extends Node2D {
         
         Rectangle2D bounds = this.getParent().getBounds().getBounds();
         //System.out.println(this.getBounds().getBounds());
-        this.dataHist.normalize(this.dataHist.getMaximum());
+        //this.dataHist.normalize(this.dataHist.getMaximum());
+        
+        double normalization = this.dataHist.getMaximum();
+        
         screen.set(bounds.getWidth(),bounds.getHeight());
         screen.setOffsets(bounds.getX(), bounds.getY());
         //screen.setScale(bounds.getHeight()/bounds.getWidth(), 1);
@@ -223,6 +226,7 @@ public class TGH2Node3D extends Node2D {
         
         int nQuads = dataMesh.getCount();
         Quad3D quad = new Quad3D();
+        ((QuadMeshProviderH2F) dataMesh).setNormalization(normalization);
         for(int i = 0; i < nQuads; i++){
             dataMesh.getQuad(quad, i);
            
@@ -237,11 +241,13 @@ public class TGH2Node3D extends Node2D {
     public static class QuadMeshProviderH2F extends QuadMesh3D {
         
         H2F h2 = null;
+        double norm = 1.0;
         
         public QuadMeshProviderH2F(H2F h){
             h2 = h;
         }
         
+        public void setNormalization(double n) { norm = n;}
         @Override
         public void getQuad(Quad3D quad, int index){
             double offset = -0.5;            
@@ -253,11 +259,12 @@ public class TGH2Node3D extends Node2D {
             
             double stepX  = ((double)1)/(h2.getAxisX().getNBins()-1);
             double stepY = ((double)1)/(h2.getAxisY().getNBins()-1);
+
             
-            quad.points()[0].set(offset + x*stepX, -0.5+h2.getBinContent(x, y), offset + y*stepY);
-            quad.points()[1].set(offset + x*stepX,  -0.5+h2.getBinContent(x, y+1),offset + (y+1)*stepY);
-            quad.points()[2].set(offset + (x+1)*stepX,-0.5+h2.getBinContent(x+1, y+1), offset + (y+1)*stepY);
-            quad.points()[3].set( offset + (x+1)*stepX, -0.5+h2.getBinContent(x+1, y), offset + y*stepY);
+            quad.points()[0].set(offset + x*stepX, -0.5+h2.getBinContent(x, y)/norm, offset + y*stepY);
+            quad.points()[1].set(offset + x*stepX,  -0.5+h2.getBinContent(x, y+1)/norm,offset + (y+1)*stepY);
+            quad.points()[2].set(offset + (x+1)*stepX,-0.5+h2.getBinContent(x+1, y+1)/norm, offset + (y+1)*stepY);
+            quad.points()[3].set( offset + (x+1)*stepX, -0.5+h2.getBinContent(x+1, y)/norm, offset + y*stepY);
             
             //for(int i = 0; i < quad.points.length; i++)
             //    quad.translateXYZ(0, -15, 0);
@@ -276,7 +283,7 @@ public class TGH2Node3D extends Node2D {
            // return new Color(0,0,255,60);
             int bx = this.getBinX(index);
             int by = this.getBinY(index);
-            Color c = TStyle.getInstance().getPalette().palette2d().getColor3D(h2.getBinContent(bx, by), 0, 1, true);
+            Color c = TStyle.getInstance().getPalette().palette2d().getColor3D(h2.getBinContent(bx, by)/norm, 0, 1, true);
             return c;
         }
         
@@ -325,7 +332,7 @@ public class TGH2Node3D extends Node2D {
             h2.fill(r.nextDouble(), r.nextDouble());
 
             try {
-                Thread.sleep(200);
+                Thread.sleep(1);
             } catch (InterruptedException ex) {
                 Logger.getLogger(TGH2Node3D.class.getName()).log(Level.SEVERE, null, ex);
             }
