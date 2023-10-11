@@ -17,6 +17,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import twig.config.TAxisAttributes;
 import twig.config.TPalette2D;
 import twig.config.TStyle;
@@ -201,7 +204,7 @@ public class TGH2Node3D extends Node2D {
         
         Rectangle2D bounds = this.getParent().getBounds().getBounds();
         //System.out.println(this.getBounds().getBounds());
-        
+        this.dataHist.normalize(this.dataHist.getMaximum());
         screen.set(bounds.getWidth(),bounds.getHeight());
         screen.setOffsets(bounds.getX(), bounds.getY());
         //screen.setScale(bounds.getHeight()/bounds.getWidth(), 1);
@@ -309,10 +312,23 @@ public class TGH2Node3D extends Node2D {
         System.out.println(" 2 " + c.view().region(2).getBounds().getBounds());
         
         c.repaint();
-        TGH2Node3D node4 = new TGH2Node3D(h1,"W");
+        H2F h = new H2F("h2",48,0.,1,24,0.,1);
+        
+        TGH2Node3D node4 = new TGH2Node3D(h2,"W");
         c2.view().region(0).replace(node4);
         c2.view().region(0).getInsets().set(0, 0, 40, 0);
+        c2.view().initTimer(300);
         c2.repaint();
         
+        Random r = new Random();
+        for(int i = 0; i < 500000; i++){
+            h2.fill(r.nextDouble(), r.nextDouble());
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TGH2Node3D.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
