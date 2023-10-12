@@ -117,6 +117,13 @@ public class TDataFactory {
     
     }
     
+    public static List<H1F>  createHistograms(int count){
+        List<H1F> histograms = new ArrayList<>();
+        for(int i = 0; i < count; i++)
+            histograms.add(TDataFactory.createH1F(35000));
+        return histograms;
+    }
+    
     public static List<GraphErrors> createGraphColors(int size){
         List<GraphErrors> graphs = new ArrayList<>();
         for(int i = 0; i < size; i++){

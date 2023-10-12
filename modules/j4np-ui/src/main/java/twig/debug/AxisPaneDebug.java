@@ -38,6 +38,7 @@ public class AxisPaneDebug extends JPanel {
             g2d.drawLine(0, y, w, y);
         }
     }
+    
     public void drawAxis3D(Graphics2D g2d, double x1, double y1, double x2, double y2){
         Point3D p = new Point3D(x1,y1,0.0);
         double angle = Math.atan2(y2-y1, x2-x1);
@@ -54,12 +55,14 @@ public class AxisPaneDebug extends JPanel {
         p.rotateZ(-angle);
         Rectangle2D r = new Rectangle2D.Double(p.x(), p.y(), length, 0);
         //Translation2D tr = new Translation2D(0,1,0,1);
-        Translation2D tr = new Translation2D(1,0,1,0);
+        Translation2D tr = new Translation2D(2.0,0,2.0,0);
         
         TGAxis axis = new TGAxis(AxisType.AXIS_X);
+        axis.setLimits(0, 2.0);
         axis.getAttributes().setAxisBoxDraw(Boolean.FALSE);
         axis.getAttributes().setAxisTickMarkSize(-8);
         axis.getAttributes().setAxisTitle(String.format("axis rotation %.2f", Math.toDegrees(angle)));
+        
         axis.draw(g2d, r, tr);
         //-------------
         g2d.setTransform(original);

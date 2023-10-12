@@ -43,12 +43,21 @@ public class TGH2Node3D extends Node2D {
     
     public int cameraOperture  = 50;
     
+    TGAxis axisX = new TGAxis(TAxisAttributes.AxisType.AXIS_X);
+    TGAxis axisY = new TGAxis(TAxisAttributes.AxisType.AXIS_X);
+    TGAxis axisZ = new TGAxis(TAxisAttributes.AxisType.AXIS_X);
     
     QuadMesh3D  dataMesh = null;
     
     public TGH2Node3D(H2F data, String opt){
         super(100,100);
         this.dataHist = data; options = opt;
+        
+        
+        
+        axisX.setLimits(this.dataHist.getAxisX().min(), this.dataHist.getAxisX().max());
+        axisY.setLimits(this.dataHist.getAxisY().min(), this.dataHist.getAxisY().max());
+        //axisZ.setLimits(0, this.dataHist.getAxisY().max());
         //dataHist.normalize(dataHist.getMaximum());
         dataMesh = new QuadMeshProviderH2F(dataHist);
         this.refreshCamera();
@@ -108,7 +117,37 @@ public class TGH2Node3D extends Node2D {
         axis.getAttributes().setAxisTickMarkSize(-8);
         axis.getAttributes().setAxisTickMarkCount(5);
         
-        axis.getAttributes().setAxisTitle(String.format("axis rotation %.2f", Math.toDegrees(angle)));
+        //axis.getAttributes().setAxisTitle(this.d);//String.format("axis rotation %.2f", Math.toDegrees(angle)));
+        axis.draw(g2d, r, tr);
+        //-------------
+        g2d.setTransform(original);
+    }
+    
+    public void drawAxis3D(Graphics2D g2d, TGAxis axis, double x1, double y1, double x2, double y2){
+        Point3D p = new Point3D(x1,y1,0.0);
+        double angle = Math.atan2(y2-y1, x2-x1);
+        //System.out.println(" angle = " + Math.toDegrees(angle));
+        
+        AffineTransform original = g2d.getTransform();
+        //AffineTransform at = new AffineTransform();
+        //at.setToRotation(Math.toRadians(Math.toDegrees(angle)),0,0);
+        //at.scale(2, 2);        
+        //g2d.setTransform(at);
+        
+        g2d.rotate(Math.toRadians(Math.toDegrees(angle)));
+        double length = Math.sqrt((x1-x2)*(x1-x2)+(y2-y1)*(y2-y1));
+        p.rotateZ(-angle);
+        Rectangle2D r = new Rectangle2D.Double(p.x(), p.y(), length, 0);
+        //Translation2D tr = new Translation2D(0,1,0,1);
+        Translation2D tr = new Translation2D(axis.getRange().max(),axis.getRange().min(),1,0);
+        
+        //TGAxis axis = new TGAxis(TAxisAttributes.AxisType.AXIS_X);
+        axis.getAttributes().setAxisType(TAxisAttributes.AxisType.AXIS_X);
+        axis.getAttributes().setAxisBoxDraw(Boolean.FALSE);
+        axis.getAttributes().setAxisTickMarkSize(-8);
+        axis.getAttributes().setAxisTickMarkCount(5);
+       
+        //axis.getAttributes().setAxisTitle(this.d);//String.format("axis rotation %.2f", Math.toDegrees(angle)));
         axis.draw(g2d, r, tr);
         //-------------
         g2d.setTransform(original);
@@ -123,8 +162,8 @@ public class TGH2Node3D extends Node2D {
         
         Line3D projected = new Line3D();
         camera.getLine(line, projected);
-        
-        this.drawAxis3D(g2d, 
+        axisX.getAttributes().setAxisTitle(this.dataHist.attr().getTitleX());
+        this.drawAxis3D(g2d, axisX,
                 screen.getX(projected.origin().x()),
                 screen.getY(projected.origin().y()),
                 screen.getX(projected.end().x()),
@@ -139,8 +178,8 @@ public class TGH2Node3D extends Node2D {
                 0.5, -0.5,  0.5
         );
         camera.getLine(line, projected);
-        
-        this.drawAxis3D(g2d, 
+        axisY.getAttributes().setAxisTitle(this.dataHist.attr().getTitleY());
+        this.drawAxis3D(g2d, axisY,
                 screen.getX(projected.origin().x()),
                 screen.getY(projected.origin().y()),
                 screen.getX(projected.end().x()),
@@ -156,8 +195,8 @@ public class TGH2Node3D extends Node2D {
                 -0.5, -0.5, -0.5
         );
         
-        camera.getLine(line, projected);        
-        this.drawAxis3D(g2d, 
+        camera.getLine(line, projected);
+        this.drawAxis3D(g2d, axisZ,
                 screen.getX(projected.origin().x()),
                 screen.getY(projected.origin().y()),
                 screen.getX(projected.end().x()),
@@ -220,7 +259,8 @@ public class TGH2Node3D extends Node2D {
         Point3D p2 = new Point3D(0.5,0.5,0.5);
         
         //camera.drawLine(g2d, screen, line, defaultStroke, Color.BLACK);
-        
+        double max = this.dataHist.getMaximum();
+        axisZ.setLimits(0, max);
         this.drawWalls( g2d, screen);
         this.drawAxis(  g2d, screen);
         
@@ -299,7 +339,7 @@ public class TGH2Node3D extends Node2D {
         TGCanvas c = new TGCanvas(800,800);
         TGCanvas c2 = new TGCanvas(800,800);
         H2F h1 = TDataFactory.createH2F(120000, 24,80);        
-        H2F h2 = TDataFactory.createH2F(120000, 40,40);
+        H2F h2 = TDataFactory.createH2F(120000, 10,40);
         H2F h3 = TDataFactory.createH2F(120000, 30,40); 
         H1F h4 = TDataFactory.createH1F(1200);
         H1F h5 = TDataFactory.createH1F(1200);

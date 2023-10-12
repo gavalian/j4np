@@ -225,11 +225,19 @@ public class TGCanvasDebug {
         
         //TLegend leg = new TLegend();
     }
+    public static void divideExample(){
+        List<H1F> hL = TDataFactory.createHistograms(4);
+        TGCanvas c = new TGCanvas();
+        c.view().divide(2, 2);
+        c.view().divide(new double[][]{{0.5,0.5},{1.0,0.0}});
+        for(int i =0; i < 3; i++) c.cd(i).draw(hL.get(i));
+    }
     
     public static void main(String[] args){
                
         
-        TGCanvasDebug.example2();
+        //TGCanvasDebug.example2();
+        TGCanvasDebug.divideExample();
         /*
         TStyle.getInstance().setCanvasBackgroundColor(TPalette.rgbToInt(56, 60, 74));
         TStyle.getInstance().setAxisLineColor(TPalette.rgbToInt(188, 188, 188));
