@@ -215,8 +215,8 @@ public class TGH2Node3D extends Node2D {
         */
         double xdrag = (xmove-x)/screen.getWidth();
         double ydrag = (ymove-y)/screen.getHeight();
-        camera.incrementRotationY(0.2*xdrag);
-        camera.incrementRotationX(0.2*ydrag);
+        camera.incrementRotationY(0.4*xdrag);
+        camera.incrementRotationX(0.4*ydrag);
         camera.adjust();
         
         //camera.reset();

@@ -6,13 +6,17 @@ package twig.data;
 
 import j4np.utils.base.ArchiveUtils;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -30,6 +34,9 @@ import twig.studio.TwigStudio;
 public class TDirectory implements TreeProvider {
     
     private final ConcurrentMap<String,Directory> dirList = new ConcurrentHashMap<>();
+
+    private Timer   autoSaveTimer = null;
+    private String   autoSaveFile = "directory_autosave.twig";    
     
     public TDirectory(){
         
@@ -79,6 +86,12 @@ public class TDirectory implements TreeProvider {
             DataSetSerializer.export(ds, file, directory);
         }
         //return this;
+    }
+    
+    protected void executeTimer(){
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        System.out.printf("[%s] auto save to file -> %s\n",timeStamp,this.autoSaveFile);
+        this.write(this.autoSaveFile, timeStamp);
     }
     
     public static void export(String file, String directory, List<DataSet> data){
@@ -281,6 +294,34 @@ public class TDirectory implements TreeProvider {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public void initTimer(int interval) {
+        System.out.println("[TDirectory] >>>>  starting an autosave timer with file " + this.autoSaveFile);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                executeTimer();
+            }
+        };
+        autoSaveTimer = new Timer("EmbeddeCanvasTimer");
+        autoSaveTimer.scheduleAtFixedRate(timerTask, 30, interval);
+    }
+    
+    public void write(String file, String prefix){
+        for(Map.Entry<String,Directory> entry : this.dirList.entrySet() ){
+            List<DataSet> data = entry.getValue().data;                        
+            //System.out.println("directory " + entry.getValue().directory);
+            for(DataSet d : data){
+                //System.out.println("\t object " + d.getName());
+                String dir = entry.getValue().directory;
+                if(prefix.startsWith("/")==true) prefix = prefix.substring(1, dir.length());                
+                if(dir.startsWith("/")==true) dir = dir.substring(1, dir.length());
+                String location = prefix + "/" + dir;
+                DataSetSerializer.export(d, file, location);
+            }
+        }
+    }
+    
+    
     public void write(String filename){
         for(Map.Entry<String,Directory> entry : this.dirList.entrySet() ){
             List<DataSet> data = entry.getValue().data;                        
@@ -293,6 +334,7 @@ public class TDirectory implements TreeProvider {
             }
         }
     }
+    
     
     public void read(String filename){
         List<String>  items = ArchiveUtils.getList(filename, ".*dataset");

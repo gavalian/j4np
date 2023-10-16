@@ -22,7 +22,6 @@ import java.util.List;
 import javax.visrec.ml.data.DataSet;
 import org.apache.logging.log4j.LogManager;
 
-
 /**
  * 
  * @author gavalian

@@ -27,8 +27,7 @@ public class ClassifierTrainer {
     
     NeuralClassifierModel model = null;
     Random rndm = new Random();
-    
-    
+        
     public double  minOffsetFalse = 3;
     public double  maxOffsetFalse = 25;
     public int     maxRandomize = 4;
@@ -72,12 +71,18 @@ public class ClassifierTrainer {
         NeuralClassifierModel model = new NeuralClassifierModel();
         model.loadFromFile(network, run);
         ConfusionMatrix matrix = new ConfusionMatrix(3);
+        long then = System.currentTimeMillis();
+        
         for(int j = 0; j < list.getList().size(); j++){
             float[] output = new float[3];
             model.getModel().feedForwardSoftmax(list.getList().get(j).features(), output);
             list.getList().get(j).setInfered(output);            
         }
         
+        long now = System.currentTimeMillis();
+        double time = now - then;
+        double rate = time/list.getList().size();
+       
         matrix.apply(list);
         System.out.println("---------------");
         System.out.println(Arrays.toString(matrix.getMatrix()[0]));
@@ -87,8 +92,28 @@ public class ClassifierTrainer {
         System.out.println(Arrays.toString(matrix.getConfusionMatrix()[0]));
         System.out.println(Arrays.toString(matrix.getConfusionMatrix()[1]));
         System.out.println(Arrays.toString(matrix.getConfusionMatrix()[2]));
+        System.out.println("\n\n**********");
+        System.out.printf(" processed %d events in %d msec, with rate = %.6f msec/event",
+                list.getList().size(),now-then,rate);
     }
     
+    
+    public static void benchmark(DataList list){
+        
+        long then = System.currentTimeMillis();
+        for(int j = 0; j < list.getList().size(); j++){
+            float[] output = new float[3];
+            
+            //model.getModel().feedForwardSoftmax(list.getList().get(j).features(), output);
+            list.getList().get(j).setInfered(output);            
+        }
+        long now = System.currentTimeMillis();
+        double time = now - then;
+        double rate = time/list.getList().size();
+        System.out.println("\n\n**********");
+        System.out.printf(" processed %d events in %d msec, with rate = %.6f msec/event",
+                list.getList().size(),now-then,rate);
+    }
     public static DataList getDataListFalse(String file,  int max){
         DataList  dlist = new DataList();
         for(int i = 1; i <=40; i++){
@@ -185,6 +210,9 @@ public class ClassifierTrainer {
         List<String>  networkContent = classifier.getNetworkStream();
         String archiveFile = String.format("network/%d/%s/trackClassifier.network",run,"default");
         ArchiveUtils.writeFile(archive, archiveFile, networkContent); 
+        
+        
+        
     }
     
     public int getHighestIndex(float[] output){
@@ -423,16 +451,32 @@ public class ClassifierTrainer {
                 
                 //.lossType(LossType.MEAN_SQUARED_ERROR);
         
-        classifier.init(new int[]{6,12,12,12,6,3});
+        //classifier.init(new int[]{6,12,12,12,6,3});
+        classifier.init(new int[]{6,12,24,24,12,3});
         
+        //classifier.train(list, 5);
         classifier.train(list, 1024);
         
         List<String>  networkContent = classifier.getNetworkStream();
         String archiveFile = String.format("network/%d/%s/trackClassifier.network",
                 run,"default");
         ArchiveUtils.writeFile("clas12test.network", archiveFile, networkContent); 
+        
+        
+        long then = System.currentTimeMillis();
+        
+        classifier.evaluate(list);
+
+        long now = System.currentTimeMillis();
+        
+        double time = now - then;
+        double rate = time/list.getList().size();
+        System.out.println("\n\n**********");
+        System.out.printf(" processed %d events in %d msec, with rate = %.6f msec/event\n",
+                list.getList().size(),now-then,rate);
     }
     
+   
     public static void main(String[] args){
         
         //String file = "training_sample_tr.h5";
@@ -452,19 +496,19 @@ public class ClassifierTrainer {
         ClassifierTrainer.train6(file, 4, 3, 35, 4, 15000);
         
         ClassifierTrainer.train6(file, 5, 4, 45, 3, 15000);*/
-        //ClassifierTrainer.train6(file, 16, 4, 45, 4, 15000);
+        ClassifierTrainer.train6(file, 16, 4, 45, 4, 1800);
         
         
         //ClassifierTrainer.train12(file, 8, 4, 45, 4, 15000);
         
         
         ClassifierTrainer ct = new ClassifierTrainer();
-        DataList list = ClassifierTrainer.getDataList(file2, 2000);
+        DataList list = ClassifierTrainer.getDataList(file2, 1000);
         DataList listf = ClassifierTrainer.getDataListFalse(file2, 1500);
         list.getList().addAll(listf.getList());        
         
 
-        ct.evaluate("clas12test.network", 5197, list);
+        ct.evaluate("clas12rga.network", 5197, list);
 
         /* DataList listExtended = new DataList();
         

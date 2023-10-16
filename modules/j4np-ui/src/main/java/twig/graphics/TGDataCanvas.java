@@ -359,6 +359,21 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                 }
             }
         }
+        
+        if(e.getActionCommand().compareTo("show_h2d_3D")==0){
+            if(popupProvider.region!=null){
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                if(obj.get(0).getDataSet() instanceof H2F){
+                    TGCanvas c = new TGCanvas("canvas",500,500,false); 
+                    H2F h = ((H2F)obj.get(0).getDataSet());
+                    TGH2Node3D node3d = new TGH2Node3D(h,"Z");
+                    c.view().region(0).replace(node3d);
+                    c.view().region(0).getInsets().set(0, 0, 40, 0);
+                    c.repaint();
+                }
+            }
+        }
+
         if(e.getActionCommand().compareTo("projection_y")==0){
             if(popupProvider.region!=null){
                 List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
@@ -736,9 +751,9 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             menu.add(new JSeparator());
             this.addMenu(menu, "Data", 
                     new String[]{"Projection X","Projection Y",
-                        "Profile X", "Profile Y"}, 
+                        "Profile X", "Profile Y","Show 3D"}, 
                     new String[]{"projection_x","projection_y",
-                        "profile_x","profile_y"}
+                        "profile_x","profile_y","show_h2d_3D"}
             );
             menu.add(new JSeparator());
             

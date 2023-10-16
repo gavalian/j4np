@@ -40,7 +40,6 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
-
 /**
  *
  * @author gavalian
@@ -362,9 +361,12 @@ public class DeepNettsClassifier {
         public void setPrintoutInterval(int pi){ this.printoutInterval = pi;}
         
         public String statusString(BackpropagationTrainer tr){
-            return String.format(" [%5d/%5d], loss = %e , accuracy = %12.8f",
+            long now = System.currentTimeMillis();
+            long elapsed = now - this.lastTime;
+            
+            return String.format(" [%5d/%5d], loss = %e , time %12d msec, accuracy = %12.8f",
                     epochCounter,maxEpochs,
-                    tr.getTrainingLoss(),
+                    tr.getTrainingLoss(), elapsed,
                     tr.getTrainingAccuracy());
         }
         
@@ -382,10 +384,12 @@ public class DeepNettsClassifier {
                 
                 System.out.print("."); System.out.flush();
                 
-                if(epochCounter%this.printoutInterval==0){
+                if(epochCounter%this.printoutInterval==0){                    
                     System.out.println(statusString(te.getSource()));                            
                     //System.out.println("\n");
                 }
+                
+                lastTime = System.currentTimeMillis();
                 /*
                 epochCounter++;
                 if(epochCounter%printoutInterval==0){
