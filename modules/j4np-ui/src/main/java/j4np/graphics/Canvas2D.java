@@ -147,7 +147,7 @@ public class Canvas2D extends JPanel implements MouseInputListener {
             public void run() {
                 repaint();
                 /*for(int i = 0; i < canvasPads.size();i++){
-                    System.out.println("PAD = " + i);
+     Timer               System.out.println("PAD = " + i);
                     canvasPads.get(i).show();
                 }*/
             }

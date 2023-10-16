@@ -46,6 +46,11 @@ public class TDirectory implements TreeProvider {
         this.read(file);
     }
     
+    
+    public TDirectory setAutoSaveFile(String asavefile){
+        this.autoSaveFile = asavefile; return this;
+    }
+    
     public TDirectory add(String dir, DataSet data){
         /*if(dirList.containsKey(dir)==false){
             dirList.put(dir, new Directory(dir));
