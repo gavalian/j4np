@@ -9,13 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
  * @author gavalian
  */
 public class TTabDataCanvas extends JPanel {
-    JTabbedPane tabbedPane = null;
+    
+    JTabbedPane       tabbedPane = null;
     List<TGDataCanvas>  canvases = new ArrayList<>();
     
     public TTabDataCanvas(){
@@ -51,6 +54,16 @@ public class TTabDataCanvas extends JPanel {
         }
         add(tabbedPane,BorderLayout.CENTER);
         if(controls!=null) add(controls,BorderLayout.PAGE_END);
+        
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                System.out.println("Tab: " + tabbedPane.getSelectedIndex());
+                System.out.println(">>> calling : update timer status method");
+                updateTimers();
+                // Prints the string 3 times if there are 3 tabs etc
+            }
+        });
     }
     
     public void addCanvas(String name, boolean focused){
@@ -61,8 +74,22 @@ public class TTabDataCanvas extends JPanel {
             tabbedPane.setSelectedIndex(canvases.size()-1);
         }
     }
+    
     public TGDataCanvas activeCanvas(){ return this.canvases.get(tabbedPane.getSelectedIndex());}
     public List<TGDataCanvas> getCanvases(){
         return canvases;
     } 
+    
+    public void initTimers(int interval){
+        for(int i = 0; i < this.canvases.size(); i++){
+            this.canvases.get(i).initTimer(interval);
+        }
+    }
+    
+    public void updateTimers(){
+        for(int i = 0; i < this.canvases.size(); i++){
+            this.canvases.get(i).setTimerStatus(true);
+        }        
+        this.activeCanvas().setTimerStatus(false);
+    }
 }

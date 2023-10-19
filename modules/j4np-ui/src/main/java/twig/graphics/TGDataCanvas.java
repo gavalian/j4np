@@ -517,7 +517,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         if(e.getActionCommand().compareTo("show_region_stats")==0){
             if(popupProvider.region!=null){                
                 TGRegion reg = popupProvider.region;
-                reg.showStats(1.03, 1.03);
+                reg.showStats(1.01, 1.01);
                 this.repaint();
             }
         }

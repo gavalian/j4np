@@ -11,7 +11,6 @@ import deepnetts.net.layers.activation.ActivationType;
 import deepnetts.net.loss.LossType;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
-import deepnetts.util.Tensor;
 import j4ml.data.DataEntry;
 import j4ml.data.DataList;
 import j4ml.ejml.EJMLModel;

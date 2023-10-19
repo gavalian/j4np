@@ -53,6 +53,7 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     
     private int        currentAcviteComponent = -1;
     private Timer                 updateTimer = null;
+    private boolean       isUpdateTimerPaused = false;
     private Node2D                 activeNode = null;
     private int             canvasDiagnostics = 0;
     private Background2D           background = null; 
@@ -140,12 +141,14 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         this.popupProvider = pr;
     }
     
+    public void setTimerStatus(boolean isPaused){ this.isUpdateTimerPaused = isPaused;}
+    
     public void initTimer(int interval) {
         System.out.println("[EmbeddedCanvas] ---->  starting an update timer.");
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                repaint();
+                if(isUpdateTimerPaused==false) repaint();
                 /*for(int i = 0; i < canvasPads.size();i++){
      Timer               System.out.println("PAD = " + i);
                     canvasPads.get(i).show();

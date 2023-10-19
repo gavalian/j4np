@@ -24,7 +24,7 @@ import twig.config.TStyle;
 public class MultiPaveText implements Widget {
     
     private List<PaveTextRow>  paveRows = new ArrayList<>();
-    private Font               textFont = new Font("Avenir", Font.PLAIN, 24);
+    private Font               textFont = new Font("PT Serif", Font.PLAIN, 14);
     private LatexText         latexText = new LatexText("a",0,0);
     
     private Rectangle2D         paveBorder = new Rectangle2D.Double();    
@@ -50,6 +50,7 @@ public class MultiPaveText implements Widget {
     
     public MultiPaveText(double __x, double __y){
         positionX = __x; positionY = __y;
+        this.setFont(textFont);
     }
     
     public void setFont(Font f){

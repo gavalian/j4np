@@ -339,7 +339,7 @@ public class TGH2Node3D extends Node2D {
         TGCanvas c = new TGCanvas(800,800);
         TGCanvas c2 = new TGCanvas(800,800);
         H2F h1 = TDataFactory.createH2F(120000, 24,80);        
-        H2F h2 = TDataFactory.createH2F(120000, 10,40);
+        H2F h2 = TDataFactory.createH2F(120000, 40,40);
         H2F h3 = TDataFactory.createH2F(120000, 30,40); 
         H1F h4 = TDataFactory.createH1F(1200);
         H1F h5 = TDataFactory.createH1F(1200);
@@ -366,7 +366,7 @@ public class TGH2Node3D extends Node2D {
         c2.view().region(0).getInsets().set(0, 0, 40, 0);
         c2.view().initTimer(300);
         c2.repaint();
-        
+        /*
         Random r = new Random();
         for(int i = 0; i < 500000; i++){
             h2.fill(r.nextDouble(), r.nextDouble());
@@ -376,6 +376,6 @@ public class TGH2Node3D extends Node2D {
             } catch (InterruptedException ex) {
                 Logger.getLogger(TGH2Node3D.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }*/
     }
 }

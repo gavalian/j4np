@@ -5,10 +5,8 @@
 package twig.data;
 
 import j4np.utils.base.ArchiveUtils;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -25,7 +23,6 @@ import javax.swing.tree.TreeModel;
 import twig.graphics.TGDataCanvas;
 import twig.server.TreeModelMaker;
 import twig.studio.TreeProvider;
-import twig.studio.TwigStudio;
 
 /**
  *
@@ -133,7 +130,7 @@ public class TDirectory implements TreeProvider {
         System.out.println("[group] >>> loading : " +  dataset);
         DataSet ds = DataSetSerializer.load(file, dataset);
         return ds;
-     }
+    }
     
     public static DataGroup load(String file, String directory, String... names){
         DataGroup group = new DataGroup();
@@ -300,6 +297,12 @@ public class TDirectory implements TreeProvider {
     }
     
     public void initTimer(int interval) {
+        
+        if(autoSaveTimer !=null ){
+            autoSaveTimer.cancel();
+            autoSaveTimer = null;
+        }        
+
         System.out.println("[TDirectory] >>>>  starting an autosave timer with file " + this.autoSaveFile);
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -307,7 +310,7 @@ public class TDirectory implements TreeProvider {
                 executeTimer();
             }
         };
-        autoSaveTimer = new Timer("EmbeddeCanvasTimer");
+        autoSaveTimer = new Timer("DirectoryAutoSave");
         autoSaveTimer.scheduleAtFixedRate(timerTask, 30, interval);
     }
     
@@ -325,7 +328,45 @@ public class TDirectory implements TreeProvider {
             }
         }
     }
+        
+    private String getPath(String path){
+        String result = path.replace("//", "/");
+        if(path.endsWith("/")==true) result = result.substring(0, result.length()-1);
+        if(path.startsWith("/")==true) result = result.substring(1, result.length());        
+        return result;
+    }
     
+    private String removeLeading(String dirname, String leading){
+        String path = dirname.replaceAll(leading, "");
+        return getPath(path);
+    }
+    
+   /* private String removePrexix(String data){
+        String[] tokens = data.split("/");
+        if(tokens.length<2) return data;
+        StringBuilder str = new StringBuilder();
+
+        return str.toString();
+    }*/
+    
+    public void trimDirectory(String strip){
+        ConcurrentMap<String,Directory> list = dirList;
+        dirList.clear();
+        for(Map.Entry<String,Directory> entry : list.entrySet()){
+            String key = this.removeLeading(entry.getKey(), strip);
+            dirList.put(key, entry.getValue());
+        }
+    }
+    
+    public void addDirectory(TDirectory dir){
+        
+        List<String> objects = dir.getObjects();
+        
+        for(int i = 0; i < objects.size(); i++){
+            DataSet ds = dir.get(objects.get(i));
+            
+        }
+    }
     
     public void write(String filename){
         for(Map.Entry<String,Directory> entry : this.dirList.entrySet() ){
@@ -425,6 +466,17 @@ public class TDirectory implements TreeProvider {
     public static void main(String[] args){ 
         
         TDirectory dir = new TDirectory();
+        String path = "/ar/tb/tu/";
+        String result = dir.getPath(path);
+        
+        String nuevo = dir.removeLeading(result, "tb");
+        
+        System.out.println("  path : " + path);
+        System.out.println("result : " + result);
+        System.out.println("result : " + nuevo);
+        
+        
+        /*TDirectory dir = new TDirectory();
         
         H1F h1 = new H1F("h1f_1",120,0.0,1.0);
         H1F h2 = new H1F("h1f_2",120,0.0,1.0);
@@ -453,6 +505,7 @@ public class TDirectory implements TreeProvider {
         System.out.println(" bool - " + path.startsWith("/"));
         path = path.replaceFirst("/", "");
         System.out.println(" bool - " + path.startsWith("/"));
+        */
         //Path p = Path.of("/home/users/rgk/");
         //System.out.println(p.getFileSystem());
         //TwigStudio.browser("myfile.twig");

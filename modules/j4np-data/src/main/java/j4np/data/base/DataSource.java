@@ -60,4 +60,11 @@ public interface DataSource {
      * @return 
      */
     public int nextFrame(DataFrame frame);
+    /**
+     *  This method can be implemented in specific implementation
+     *  of DataSource to configure. Mostly to be used to open a UI.
+     * 
+     * @return returns true if initialization was successful
+     */
+    default boolean configue(){ return true;}
 }

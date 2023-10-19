@@ -15,6 +15,7 @@ import twig.data.H1F;
 import twig.data.H2F;
 import twig.data.TDataFactory;
 import twig.data.TDirectory;
+import twig.data.TDirectoryStructure;
 import twig.data.TGroupDirectory;
 import twig.graphics.TGCanvas;
 import twig.graphics.TGDataCanvas;
@@ -145,6 +146,41 @@ public class TwigStudio {
         window.getStudioFrame().setTreeProvider(dir);
     }
     
+    public static void browser2(String filename){
+        
+        StudioWindow.changeLook();
+        
+        StudioWindow window = new StudioWindow();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        window.setSize(1200, 900);
+        window.setVisible(true);
+        
+        TDirectoryStructure dir = new TDirectoryStructure();
+        dir.open(filename);
+        
+        window.getStudioFrame().setTreeProvider(dir);
+    }
+    
+    public static void browser3(String filename){
+        
+        StudioWindow.changeLook();
+        
+        StudioMainWindow window = new StudioMainWindow();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        TDirectoryStructure dir = new TDirectoryStructure();
+        dir.open(filename);
+        
+        StudioTreeView view = new StudioTreeView(dir);
+        
+        window.setLeftPane(view);
+        window.initialize();
+        
+        window.setSize(1200, 900);
+        window.setVisible(true);
+    }
+    
     public static void groupBrowser(String filename){
          StudioWindow.changeLook();
         
@@ -189,11 +225,12 @@ public class TwigStudio {
        return dir;
     }
     public static void main(String[] args){
-        StudioWindow.changeLook();        
+        /*StudioWindow.changeLook();        
         StudioWindow frame = new StudioWindow();
         frame.getStudioFrame().setTreeProvider(TwigStudio.getDemoDirectory());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(850, 650);
-        frame.setVisible(true);
+        frame.setVisible(true);*/        
+        TwigStudio.browser3("online_autosave.twig");
     }
 }

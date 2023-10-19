@@ -177,7 +177,6 @@ public class StudioFrame extends JPanel {
         ImageIcon   iconFolderOpen = this.getImageIcon("icons/icons8-opened-folder-64.png", 16, 16);
         ImageIcon         iconLeaf = this.getImageIcon("icons/icons8-histogram-64.png", 16, 16);
         
-        
         renderer.setOpenIcon(iconFolderOpen);
         renderer.setClosedIcon(iconFolderClosed);
         renderer.setLeafIcon(iconLeaf);

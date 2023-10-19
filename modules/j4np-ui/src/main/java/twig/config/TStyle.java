@@ -94,7 +94,7 @@ public class TStyle {
     protected int         axisTitleColor = 1;
     
     
-    protected Font  defaultPaveTextFont = new Font("Avenir",Font.PLAIN,14);
+    protected Font  defaultPaveTextFont = new Font("PT Serif",Font.PLAIN,14);
 
     public Color getDefaultCanvasColor() {
         return defaultCanvasColor;
@@ -167,9 +167,9 @@ public class TStyle {
     
 
     public TStyle(){
-        this.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
-        this.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
-        this.setDefaultPaveTextFont(new Font("PT Sans",Font.PLAIN,20));
+        this.setDefaultAxisLabelFont(new Font("PT Serif",Font.PLAIN,18));
+        this.setDefaultAxisTitleFont(new Font("PT Serif",Font.PLAIN,20));
+        this.setDefaultPaveTextFont(new Font("PT Serif",Font.PLAIN,20));
         
         String fn = "PT Serif";
         this.attributeAxisX.setAxisLabelFont(new Font(fn,Font.PLAIN,16) );
