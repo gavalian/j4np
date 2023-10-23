@@ -238,7 +238,8 @@ public class ArchiveProvider {
        
        Set<Integer> runSet = new HashSet<>();
         for(String directory : directories){
-            String[] tokens = directory.split("/");
+            String dir = directory.replaceAll("//", "/");
+            String[] tokens = dir.split("/");
             Integer   value = Integer.parseInt(tokens[1]);
             runSet.add(value);
             //System.out.println(value);

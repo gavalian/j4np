@@ -92,8 +92,10 @@ public class TDirectory implements TreeProvider {
     
     protected void executeTimer(){
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-        System.out.printf("[%s] auto save to file -> %s\n",timeStamp,this.autoSaveFile);
-        this.write(this.autoSaveFile, timeStamp);
+        String timeStampFile = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+        String exportFileName = this.autoSaveFile+ "_" + timeStampFile + ".twig";
+        System.out.printf("[%s] auto save to file -> %s\n",timeStamp,exportFileName);
+        this.write(exportFileName, timeStamp);
     }
     
     public static void export(String file, String directory, List<DataSet> data){

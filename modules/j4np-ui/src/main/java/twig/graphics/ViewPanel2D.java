@@ -35,7 +35,7 @@ public class ViewPanel2D extends DatasetActionPanel implements ActionListener {
        super(parent);
        hist2D = h;
        viewType = type;       
-       this.init();
+       this.init();              
     }
     
     private void init(){
@@ -54,32 +54,7 @@ public class ViewPanel2D extends DatasetActionPanel implements ActionListener {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int bin = (( JSlider ) e.getSource()).getValue();
-                if(viewType.compareTo("Y")==0){
-                    H1F h = hist2D.sliceX(bin);
-                    
-                    double x = hist2D.getAxisX().getBinCenter(bin);
-                    double y1 = hist2D.getAxisY().min();
-                    double y2 = hist2D.getAxisY().max();
-                    Line l = new Line(x,y1,x,y2);
-                    l.setNDF(false);
-                    l.setLineColor(5);
-                    l.setWidth(2);
-                    getCanvas().activeCanvas().region(0).draw(hist2D).draw(l);
-                    getCanvas().activeCanvas().region(1).draw(h);
-                    getCanvas().activeCanvas().repaint();
-                } else {
-                    H1F h = hist2D.sliceY(bin);
-                    double y = hist2D.getAxisY().getBinCenter(bin);
-                    double x1 = hist2D.getAxisX().min();
-                    double x2 = hist2D.getAxisX().max();
-                    Line l = new Line(x1,y,x2,y);
-                    l.setWidth(2);
-                    l.setNDF(false);
-                    l.setLineColor(5);
-                    getCanvas().activeCanvas().region(0).draw(hist2D).draw(l);
-                    getCanvas().activeCanvas().region(1).draw(h);
-                    getCanvas().activeCanvas().repaint();
-                } 
+                updateWithBin(bin);
             }        
         });
         context = new JPanel();
@@ -97,6 +72,44 @@ public class ViewPanel2D extends DatasetActionPanel implements ActionListener {
         initUI(new String[]{"2D-Viwer"});
         getCanvas().activeCanvas().divide(1, 2);
         getCanvas().activeCanvas().region(0).draw(hist2D);
+        
+        int nbin = 0;
+        if(viewType.compareTo("Y")==0){
+            nbin = hist2D.getAxisX().getNBins()/2;
+        } else {
+            nbin = hist2D.getAxisY().getNBins()/2;
+        }
+        
+        this.updateWithBin(nbin);
+    }
+    
+    private void updateWithBin(int bin){
+        if(viewType.compareTo("Y")==0){
+            H1F h = hist2D.sliceX(bin);
+            
+            double x = hist2D.getAxisX().getBinCenter(bin);
+            double y1 = hist2D.getAxisY().min();
+            double y2 = hist2D.getAxisY().max();
+            Line l = new Line(x,y1,x,y2);
+            l.setNDF(false);
+            l.setLineColor(5);
+            l.setWidth(2);
+            getCanvas().activeCanvas().region(0).draw(hist2D).draw(l);
+            getCanvas().activeCanvas().region(1).draw(h);
+            getCanvas().activeCanvas().repaint();
+        } else {
+            H1F h = hist2D.sliceY(bin);
+            double y = hist2D.getAxisY().getBinCenter(bin);
+            double x1 = hist2D.getAxisX().min();
+            double x2 = hist2D.getAxisX().max();
+            Line l = new Line(x1,y,x2,y);
+            l.setWidth(2);
+            l.setNDF(false);
+            l.setLineColor(5);
+            getCanvas().activeCanvas().region(0).draw(hist2D).draw(l);
+            getCanvas().activeCanvas().region(1).draw(h);
+            getCanvas().activeCanvas().repaint();
+        } 
     }
     
     @Override
