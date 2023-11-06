@@ -215,9 +215,9 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                 imageFile.createNewFile();
                 ImageIO.write(getScreenShot(), "png", imageFile);
             } catch (Exception ignored) {
+                
             }
-        }
-        
+        }        
     }
     
     public TGDataCanvas left(int left){

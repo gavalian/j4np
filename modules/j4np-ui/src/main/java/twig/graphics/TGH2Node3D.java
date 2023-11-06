@@ -269,8 +269,11 @@ public class TGH2Node3D extends Node2D {
         ((QuadMeshProviderH2F) dataMesh).setNormalization(normalization);
         for(int i = 0; i < nQuads; i++){
             dataMesh.getQuad(quad, i);
-           
-           camera.fillPath(g2d, screen, true, dataMesh.getColor(i), new Color(80,80,80), this.defaultStroke, quad.points());
+            //double zv = 0.5+0.25*(quad.points()[0].z()+quad.points()[1].z()+quad.points()[2].z()+quad.points()[3].z());
+            //System.out.println("zv = " + zv/normalization);
+            //Color c = TStyle.getInstance().getPalette().palette2d().getColor3D(zv, 0, 1, true);
+            Color c = dataMesh.getColor(i);
+            camera.fillPath(g2d, screen, true, c, new Color(80,80,80), this.defaultStroke, quad.points());
            //camera.fillPath(g2d, screen, true, new Color(50,150,255,75), new Color(80,80,80), this.defaultStroke, quad.points());
            //camera.drawPath(g2d, screen, true, new Color(50,150,255,25), this.defaultStroke, quad.points());
            //camera.drawPath(g2d, screen, true, Color.BLACK, this.defaultStroke, quad.points());
@@ -299,7 +302,6 @@ public class TGH2Node3D extends Node2D {
             
             double stepX  = ((double)1)/(h2.getAxisX().getNBins()-1);
             double stepY = ((double)1)/(h2.getAxisY().getNBins()-1);
-
             
             quad.points()[0].set(offset + x*stepX, -0.5+h2.getBinContent(x, y)/norm, offset + y*stepY);
             quad.points()[1].set(offset + x*stepX,  -0.5+h2.getBinContent(x, y+1)/norm,offset + (y+1)*stepY);
@@ -322,10 +324,11 @@ public class TGH2Node3D extends Node2D {
             if(index<12) return Color.red;
            // return new Color(0,0,255,60);
             int bx = this.getBinX(index);
-            int by = this.getBinY(index);
+            int by = this.getBinY(index);                        
             Color c = TStyle.getInstance().getPalette().palette2d().getColor3D(h2.getBinContent(bx, by)/norm, 0, 1, true);
             return c;
         }
+        
         
         @Override
         public int getCount(){
@@ -364,7 +367,7 @@ public class TGH2Node3D extends Node2D {
         TGH2Node3D node4 = new TGH2Node3D(h2,"W");
         c2.view().region(0).replace(node4);
         c2.view().region(0).getInsets().set(0, 0, 40, 0);
-        c2.view().initTimer(300);
+        //c2.view().initTimer(300);
         c2.repaint();
         /*
         Random r = new Random();

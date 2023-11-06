@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import twig.data.DataSet;
 import twig.data.H1F;
 import twig.data.H2F;
@@ -181,6 +182,37 @@ public class TwigStudio {
         window.setVisible(true);
     }
     
+    public static void browser4(String filename){
+        
+        StudioMainWindow mw = new StudioMainWindow();
+        
+        JMenu[] menus = new JMenu[2];
+        menus[0] = StudioTools.createMenu("File", mw, 
+                new String[]{"New","Open","Save","-----","Quit"}, 
+                new String[]{"file_new","file_open","file_save","-----","file_quit"});
+        
+        menus[1] = StudioTools.createMenu("Edit", mw, 
+                new String[]{"Resize","Clear","-----","Show Directory","Hide Directory"}, 
+                new String[]{"edit_resize","edit_clear","-----",
+                    "edit_showdirectory","edit_hidedirectory"});
+               
+        StudioWindow.changeLook();
+        
+        StudioMainWindow window = new StudioMainWindow();
+        //window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.addMenu(menus);
+        TDirectoryStructure dir = new TDirectoryStructure();
+        dir.open(filename);
+        
+        StudioTreeView view = new StudioTreeView(dir);
+        
+        window.setLeftPane(view);
+        window.initialize();
+        
+        window.setSize(1200, 900);
+        window.setVisible(true);
+    }
+    
     public static void groupBrowser(String filename){
          StudioWindow.changeLook();
         
@@ -231,6 +263,6 @@ public class TwigStudio {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(850, 650);
         frame.setVisible(true);*/        
-        TwigStudio.browser3("online_autosave.twig");
+        TwigStudio.browser4("online_autosave.twig");
     }
 }

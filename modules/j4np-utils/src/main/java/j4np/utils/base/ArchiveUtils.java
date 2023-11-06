@@ -66,12 +66,17 @@ public class ArchiveUtils {
         }
         return true;
     }
-
+    public static String checkPath(String path){
+        String path2 = path.replaceAll("//", "/");
+        return path2.replaceAll("//", "/");
+    }
+    
     public static void writeFile(String zipfile, String outputName, List<String> fileLines){
         InputStream stream = null;
         try {
             stream = ArchiveUtils.createFromList(fileLines);
-            ArchiveUtils.writeInputStream(zipfile, outputName, stream);
+            String outputNameChecked = ArchiveUtils.checkPath(outputName);
+            ArchiveUtils.writeInputStream(zipfile, outputNameChecked, stream);
         } catch (IOException ex) {
             Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -86,12 +91,12 @@ public class ArchiveUtils {
     public static void writeInputStream(String zipfile, String outputName, InputStream stream){
         String directory = String.format("%s",outputName);
         //System.out.println("[exporting] -> " + directory);
-        
+        String directoryChecked = ArchiveUtils.checkPath(directory);
         try {
             ZipFile zip = new ZipFile(zipfile);
             ZipParameters pars = new ZipParameters();
             pars.setOverrideExistingFilesInZip(true);
-            pars.setFileNameInZip(directory);
+            pars.setFileNameInZip(directoryChecked);
             zip.addStream(stream, pars);
         } catch (IOException ex) {
             Logger.getLogger(ArchiveUtils.class.getName()).log(Level.SEVERE, null, ex);

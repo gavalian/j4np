@@ -24,12 +24,13 @@
 
       <dependency>
         <groupId>com.deepnetts</groupId>
+<!--
         <artifactId>deepnetts-core-pro</artifactId>
         <version>3.0.0</version>
-	<!--
+
+-->
 	<artifactId>deepnetts-core</artifactId>
         <version>1.13.2</version>
--->
       </dependency>
       
       <dependency>

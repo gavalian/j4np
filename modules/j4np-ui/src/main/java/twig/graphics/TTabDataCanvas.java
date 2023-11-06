@@ -5,6 +5,7 @@
 package twig.graphics;
 
 import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
@@ -20,6 +21,8 @@ public class TTabDataCanvas extends JPanel {
     
     JTabbedPane       tabbedPane = null;
     List<TGDataCanvas>  canvases = new ArrayList<>();
+    
+    protected List<CanvasPublisher> publishers = new ArrayList<>();
     
     public TTabDataCanvas(){
         super();
@@ -40,8 +43,26 @@ public class TTabDataCanvas extends JPanel {
         return tabbedPane.getSelectedIndex();
     }
     
+    public void addPublisher(CanvasPublisher cpb){
+        this.publishers.add(cpb);
+    }
+    
     public void setSelected(int index){
         tabbedPane.setSelectedIndex(index);
+    }
+    
+    public List<BufferedImage> getScreenShots(){
+        List<BufferedImage> shots = new ArrayList<>();
+        for(TGDataCanvas c : this.canvases) shots.add(c.getScreenShot());
+        return shots;
+    }
+    
+    
+    public void publish(){
+        List<BufferedImage> imgList = this.getScreenShots();
+        for(CanvasPublisher pb : this.publishers){
+            pb.publish(imgList);
+        }
     }
     
     public final void init(JPanel controls, String[] names){
@@ -91,5 +112,9 @@ public class TTabDataCanvas extends JPanel {
             this.canvases.get(i).setTimerStatus(true);
         }        
         this.activeCanvas().setTimerStatus(false);
+    }    
+    
+    public static abstract class CanvasPublisher {
+        public abstract void publish(List<BufferedImage> imgList);
     }
 }

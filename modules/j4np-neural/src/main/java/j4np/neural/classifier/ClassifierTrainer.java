@@ -460,7 +460,7 @@ public class ClassifierTrainer {
         List<String>  networkContent = classifier.getNetworkStream();
         String archiveFile = String.format("network/%d/%s/trackClassifier.network",
                 run,"default");
-        ArchiveUtils.writeFile("clas12test.network", archiveFile, networkContent); 
+        ArchiveUtils.writeFile("clas12rgk.network", archiveFile, networkContent); 
         
         
         long then = System.currentTimeMillis();
@@ -482,9 +482,9 @@ public class ClassifierTrainer {
         //String file = "training_sample_tr.h5";
         //String file2 = "training_sample_va.h5";
         
-        String file  = "/Users/gavalian/Work/DataSpace/neural/clas_neural_005197_tr.h5";
-        String file2 = "/Users/gavalian/Work/DataSpace/neural/clas_neural_005197_va.h5";
-        String file3 = "/Users/gavalian/Work/DataSpace/neural/clas_neural_005442_va.h5";
+        String file  = "/Users/gavalian/Work/DataSpace/neural/run_012933_tracks_tr.h5";
+        String file2 = "/Users/gavalian/Work/DataSpace/neural/run_012933_tracks_va.h5";
+        String file3 = "/Users/gavalian/Work/DataSpace/neural/run_012933_tracks_va.h5";
         
         
         //ClassifierTrainer.train6(file, 5197, 4, 45, 4, 15000);
@@ -496,19 +496,16 @@ public class ClassifierTrainer {
         ClassifierTrainer.train6(file, 4, 3, 35, 4, 15000);
         
         ClassifierTrainer.train6(file, 5, 4, 45, 3, 15000);*/
-        ClassifierTrainer.train6(file, 16, 4, 45, 4, 1800);
+        ClassifierTrainer.train6(file, 16, 4, 45, 4, 2400);        
         
-        
-        //ClassifierTrainer.train12(file, 8, 4, 45, 4, 15000);
-        
-        
+        //ClassifierTrainer.train12(file, 8, 4, 45, 4, 15000);        
         ClassifierTrainer ct = new ClassifierTrainer();
         DataList list = ClassifierTrainer.getDataList(file2, 1000);
         DataList listf = ClassifierTrainer.getDataListFalse(file2, 1500);
         list.getList().addAll(listf.getList());        
         
 
-        ct.evaluate("clas12rga.network", 5197, list);
+        ct.evaluate("clas12rgk.network", 12933, list);
 
         /* DataList listExtended = new DataList();
         

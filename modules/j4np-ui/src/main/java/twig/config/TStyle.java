@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +24,9 @@ import java.util.logging.Logger;
  */
 public class TStyle {
 
+    
+    private Properties styleProperties = new Properties();
+    
     public static enum TwigStyle {
         PRESENTATION, PRESENTATION_DARK, PRESENTATION_BOLD, 
         ARTICLE, MONITOR, MONITOR_DARK, MATPLOTLIB
@@ -167,6 +171,11 @@ public class TStyle {
     
 
     public TStyle(){
+        
+        styleProperties.setProperty("h2d.stats.font.name",  "PT Serif");
+        styleProperties.setProperty("h2d.stats.font.size",  "24");
+        styleProperties.setProperty("h2d.stats.font.style", "plain");
+        
         this.setDefaultAxisLabelFont(new Font("PT Serif",Font.PLAIN,18));
         this.setDefaultAxisTitleFont(new Font("PT Serif",Font.PLAIN,20));
         this.setDefaultPaveTextFont(new Font("PT Serif",Font.PLAIN,20));
@@ -180,9 +189,15 @@ public class TStyle {
         this.attributeAxisZ.setAxisTitleFont(new Font(fn,Font.PLAIN,18) );
     }
     
+    public void showProperties(){
+        
+    }
+    public Properties properties(){ return this.styleProperties;}
     
     public static void setStyle(TwigStyle type){
+        
         TStyle style = TStyle.getInstance();
+        
         if(type == TwigStyle.PRESENTATION){
            style.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
            style.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
@@ -279,7 +294,6 @@ public class TStyle {
         }*/
         return globalStyle;
     }
-
 
     public int getCanvasBackgroundColor(){
         return this.canvasBackgroundColor;

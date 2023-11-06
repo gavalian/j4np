@@ -15,9 +15,9 @@ import javax.swing.JPanel;
  * @author gavalian
  */
 public class StudioComponent extends JPanel {
+    
     List<ActionListener>  listeners = new ArrayList<>();
     public StudioComponent(){}
-
     public void addActionListener(ActionListener al){ this.listeners.add(al);}
     public void fireEvent(ActionEvent event){
         for(ActionListener l : listeners) l.actionPerformed(event);

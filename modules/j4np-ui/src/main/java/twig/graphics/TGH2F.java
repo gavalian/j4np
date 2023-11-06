@@ -8,6 +8,7 @@ package twig.graphics;
 import j4np.graphics.Translation2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
@@ -16,6 +17,7 @@ import twig.data.DataPoint;
 import twig.data.DataRange;
 import twig.data.H1F;
 import twig.data.H2F;
+import twig.widgets.LatexText;
 import twig.widgets.MarkerTools;
 
 /**
@@ -26,13 +28,25 @@ public class TGH2F extends TDataNode2D {
     
     private DataPoint     point = new DataPoint();
     private DataRange dataRange = new DataRange();
-    
+    LatexText text = new LatexText("a",0,0);
     public TGH2F(H2F h){
         this.dataSet = h;
+        text.setFont(new Font(
+                TStyle.getInstance().properties().getProperty("h2d.stats.font.name"),
+                Font.PLAIN, 
+                Integer.parseInt(
+                        TStyle.getInstance().properties().getProperty("h2d.stats.font.size"))                
+        ));
     }
     
     public TGH2F(H2F h, String options){
         dataSet = h; setOptions(options);
+        text.setFont(new Font(
+                TStyle.getInstance().properties().getProperty("h2d.stats.font.name"),
+                Font.PLAIN, 
+                Integer.parseInt(
+                        TStyle.getInstance().properties().getProperty("h2d.stats.font.size"))                
+        ));
     }
     
     @Override
@@ -44,6 +58,11 @@ public class TGH2F extends TDataNode2D {
         }
     }
     
+    public boolean isDrak(Color c){
+        double mean = c.getRed()+c.getGreen()+c.getBlue();
+        //System.out.println(" darkeness = " + mean*0.33);
+        return mean*0.33 <= 100;
+    }
     
     @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
@@ -68,7 +87,7 @@ public class TGH2F extends TDataNode2D {
         
         boolean drawBack = options.contains("F");
         boolean drawLogZ = options.contains("Z");
-        
+        boolean writeStats = options.contains("S");
         
         if(options.contains("F")==true){
            
@@ -111,8 +130,22 @@ public class TGH2F extends TDataNode2D {
         
                 //System.out.println(xb + " " + yb + " " + color + " " + point.z);
                 //g2d.setColor(color);
-                g2d.fillRect((int) startX, (int) startY, (int) (xLen+1), (int) (yLen+1));
+                g2d.fillRect((int) startX, (int) startY, (int) (xLen+1), (int) (yLen+1));                
                 g2d.fillRect((int) Math.floor(startX-0.5), (int) Math.floor(startY-0.5), (int) (xLen+1), (int) (yLen+1));
+                if(writeStats==true){
+                    g2d.setColor(Color.WHITE);
+                    text.setColor(Color.white);
+                    if(this.isDrak(color)==false) { 
+                        g2d.setColor(Color.BLACK);
+                        text.setColor(Color.BLACK);
+                    }
+                    double xt = startX + xLen*0.5;
+                    double yt = startY + yLen*0.5;
+                    //text.setText(String.format("%.2f", point.z));
+
+                    text.drawString(String.format("%.2f", point.z), g2d,(int) xt, (int) yt, 
+                            LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER, 0);
+                }
                 //g2d.setColor(new Color(240,140,140));
                 //g2d.setStroke(new BasicStroke(2));                
                 //g2d.drawRect((int) startX, (int) startY, (int) xLen, (int) yLen);

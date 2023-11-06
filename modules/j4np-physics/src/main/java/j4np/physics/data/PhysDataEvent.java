@@ -23,12 +23,17 @@ import java.util.Map;
  */
 public class PhysDataEvent extends PhysicsEvent {
 
-    protected Bank     dataBank = null;
+    protected Bank       dataBank = null;
+    protected Bank     configBank = null;
+    
     protected int  index_status = -1;
     protected int  index_charge = -1;
     protected PropertyList properties = new PropertyList();
+    
     public PhysDataEvent(){}
+    
     public PhysDataEvent(Bank b){
+    
         Schema sc = b.getSchema().copy();
         dataBank  = new Bank(sc);
         if(sc.hasEntry("status")==true){
@@ -41,6 +46,9 @@ public class PhysDataEvent extends PhysicsEvent {
     
     public void init(HipoReader r){
         properties.init(r);
+        if(r.getSchemaFactory().hasSchema("REC::Event")){
+            configBank = new Bank(r.getSchemaFactory().getSchema("REC::Event"));
+        }
     }
     
     public void addLink(int order, String bank, String reference){
@@ -59,7 +67,15 @@ public class PhysDataEvent extends PhysicsEvent {
     public void read(Event event){
         event.read(dataBank);
         properties.read(event);
+        if(configBank!=null) event.read(configBank);
         //System.out.printf(" bank ");
+    }
+    
+    public int getHelicity(){
+        if(configBank!=null){
+            if(configBank.getRows()>0) return configBank.getInt(6, 0);
+        }
+        return 0;
     }
     
     @Override
