@@ -77,6 +77,11 @@ public class StatNumber {
 		error = Math.sqrt((error * error) + (num.error() * num.error()));
 	}
 	
+        public void add(double value, double ve) {
+		number += value;
+		error = Math.sqrt((error * error) + (ve * ve));
+	}
+        
 	/**
 	 * Divides the current object by the parameter StatNumber
 	 * 
@@ -125,5 +130,11 @@ public class StatNumber {
 		number -= num.number();
 		error = Math.sqrt((error * error) 
                 + (num.error()*num.error()));
+	}
+        
+        public void subtract(double value, double ve) {
+		number -= value;
+		error = Math.sqrt((error * error) 
+                + (ve*ve));
 	}
 }

@@ -170,16 +170,17 @@ public class TDataAttributes {
             case "mc" : setMarkerColor(Integer.parseInt(value)); break;
             case "mt" : setMarkerStyle(Integer.parseInt(value)); break;
             case "ms" : setMarkerSize(Integer.parseInt(value)); break;
+            case "mw" : setMarkerOutlineWidth(Integer.parseInt(value)); break;
+            case "mo" : setMarkerOutlineColor(Integer.parseInt(value)); break;
             case "fc" : setFillColor(Integer.parseInt(value)); break;
             case "fs" : setFillStyle(Integer.parseInt(value)); break;
+            
             default: System.out.printf("data attributes >> error : unknown property : %s\n",tokens[0]); break;
         }
     }
     
-    public TDataAttributes(){
-        
-    }
-        
+    public TDataAttributes(){  }
+    
     public  int    lineColor = 1;
     private int    lineWidth = 1;
     private int    lineStyle = 0;

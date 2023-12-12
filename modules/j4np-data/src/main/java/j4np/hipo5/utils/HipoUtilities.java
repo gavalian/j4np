@@ -63,6 +63,7 @@ public class HipoUtilities extends OptionApplication {
                 .addOption("-n", "number of events in from the input file to replicate");
         
         parser.addCommand("-merge", "merge input files into one big output file");
+        parser.getOptionParser("-merge").addRequired("-o","output file name");
         
         
         parser.addCommand("-dump", " show content of the hipo file");
@@ -412,6 +413,39 @@ public class HipoUtilities extends OptionApplication {
         
     }
     
+    public static void merge(String output, List<String> inputs){
+        
+        System.out.printf("::: mergin files : %d\n",inputs.size());
+        HipoWriter w = null;
+        Event event = new Event(128*1024);
+        long totalCounter = 0L;
+        for(int i = 0; i < inputs.size(); i++){
+            HipoReader r = new HipoReader();
+            r.setDebugMode(0);
+            
+            try {
+                r.open(inputs.get(i));
+                if(w==null) w = HipoWriter.create(output, r);
+                long then = System.currentTimeMillis();
+                int counter = 0;
+                while(r.hasNext()==true){
+                    r.nextEvent(event);
+                    w.addEvent(event);
+                    counter++;
+                }
+                long now = System.currentTimeMillis();
+                totalCounter += counter;
+                System.out.printf("merge info  :: converted file %5d/%5d, n events = %12d, total events %26d, time = %8d msec\n",
+                        i+1,inputs.size(),counter, totalCounter, now-then);
+            } catch (Exception e){
+                System.out.println("merge error :: the file myabe corrupt : " + inputs.get(i));
+            }
+        }
+        
+        if(w!=null) w.close();
+        
+    }
+    
     public static void replicate(String input, String output, int start, int nEvents, int nExpand){
         HipoReader r = new HipoReader(input);
         HipoWriter w = HipoWriter.create(output, r);
@@ -465,6 +499,13 @@ public class HipoUtilities extends OptionApplication {
             HipoUtilities.filter(inputFiles, outputFile, regExpression, 
                     bankExistsFilter,banksRemove,tagToFilter,schemaFilter,maxEvents,compression);            
         }
+        
+        if(parser.getCommand().compareTo("-merge")==0){            
+            List<String>  inputFiles    = parser.getOptionParser("-merge").getInputList();
+            String        outputFile    = parser.getOptionParser("-merge").getOption("-o").stringValue();
+            HipoUtilities.merge(outputFile, inputFiles);
+        }
+        
         if(parser.getCommand().compareTo("-replicate")==0){
             OptionParser p = parser.getOptionParser("-replicate");
             String output = p.getOption("-o").stringValue();

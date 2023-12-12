@@ -5,6 +5,8 @@
 package j4np.physics.store;
 
 import j4np.hipo5.io.HipoReader;
+import j4np.physics.LorentzVector;
+import j4np.physics.PhysicsEvent;
 import j4np.physics.PhysicsReaction;
 import j4np.physics.VectorOperator;
 import j4np.physics.data.PhysEventNode;
@@ -41,6 +43,10 @@ public class ReactionPionX extends PhysicsReaction {
         this.addVector("[11,1]");
         this.addVector("[211]");
         
+        VectorOperatorCustom vop = new VectorOperatorCustom(this.getBeamVector());
+        
+        this.addVector(vop);
+        
         this.addEntry("mx2"    ,  0, VectorOperator.OperatorType.MASS2);
         this.addEntry("mx2r"   ,  1, VectorOperator.OperatorType.MASS2);        
         this.addEntry("rho"    , 2, VectorOperator.OperatorType.MASS);
@@ -57,6 +63,7 @@ public class ReactionPionX extends PhysicsReaction {
         this.addEntry("p1p"     , 6, VectorOperator.OperatorType.P);
         this.addEntry("p1t"     , 6, VectorOperator.OperatorType.THETA_DEG);
         this.addEntry("p1f"     , 6, VectorOperator.OperatorType.PHI_DEG);
+        this.addEntry("mtt", 7, VectorOperator.OperatorType.MASS2);
         
         this.showBranches();
         
@@ -68,5 +75,26 @@ public class ReactionPionX extends PhysicsReaction {
          HipoReader r = new HipoReader(file);         
          this.setDataSource(r, "REC::Particle");
          this.setEventClass(new PhysEventNode());
+     }
+     
+     public static class VectorOperatorCustom extends VectorOperator {
+         LorentzVector  ve = new LorentzVector();
+         LorentzVector vpp = new LorentzVector();
+         LorentzVector vpm = new LorentzVector();
+         LorentzVector vq2 = new LorentzVector();
+         public VectorOperatorCustom(LorentzVector lv){
+             super(lv);
+         }
+         
+         @Override
+         public void apply(PhysicsEvent event){
+             
+             event.vector(ve,  0.0005, 11, 0);
+             event.vector(vpm, 0.139,  11, 1);
+             event.vector(vpp, 0.139, 211, 0);
+             
+             opVector.copy(vec);
+             opVector.sub(ve).sub(vpm).sub(vpp);             
+         }
      }
 }

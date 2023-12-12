@@ -136,7 +136,7 @@ of all combinations of clusters that form 5-segment candidates.
  
  A Multi-Layer Perceptron neural network is used for the CLAS12 track identification  \cite{Gavalian:2020oxg}. 
  The implemented architecture is shown in Figure~\ref{mlp:architecture}, where an input layer with 6 
- nodes is used (each node representing the average wire position of the segment in the super-layer) and 3 
+ nodes are used (each node representing the average wire position of the segment in the super-layer) and 3 
  output nodes for the classes ``positive track'', ``negative track'' and ``false track''.
  
  \begin{figure}[!ht]
@@ -146,17 +146,17 @@ of all combinations of clusters that form 5-segment candidates.
 \caption {a) Architecture of Multi-Layer Perceptron used for track classification. The network has 6 input nodes,
 corresponding to the average wire positions of the segment in each super-layer, three hidden layers with 12 nodes 
 in each, and 3 output nodes. b) Corruption-recovery auto-encoder architecture with 6 input nodes representing track segments 
-mean wire values with one of the values is set to 0, and 6 output nodes with the correct value for the node 
+mean wire values with one of the values set to 0 and 6 output nodes with the correct value for the node 
 that has 0 in the input. }
  \label{mlp:architecture}
  \end{center}
 \end{figure}
 
-The network is trained using a sample of tracks reconstructed by the conventional algorithm, selected with 
-$\chi^2$ cuts to retain the highest quality ones, which are fed to the network with their respective labels 
+The network is trained using a sample of tracks from experimental data reconstructed by the conventional algorithm, 
+selected with $\chi^2$ cuts to retain the highest quality ones, which are fed to the network with their respective labels 
 (i.e. positive or negative tracks). For false tracks, a combination of segments (6 segments forming a track 
 candidate) that was not identified as a track by the conventional algorithm is chosen.
- 
+
  \subsection{Corruption Auto-Encoder}
  
  \begin{figure}[!ht]

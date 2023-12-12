@@ -6,6 +6,7 @@
 package j4np.data.evio;
 
 import j4np.data.base.DataEvent;
+import j4np.data.base.DataUtils;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -87,10 +88,10 @@ public class EvioBlock {
     }
     
     public void show(){
-        /*String data = DataUtils.getStringArray(blockByteBuffer, 10,20);
-        System.out.printf("block : position = %14d, length = %8d, next pos = %12d, next length = %8d\n",
+        //String data = DataUtils.getStringArray(blockByteBuffer, 10,20);
+        /*System.out.printf("block : position = %14d, length = %8d, next pos = %12d, next length = %8d\n",
                 this.blockFilePosition,blockByteBuffer.getInt(0),
-                nextPosition(),  nextLength());
-        System.out.printf("block : \n%s\n",data);        */
+                nextPosition(),  nextLength());*/
+        //System.out.printf("block : \n%s\n",data);        
     }
 }

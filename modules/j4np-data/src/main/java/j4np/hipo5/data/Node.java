@@ -177,6 +177,13 @@ public class Node {
                 this.getGroup(), this.getItem(), nodeType.getType(), this.getDataSize()));
         System.out.println(dataString);
     }
+    
+    public void show(int count){
+        for(int i = 0; i < count; i++){
+            System.out.printf("%08X ", this.nodeBuffer.getInt(i*4));
+        }
+        System.out.println();
+    }
     /**
      * returns string representation of the data.
      * @return data string
@@ -485,6 +492,15 @@ public class Node {
         }
         int offset = getOffset(index);
         nodeBuffer.put(offset, value);
+    }
+    
+    public void putByte(byte[] array){
+        int capacity = this.nodeBuffer.capacity();
+        if(array.length < capacity){
+            System.out.println("[node::putByte] error, the byte array is smaller than the node capacity");
+            return;
+        }
+        System.arraycopy(array, 0, nodeBuffer.array(), 8, capacity-8);
     }
     
     public void setShort(int index, short value){

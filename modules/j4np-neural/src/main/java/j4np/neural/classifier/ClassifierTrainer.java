@@ -460,7 +460,7 @@ public class ClassifierTrainer {
         List<String>  networkContent = classifier.getNetworkStream();
         String archiveFile = String.format("network/%d/%s/trackClassifier.network",
                 run,"default");
-        ArchiveUtils.writeFile("clas12rgk.network", archiveFile, networkContent); 
+        ArchiveUtils.writeFile("newRGD_nue.network", archiveFile, networkContent); 
         
         
         long then = System.currentTimeMillis();
@@ -482,8 +482,8 @@ public class ClassifierTrainer {
         //String file = "training_sample_tr.h5";
         //String file2 = "training_sample_va.h5";
         
-        String file  = "/Users/gavalian/Work/DataSpace/neural/run_012933_tracks_tr.h5";
-        String file2 = "/Users/gavalian/Work/DataSpace/neural/run_012933_tracks_va.h5";
+        String file  = "ai_run_18325_tr.h5";
+        String file2 = "ai_run_18325_va.h5";
         String file3 = "/Users/gavalian/Work/DataSpace/neural/run_012933_tracks_va.h5";
         
         
@@ -496,16 +496,22 @@ public class ClassifierTrainer {
         ClassifierTrainer.train6(file, 4, 3, 35, 4, 15000);
         
         ClassifierTrainer.train6(file, 5, 4, 45, 3, 15000);*/
-        ClassifierTrainer.train6(file, 16, 4, 45, 4, 2400);        
+        //---- this is the best network configuration 
+        // 4,45,4 - means random shift is 4 wires to 45 wires,
+        // number of clusters replaced is up to 4 ( 1,2,3 or 4)
+        //
+        //** ClassifierTrainer.train6(file, 18305, 4, 45, 4, 5200);        
         
         //ClassifierTrainer.train12(file, 8, 4, 45, 4, 15000);        
         ClassifierTrainer ct = new ClassifierTrainer();
-        DataList list = ClassifierTrainer.getDataList(file2, 1000);
-        DataList listf = ClassifierTrainer.getDataListFalse(file2, 1500);
-        list.getList().addAll(listf.getList());        
+        DataList list = ClassifierTrainer.getDataList(file2, 1500);
+        DataList listf = ClassifierTrainer.getDataListFalse(file2, 15);
+        list.getList().addAll(listf.getList()); 
+        list.shuffle();
+        list.shuffle();
+        list.export("mlp_training_sample.csv");
         
-
-        ct.evaluate("clas12rgk.network", 12933, list);
+        ct.evaluate("newRGD_nue.network", 12933, list);
 
         /* DataList listExtended = new DataList();
         

@@ -171,6 +171,7 @@ public class TrackNetworkTrainer {
         for(int i = 0; i < 5; i++){
             H1F h = h2.sliceX(i);
             h.setName("region_"+(i+1));
+            h.attr().setTitleX("Wire_p-Wire_r");
             group.add(h, i+1, "");
         }
         DataSetSerializer.exportDataGroup(group, archive, dataDir);
@@ -224,8 +225,18 @@ public class TrackNetworkTrainer {
         H1F  hTruePositive = new H1F(  "hTruePositive",40,0.5,40.5);
         H1F  hTrue = new H1F(  "hTrue",40,0.5,40.5);
         H1F  hTrueNegative = new H1F(    "hTrueNegative",40,0.5,40.5);
-        H1F hFalsePositive = new H1F(   "hFalsePositive",40,0.5,40.5);
+        H1F  hFalsePositive = new H1F(   "hFalsePositive",40,0.5,40.5);
         H1F  hFalseNegative = new H1F(  "hFalseNegative",40,0.5,40.5);
+        
+        hTrue.attr().setTitleX("Momentum Bin (1-20 negative)");
+        hTrueNegative.attr().setTitleX("Momentum Bin (1-20 negative)");
+        hTruePositive.attr().setTitleX("Momentum Bin (1-20 negative)");
+        hFalsePositive.attr().setTitleX("Momentum Bin (1-20 negative)");
+        
+        hTrue.attr().setTitleY("Momentum Bin (1-20 negative)");
+        hTrueNegative.attr().setTitleY("True NEgative");
+        hTruePositive.attr().setTitleY("True Positive");
+        hFalsePositive.attr().setTitleY("False Positive");
         
         hTruePositive.attr().set("fc=2,fs=2,lc=2");
         hFalsePositive.attr().set("fc=4,fs=12,lc=4");
@@ -316,6 +327,13 @@ public class TrackNetworkTrainer {
          H1F hEfficiencyNeg = H1F.divide(hFalseNegative, hTruePositive);
         hEfficiencyNeg.attr().set("fc=5,fs=14,lc=5");
         hEfficiencyNeg.setName("hEffciencyNeg");
+        
+        
+        hEfficiencyPos.attr().setTitleX("Momentum Bin (1-20 negative)");
+        hEfficiencyNeg.attr().setTitleX("Momentum Bin (1-20 negative)");
+        
+        hEfficiencyPos.attr().setTitleY("Efficieincy");
+        hEfficiencyNeg.attr().setTitleY("Efficieincy");
         
         TDirectory dir = new TDirectory();
         DataGroup group = new DataGroup(2,2);

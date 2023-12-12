@@ -118,8 +118,7 @@ public class TGAxisFrame extends Node2D implements StyleNode {
                 dataNodes.get(d).getDataBounds(tempDataRange);
                 axisDataRange.grow(tempDataRange.getRange());
             }
-            
-            
+                        
             if(this.axisFrameRange.isLogY()==true){
                 //System.out.println(axisDataRange.getRange());
                 axisDataRange.growY(10.);

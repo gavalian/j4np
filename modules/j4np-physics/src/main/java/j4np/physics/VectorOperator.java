@@ -48,6 +48,14 @@ public class VectorOperator {
         }
     }
     
+    public VectorOperator(LorentzVector start, int[] pid, int[] order, int[] sign, double[] mass) {
+        vec.copy(start);
+        particleID    = pid;
+        particleOrder = order;
+        particleSign  = sign;        
+        particleMass = mass;
+    }
+    
     public VectorOperator(List<Integer> pid, List<Integer> order, List<Double> mass, List<Integer> sign){
        this.particleID = new int[pid.size()];
        this.particleOrder = new int[order.size()];

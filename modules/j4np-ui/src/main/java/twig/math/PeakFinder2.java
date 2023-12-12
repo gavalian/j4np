@@ -60,7 +60,7 @@ public class PeakFinder2 {
         F1D back = new F1D("back",background[backOrder],min,max);
         for(int i = 0; i < back.getNPars();i++){
             back.setParameter(i, 0.5);
-            back.setParLimits(i, -5, 5);
+            back.setParLimits(i, -15, 15);
         }
         
         list.add(back);

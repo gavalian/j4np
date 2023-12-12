@@ -28,6 +28,7 @@ public class EvioNode extends BaseStructure implements DataNode {
         IDENTIFIER_POSITION = 4;
         DATA_POSITION       = 8;
     }
+    
     @Override
     public ByteBuffer getBuffer() {
         return this.structBuffer;
@@ -69,7 +70,11 @@ public class EvioNode extends BaseStructure implements DataNode {
 
     @Override
     public String format() {
-        return "unknown";
+        //int size = this.bufferLength()*4;
+        int datapos = this.getDataPosition();
+        byte[] str = new byte[datapos-8];
+        for(int i = 0; i < str.length; i++) str[i] = this.structBuffer.get(i+8);
+        return new String(str);
     }
     
     public void show(){
@@ -82,16 +87,52 @@ public class EvioNode extends BaseStructure implements DataNode {
                 );
     }
 
+    public void show(int count){
+        for(int i = 0; i < count; i++){
+            System.out.printf("%3d : %08X ", i*4, this.structBuffer.getInt(i*4));
+        }
+        System.out.println();
+    }
+    
+    public int getDataPosition(){
+        int pos = 8;
+        int length = this.bufferLength()*4;
+        while(true){
+            int trail = this.structBuffer.getInt(pos);
+            if((trail&0x0000FFFF)==0x00000400) break;
+            pos+=4;
+            if(pos>=length-3) break;
+        }
+        return pos;
+    }
+    
     @Override
     public double getDouble(int index) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    
     @Override
     public int getInt(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.structBuffer.getInt(index*4+8);
     }
 
+    public int getIntAt(int index) {
+        return this.structBuffer.getInt(index+8);
+    }
+
+    public byte getByteAt(int index) {
+        return this.structBuffer.get(index+8);
+    }
+    
+    public short getShortAt(int index) {
+        return this.structBuffer.getShort(index+8);
+    }
+    
+    public void setInt(int index, int value) {
+         this.structBuffer.putInt(index*4+8,value);
+    }
+    
     @Override
     public double getDouble(int order, int index) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

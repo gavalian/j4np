@@ -32,15 +32,23 @@ public class ReactionLambdaX extends PhysicsReaction {
         this.vecOprators.clear();
         this.operEntries.clear();
                              
-        this.addVector(this.getVector(), "-[11,0]-[211,0,0.938]-[11,1,0.13957]");
-        this.addVector(this.getVector(), "-[11,1]-[211,0,0.938]-[11,0,0.13957]");
+        this.addVector(this.getVector(), "-[11,0]-[211,0,0.938]-[11,1,0.497]");
+        this.addVector(this.getVector(), "-[11,1]-[211,0,0.938]-[11,0,0.497]");
 
-        this.addVector( "[11,1,0.13957]+[211,0,0.938]");
-        this.addVector( "[11,0,0.13957]+[211,0,0.938]");
+        this.addVector( "[11,1,0.497]+[211,0,0.938]");
+        this.addVector( "[11,0,0.497]+[211,0,0.938]");
 
         this.addVector("[11,0]");
         this.addVector("[11,1]");
         this.addVector("[211]");
+        this.addVector(this.getVector(), "-[11]");
+        this.addVector(this.getVector(), "-[11,1]");
+        
+        this.addVector(this.getBeamVector(), "-[11,0]");
+        this.addVector(this.getBeamVector(), "-[11,1]");
+        
+        this.addVector( this.getBeamVector(), "-[11,0]-[11,1,0.497]-[211,0,0.938]");
+        this.addVector( this.getBeamVector(), "-[11,1]-[11,0,0.497]-[211,0,0.938]");
 
         this.addEntry("mx2"    ,  0, VectorOperator.OperatorType.MASS2);
         this.addEntry("mx2r"   ,  1, VectorOperator.OperatorType.MASS2);        
@@ -58,7 +66,13 @@ public class ReactionLambdaX extends PhysicsReaction {
         this.addEntry("p1p"     , 6, VectorOperator.OperatorType.P);
         this.addEntry("p1t"     , 6, VectorOperator.OperatorType.THETA_DEG);
         this.addEntry("p1f"     , 6, VectorOperator.OperatorType.PHI_DEG);
+        this.addEntry("w2"      , 7, VectorOperator.OperatorType.MASS2);
+        this.addEntry("w2r"     , 8, VectorOperator.OperatorType.MASS2);
         
+        this.addEntry("q2"      ,  9, VectorOperator.OperatorType.MASS2);
+        this.addEntry("q2r"     , 10, VectorOperator.OperatorType.MASS2);
+        this.addEntry("mt"     , 11, VectorOperator.OperatorType.MASS2);
+        this.addEntry("mtr"     , 12, VectorOperator.OperatorType.MASS2);
         this.showBranches();
         
         this.addModifier(PhysicsReaction.FORWARD_ONLY);

@@ -335,14 +335,13 @@ public class TGH2Node3D extends Node2D {
             return (h2.getAxisX().getNBins()-1)*(h2.getAxisY().getNBins()-1);
         }
     }        
-    
-    
+        
     public static void main(String[] args){
         TStyle.getInstance().getPalette().palette2d().setPalette(TPalette2D.PaletteName.kBird);
         TGCanvas c = new TGCanvas(800,800);
         TGCanvas c2 = new TGCanvas(800,800);
         H2F h1 = TDataFactory.createH2F(120000, 24,80);        
-        H2F h2 = TDataFactory.createH2F(120000, 40,40);
+        H2F h2 = TDataFactory.createH2F(1200000, 40,40);
         H2F h3 = TDataFactory.createH2F(120000, 30,40); 
         H1F h4 = TDataFactory.createH1F(1200);
         H1F h5 = TDataFactory.createH1F(1200);

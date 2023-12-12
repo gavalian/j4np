@@ -13,11 +13,15 @@ import j4np.data.base.DataSource;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Node;
 import j4np.hipo5.io.HipoWriter;
+import j4np.utils.io.OptionParser;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -218,11 +222,162 @@ public class EvioFile implements DataSource {
         return counter;
     }
     
+    public static void convertFiles(String output, List<String> files){
+        HipoWriter w = new HipoWriter();
+        w.open(output);
+        
+        Collections.sort(files);
+        EvioNode  evnode = new EvioNode(2*1024);
+        boolean write = false;
+        List<Integer> status = new ArrayList<>();
+        DataNodeCallback callback = new DataNodeCallback(){
+            
+            public void setStatus(){
+                
+            }
+            @Override
+            public void apply(DataEvent event, int position, int[] identification) {
+                
+                if(identification[0]==37){
+                    event.getAt(evnode, position);
+                    int id = evnode.identifier();
+                    
+                    /*System.out.printf("\t callback %5d, %5d ==> %5d / %5d , type = %d, length = %d  %X , %d\n",
+                            identification[0],identification[1],
+                            identification[2],identification[3],
+                            node.getType(), node.bufferLength(),
+                            id, EvioDataUtils.decodeType(id)
+                    );*/
+                    
+                    //long trigger = (( (long) evnode.getInt(7))<<32) | (evnode.getInt(6)&0xffffffffL); 
+                    int trigger = evnode.getInt(4);
+                    /*for(int i = 0; i < 8; i++){
+                        System.out.printf(" %32s ", Integer.toBinaryString(node.getInt(i)));
+                    } */                   
+                    //System.out.println();
+                    //if(((trigger>>30)&0x01)!=0)
+                    //    System.out.printf("trigger (0) = %32s\n",Long.toBinaryString(trigger));
+                    
+                    //if(((trigger>>30)&0x01)!=0)
+                    //    System.out.printf("trigger (0) = %32s\n",Long.toBinaryString(trigger));
+                        
+                    if((trigger&0x40000000)!=0){
+                        //write = true;
+                        System.out.printf("trigger (2) = %32s\n",Long.toBinaryString(trigger));
+                        status.add(1);
+                    }
+                }   
+            }
+            
+        };
+
+        
+        int counter = 0;
+        for(String file : files){
+            counter++;
+            System.out.printf("converting %5d/%5d %s\n",counter,files.size(),file);
+             EvioFile struct = new EvioFile();
+             struct.open(file); 
+             Event e = new Event();
+             EvioEvent event = new EvioEvent();
+             while(struct.hasNext()==true){
+                 counter++;
+                 struct.next(event);
+                 event.setCallback(callback);
+                 status.clear();
+                 int esize = event.bufferLength()*4;
+                 event.scan();
+                 
+                 if(!status.isEmpty()){
+                     byte[] bytes = new byte[esize];
+                     System.arraycopy(event.getBuffer().array(), 0, bytes, 0, esize);
+                     Node node = new Node(1,11,bytes);
+                     e.reset();
+                     e.write(node);
+                     w.addEvent(e);
+                 }
+             }             
+        }
+        w.close();
+    }
+    
+    public static void testFile(String file){
+        EvioFile struct = new EvioFile();
+        struct.open(file);
+        EvioEvent event = new EvioEvent();
+        EvioNode  node = new EvioNode(2*1024);
+        
+        int counter = 0;
+        DataNodeCallback callback = new DataNodeCallback(){
+            public boolean write = false;
+            
+            @Override
+            public void apply(DataEvent event, int position, int[] identification) {
+                
+                if(identification[0]==37){                    
+                    
+                    for(int i = 0; i < 8; i++) node.setInt(i, 0);
+                    event.getAt(node, position);
+                    int id = node.identifier();
+                    
+                    /*System.out.printf("\t callback %5d, %5d ==> %5d / %5d , type = %d, length = %d  %X , %d\n",
+                            identification[0],identification[1],
+                            identification[2],identification[3],
+                            node.getType(), node.bufferLength(),
+                            id, EvioDataUtils.decodeType(id)
+                    );*/
+                    
+                    long trigger = (( (long) node.getInt(7))<<32) | (node.getInt(6)&0xffffffffL); 
+                    
+                    if((node.getInt(4)&0x40_00_00_00)!=0){
+                        for(int i = 0; i < 8; i++){
+                            System.out.printf(" %s | ", Integer.toBinaryString(node.getInt(i)));
+                        }
+                        System.out.println();
+                        if(((trigger>>30)&0x01)!=0)
+                            System.out.printf("trigger (0) = %32s\n",Long.toBinaryString(trigger));
+                    
+                        if((trigger&0x40000000L)!=0){
+                            write = true;
+                            System.out.printf("trigger (2) = %32s\n",Long.toBinaryString(trigger));
+                        }
+                        
+                    }   
+                }
+            }
+            
+        };
+        
+        event.setCallback(callback);
+        while(struct.hasNext()==true&&counter<1000000){
+            counter++;
+            struct.next(event);
+            //System.out.printf(" event # %5d, size = %8d\n",counter,event.bufferLength()*4);
+            event.scan();
+        }
+        System.out.println(" counter = " + counter);
+    }
+    
     public static void main(String[] args){
+        //boolean goOn = false;
+        
+        //EvioFile.testFile("/Users/gavalian/Work/DataSpace/evio/clas_018777.evio.00049");
+        
+        
+        //if(goOn){
+            OptionParser parser = new OptionParser("evio6converter");             
+            parser.addRequired("-o", "output file name");            
+            parser.parse(args);            
+            EvioFile.convertFiles(parser.getOption("-o").stringValue(), parser.getInputList());
+        //}
+        
+        
+        /*
+        String file = args[0];
         EvioFile struct = new EvioFile();
         //struct.open("/Users/gavalian/Work/DataSpace/evio/segm1.evio");
         //struct.open("/Users/gavalian/Work/DataSpace/evio/segm5662.evio.00001");
-        struct.open("/Users/gavalian/Work/DataSpace/evio/clas_017401.evio.00475");        
+        struct.open(file); 
         //struct.firstBlock();
         
         int counter = 0;
@@ -230,7 +385,7 @@ public class EvioFile implements DataSource {
         
         //System.out.println("[] reading next block : " + struct.next());
         HipoWriter w = new HipoWriter();
-        w.open("output.evio");
+        w.open(file+".h5");
         
         Event e = new Event();
         
@@ -242,13 +397,13 @@ public class EvioFile implements DataSource {
             event.scan();
             byte[] bytes = new byte[esize];
             System.arraycopy(event.getBuffer().array(), 0, bytes, 0, esize);
-            Node node = new Node(32,1,bytes);
+            Node node = new Node(1,11,bytes);
             e.reset();
             e.write(node);
             w.addEvent(e);
 
         }
-        w.close();
+        w.close();*/
         /*
         event.setCallback(new DataNodeCallback(){
             int counter = 0;

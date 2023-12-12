@@ -280,12 +280,12 @@ public class ClusterTrainer {
             H2F h2 = H2F.create(112, 6, list.getList().get(i).features());
             
             
-            /*System.out.println("===========================");
+            System.out.println("===========================");
             AsciiPlot.drawh2(h2);
             AsciiPlot.drawh1box(hi);
             System.out.println("max = " + ho.getMax());
             AsciiPlot.drawh1box(ho);
-            */
+            
             //List<Double> cls = finder.find(output);
             //System.out.println(Arrays.toString(finder.fromList(cls)));
             

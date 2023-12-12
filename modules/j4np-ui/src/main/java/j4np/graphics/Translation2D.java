@@ -57,7 +57,7 @@ public class Translation2D {
             double fraction = (y-transBounds.getY())/transBounds.getHeight();
             return r.getY()+fraction*r.getHeight();
         }
-        double ymin = transBounds.getY();        
+        double ymin = transBounds.getY();
         double yadj    = y;
         if(ymin<0.0000000000001) ymin = 0.001;
         if(yadj<0.0000000000001) yadj = 0.001;

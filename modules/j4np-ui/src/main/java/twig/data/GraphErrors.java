@@ -329,4 +329,31 @@ public class GraphErrors implements DataSet {
         return new ArrayList<String>();
     }
     
+    public static GraphErrors asymmetry(GraphErrors g1, GraphErrors g2){
+        StatNumber denom = new StatNumber();
+        StatNumber  nom = new StatNumber();
+        
+        int size = g1.getVectorX().size();
+        GraphErrors asym = new GraphErrors();
+        for(int i = 0; i < size; i++){
+            nom.set(g1.getVectorY().getValue(i)
+                    , g1.getVectorEY().getValue(i));
+            nom.subtract(
+                    g2.getVectorY().getValue(i)
+                    , g2.getVectorEY().getValue(i)
+            );
+            denom.set(g1.getVectorY().getValue(i)
+                    , g1.getVectorEY().getValue(i));
+            denom.add(
+                    g2.getVectorY().getValue(i)
+                    , g2.getVectorEY().getValue(i)
+            );
+            
+            nom.divide(denom);
+            asym.addPoint(g1.getVectorX().getValue(i),nom.number(),
+                    g1.getVectorEX().getValue(i), 
+                    nom.error());
+        }
+        return asym;
+    }
 }

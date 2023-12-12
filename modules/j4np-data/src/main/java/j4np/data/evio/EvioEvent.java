@@ -63,7 +63,7 @@ public class EvioEvent extends BaseStructure implements DataEvent {
             int tag  = EvioDataUtils.decodeTag(identity);
             int num  = EvioDataUtils.decodeNum(identity);
             
-            /*System.out.printf("\tnode : size = %9d , identity = (%5d, %4d), type = %4d , pos = %6d\n",
+           /* System.out.printf("\tnode : size = %9d , identity = (%5d, %4d), type = %4d , pos = %6d\n",
                     nodeSize,
                     EvioDataUtils.decodeTag(identity),
                     EvioDataUtils.decodeNum(identity),

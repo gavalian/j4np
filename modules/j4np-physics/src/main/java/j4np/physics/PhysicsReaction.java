@@ -33,6 +33,7 @@ public class PhysicsReaction extends Tree {
     protected EventFilter          eventFilter = new EventFilter("X+:X-:Xn");
     protected LorentzVector         beamVector = new LorentzVector();
     protected LorentzVector       targetVector = new LorentzVector();
+    
     protected PhysDataEvent       physicsEvent = null;
     protected HipoReader                reader = null;
     protected String        dataPrintoutFormat = "%8.5f";
@@ -205,9 +206,14 @@ public class PhysicsReaction extends Tree {
         return vec;
     }
     
+    public LorentzVector getBeamVector(){ 
+        LorentzVector vec = LorentzVector.from(beamVector);
+        return vec;
+    }
+    
     public PhysicsReaction addVector(LorentzVector vec, String oper){
         VectorOperator vv = VectorOperator.parseOperator(oper);
-        vv.setVector(this.getVector());
+        vv.setVector(vec);
         vv.show();
         vecOprators.add(vv);
         //vecOprators.add(new VectorOperator(vec,oper));

@@ -110,6 +110,12 @@ public class LatexText {
         if(this.asciiString.length()>0){
             latexString.addAttribute(TextAttribute.FAMILY, font.getFontName());
             latexString.addAttribute(TextAttribute.SIZE, font.getSize());
+            int style = font.getStyle();
+            if(style==1) latexString.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+            //if(style==2) latexString.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+            //latexString.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+            //latexString.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+            //latexString.addAttribute(TextAttribute.WEIGHT, font.getStyle());
         }
     }
     /*
@@ -268,8 +274,13 @@ public class LatexText {
         if(alignY==TextAlign.TOP)    posY = posY + (int) (rect.getHeight());
         //if(alignY==LatexText.ALIGN_TOP)    posY = posY + (int) (rect.getHeight());
         //if(alignY==LatexText.ALIGN_CENTER)    posY = posY + (int) (0.5*rect.getHeight());
+        
+        double angle = -Math.PI/2.0;
+        if(rotate==TextRotate.LEFT) angle = Math.PI/2;
+        if(rotate==TextRotate.UPSIDEDOWN) angle = Math.PI;
         AffineTransform orig = g2d.getTransform();
-        g2d.rotate(-Math.PI/2);
+        
+        g2d.rotate(angle);
         g2d.setColor(this.latexTextColor);
         g2d.drawString(latexString.getIterator(),-posX ,posY - descent);
         g2d.setTransform(orig);
