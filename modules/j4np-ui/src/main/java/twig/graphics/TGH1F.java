@@ -140,7 +140,7 @@ public class TGH1F extends TDataNode2D {
         int markerSize = this.dataSet.attr().getMarkerSize();
         int markerStyle = this.dataSet.attr().getMarkerStyle();        
         int fillColor = this.dataSet.attr().getFillColor();
-                            
+        
         int nPoints = dataSet.getSize(0); 
         GeneralPath line = new GeneralPath();
         dataSet.getPoint(point, 0);
@@ -167,9 +167,10 @@ public class TGH1F extends TDataNode2D {
         yp = 0.0;
         yc = r.getY() + r.getHeight() - tr.relativeY(yp, r);
         line.lineTo(xc, yc);
-        
+        //System.out.println(" FILL COLOR = " + fillColor);
         if(fillColor>=0){
             Color fColor = style.getPalette().getColor(fillColor);
+            //System.out.println(" INT = " + fillColor + "  " + fColor);
             g2d.setColor(fColor);
             g2d.fill(line);
         }

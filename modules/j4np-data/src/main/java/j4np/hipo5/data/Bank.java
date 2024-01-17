@@ -233,6 +233,14 @@ public class Bank {
     
     public final Schema getSchema(){ return nodeSchema; }
     
+    public int[] getInt(String name){
+        int nrows = this.getRows();
+        int[] column = new int[nrows];
+        int element = this.getSchema().getEntryOrder(name);
+        for(int r = 0; r < nrows; r++) { column[r] = this.getInt(element, r);}
+        return column;
+    }
+    
     public int getInt(String name, int row){
         int type = this.nodeSchema.getType(name);
         int offset = this.nodeHeaderSize + nodeSchema.getOffset(name, row, nodeRows);
@@ -269,6 +277,14 @@ public class Bank {
         }
         int offset = nodeHeaderSize + nodeSchema.getOffset(name, row, nodeRows);
         return nodeBuffer.getFloat(offset);
+    }
+    
+    public double[] getDouble(String name){
+        int nrows = this.getRows();
+        double[] column = new double[nrows];
+        int element = this.getSchema().getEntryOrder(name);
+        for(int r = 0; r < nrows; r++) { column[r] = this.getFloat(element, r);}
+        return column;
     }
     
     public double getDouble(String name, int row){

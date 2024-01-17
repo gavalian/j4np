@@ -27,6 +27,7 @@ import twig.data.DataSet;
 import twig.data.DataVector;
 import twig.data.H1F;
 import twig.data.H2F;
+import twig.data.H3F;
 import twig.data.Range;
 import twig.graphics.TGDataCanvas;
 import twig.server.TreeModelMaker;
@@ -192,14 +193,14 @@ public abstract class Tree implements TreeProvider {
     
     private  void drawUndefined(String expression, String cuts, String options){
         if(expression.contains(":")==true){
-            H2F h = this.geth2undef(expression, cuts, 100,100);
+            H2F h = this.geth2undef(expression, cuts, this.defaultBins,this.defaultBins);
             
             TwigStudio.getInstance().getDataCanvas().region().draw(h, options);
             if(options.contains("same")==false)
                 TwigStudio.getInstance().getDataCanvas().next();
             TwigStudio.getInstance().getDataCanvas().repaint();
         } else {
-            H1F h = this.gethundef(expression, cuts, 100);
+            H1F h = this.gethundef(expression, cuts, this.defaultBins);
             TwigStudio.getInstance().getDataCanvas().region().draw(h, options);
             if(options.contains("same")==false)
                 TwigStudio.getInstance().getDataCanvas().next();
@@ -322,6 +323,17 @@ public abstract class Tree implements TreeProvider {
         geth2(expression,cut,h2);
         return h2;
     }
+    
+    public final H3F geth3(String expression, String cut, 
+            int binsX, double minX, double maxX,
+            int binsY, double minY, double maxY,
+            int binsZ, double minZ, double maxZ){
+        H3F h3 = new H3F(binsX,minX,maxX,binsY,minY,maxY,binsZ,minZ,maxZ);
+        h3.setName(expression);
+        h3.attr().setTitle(cut);
+        geth3(expression,cut,h3);
+        return h3;
+    }
     /**
      * fills expression provided by "expression" into provided
      * histogram "h", if the "cut" is valid.
@@ -357,6 +369,37 @@ public abstract class Tree implements TreeProvider {
         evaluate += (end - start);
         System.out.printf("get::perf>> evaluated #%12d in %12d ms, read %12.4f ms\n", 
                 counter,(int) (evaluate/1000000.0), (read/1000000.0));
+    }
+    
+    
+    public final void geth3(String expression, String cut, H3F h){
+        reset();
+        h.attr().setTitle(cut);
+        h.attr().setTitleX(expression);
+        String[] axisExp = expression.split(":");
+        List<String> branches = this.getBranches();
+
+        TreeExpression  varExpX = new TreeExpression(axisExp[0], branches);
+        TreeExpression  varExpY = new TreeExpression(axisExp[1], branches);
+        TreeExpression  varExpZ = new TreeExpression(axisExp[2], branches);
+        
+        TreeCut         cutExp = new TreeCut("1",cut,branches);
+        int counter = 0;
+        long evaluate = 0L;
+        long then = System.currentTimeMillis();
+        while(this.next()==true){
+            counter++;
+            if(treeProcessLimit>0&&counter>=treeProcessLimit) break;
+            if(cutExp.isValid(this)>0.5){
+                double vX = varExpX.getValue(this);
+                double vY = varExpY.getValue(this);
+                double vZ = varExpZ.getValue(this);
+                h.fill(vX,vY,vZ);
+            }
+        }
+        long now = System.currentTimeMillis();
+        System.out.printf("get::perf>> evaluated #%12d in %12d ms, total %12d ms\n", 
+                counter,(int) (evaluate/1000000.0), now-then);        
     }
     
     public final void geth2(String expression, String cut, H2F h){
@@ -458,7 +501,7 @@ public abstract class Tree implements TreeProvider {
            System.out.println("will be drawing this : " + path);
            if(path.contains("/")==true){
                String branch = path.replaceAll("/", "");               
-               H1F h = this.gethundef(branch, "", 100);
+               H1F h = this.gethundef(branch, "", this.defaultBins);
                c.region().draw(h);
                c.next();
            }

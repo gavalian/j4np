@@ -668,6 +668,26 @@ public class H1F  implements DataSet {
             System.out.println("[warning] ---> histograms have different bin number. not added.");
         }
     } 
+    
+    public static H1F sub(H1F h1, H1F h2){
+        if(h1.getXaxis().getNBins()!=h2.getXaxis().getNBins()){
+            System.out.println("[H1D::divide] error : histograms have inconsistent bins");
+            return null;
+        }
+        H1F h1div = new H1F(h1.getName()+"_ADD_"+h2.getName(),
+                h1.getXaxis().getNBins(),
+                h1.getXaxis().min(),h1.getXaxis().max());
+        StatNumber   result = new StatNumber();
+        StatNumber   denom  = new StatNumber();
+        for(int bin = 0; bin < h1.getXaxis().getNBins(); bin++){
+            result.set(h1.getBinContent(bin), h1.getBinError(bin));
+            denom.set(h2.getBinContent(bin), h2.getBinError(bin));
+            result.subtract(denom);
+            h1div.setBinContent(bin, result.number());
+            h1div.setBinError(bin, result.error());
+        }
+        return h1div;
+    } 
     /**
      * returns a new histogram with a content of h1 where the integral is normalized
      * to histogram h2.
@@ -867,6 +887,22 @@ public class H1F  implements DataSet {
             graph.addPoint(point.x, point.y, 
                     point.xerror,point.yerror);
         }
+        return graph;
+    }
+    
+    public Graph3D getGraph3D(double xvalue){
+        //GraphErrors  graph = new GraphErrors(this.getAxis().getBinCenters(),
+        //        this.getData());
+        Graph3D  graph = new Graph3D();
+        DataPoint point = new DataPoint();
+        int npoints = getSize(0);// this.getDataSize();
+        graph.addPoint(xvalue, this.xAxis.min(), 0.0);
+        for(int loop = 0; loop < npoints; loop++){
+            this.getPoint(point, loop);
+            graph.addPoint(xvalue, point.x, point.y
+                    );
+        }
+        graph.addPoint(xvalue, this.xAxis.max(), 0.0);
         return graph;
     }
     

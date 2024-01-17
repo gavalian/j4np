@@ -153,8 +153,20 @@ public class TDataFactory {
         }
         return h;
     }
+    public static H1F createH1Fs(int count, int bins, double min, double max, double mean, double sigma){
+        Random r = new Random();
+        H1F h = new H1F("h",bins,min,max);
+        h.attr().setLegend(String.format("rndm (#mu=%.2f, #sigma=%.3f)", mean,sigma));
+        h.attr().setTitleX("X-axis");
+        for(int loop = 0; loop < count; loop++){
+            double g = r.nextGaussian()*sigma + mean;
+            h.fill(g);
+            //h.fill(r.nextDouble()*(max-min)+min);
+        }
+        return h;
+    }
     
-     public static H1F createH1Fs(int count, int bins, double min, double max, double mean, double sigma){
+     public static H1F createH1Fg(int count, int bins, double min, double max, double mean, double sigma){
         Random r = new Random();
         H1F h = new H1F("h",bins,min,max);
         for(int loop = 0; loop < count; loop++){

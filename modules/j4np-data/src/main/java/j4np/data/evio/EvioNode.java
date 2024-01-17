@@ -121,6 +121,14 @@ public class EvioNode extends BaseStructure implements DataNode {
         return this.structBuffer.getInt(index+8);
     }
 
+    public long getLong(int index) {
+        return this.structBuffer.getLong(index*8+8);
+    }
+    
+    public long getLongAt(int index) {
+        return this.structBuffer.getLong(index+8);
+    }
+    
     public byte getByteAt(int index) {
         return this.structBuffer.get(index+8);
     }

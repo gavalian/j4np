@@ -147,6 +147,8 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             g2d.setClip(null);
             axisX.draw(g2d, r, axisFrameRange);
             axisY.draw(g2d, r, axisFrameRange);
+            //System.out.println("X  " + axisX.getAttributes().getAxisTitle());
+            //System.out.println("Y  " + axisY.getAttributes().getAxisTitle());
             
             if(this.dataNodes.get(0).getDataSet() instanceof H2F){
                 //System.out.println(" drawing Z axis with type = " + axisZ.getStyle());
@@ -158,24 +160,6 @@ public class TGAxisFrame extends Node2D implements StyleNode {
             
         }
         
-        //this.setLimits(axisFrameRange., layer, layer, layer)
-        //System.out.print(" AXIS range = " );axisFrameRange.show();
-        
-        //System.out.println(parent.getTranslation());
-        //System.out.println("border = " + parent.getBounds().getBounds());
-        
-        /*
-        if(axisX.getAttributes().getAxisBoxDraw()==true||
-                axisY.getAttributes().getAxisBoxDraw()==true
-                ){
-            g2d.drawRect((int) r.getX(), (int) r.getY(), 
-                    (int) r.getWidth(), (int) r.getHeight());
-        }*/
-        
-        //axisX.draw(g2d, r, axisFrameRange);
-        //axisY.draw(g2d, r, axisFrameRange);
-        //axisZ.draw(g2d, r, axisFrameRange);
-        
         for(int w = 0; w < widgetNodes.size(); w++){
             if(widgetNodes.get(w).isNDF()==true){
                 widgetNodes.get(w).draw(g2d, r, ndfFrameRange);
@@ -183,9 +167,6 @@ public class TGAxisFrame extends Node2D implements StyleNode {
                 widgetNodes.get(w).draw(g2d, r, axisFrameRange);
             }
         }
-        
-        
-        
     }
     
     public  List<Widget>       getWidgets(){ return this.widgetNodes;}

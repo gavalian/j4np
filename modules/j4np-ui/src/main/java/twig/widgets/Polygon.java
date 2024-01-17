@@ -90,14 +90,19 @@ public class Polygon implements Widget {
     }
     
     public static Polygon box(double xsize, double ysize){
+        return Polygon.trap(xsize, xsize, ysize);
+    }
+    
+    public static Polygon trap(double xsize_l, double xsize_h, double ysize){
         Polygon p = new Polygon();
-        p.addPoint(0.0, 0.0);
-        p.addPoint(0.0, ysize);
-        p.addPoint(xsize, ysize);
-        p.addPoint(xsize, 0.0);
-        p.addPoint(0.0, 0.0);
+        p.addPoint(-xsize_l/2, -ysize/2);
+        p.addPoint( xsize_l/2, -ysize/2);
+        p.addPoint( xsize_h/2,  ysize/2);
+        p.addPoint(-xsize_h/2,  ysize/2);
+        p.addPoint(-xsize_l/2, -ysize/2);
         return p;  
     }
+    
     
     private void drawLinear(Graphics2D g2d, Rectangle2D r, Translation2D tr){
         TStyle style = TStyle.getInstance();
@@ -149,7 +154,7 @@ public class Polygon implements Widget {
         }
         g2d.setColor(style.getPalette().getColor(lcolor));
         g2d.setStroke(style.getLineStroke(lstyle, lwidth));
-        
+        //System.out.println(" drawing path " + path);
         g2d.draw(path);
     }
     
@@ -204,7 +209,8 @@ public class Polygon implements Widget {
     }
     
     @Override
-    public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {        
+    public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {   
+        //System.out.println(" drawing Polygon " + r);
        this.drawLinear(g2d, r, tr);
     }
 

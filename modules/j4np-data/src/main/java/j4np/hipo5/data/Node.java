@@ -65,6 +65,12 @@ public class Node {
         for(int i = 0; i < value.length;i++) this.setByte(i, value[i]);        
     }
     
+    public Node(int group, int item, byte[] value, int offset, int length){
+        createNode(group,item,DataType.BYTE, length);
+        System.arraycopy(value, 0, this.nodeBuffer.array(), 8, length);
+        //for(int i = 0; i < length;i++) this.setByte(i, value[i]);   
+    }
+    
     public Node(int group, int item, short[] value){
         createNode(group,item,DataType.SHORT,value.length);
         for(int i = 0; i < value.length;i++) this.setInt(i, value[i]);        
@@ -77,6 +83,11 @@ public class Node {
         nodeBuffer = ByteBuffer.wrap(buffer);
         nodeBuffer.order(ByteOrder.LITTLE_ENDIAN);
         nodeType = getType();
+    }
+    
+    public void initDataFrom(byte[] data, int length){
+        System.arraycopy(data, 0, nodeBuffer.array(), 8, length);
+        nodeBuffer.putInt(   4, length&0x00FFFFFF);        
     }
     
     protected void allocate(int length){
@@ -485,7 +496,7 @@ public class Node {
      * @param index element index
      * @param value byte value to set
      */
-    public void setByte(int index, byte value){                
+    public final void setByte(int index, byte value){                
         if(nodeType!=DataType.BYTE){
             printWrongTypeMessage(DataType.BYTE);
             return;

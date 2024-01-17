@@ -1,3 +1,4 @@
 j4ml.clas12.classifier.ClassifierDataExtract
 j4np.neural.data.NeuralApplication
 j4ml.cvt.CvtApplication
+j4np.clas12.decoder.Clas12DecoderApp

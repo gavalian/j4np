@@ -37,6 +37,12 @@ public class DataVector {
         
     }
     
+    public static DataVector zeros(int size){
+        DataVector v = new DataVector();
+        for(int loop = 0; loop < size; loop++) v.add(0.0);
+        return v;
+    }
+    
     public DataVector(double[] data){
         this.set(data);
     }

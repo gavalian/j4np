@@ -287,6 +287,7 @@ public class Func1D implements DataSet {
         int np = this.getNPars();
         if(options.contains("S")==true){
             StringBuilder str = new StringBuilder();
+            str.append(String.format("#chi^2/NDF: %.3f,", this.getChiSquare()/this.getNDF()));
             for(int i = 0; i < np; i++){
                 if(i!=0) str.append(", ");
                 str.append(String.format("%s:"+format, this.parameter(i).label(),
@@ -296,6 +297,7 @@ public class Func1D implements DataSet {
             }
             stats.add(str.toString());
         } else {
+            stats.add(String.format("#chi^2/ndf:%.3f", this.getChiSquare()/this.getNDF()));
             for(int i = 0; i < np; i++){
                 
                 String par = String.format("%s:"+format, this.parameter(i).label(),

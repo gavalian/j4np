@@ -18,7 +18,7 @@ public class TwigFitExample {
     
     public static void main(String[] args){
         
-        H1F h = TDataFactory.createH1Fs(750, 80, 0.0, 1.0, 0.4, 0.05);
+        H1F h = TDataFactory.createH1Fs(750, 40, 0.0, 1.0, 0.4, 0.05);
         
         GraphErrors g = h.getGraph();
         
@@ -45,10 +45,12 @@ public class TwigFitExample {
         func.attr().setLineWidth(2);
         func.attr().setLineStyle(2);
         
-        TGCanvas c = new TGCanvas(530,450);
+        TGCanvas c = new TGCanvas(630,550);
         c.view().region().draw(g).draw(func,"same");
         c.view().region().showLegend(0.02, 0.98);
-        c.view().region().showStats(0.8, 0.95);
+        //c.view().region().showStats(0.8, 0.95);
         c.view().region().axisLimitsX(0, 1);
+        
+        c.region().showStats(1.005, 1.005);
     }
 }

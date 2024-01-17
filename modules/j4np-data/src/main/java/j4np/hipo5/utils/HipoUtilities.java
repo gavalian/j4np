@@ -29,9 +29,9 @@ public class HipoUtilities extends OptionApplication {
     
     public HipoUtilities(){
         
-        super("h5utils");
+        super("h5u");
         OptionStore parser = this.getOptionStore();
-        parser.setName("h5utils");
+        parser.setName("h5u");
         
         parser.addCommand("-filter", " filter banks from the input files");
         parser.addCommand("-filter2", " filter banks from the input files (improved version)");

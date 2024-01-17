@@ -30,6 +30,7 @@ public class DataIO {
         }
         return vectors;
     }
+    
     public static boolean contains(int n, int[] array){
         for(int i = 0; i < array.length; i++) if(n==array[i]) return true;
         return false;

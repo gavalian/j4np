@@ -225,7 +225,7 @@ public final class Line3D implements Transformable, Showable {
     public Point3D lerpPoint(double t) {
         return boundPoint0.lerp(boundPoint1, t);
     }
-
+    
     /**
      * Returns a vector from the origin point to the end point.
      *

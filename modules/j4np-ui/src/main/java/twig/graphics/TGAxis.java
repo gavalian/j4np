@@ -422,8 +422,12 @@ public class TGAxis implements StyleNode {
                 textWidget.setText(attributes.getAxisTitle());                
                 //textWidget.drawString(attributes.getAxisTitle(), g2d,
                 //        titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);
+                
+                //System.out.println(" DRAWING THE AXIS TITLE " + attributes.getAxisTitle());
                 textWidget.drawString( g2d,
-                        titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);
+                        titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.RIGHT);
+                
+                
             }
             /*textWidget.drawString("abra-catabra", g2d,
             titlePositionX , titlePositionY, TextAlign.CENTER, TextAlign.BOTTOM, TextRotate.LEFT);*/

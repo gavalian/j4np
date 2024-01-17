@@ -211,7 +211,33 @@ public class TPalette {
         word = (word|((a<<24)&0xFF000000));
        return word;
     }
+    public static Color colorFromString(String value){
+        if(value.startsWith("#")==true&&value.length()>=7){
+            String red = value.substring(1, 3);
+            String green = value.substring(3, 5);
+            String blue = value.substring(5, 7);
+            //System.out.printf("===> LENGTH = %d -%s , %s , %s\n",value.length(),red,green,blue);
+            return new Color(Integer.parseInt(red, 16), 
+                    Integer.parseInt(green, 16), 
+                    Integer.parseInt(blue, 16));
+        }
+        return null;
+    }
     
+    public static int createColorFromString(String value){
+        if(value.startsWith("#")==true&&value.length()>=7){
+            String red = value.substring(1, 3);
+            String green = value.substring(3, 5);
+            String blue = value.substring(5, 7);
+            //System.out.printf("===> LENGTH = %d -%s , %s , %s\n",value.length(),red,green,blue);
+            return TPalette.createColor(Integer.parseInt(red, 16), 
+                    Integer.parseInt(green, 16), 
+                    Integer.parseInt(blue, 16),
+                    255);
+        }
+        System.out.printf("ERROR: the string %s is in wrong color format\n",value);
+        return -1;
+    }
     public static int createColor(int r, int g, int b, int a){
         int word = b;
         int alpha = a/2;        

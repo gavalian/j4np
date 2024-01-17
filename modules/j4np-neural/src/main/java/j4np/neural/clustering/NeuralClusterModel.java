@@ -53,9 +53,23 @@ public class NeuralClusterModel {
         return h;        
     }
     
+    public H2F getData2(CompositeNode node, int sector){
+        H2F h = new H2F("h",112,0.5,112.5,36,0.5,36.5);        
+        for(int k = 0; k < node.getRows(); k++){
+            int det = node.getInt(0, k);
+            int sec = node.getInt(1, k);
+            int x   = node.getInt(2, k)-1;
+            int y   = node.getInt(3, k)-1;            
+            //System.out.printf("sec = %5d, x/y = %5d, %5d\n",node.getInt(0, k),x,y);
+            if(sec==sector&&det==6) h.setBinContent( node.getInt(3,k)-1,node.getInt(2, k)-1, 1.0);
+        }
+        return h;        
+    }
+    
     public void process(Event event){
         CompositeNode node = new CompositeNode(12,1,"bbsbil",4060);        
-        event.read(node,12,1);
+        //event.read(node,12,1);
+        event.read(node,33,1);
         
         ClusterFinder finder = new ClusterFinder(0.2);
         //node.show();
@@ -64,7 +78,7 @@ public class NeuralClusterModel {
         cl.setRows(0);
         
         for(int s = 0; s < 6; s++){
-            H2F h = getData(node, s+1);            
+            H2F h = getData2(node, s+1);
             //AsciiPlot.drawh2(h);
             for(int l = 0; l < 6; l++){
                 H2F hs = h.sliceY(l*6, l*6+5);

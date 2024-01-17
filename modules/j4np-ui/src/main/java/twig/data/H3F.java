@@ -7,7 +7,9 @@ package twig.data;
 
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import twig.config.TDataAttributes;
 import twig.math.MultiIndex;
 
 
@@ -15,14 +17,21 @@ import twig.math.MultiIndex;
  * @author Gagik Gavalian
  * 
  */
-public class H3F {
+public class H3F implements DataSet {
 
     private final Axis xAxis = new Axis();
     private final Axis yAxis = new Axis();
     private final Axis zAxis = new Axis();
     
     private MultiIndex offset = new MultiIndex();
-    private float[] hBuffer;
+    protected double[] hBuffer;
+    
+    private String hName = "h3f";
+    protected long uniqueID = 0L;
+    protected int nEntries = 0;
+    
+    
+    protected TDataAttributes dataAttr = new TDataAttributes();
     
     public H3F(int xbins, double xmin, double xmax, int ybins, double ymin, double ymax,
             int zbins, double zmin, double zmax){
@@ -35,12 +44,18 @@ public class H3F {
     }
     
     
+    
+    @Override
+    public String getName(){ return this.hName;}
+    public long getUniqueID(){return this.uniqueID;}
+    public int  getEntries(){ return this.nEntries;}
+    
      private void initData(double[] xLimits, double[] yLimits, double[] zLimits){
         xAxis.set(xLimits);
         yAxis.set(yLimits);
         zAxis.set(zLimits);
         offset.setDimensions(xAxis.getNBins(),yAxis.getNBins(),zAxis.getNBins());
-        hBuffer = new float[offset.getArraySize()];
+        hBuffer = new double[offset.getArraySize()];
     }
      
     private void initData(int xbins, double xmin, double xmax, int ybins, double ymin, double ymax,
@@ -49,10 +64,13 @@ public class H3F {
         yAxis.set(ybins, ymin, ymax);
         zAxis.set(zbins, zmin, zmax);
         offset.setDimensions(xbins,ybins,zbins);
-        hBuffer = new float[offset.getArraySize()];
+        hBuffer = new double[offset.getArraySize()];
     }
     
-    
+    //public Axis getAxisX(){return this.xAxis;}
+    //public Axis getAxisY(){return this.yAxis;}
+    //public Axis getAxisZ(){return this.zAxis;}
+
     private boolean isValidBins(int bx, int by, int bz){
         if ((bx >= 0) && (bx <= xAxis.getNBins()) && (by >= 0)
                 && (by <= yAxis.getNBins()) && (bz>=0) && 
@@ -123,7 +141,7 @@ public class H3F {
         return this.hBuffer.length;
     }
     
-    public float getDataBufferBin(int bin){
+    public double getDataBufferBin(int bin){
         return hBuffer[bin]; 
     }
     
@@ -187,6 +205,55 @@ public class H3F {
             slicesZ.add(h2);
         }
         return slicesZ;
+    }
+
+    @Override
+    public void setName(String name) {
+        hName = name;
+    }
+
+    @Override
+    public int getSize(int dimention) {
+        switch(dimention){
+            case 0: return this.xAxis.getNBins();
+            case 1: return this.yAxis.getNBins();
+            case 2: return this.zAxis.getNBins();
+            default: break;
+        }
+        return 0;
+    }
+
+    @Override
+    public void getPoint(DataPoint point, int... coordinates) {
+        point.x = this.xAxis.getBinCenter(coordinates[0]);
+        point.xerror = this.xAxis.getBinWidth(coordinates[0]);
+        
+        point.y = this.yAxis.getBinCenter(coordinates[1]);
+        point.yerror = this.yAxis.getBinWidth(coordinates[1]);
+        
+        
+        point.z = this.zAxis.getBinCenter(coordinates[2]);
+        point.zerror = this.zAxis.getBinWidth(coordinates[2]); 
+    }
+
+    @Override
+    public void getRange(DataRange range) {
+        range.set(
+                this.xAxis.min(),  this.xAxis.max(),
+                this.yAxis.min(),  this.yAxis.max()
+        );
+        range.z    = this.xAxis.min();
+        range.dept = this.xAxis.max()-this.xAxis.min();        
+    }
+
+    @Override
+    public TDataAttributes attr() {
+       return  dataAttr;
+    }
+
+    @Override
+    public List<String> getStats(String options) {
+        return Arrays.asList("x","y","z");
     }
     
     

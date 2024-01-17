@@ -14,6 +14,7 @@ import twig.widgets.Polygon;
  * @author gavalian
  */
 public class WidgetDebug {
+    
     public static void polygonDebug(){
         TGCanvas c = new TGCanvas();
         H1F h = TDataFactory.createH1F(1200, 120, 0.0, 1.0, 0.6, 0.15);
@@ -21,8 +22,8 @@ public class WidgetDebug {
         
         Polygon p = new Polygon(new double[]{0.4,0.5,0.8,0.7,0.4}, new double[]{10,35,42,15,10});
         p.attrLine().setLineWidth(3);
-        
-        c.draw(h).draw(p);        
+    
+        c.draw(h).draw(p);
 
         Polygon b = Polygon.box(0.4, 20);
         b.attrLine().setLineStyle(3);

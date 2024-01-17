@@ -19,6 +19,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import twig.config.TAttributeUtils;
 import twig.config.TAttributeUtils.ValuePair;
+import twig.config.TPalette;
 import twig.config.TStyle;
 import twig.data.DataGroup;
 import twig.data.DataSet;
@@ -441,6 +442,88 @@ public class TGRegion extends Node2D implements StyleNode {
         return this;
     }
     
+    public void set(String options){
+        String[] tokens = options.split(",");
+        for(String token : tokens) setByToken(token.trim());
+    }
+    private Color getColorByString(String color){
+        if(color.startsWith("#")==true){
+           return TPalette.colorFromString(color);
+        } 
+        return TStyle.getInstance().getPalette().getColor(Integer.parseInt(color));        
+    }
+    
+    public void setAxisWidth(int width){
+        this.axisFrame.getAxisX().getAttributes().setAxisLineWidth(width);
+        this.axisFrame.getAxisY().getAttributes().setAxisLineWidth(width);
+        this.axisFrame.getAxisZ().getAttributes().setAxisLineWidth(width);
+        this.axisFrame.getAxisX().getAttributes().setAxisTicksLineWidth(width);
+        this.axisFrame.getAxisY().getAttributes().setAxisTicksLineWidth(width);
+        this.axisFrame.getAxisZ().getAttributes().setAxisTicksLineWidth(width);
+    }
+    
+    public void setAxisColor(Color c){
+        this.axisFrame.getAxisX().getAttributes().setAxisLabelColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        this.axisFrame.getAxisY().getAttributes().setAxisLabelColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        this.axisFrame.getAxisZ().getAttributes().setAxisLabelColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        
+        this.axisFrame.getAxisX().getAttributes().setAxisTitleColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        this.axisFrame.getAxisY().getAttributes().setAxisTitleColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        this.axisFrame.getAxisZ().getAttributes().setAxisTitleColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        
+        this.axisFrame.getAxisX().getAttributes().setAxisLineColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        this.axisFrame.getAxisY().getAttributes().setAxisLineColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+        this.axisFrame.getAxisZ().getAttributes().setAxisLineColor(
+                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+    }
+    
+    private void setAxisDrawOptions(String options){
+        //System.out.printf(" OPTIONS [%s]\n",options);
+        if(options.contains("x")==true){
+            this.axisFrame.getAxisX().getAttributes().setAxisLabelsDraw(true);
+            this.axisFrame.getAxisX().getAttributes().setAxisTitlesDraw(true);
+        } else {
+            this.axisFrame.getAxisX().getAttributes().setAxisLabelsDraw(false);
+            this.axisFrame.getAxisX().getAttributes().setAxisTitlesDraw(false);
+        }
+        if(options.contains("y")==true){
+            this.axisFrame.getAxisY().getAttributes().setAxisLabelsDraw(true);
+            this.axisFrame.getAxisY().getAttributes().setAxisTitlesDraw(true);
+        } else {
+            this.axisFrame.getAxisY().getAttributes().setAxisLabelsDraw(false);
+            this.axisFrame.getAxisY().getAttributes().setAxisTitlesDraw(false);
+        }
+        
+    }
+    private void setByToken(String token){
+        String[] pair = token.split("=");
+        if(pair.length==2){
+            switch(pair[0]){
+                case "bc": {Color c = this.getColorByString(pair[1]); setBackgroundColor(c.getRed(),c.getGreen(),c.getBlue());} break;
+                case "fc": {Color c = this.getColorByString(pair[1]); this.axisFrame.setBackgroundColor(c.getRed(),c.getGreen(),c.getBlue());} break;
+                case "ac": {Color c = this.getColorByString(pair[1]); 
+                           this.setAxisColor(c);} break;
+                case "al": this.setAxisDrawOptions(pair[1]); break;
+                case "lw": this.setAxisWidth(Integer.parseInt(pair[1])); break;
+                case "ml": this.getInsets().left(Integer.parseInt(pair[1])); break;
+                case "mr": this.getInsets().right(Integer.parseInt(pair[1])); break;
+                case "mt": this.getInsets().top(Integer.parseInt(pair[1])); break;
+                case "mb": this.getInsets().bottom(Integer.parseInt(pair[1])); break;
+                default: break;
+            }
+        } else 
+            System.out.println("TGRegion: error with set token ["+token+"]");
+    }
+    
+    
     public TGRegion setAxisTicksX(double[] values, String[] labels){
         getAxisFrame().getAxisX().getAttributes().getAxisTicksPosition().clear();
         getAxisFrame().getAxisX().getAttributes().getAxisTicksString().clear();
@@ -506,6 +589,7 @@ public class TGRegion extends Node2D implements StyleNode {
         draw(ds,"*"); return this;
     }
     
+    
     public TGRegion draw(List<? extends DataSet> list, String options){
         if(options.contains("same")==false){
             this.axisFrame.clear();
@@ -523,6 +607,10 @@ public class TGRegion extends Node2D implements StyleNode {
     
     public TGRegion draw(Widget w){
         this.axisFrame.addWidget(w);
+        return this;
+    }
+    public TGRegion draw(List<? extends Widget> list){
+        for(Widget w : list) this.axisFrame.addWidget(w);
         return this;
     }
     

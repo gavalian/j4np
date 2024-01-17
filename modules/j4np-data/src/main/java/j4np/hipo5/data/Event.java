@@ -7,14 +7,12 @@ package j4np.hipo5.data;
 
 import j4np.data.base.DataEvent;
 import j4np.data.base.DataNode;
-import j4np.hipo5.data.Schema.SchemaBuilder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  *
@@ -206,12 +204,29 @@ public class Event implements DataEvent {
      */
     public boolean remove(int __group, int __item){
         int index = scan(__group, __item);
-        if(index<0) return false;        
+        if(index<0) return false;
         int length = scanLength(__group, __item);
+        System.out.println("LENGTH = " + length);
+        
         int nextPosition = index + 8 + length;
         int eventLength  = getEventBufferSize();
         System.arraycopy(eventBuffer.array(), nextPosition, eventBuffer.array(), index, eventLength - nextPosition);
         eventBuffer.putInt(this.EVENT_LENGTH_OFFSET, eventLength - length - 8);
+        return true;
+    }
+    
+    public boolean replace(int group, int item, CompositeNode node){
+        int position = this.scan(group,item);
+        int length = this.scanLengthAt(group,item, position);
+        int node_length = node.getLength();
+        //System.out.printf("-- node @ %d -- data length = %d, node length = %d\n",
+        //        position,length, node_length);
+        if(length!=node_length){
+            System.out.printf("----- error replacing node (%6d,%6d) dues to size difference %d,%d\n",
+                    node.getGroup(),node.getItem(),length, node_length);
+            return false;
+        }
+        System.arraycopy(node.getByteBuffer().array(), 0, this.eventBuffer.array(), position, length);
         return true;
     }
     
@@ -315,8 +330,9 @@ public class Event implements DataEvent {
         return node;
     }
     
-    protected void read(CompositeNode node, int position){
-        
+    public void read(CompositeNode node, int position){
+        int length = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
+        node.initFromBuffer(this.eventBuffer.array(), position, length+8);
     }
     
     public void read(CompositeNode node){
@@ -477,6 +493,32 @@ public class Event implements DataEvent {
         //return -1;
     }
     
+    public void scanLeafs(CompositeNode index){
+        int    position = EVENT_HEADER_SIZE;
+        int eventLength = this.eventBuffer.getInt(EVENT_LENGTH_OFFSET);
+        //this.eventNodesMap.reset();
+        index.setRows(0);
+        int row = 0;
+        while(position + NODE_HEADER_LENGTH < eventLength){
+            short group = eventBuffer.getShort( position    );
+            //System.out.println(" group = " + group);
+            byte  item  = eventBuffer.get(      position + 2);
+            byte  type  = eventBuffer.get(      position + 3);
+            int   sizeWord  = eventBuffer.getInt( position + 4);
+            int   size  = sizeWord&0x00FFFFFF;
+            int   format = (sizeWord>>24)&0x000000FF;
+            
+            index.setRows(row+1);
+            index.putInt(0, row, group);
+            index.putInt(1, row, item);
+            index.putInt(2, row, position);
+            row++;
+            //System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , format length = %4d, size = %4d\n",
+            //        group,item, position, type, format, size);
+            //if(__group==group&&__item==item)    return position;
+            position += size + NODE_HEADER_LENGTH;
+        }
+    }
     public List<String> scanLeafs(){
         List<String> leafs = new ArrayList<>();
         int    position = EVENT_HEADER_SIZE;
@@ -506,7 +548,7 @@ public class Event implements DataEvent {
          short group = eventBuffer.getShort( position    );
          byte  item  = eventBuffer.get(      position + 2);
          byte  type  = eventBuffer.get(      position + 3);
-         int   size  = eventBuffer.getInt(   position + 4);
+         int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
          if(__group==group&&__item==item)   return (size&0x00FFFFFF);
         return -1;
     }
@@ -515,14 +557,15 @@ public class Event implements DataEvent {
 
         int    position = EVENT_HEADER_SIZE;
         int eventLength = this.eventBuffer.getInt(EVENT_LENGTH_OFFSET);
-        this.eventNodesMap.reset();
+        //this.eventNodesMap.reset();
         
         while(position +NODE_HEADER_LENGTH <eventLength){
             short group = eventBuffer.getShort( position    );
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
             byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4);
+            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
+            //System.out.printf("--- %d %d - %d -- %d\n",group, item, type, size);
             if(__group==group&&__item==item)    return (size&0x00FFFFFF);
             position += size + NODE_HEADER_LENGTH;
         }
@@ -745,6 +788,16 @@ public class Event implements DataEvent {
         event.read(node4,12,3);
         
         node4.show();
+        node4.print();
+        
+        event.remove(12, 2);
+        event.scanShow();
+        
+        node4.setItem(33);
+        
+        event.replace(12,3, node4);
+        
+        event.scanShow();
         /*
         SchemaBuilder schemaBuilder = new SchemaBuilder("event",1234,1);
         schemaBuilder.addEntry("pid", "I", "pid");

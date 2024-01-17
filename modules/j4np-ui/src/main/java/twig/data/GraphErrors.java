@@ -133,12 +133,12 @@ public class GraphErrors implements DataSet {
         dataY.set(point, y);
     }
 
-    public void shiftX(double xshift){
+    public void shiftX(double xshift){        
         int npoints = this.dataX.getSize();
-        for (int i = 0; i < npoints; i++){
-            double xvalue = this.dataX.getValue(i);
-            this.dataX.set(i, xvalue+xshift);
-        }
+        DataVector vtemp = new DataVector();
+        for(int k = 0; k < npoints; k++) vtemp.add(this.dataX.getValue(k)+xshift);
+        dataX.clear();
+        for (int i = 0; i < npoints; i++) this.dataX.add(vtemp.getValue(i));
     }
     
     public void setError(int point, double ex, double ey) {

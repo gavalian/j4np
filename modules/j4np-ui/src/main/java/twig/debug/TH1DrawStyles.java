@@ -109,9 +109,40 @@ public class TH1DrawStyles {
         
         c.repaint();
     }
+    
+    public static void drawColors(){
+        Random r = new Random();        
+        TGCanvas c = new TGCanvas(600,600);                        
+        H1F h = TDataFactory.createH1F(2500, 240, 0, 1.0, 0.3, 0.045);
+        for(int i=0; i < 1800; i++ ){
+            double value = r.nextDouble()+r.nextDouble();
+            h.fill(value);
+        }
+        
+        h.attr().setTitleY("counts");
+        h.attr().setTitleX("x-axis");
+        TPalette p = TStyle.getInstance().getPalette();
+        int cint = TPalette.createColor(250, 250, 51,250);
+        int cint2 = TPalette.createColorFromString("#FF00CC");
+        
+        //h.attr().set("fc=#FAFA33,mc=#FF0000,lc=#000000");
+        h.attr().set("fc=#B80000,mc=#FF0000,lc=5");
+        
+        //System.out.println(" COLOR INT = " + cint);
+        
+        Color col = p.getColor(cint2);
+        //System.out.println(" color = " + col);
+        c.region().set("fc=#EEEEEE,ac=1,lw=1");
+        c.setBackground(null);
+        //c.region().setBackgroundColor(cint, cint, cint)
+        //c.region().getInsets().left(120);
+        c.draw(h,"PEF");
+    }
+    
     public static void main(String[] args){
         //TH1DrawStyles.gradient();
-        TH1DrawStyles.drawBenchmarks();
+        //TH1DrawStyles.drawBenchmarks();
+        TH1DrawStyles.drawColors();
     }
     
 }

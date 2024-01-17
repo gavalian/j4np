@@ -2,7 +2,7 @@
 #----------------------------------------------------
 # This script puts together the entire districution
 #----------------------------------------------------
-version=1.0.7
+version=1.0.8
 
 while getopts v:d: flag
 do
@@ -33,6 +33,7 @@ cp -r modules/j4np-package/scripts j4np-${version}/.
 cp modules/j4np-package/target/*with-dependencies.jar j4np-${version}/lib/core/j4np-${version}.jar
 #cp extensions/j4np-analysis/target/*with-dependencies.jar j4np-${version}/lib/ext/.
 cp extensions/j4ml-track/target/*with-dependencies.jar j4np-${version}/lib/ext/.
+cp extensions/j4np-clas12io/target/*with-dependencies.jar j4np-${version}/lib/ext/.
 cp extensions/j4ml-classifier/target/*with-dependencies.jar j4np-${version}/lib/ext/.
 #cp extensions/j4np-level3/target/*shaded.jar j4np-${version}/lib/ext/.
 #cp extensions/j4ml-classifier/target/*with-depend*.jar j4np-${version}/lib/ext/.

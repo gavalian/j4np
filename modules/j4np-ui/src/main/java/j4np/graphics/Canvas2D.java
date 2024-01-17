@@ -22,6 +22,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -167,6 +168,18 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         this.graphicsComponents.addAll(nodes);
     }
     
+    public void arrange(CanvasLayout layout){
+        for(int i = 0; i < layout.size(); i++){
+            if(i<graphicsComponents.size()){
+                Rectangle2D rect = layout.getBounds(i);
+                graphicsComponents.get(i).setBoundsBind(
+                        rect.getX(),rect.getY(),
+                        rect.getWidth(),rect.getHeight()
+                );
+                graphicsComponents.get(i).alignMode(Node2D.ALIGN_RELATIVE);
+            }
+        }
+    }
     public void arrange(double[][] fractions){
         int    nColumns = fractions.length;
         //System.out.println("COLUMNS:: ARRANGE = " + nColumns);
@@ -205,7 +218,7 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     }
     
     public void arrange(int xDivisions, int yDivisions){
-         double xStep = 1.0/xDivisions;
+        double xStep = 1.0/xDivisions;
         double  yStep = 1.0/yDivisions;
         int  counter = 0;
         for(int y = 0; y < yDivisions; y++){

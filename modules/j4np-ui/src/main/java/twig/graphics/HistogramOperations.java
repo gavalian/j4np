@@ -33,6 +33,7 @@ public class HistogramOperations extends DatasetActionPanel implements ActionLis
        super(parent);
        dataList.addAll(h);
        this.init();
+       this.setSize(750, 650);
     }
     
     public JComboBox createComboBox(List<H1F> list){
@@ -64,15 +65,20 @@ public class HistogramOperations extends DatasetActionPanel implements ActionLis
         JButton btnAdd = this.createButton("Add");
         JButton btnDiv = this.createButton("Divide");
         JButton btnMlt = this.createButton("Multiply");
+        JButton btnAsym = this.createButton("Assymmetry");
+        
+        JButton btnDummy = this.createButton("Dummy");
         
         this.addWitLabel(controls, "First:", cbOne);
         controls.add(btnSub);
         controls.add(btnAdd);
+        controls.add(btnAsym);
         this.addWitLabel(controls, "Second:", cbTwo);
         controls.add(btnDiv);
         controls.add(btnMlt);
+        controls.add(btnDummy);
         SpringUtilities.makeCompactGrid(controls,
-                                        2, 4, //rows, cols
+                                        2, 5, //rows, cols
                                         8, 8,        //initX, initY
                                         8, 8);
         
@@ -115,6 +121,24 @@ public class HistogramOperations extends DatasetActionPanel implements ActionLis
                     + two.getIntegral());
             
             H1F hsub = H1F.divide(one, two);
+            this.getCanvas().activeCanvas().region().draw(hsub);
+            this.getCanvas().activeCanvas().repaint();
+        }
+        
+        if(e.getActionCommand().compareTo("Assymmetry")==0){
+            H1F one = this.dataList.get(cbOne.getSelectedIndex());
+            H1F two = this.dataList.get(cbTwo.getSelectedIndex());
+            
+            System.out.println("DEBUG:: selected index 1 = " 
+                    + cbOne.getSelectedIndex() + " 2 = " + cbTwo.getSelectedIndex());
+            
+            System.out.println("DEBUG:: integral index 1 = "  + one.integral() + " 2 = " 
+                    + two.getIntegral());
+            
+            H1F hsumm = H1F.add(one, two);
+            H1F hdiff = H1F.sub(one, two);
+            
+            H1F hsub = H1F.divide(hdiff, hsumm);
             this.getCanvas().activeCanvas().region().draw(hsub);
             this.getCanvas().activeCanvas().repaint();
         }

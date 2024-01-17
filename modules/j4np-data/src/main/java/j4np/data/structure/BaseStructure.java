@@ -33,6 +33,11 @@ public class BaseStructure {
         structBuffer.order(bufferOrder);
     }
     
+    public BaseStructure(byte[] array){
+        structBuffer = ByteBuffer.wrap(array);
+        structBuffer.order(bufferOrder);
+    }
+    
     public BaseStructure(int size){
         structBuffer = ByteBuffer.wrap(new byte[size]);
         structBuffer.order(bufferOrder);

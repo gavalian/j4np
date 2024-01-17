@@ -7,6 +7,7 @@ package twig.debug;
 import j4np.geom.prim.Point3D;
 import j4np.graphics.Translation2D;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -18,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import twig.config.TAxisAttributes.AxisType;
 import twig.graphics.TGAxis;
+import twig.widgets.LatexText;
 
 /**
  *
@@ -67,6 +69,7 @@ public class AxisPaneDebug extends JPanel {
         //-------------
         g2d.setTransform(original);
     }
+    
     @Override
     public void paint(Graphics g){
         
@@ -78,8 +81,12 @@ public class AxisPaneDebug extends JPanel {
         
         int w = this.getSize().width;
         int h = this.getSize().height;
+        g2d.drawRect(120, 120, 200, 200);
+        LatexText text = new LatexText("String Text Latex",120,120);
+        text.setFont(new Font("PTSerif",Font.PLAIN,24));
+        text.drawString(g2d, 320, 120, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER,LatexText.TextRotate.RIGHT);
         
-        Shape shape = new Rectangle2D.Float(300, 250, 100, 100);
+        /*Shape shape = new Rectangle2D.Float(300, 250, 100, 100);
     
         Graphics2D g2 = (Graphics2D) g;
         
@@ -114,83 +121,9 @@ public class AxisPaneDebug extends JPanel {
         
         g2d.setColor(Color.blue);
         
-        g2d.draw(path);
+        g2d.draw(path);*/
         
-        /*
-        
-        TGAxis axis = new TGAxis(AxisType.AXIS_X);
-        axis.getAttributes().setAxisBoxDraw(Boolean.FALSE);
-        axis.getAttributes().setAxisTickMarkSize(-8);
-        axis.getAttributes().setAxisTitle("Rotated Axis");
-        Rectangle2D r = new Rectangle2D.Double(40, 40, 400,400);
-        Translation2D tr = new Translation2D(0,1,0,1);
-        
-        
-        
-        g2d.draw(shape);
-        g2d.drawString("Some", 300,260);
-        AffineTransform at = new AffineTransform();
-        at.setToRotation(Math.toRadians(-30));
-        at.scale(2, 2);
-        //at.setToShear(2, 2);
-        //at.setToTranslation(300, 300);
-        System.out.println(at.getScaleX());
-        
-        g2.setTransform(at);
-        g2.draw(shape);
-        axis.draw(g2d, r, tr);
-        g2d.drawString("Some", 300,260);*/
-        /*
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect(0,0,w,h);
-        
-        
-        g2d.setColor(Color.yellow);
-        g2d.drawLine(0, 0, w, h);
-        
-        this.drawGrid(g2d, w, h);
-        
-        TGAxis axis = new TGAxis(AxisType.AXIS_X);
-        axis.getAttributes().setAxisBoxDraw(Boolean.FALSE);
-        axis.getAttributes().setAxisTickMarkSize(-8);
-        axis.getAttributes().setAxisTitle("Rotated Axis");
-        Rectangle2D r = new Rectangle2D.Double(40, 40, 400,400);
-        Translation2D tr = new Translation2D(0,1,0,1);
-        
-        
-        int x1 = -200;
-        int y1 = -200;
-        
-        int x2 = 200;
-        int y2 = 200;
-        
-        g2d.setColor(Color.BLACK);
-        //g2d.drawLine(x1,y1,x2,y2);
-        g2d.drawLine(x1+w/2,y1+h/2,x2+w/2,y2+h/2);
-        g2d.fillOval(250-2, 250-2, 4, 4);
-        g2d.fillOval(450-2, 450-2, 4, 4);
-        //axis.draw(g2d, r, tr);
-        AffineTransform original = g2d.getTransform();
-        g2d.setTransform(AffineTransform.getRotateInstance(Math.toRadians(-90),
-                //0,0));
-                0, 0));
-         g2d.setColor(Color.RED);
-        g2d.drawLine(x1+w/2,y1+h/2,x2+w/2,y2+h/2);
-        g2d.setTransform(original);
-        
-        g2d.setTransform(AffineTransform.getRotateInstance(Math.toRadians(90),
-                //0,0));
-                w,h));
-         g2d.setColor(Color.RED);
-        //g2d.drawLine(x1,y1,x2,y2);
-        g2d.drawLine(x1+w/2,y1+h/2,x2+w/2,y2+h/2);
-        g2d.setTransform(original);
-        //axis.draw(g2d, r, tr);
-        
-        //g2d.dispose();
-        
-*/
-        
+  
     }
     
     public static void main(String[] args){

@@ -355,6 +355,22 @@ public class Camera3D implements Transformable {
         getPoint(original.end(), projected.end());
     }
     
+    public void drawPoints(Graphics2D g2d, Screen3D screen, Color c, int size, Point3D... points){
+        g2d.setColor(c);
+        Point3D projected = new Point3D();
+        int halfsize = size/2;
+        //System.out.println("--- draw points");
+        for(int i = 0; i < points.length; i++){
+            getPoint(points[i],projected);
+            g2d.fillOval(
+                    (int) (screen.getX(projected.x())-halfsize),
+                    (int)( screen.getY(projected.y())-halfsize)
+                    , size, size);
+            //points[i].show();
+            //projected.show();
+        }
+        
+    }
     public void drawPath(Graphics2D g2d, Screen3D screen, boolean closed, Color c, BasicStroke stroke, Point3D... points){
         GeneralPath path = new GeneralPath();
         getPath(path,screen, closed,points);

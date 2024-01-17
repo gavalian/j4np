@@ -7,6 +7,7 @@ package twig.graphics;
 
 import j4np.graphics.Background2D;
 import j4np.graphics.Canvas2D;
+import j4np.graphics.CanvasLayout;
 import j4np.graphics.Node2D;
 import j4np.graphics.PopupProvider;
 import java.awt.Color;
@@ -65,6 +66,17 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     
     public void setDrawEmptyRegions(boolean flag){
         drawRegionsEmpty = flag;
+    }
+    
+    public void divide(CanvasLayout layout){
+        int size = layout.size();
+        this.getGraphicsComponents().clear();
+        for(int i = 0; i < size; i++){
+            TGRegion pad = new TGRegion(drawRegionsEmpty);
+            this.addNode(pad);
+        }
+        this.arrange(layout);
+        this.repaint();
     }
     
     public void divide(double[][] fractions){
@@ -636,6 +648,16 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             }
         }
         
+        if(e.getActionCommand().compareTo("fitter_panel")==0){
+            if(popupProvider.region!=null){                
+                List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
+                List<DataSet> datasets = new ArrayList<>();
+                for(TDataNode2D dn : obj) datasets.add(dn.getDataSet());
+                FitterPanelMinuit panel = new FitterPanelMinuit(datasets,null);
+                panel.showDialog();
+            }
+        }
+        
         if(e.getActionCommand().compareTo("operations_1D")==0){
             if(popupProvider.region!=null){                
                 List<TDataNode2D> obj = popupProvider.region.getAxisFrame().dataNodes;
@@ -645,6 +667,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                         datasets.add((H1F) dn.getDataSet());
                 }
                 HistogramOperations panel = new HistogramOperations(datasets,null);
+                //panel.setSize(900, 300);
                 panel.showDialog();
             }
         }
@@ -789,8 +812,8 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
            
             
             this.addMenu(menu, "Operations", 
-                    new String[]{"Fitter Panel","2D Viewer X","2D Viewer Y","Operations"}, 
-                    new String[]{"fitter_panel_genetic"
+                    new String[]{"Fitter Panel","Fitter Pannel Genetic", "2D Viewer X","2D Viewer Y","Operations"}, 
+                    new String[]{"fitter_panel","fitter_panel_genetic"
                             ,"2d_viewer_panel_X","2d_viewer_panel_Y","operations_1D"
                     }
             );

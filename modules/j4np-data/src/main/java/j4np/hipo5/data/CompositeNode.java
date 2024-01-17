@@ -49,7 +49,7 @@ public class CompositeNode extends BaseHipoStructure {
         dataDescriptor.parse(format);
         int rowLength = dataDescriptor.getStructureLength();
         int formatLength = format.length();
-        int size = rowLength*rows + formatLength;        
+        int size = rowLength*rows + formatLength;      
         require(size);
         this.setGroup(group).setItem(item).setType(10).setFormatAndLength(format, rowLength*rows);
     }
@@ -501,8 +501,36 @@ public class CompositeNode extends BaseHipoStructure {
                 this.structBuffer.array(), rowOffsetDst, rowLengthSrc);
     }
     
+    
+    public boolean copyRows(CompositeNode b, int row, int length){
+        int rowSize      = b.getRowsSize();
+        int rowSizeLocal = this.getRowsSize();
+        if(rowSize!=rowSizeLocal){
+            System.out.printf("error:: composite node copyRows. incompatible size %6d %6d\n",
+                    rowSize, rowSizeLocal);
+            return false;
+        }
+        int currentRow = this.getRows();
+        int offsetlocal = this.getRowOffset(currentRow);
+        int offset = b.getRowOffset(row);
+        int blen   = length*rowSize;
+        //System.out.printf(" current row = %d, row offset local = %d, row offset = %d, length %d\n",
+        //        currentRow, offsetlocal, offset, blen );        
+        //System.out.printf("capacity = %d\n",this.getByteBuffer().limit());
+        if(offsetlocal+blen>=this.getByteBuffer().capacity()){
+            System.out.printf("error:: composite node copyRows. insufficient space copy length %d\n",
+                    blen); return false;
+        }
+        
+        System.arraycopy(b.getByteBuffer().array(), offset, getByteBuffer().array(),
+                offsetlocal , blen);
+        
+        this.setRows(currentRow+length);
+        return true;
+    }
+    
     public static void main(String[] args){
-        CompositeNode node1 = CompositeNode.random(4);
+        CompositeNode node1 = CompositeNode.random(12);
         CompositeNode node2 = CompositeNode.random(6);
         
         System.out.println("----------------------");
@@ -510,13 +538,20 @@ public class CompositeNode extends BaseHipoStructure {
         System.out.println("----------------------");
         node2.print();
         
+        node1.setRows(10);
+        System.out.println("----------------------");
+        node2.show();
+        node1.print();
+        node1.copyRows(node2,0,6);
+        System.out.println("----------------------");
+        node1.print();
+        /*
         node1.copyRow(node2, 5, 0);
-        node1.copyRow(node2, 4, 2);
-        
+        node1.copyRow(node2, 4, 2);        
         node1.copyRow(node2, 6, 2);
         
         System.out.println("----------------------");
-        node1.print();
+        node1.print();*/
         /*
         Event e = new Event();
         Node n1 = new Node(5,1,new float[15]);

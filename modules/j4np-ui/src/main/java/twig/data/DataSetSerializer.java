@@ -49,6 +49,11 @@ public class DataSetSerializer {
             return jsonString;
         }
         
+        if(ds instanceof H3F){
+            String jsonString = DataSetSerializer.serialize_H3F_JSON((H3F) ds);
+            return jsonString;
+        }
+        
         if(ds instanceof GraphErrors){
             String jsonString = DataSetSerializer.serialize_GraphErrors_JSON((GraphErrors) ds);
             return jsonString;
@@ -153,6 +158,11 @@ public class DataSetSerializer {
                 if(type.contains("H1F")==true){
                     H1F h1f = DataSetSerializer.deserialize_H1F(jsonString);
                     return h1f;
+                }
+                
+                if(type.contains("H3F")==true){
+                    H3F h3f = DataSetSerializer.deserialize_H3F(jsonString);
+                    return h3f;
                 }
                 
                 if(type.contains("H2F")==true){
@@ -302,6 +312,43 @@ public class DataSetSerializer {
         return str.toString();
     }
     
+    private static String serialize_H3F_JSON(H3F h){
+        return DataSetSerializer.serialize_H3F_JSON(h,false);
+    }
+    
+    private static String serialize_H3F_JSON(H3F h, boolean compact){
+        
+        StringBuilder str = new StringBuilder();        
+        String binContent = DataSetSerializer.jsonArray(h.hBuffer);
+        //String binErrors  = DataSetSerializer.jsonArray(h.histogramDataError);
+        
+        str.append(String.format("{\"name\": \"%s\",\n", h.getName()));
+        str.append(String.format("\"UID\": \"%d\",\n", h.getUniqueID()));
+        str.append(String.format("\"class\": \"%s\",\n",h.getClass().getName()));        
+        str.append(String.format("\"stats\": [%d,%d,%d],\n",
+                h.getEntries(),0,0));
+        
+        String attributes = DataSetSerializer.attributesToJson(h.attr());
+        
+        str.append(attributes).append(",\n");
+        
+        str.append(String.format("\"axisx\": %s,\n", 
+                DataSetSerializer.jsonArray(h.getAxisX().axisMargins)));        
+        str.append(String.format("\"axisy\": %s,\n", 
+                DataSetSerializer.jsonArray(h.getAxisY().axisMargins))); 
+        str.append(String.format("\"axisz\": %s,\n", 
+                DataSetSerializer.jsonArray(h.getAxisZ().axisMargins)));
+        
+        str.append("\"data\": ").append(binContent);
+                //.append(",\n");
+                
+        /*if(compact==false){
+            str.append(",\n").append("\"error\":")
+                    .append(binErrors);
+        } */                       
+        str.append("\n}\n");
+        return str.toString();
+    }
     public static void attributesFromJson(TDataAttributes attr, JsonObject json) {
         JsonArray  jsonAttr = json.get("attributes").asArray();
         
@@ -437,6 +484,7 @@ public class DataSetSerializer {
         return h;
     }
     
+    
     public static H2F deserialize_H2F(String json){
         
         JsonObject jsonObject = (JsonObject) Json.parse(json);
@@ -482,6 +530,61 @@ public class DataSetSerializer {
             //} else {
             //    h.setBinError(bin,Math.sqrt(Math.abs(value)));
             //}
+        }
+        
+        DataSetSerializer.attributesFromJson(h.attr(), jsonObject);
+        
+        return h;
+    }
+    
+        
+    public static H3F deserialize_H3F(String json){
+        
+        JsonObject jsonObject = (JsonObject) Json.parse(json);
+        String           name = jsonObject.get("name").asString();
+        
+        JsonArray  axisLimitsX = jsonObject.get("axisx").asArray();
+        JsonArray  axisLimitsY = jsonObject.get("axisy").asArray();
+        JsonArray  axisLimitsZ = jsonObject.get("axisz").asArray();
+        
+        int nBinsX = axisLimitsX.values().size();
+        int nBinsY = axisLimitsY.values().size();
+        int nBinsZ = axisLimitsZ.values().size();
+        
+        double[] axisBinsX = new double[nBinsX];
+        double[] axisBinsY = new double[nBinsY];
+        double[] axisBinsZ = new double[nBinsZ];
+        
+        for(int i = 0; i < nBinsX; i++) 
+            axisBinsX[i] = axisLimitsX.get(i).asDouble();//Double.parseDouble(axisLimits.get(i).asString());
+        
+        for(int i = 0; i < nBinsY; i++) 
+            axisBinsY[i] = axisLimitsY.get(i).asDouble();//Double.parseDouble(axisLimits.get(i).asString());
+
+        for(int i = 0; i < nBinsZ; i++) 
+            axisBinsZ[i] = axisLimitsZ.get(i).asDouble();//Double.parseDouble(axisLimits.get(i).asString());
+        
+        H3F h = new H3F(axisBinsX,axisBinsY,axisBinsZ);
+        
+        JsonArray  stats  = jsonObject.get("stats").asArray();
+        int nStats = stats.size();
+        
+        if(nStats>=3){
+             //h.setEntries(stats.get(0).asInt());
+             //h.setUnderflow(stats.get(1).asInt());
+             //h.setOverflow(stats.get(2).asInt());
+        }
+        
+        JsonArray  data  = jsonObject.get("data").asArray();
+        JsonValue errorObj = jsonObject.get("error");        
+        JsonArray    error = null;
+        if(errorObj!=null) error = jsonObject.get("error").asArray();
+        
+        //if(errorObj==null) System.out.println("[deserialize] ::: oh no, no error data");
+        int nData = data.size();
+        for(int bin = 0; bin < nData; bin++){
+            double value = data.get(bin).asDouble();
+            h.hBuffer[bin] = value;
         }
         
         DataSetSerializer.attributesFromJson(h.attr(), jsonObject);
@@ -589,7 +692,7 @@ public class DataSetSerializer {
             List<DataSet> dataList = DataSetSerializer.deserializeJsonArray(jsonArray);
             return dataList;
         }
-        return new ArrayList<DataSet>();
+        return new ArrayList<>();
     }
     //public static void deserializeDirectory(TDirectory dir, String jsonString){
     //    List<DataSet> dataSet = 
@@ -598,13 +701,27 @@ public class DataSetSerializer {
     public static void main(String[] argas){
         
         
-        H1F h = new H1F("h",20,.0,1.0);
+        H3F h3 = new H3F(5,0,1,5,0,1,5,0,1);
+        
+        
+        String json = DataSetSerializer.serialize_H3F_JSON(h3, false);
+        
+        System.out.println(json);
+        
+        
+        H3F h32 = DataSetSerializer.deserialize_H3F(json);
+        
+        
+        /*H1F h = new H1F("h",20,.0,1.0);
         Random r = new Random();
         for(int i = 0; i < 120; i++){
             h.fill(r.nextGaussian()+0.5);
         }
         String json = DataSetSerializer.serialize_H1F_JSON(h);
         System.out.println(json);
+        */
+        
+        
         /*
         TDirectory dir = new TDirectory();
         

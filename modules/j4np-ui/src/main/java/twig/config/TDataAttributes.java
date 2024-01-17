@@ -164,15 +164,24 @@ public class TDataAttributes {
         String value = tokens[1].trim();
         
         switch(key){
-            case "lc" : setLineColor(Integer.parseInt(value)); break;
+            case "lc" : if(value.startsWith("#")==true) 
+                setLineColor(TPalette.createColorFromString(value)); else 
+                setLineColor(Integer.parseInt(value)); break;
             case "lw" : setLineWidth(Integer.parseInt(value)); break;
             case "ls" : setLineStyle(Integer.parseInt(value)); break;
-            case "mc" : setMarkerColor(Integer.parseInt(value)); break;
+            case "mc" : if(value.startsWith("#")==true) 
+                setMarkerColor(TPalette.createColorFromString(value)); else 
+                setMarkerColor(Integer.parseInt(value)); break;
             case "mt" : setMarkerStyle(Integer.parseInt(value)); break;
             case "ms" : setMarkerSize(Integer.parseInt(value)); break;
             case "mw" : setMarkerOutlineWidth(Integer.parseInt(value)); break;
-            case "mo" : setMarkerOutlineColor(Integer.parseInt(value)); break;
-            case "fc" : setFillColor(Integer.parseInt(value)); break;
+            case "mo" : if(value.startsWith("#")==true) 
+                setMarkerOutlineColor(TPalette.createColorFromString(value)); else 
+                setMarkerOutlineColor(Integer.parseInt(value)); break;
+            case "fc" : if(value.startsWith("#")==true) 
+                setFillColor(TPalette.createColorFromString(value));  else
+                setFillColor(Integer.parseInt(value)); break;
+            
             case "fs" : setFillStyle(Integer.parseInt(value)); break;
             
             default: System.out.printf("data attributes >> error : unknown property : %s\n",tokens[0]); break;
