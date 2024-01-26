@@ -124,6 +124,17 @@ public class TDataFactory {
         return histograms;
     }
     
+    public static List<H1F>  createHistograms(int count, boolean fill){
+        List<H1F> histograms = TDataFactory.createHistograms(count);
+        Random r = new Random();
+        for(int j = 0; j < histograms.size(); j++){
+            double m = r.nextDouble()*0.7 + 0.15;
+            double s = r.nextDouble()*0.04 + 0.01;
+            for(int k = 0; k < 5000; k++) histograms.get(j).fill(r.nextGaussian()*s+m);
+            histograms.get(j).attr().set("fc=9");
+        } 
+        return histograms;
+    }
     public static List<GraphErrors> createGraphColors(int size){
         List<GraphErrors> graphs = new ArrayList<>();
         for(int i = 0; i < size; i++){

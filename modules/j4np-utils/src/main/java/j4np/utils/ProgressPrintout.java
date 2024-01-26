@@ -25,6 +25,7 @@ public class ProgressPrintout {
     private double   printoutIntervalSeconds = 10.0;
     private String   printoutLeadingString   = ">>>>> progress : ";
     private Integer  numberOfCalls           = 0;
+    private int  displayMode = 0;
     
     public  ProgressPrintout(){
         this.previousPrintoutTime = System.currentTimeMillis();
@@ -37,6 +38,8 @@ public class ProgressPrintout {
         this.startPrintoutTime = System.currentTimeMillis();
     }
     
+    public void setMode(int mode) { this.displayMode = mode;}
+    
     public void setInterval(double interval){
         this.printoutIntervalSeconds = interval;
     }
@@ -46,7 +49,12 @@ public class ProgressPrintout {
         StringBuilder str = new StringBuilder();
         double averageTime = 1000.0*totalElapsedTime/this.numberOfCalls;
         str.append(String.format("%s (%12d) : ", this.printoutLeadingString,this.numberOfCalls));
-        str.append(String.format(" time : %8.2f (sec) =>>> average time = %9.3f msec", totalElapsedTime,averageTime));
+        if(this.displayMode==0){
+            str.append(String.format(" time : %8.2f (sec) =>>> average time = %9.3f msec", totalElapsedTime,averageTime));
+        } else {
+            double hz = 1000.0/averageTime;
+            str.append(String.format(" time : %8.2f (sec) =>>> average time = %9.3f Hz", totalElapsedTime,hz));
+        }
         Set<String> keys = this.items.keySet();
         for(String key : keys){
             str.append(this.getItemString(key));

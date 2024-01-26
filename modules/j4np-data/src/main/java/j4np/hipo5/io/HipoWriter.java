@@ -72,6 +72,13 @@ public class HipoWriter implements DataSync {
         rewriteMode = mode;
     }
     
+    public static HipoWriter withDictionary(String env, String directory){
+        String dir = System.getenv(env) + "/" + directory;
+        HipoWriter w = new HipoWriter();
+        w.schemaFactory.initFromDirectory(dir);
+        return w;
+    }
+    
     public final HipoWriter setCompressionType(int compression){
         this.compressionType = compression; 
         //writer.setCompressionType(compression);       

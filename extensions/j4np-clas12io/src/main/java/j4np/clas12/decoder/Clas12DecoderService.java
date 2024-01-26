@@ -60,7 +60,7 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
     public void execute(Event t) {
         int position = t.scan(1, 11);
         if(position<8) return;
-        
+        //System.out.println("-------- decoding an event ----");
         Node n = t.read(1, 11);
         byte[] data = n.getByte();
         EvioEvent event = new EvioEvent(data);
@@ -68,7 +68,7 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
         callbackstore.getDecoders().add(new GenericDecoder());
         //System.out.println(" EVIO EVENT LENGTH = " + event.bufferLength());
         t.reset();
-        DataBankStore store = new DataBankStore();
+        DataBankStore store = DataBankStore.createDecoder();
         event.setCallback(callbackstore);
         callbackstore.store = store;
         callbackstore.hipoEvent = t;
@@ -76,18 +76,9 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
         event.scan();
         
         t.write(store.header);
-        //translate(t,store);
-        //translate22(t,store);        
-        //t.scanShow();
-        //t.reset();        
-        //t.write(store.tdcNode);
-        //t.write(store.timeStamp);
-        //store.timeStamp.print();
-        //t.write(store.adcNode);
-        //t.write(store.header);
-        //t.write(store.);
+        t.write(store.timeStamp);
     }
-    
+    /*
     public void translate(Event event , DataBankStore store){
         int run = store.header.getInt(0, 0);
         if(run<10) {
@@ -183,7 +174,7 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
         //event.write(store.tdcNode);
         //store.index.print();
     }
-    
+    */
     
     public static class EvioNodeCallbackStore implements DataNodeCallback {
         

@@ -41,6 +41,6 @@ public class Clas12NodeUtils {
     }
     
     public static CompositeNode createIndexNode(int group, int item, int maxRows){
-        return new CompositeNode(group,item,"iii",maxRows);
+        return new CompositeNode(group,item,"iiii",maxRows);
     }
 }

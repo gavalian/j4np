@@ -17,13 +17,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -60,9 +56,8 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     private Background2D           background = null; 
     private PopupProvider       popupProvider = null;
     private Color             backgroundColor = null;
+    private NodeInsets           canvasInsets = new NodeInsets(0,0,0,0);
     
-    
-
     public Canvas2D(){
         
         /*this.graphicsComponents.add(new GraphicsObject2D(100,100));
@@ -87,6 +82,8 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     public void setBackgroundColor(Color col){
         backgroundColor = col;
     }
+        
+    public NodeInsets  canvasInsets(){return canvasInsets;}
     
     public void setDebug(int level){ this.canvasDiagnostics = level;}
     
@@ -124,7 +121,13 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         }
         
         NodeRegion2D region = new NodeRegion2D();
-        region.set(0, 0, w, h);
+        
+        region.set(canvasInsets.getLeft(), 
+                canvasInsets.getTop(), 
+                w-canvasInsets.getLeft() - canvasInsets.getRight(), 
+                h-canvasInsets.getTop()-canvasInsets.getBottom()
+                );
+        
         long paintStart = System.currentTimeMillis();
         for(int i = 0; i < this.graphicsComponents.size(); i++){
             //System.out.println(" updating the node = " + i);
@@ -168,7 +171,14 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         this.graphicsComponents.addAll(nodes);
     }
     
+    public void reset(){
+        this.canvasInsets.set(0, 0, 0, 0);
+        this.graphicsComponents.clear();
+    }
+    
     public void arrange(CanvasLayout layout){
+        
+        this.canvasInsets.copyFrom(layout.getInsets());        
         for(int i = 0; i < layout.size(); i++){
             if(i<graphicsComponents.size()){
                 Rectangle2D rect = layout.getBounds(i);

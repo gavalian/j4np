@@ -54,6 +54,16 @@ public class CompositeNode extends BaseHipoStructure {
         this.setGroup(group).setItem(item).setType(10).setFormatAndLength(format, rowLength*rows);
     }
     
+    public void refactor(int group, int item, String format){
+        dataDescriptor = new DataStructureDescriptor();
+        dataDescriptor.parse(format);
+        int formatLength = format.length();
+        int rowLength = dataDescriptor.getStructureLength();
+        int totalLength = this.getCapacity();
+        int rows = (totalLength - 8 - formatLength)/rowLength;
+        this.setGroup(group).setItem(item).setType(10).setFormatAndLength(format, rowLength*rows);
+    }
+    
     public final void setRows(int rows){
         int rowLength = dataDescriptor.getStructureLength();
         int size = rowLength*rows + this.getHeaderLength();
@@ -200,7 +210,7 @@ public class CompositeNode extends BaseHipoStructure {
     protected ByteBuffer getByteBuffer(){ return structBuffer; }
 
     public void show(){
-        System.out.printf(" structure : size = %d\n",structBuffer.capacity());
+        System.out.printf(" structure : size = %d, max rows = %d\n",structBuffer.capacity(), this.getMaxRows());
         this.dataDescriptor.show();
     }
     
@@ -244,6 +254,11 @@ public class CompositeNode extends BaseHipoStructure {
             }
         }
         return str.toString();
+    }
+    
+    public int getMaxRows(){
+        int length = this.getCapacity() - 8 - this.dataDescriptor.getEntries();
+        return length/this.dataDescriptor.getStructureLength();         
     }
     
     public void print(){
@@ -530,7 +545,18 @@ public class CompositeNode extends BaseHipoStructure {
     }
     
     public static void main(String[] args){
+        
         CompositeNode node1 = CompositeNode.random(12);
+        node1.show();
+        node1.print();
+        
+        node1.refactor(11, 22, "bss");
+        node1.setRows(3);
+        node1.show();
+        node1.print();
+        /*
+        CompositeNode node1 = CompositeNode.random(12);
+        
         CompositeNode node2 = CompositeNode.random(6);
         
         System.out.println("----------------------");
@@ -545,6 +571,8 @@ public class CompositeNode extends BaseHipoStructure {
         node1.copyRows(node2,0,6);
         System.out.println("----------------------");
         node1.print();
+        
+        */
         /*
         node1.copyRow(node2, 5, 0);
         node1.copyRow(node2, 4, 2);        

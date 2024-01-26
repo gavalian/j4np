@@ -504,6 +504,7 @@ public class TGRegion extends Node2D implements StyleNode {
         
     }
     private void setByToken(String token){
+        if(token.length()<2) return;
         String[] pair = token.split("=");
         if(pair.length==2){
             switch(pair[0]){

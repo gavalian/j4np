@@ -150,11 +150,21 @@ public class H1F  implements DataSet {
     public H1F(String name, String title, double[] bins){
         xAxis = new Axis(bins);
     	yAxis = new Axis();
-                
         this.initAttributes();
         setName(name);
         setTitle(title);
     	initDataStore(xAxis.getNBins());
+    }
+    
+    
+    public static H1F book(String name, String titles, String attr, int bins, double min, double max){
+        H1F h = new H1F(name,bins,min,max);
+        h.attr().set(attr);
+        String[] tokens = titles.split(":");
+        if(tokens.length>0) h.attr().setTitle(tokens[0]);
+        if(tokens.length>1) h.attr().setTitleX(tokens[1]);
+        if(tokens.length>2) h.attr().setTitleY(tokens[2]);        
+        return h;
     }
     
     public H1F  setUniqueID(long id){ this.histogramUniqueID = id; return this;}

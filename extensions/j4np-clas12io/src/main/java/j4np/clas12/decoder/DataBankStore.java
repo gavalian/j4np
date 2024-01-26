@@ -18,22 +18,56 @@ public class DataBankStore {
     public CompositeNode adcCache = null;
     public CompositeNode adcCachePulse = null;
     public CompositeNode  adcNode = null;
-    public CompositeNode    index = null;
-    public CompositeNode   header = null;
+                
+    
+    public CompositeNode      cache  = null;
+    public CompositeNode      pulse  = null;
+    public CompositeNode      header = null;
     public CompositeNode   timeStamp = null;
+    public CompositeNode       index = null;
     
     public DataBankStore(){
-        tdcCache = Clas12NodeUtils.createNodeTDC(  1, 1, 8192);
+        
+        /*tdcCache = Clas12NodeUtils.createNodeTDC(  1, 1, 8192);
         tdcNode  = Clas12NodeUtils.createNodeTDC( 33, 1, 8192*2);
         
         adcCache = Clas12NodeUtils.createNodeADC(  1, 1, 8192);
         adcCachePulse = Clas12NodeUtils.createNodeADCPulse( 1, 1, 8192*2);
         
         adcNode  = Clas12NodeUtils.createNodeADC( 34, 1, 8192*2);
-
-        index    = Clas12NodeUtils.createIndexNode(1, 1, 512);
-        
-        header = Clas12NodeUtils.createHeaderNode(31, 20, 2);
-        timeStamp = new CompositeNode(35,1,"il",512);
+        */
+        index     = Clas12NodeUtils.createIndexNode(1, 1, 512);        
+        header    = Clas12NodeUtils.createHeaderNode(42, 1, 2);
+        timeStamp = new CompositeNode(42,2,"il",512);
+    }
+    
+    
+    public static DataBankStore createDecoder(){
+        DataBankStore store = new DataBankStore();
+        store.cache = Clas12NodeUtils.createNodeTDC(  1, 1, 8192);
+        store.pulse = Clas12NodeUtils.createNodeADCPulse( 1, 1, 8192*10);
+        return store;
+    }
+    
+    public static DataBankStore createTranslate(){
+        DataBankStore store = new DataBankStore();
+        store.tdcCache = Clas12NodeUtils.createNodeTDC(  42, 11, 8192);
+        store.tdcNode  = Clas12NodeUtils.createNodeTDC(  42, 11, 8192);
+        store.adcCache = Clas12NodeUtils.createNodeADC(  42,  12, 8192);
+        store.adcNode  = Clas12NodeUtils.createNodeADC(  42,  12, 8192);
+        return store;
+    }
+    public static DataBankStore createFitter(){
+        DataBankStore store = new DataBankStore();
+        store.cache = Clas12NodeUtils.createNodeADC(  1, 1, 8192);
+        store.pulse = Clas12NodeUtils.createNodeADCPulse( 1, 1, 8192*10);
+        return store;
+    }
+    
+    public void refactorTDC(CompositeNode node, int group, int item){
+        node.refactor(group,item,"bbbsbil");
+    }
+    public void refactorADC(CompositeNode node, int group, int item){
+        node.refactor(group,item,"bbbsbifs");
     }
 }

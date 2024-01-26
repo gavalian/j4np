@@ -15,6 +15,7 @@ import j4np.hipo5.io.HipoReader;
  * @author gavalian
  */
 public class Clas12TranslateService extends DataWorker<HipoReader,Event> {
+    
     DatabaseManager manager = new DatabaseManager();
 
     @Override
@@ -24,20 +25,26 @@ public class Clas12TranslateService extends DataWorker<HipoReader,Event> {
 
     @Override
     public void execute(Event e) {
-        DataBankStore store = new DataBankStore();
-        e.read(store.header, 31,20);
+        DataBankStore store = DataBankStore.createTranslate();
+        e.read(store.header, 42,1);
+        e.read(store.timeStamp, 42,2);
         store.tdcNode.setRows(0);
+        store.tdcNode.setRows(0);
+        store.adcNode.setRows(0);
         this.translateTDC(e, store);
+        this.translateADC(e, store);
         
         e.reset();
         e.write(store.header);
+        e.write(store.timeStamp);
         e.write(store.tdcNode);
+        e.write(store.adcNode);
     }
     
     public void translateTDC(Event event , DataBankStore store){
         int run = store.header.getInt(0, 0);
         if(run<10) {
-            System.out.println("[decoder] >> warning unknown run number " + run);
+            //System.out.println("[decoder] >> warning unknown run number " + run);
             return;
         }
         DatabaseManager.DecoderDatabase db = manager.get(run);
@@ -73,6 +80,52 @@ public class Clas12TranslateService extends DataWorker<HipoReader,Event> {
                 store.tdcCache.setGroup(group);
                 store.tdcCache.setItem(31);
                 store.tdcNode.copyRows(store.tdcCache,0,store.tdcCache.getRows());
+                //event.replace(group, 21, store.tdcCache);
+                //event.write(store.tdcCache);
+            }
+            
+        }
+                
+    }
+    
+    public void translateADC(Event event , DataBankStore store){
+        int run = store.header.getInt(0, 0);
+        if(run<10) {
+            //System.out.println("[decoder] >> warning unknown run number " + run);
+            return;
+        }
+        DatabaseManager.DecoderDatabase db = manager.get(run);
+        event.scanLeafs(store.index);
+        store.adcNode.setRows(0);
+        //event.read(node, run, run);
+        for(int i = 0; i < store.index.getRows(); i++){
+            int group = store.index.getInt(0, i);
+            int  item = store.index.getInt(1, i);
+            int   pos = store.index.getInt(2, i);
+            int[] address = new int[5];
+            if(item==22){ 
+                event.read(store.adcCache, pos);
+                int rows = store.adcCache.getRows();
+                for(int r = 0; r < rows; r++){
+                    int crate = store.adcCache.getInt(1, r);
+                    int  slot = store.adcCache.getInt(2, r);
+                    int chann = store.adcCache.getInt(3, r);
+                    long key = DetectorTools.hardwareEncoder(crate, slot, chann);
+                    if(db.crateMap.containsKey(key)==true){
+                        long value = db.crateMap.get(key);
+                        DetectorTools.softwareDecoder(value, address);
+                        
+                        store.adcCache.putByte(  0, r, (byte) address[0]);
+                        store.adcCache.putByte(  1, r, (byte) address[1]);
+                        store.adcCache.putByte(  2, r, (byte) address[2]);
+                        store.adcCache.putShort( 3, r, (byte) address[3]);
+                        store.adcCache.putByte(  4, r, (byte) (address[4]+1));
+                    }
+                }                
+                //event.remove(group, item);
+                store.adcCache.setGroup(group);
+                store.adcCache.setItem(32);
+                store.adcNode.copyRows(store.adcCache,0,store.adcCache.getRows());
                 //event.replace(group, 21, store.tdcCache);
                 //event.write(store.tdcCache);
             }

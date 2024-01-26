@@ -28,7 +28,9 @@ public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
     
     @Override
     public boolean init(HipoReader src) {
-        factory.initFromDirectory("/Users/gavalian/Work/Software/project-10.8/distribution/coatjava/etc/bankdefs/hipo4/");
+        //factory.initFromDirectory("/Users/gavalian/Work/Software/project-10.8/distribution/coatjava/etc/bankdefs/hipo4/");
+        String env = System.getenv("CLAS12DIR");
+        factory.initFromDirectory(env+"/etc/bankdefs/hipo4");
         factory.show();
         return true;
     }
@@ -36,14 +38,16 @@ public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
     @Override
     public void execute(Event e) {
         CompositeNode   cnode = new CompositeNode(1,1,"i",100*8196);
+        CompositeNode   anode = new CompositeNode(1,1,"i",100*8196);
         CompositeNode   hnode = new CompositeNode(1,1,"i",120);
         CompositeNode    iter = new CompositeNode(1,1,"i",8196); iter.setRows(0);
         CompositeNode      ts = new CompositeNode(1,1,"il",8196);
         
         cnode.setRows(0);
-        e.read(hnode, 31,20);
-        e.read(ts, 35,1);
-        e.read(cnode, 33,1);
+        e.read(hnode, 42, 1);
+        e.read(   ts, 42, 2);
+        e.read(cnode, 42, 11);
+        e.read(anode, 42, 12);
         
         e.reset();        
 
@@ -70,6 +74,18 @@ public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
         e.write(dc);
         Bank ft = this.createTDC(cnode,  12, "FTOF::tdc", iter);
         e.write(ft);
+        
+        Bank fta = this.createADC(anode,  12, "FTOF::adc", iter);
+        e.write(fta);
+        
+        Bank ect = this.createTDC(cnode,  7, "ECAL::tdc", iter);
+        e.write(ect);
+        
+        Bank eca = this.createADC(anode,  7, "ECAL::adc", iter);
+        e.write(eca);
+        
+        Bank hta = this.createADC(anode,  15, "HTCC::adc", iter);
+        e.write(hta);
         //System.out.printf(" get Rows = %d , position %d , row 17 = %d\n" , cnode.getRows(),  e.scan(33, 1), iter.getRows());
         //cnode.print();
         /*
@@ -105,6 +121,27 @@ public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
         
     }
  
+    protected Bank createADC(CompositeNode adc, int detector, String bank, CompositeNode iterator){
+
+        getIterator(adc, detector, iterator);
+        int nrows6 = iterator.getRows();
+        
+        //tdc.print();
+        //iter.print();
+        Bank bdc = factory.getBank(bank, nrows6);
+        for(int r = 0; r < nrows6; r++){
+            int row = iterator.getInt(0, r);
+            bdc.putByte(0, r, (byte) adc.getInt(1, row));
+            bdc.putByte(1, r, (byte) adc.getInt(2, row));
+            bdc.putShort(2, r, (short) adc.getInt(3, row));
+            bdc.putByte(3, r, (byte) (adc.getInt(4, row)-1));
+            bdc.putInt(4, r,    adc.getInt(5, row));
+            bdc.putFloat(5, r,   (float) adc.getDouble(6, row));
+            bdc.putShort(6, r,   (short) adc.getInt(7, row)); 
+        }
+        return bdc;
+    }
+    
     protected Bank createTDC(CompositeNode tdc, int detector, String bank, CompositeNode iterator){
         getIterator(tdc, detector, iterator);
         int nrows6 = iterator.getRows();

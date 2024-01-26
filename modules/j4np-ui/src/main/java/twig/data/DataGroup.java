@@ -4,6 +4,7 @@
  */
 package twig.data;
 
+import j4np.graphics.CanvasLayout;
 import j4np.utils.json.Json;
 import j4np.utils.json.JsonArray;
 import j4np.utils.json.JsonObject;
@@ -22,8 +23,7 @@ public class DataGroup {
     
     private String                  groupName = "datagroup";
     private List<DataSet>           groupData = new ArrayList<>();
-    private List<DataGroupRegion> groupRegions = new ArrayList<>();
-    
+    private List<DataGroupRegion> groupRegions = new ArrayList<>();    
     private List<DataGroupDescriptor> groupDescriptors = new ArrayList<>();
     
     private List<Double>   axisTickMarks = new ArrayList<>();
@@ -32,6 +32,10 @@ public class DataGroup {
     private int canvasDivisionX = 1;
     private int canvasDivisionY = 1;
     
+    private String regionAttributes = "";
+    private String canvasAttributes = "";
+    
+    private CanvasLayout  layout = null;
     
     public DataGroup(){
         groupRegions.add(new DataGroupRegion(0));
@@ -41,6 +45,7 @@ public class DataGroup {
         this.canvasDivisionX = xsize; this.canvasDivisionY = ysize;
         for(int r = 0; r < xsize*ysize; r++) 
             groupRegions.add(new DataGroupRegion(r));
+        layout = CanvasLayout.grid(xsize, ysize);
     }
     
     public DataGroup(String name, int xsize, int ysize){
@@ -48,7 +53,21 @@ public class DataGroup {
         this.canvasDivisionX = xsize; this.canvasDivisionY = ysize;
         for(int r = 0; r < xsize*ysize; r++) 
             groupRegions.add(new DataGroupRegion(r));
+        layout = CanvasLayout.grid(xsize, ysize);
+        layout.show();
     }
+    
+    public DataGroup(String name, CanvasLayout lo){
+        this.groupName = name;
+        this.layout = lo;
+        int size = this.layout.size();
+        //this.canvasDivisionX = xsize; this.canvasDivisionY = ysize;
+        
+        for(int r = 0; r < size; r++) 
+            groupRegions.add(new DataGroupRegion(r));
+        //layout = CanvasLayout.grid(xsize, ysize);
+    }
+    
     public void show(){
         System.out.printf("[DataGroup] >>> size %d , columns = %d, rows = %d\n",
                 this.groupData.size(), this.canvasDivisionX,this.canvasDivisionY);
@@ -183,16 +202,25 @@ public class DataGroup {
         }
         c.repaint();
     }
+    public DataGroup setRegionAttributes(String attr){
+        this.regionAttributes = attr; return this;
+    }
+    
+    public DataGroup setCanvasAttributes(String attr){
+        this.canvasAttributes = attr; return this;
+    }
     
     public void draw(TGDataCanvas c, boolean recreate){
         if(recreate==false){
             draw(c); return;
         }
         
-        c.divide(canvasDivisionX, canvasDivisionY);
+        //c.divide(canvasDivisionX, canvasDivisionY);
+        c.divide(layout);
         for(int r = 0; r < groupRegions.size(); r++){
             DataGroupRegion reg = groupRegions.get(r);
             c.cd(reg.order); 
+            c.region().set(regionAttributes);
             for(int d = 0; d < reg.dataDescriptor.size(); d++){
                 DataGroupDescriptor desc = reg.dataDescriptor.get(d);
                 c.region().draw(this.groupData.get(desc.region), desc.options+"same");               

@@ -116,6 +116,12 @@ public class SchemaFactory {
         }
         return bankList;
     }
+    
+    public Bank[] getBanks(String[] banks, int size ){
+        Bank[] b = new Bank[banks.length];
+        for(int i = 0; i < b.length; i++) b[i] = this.getBank(banks[i], size);
+        return b;
+    }
     /**
      * returns a reduced SchemaFactory where the list
      * of regular expressions are taken from the argument.

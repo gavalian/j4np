@@ -512,6 +512,8 @@ public class Event implements DataEvent {
             index.putInt(0, row, group);
             index.putInt(1, row, item);
             index.putInt(2, row, position);
+            index.putInt(3, row, size);
+            
             row++;
             //System.out.printf("\t group/item : [%6d / %4d] , position = %5d, type = %4d , format length = %4d, size = %4d\n",
             //        group,item, position, type, format, size);
