@@ -43,6 +43,13 @@ public class F1D extends Func1D {
             }
     };
     
+    Function funcBW = new Function("bw", 3) {
+            @Override
+            public double apply(double... args) {
+                return FunctionFactory.breihtWigner(args[0],args[1],args[2]);
+            }
+    };
+    
     Function funcLandau = new Function("landau", 3) {
             @Override
             public double apply(double... args) {
@@ -119,7 +126,7 @@ public class F1D extends Func1D {
         }
         ExpressionBuilder builder = new ExpressionBuilder(newString)
                 .function(funcGaus).function(funcLandau).function(funcLogb)
-                .function(funcErrf).function(funcExp);
+                .function(funcBW).function(funcErrf).function(funcExp);
         
         builder.variables(expvar);
         expr = builder.build();

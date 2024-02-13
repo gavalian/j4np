@@ -48,7 +48,7 @@ public class Clas12RecoMonitor extends DataWorker<HipoReader,Event> {
     public void execute(Event e) {
         try {
             for(MonitorWorker w : monitors) { w.process(e);}
-        } catch (Exception ex) {}
+        } catch (Exception ex) { System.out.println("exception happened");ex.printStackTrace();}
     }
     
     public static void main(String[] args){

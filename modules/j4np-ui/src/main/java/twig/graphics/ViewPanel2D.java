@@ -31,6 +31,7 @@ public class ViewPanel2D extends DatasetActionPanel implements ActionListener {
     private String viewType = "X";
     JPanel context = null;
     JPanel contextPane = null;
+    
     public ViewPanel2D(H2F h, Frame parent, String type){
        super(parent);
        hist2D = h;

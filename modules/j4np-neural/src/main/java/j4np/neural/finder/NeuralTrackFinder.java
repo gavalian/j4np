@@ -75,7 +75,7 @@ public class NeuralTrackFinder {
     
     public void processEvent(Event e){
         try {
-            clustering.process(e);
+            //clustering.process(e);
             classifier.process(e);
             regression.processEvent(e);
         } catch (Exception ex){

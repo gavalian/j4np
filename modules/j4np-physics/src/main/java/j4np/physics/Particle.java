@@ -36,6 +36,14 @@ public class Particle {
         return p;
     }
     
+    public static Particle withPid(int __p, Vector3 v){
+        Particle  p = new Particle(); p.pid = __p;
+        PDGParticle pt = PDGDatabase.getParticleById(__p);
+        double mass = PDGDatabase.getParticleMass(p.pid);        
+        p.vector.setPxPyPzM(v.x(),v.y(),v.z(), mass);
+        p.pcharge = pt.charge();
+        return p;
+    }
     public static Particle withPidMagThetaPhi(int __p, double mag, double theta, double phi){
         Particle  p = new Particle(); p.pid = __p;
         PDGParticle pt = PDGDatabase.getParticleById(__p);

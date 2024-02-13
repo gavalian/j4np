@@ -54,7 +54,7 @@ public class HipoUtilsIO {
         Node   jsonNode = HipoUtilsIO.getSchemaJsonNode(schema);
         Node stringNode = HipoUtilsIO.getSchemaNode(schema);
         int sizes = jsonNode.getBufferSize() + stringNode.getBufferSize();
-        Event event = new Event(sizes+24);
+        Event event = new Event(sizes+1024);
         
         //System.out.println(" writing to event : " + schema.getName());
         //jsonNode.show();

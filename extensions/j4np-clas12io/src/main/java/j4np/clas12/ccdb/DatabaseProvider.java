@@ -62,7 +62,7 @@ public class DatabaseProvider {
         provider.connect();
         
         if(provider.isConnected()){
-            LOGGER.log(Level.INFO,"[DB] --->  database connection  : success");
+            LOGGER.log(Level.INFO,"[DB] --->  database connection : success, for run # " + runNumber);
         } else {
             LOGGER.log(Level.SEVERE,"[DB] --->  database connection  : failed");
         }

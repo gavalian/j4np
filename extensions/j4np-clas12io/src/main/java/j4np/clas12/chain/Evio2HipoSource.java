@@ -56,7 +56,7 @@ public class Evio2HipoSource implements DataSource {
         int counter = 0;
         for(int i = 0; i < frame.getCount(); i++){
             Event hipo = (Event) frame.getEvent(i);
-            hipo.require(200*1024);
+            //hipo.require(200*1024);
             hipo.reset();
             if(reader.hasNext()==true){
                 reader.next(event);

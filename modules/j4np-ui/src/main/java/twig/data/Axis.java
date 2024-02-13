@@ -151,6 +151,16 @@ public class Axis implements Serializable {
     	return 0.0;
     }
     
+    public double getBinLow(int bin) {
+    	if (bin >= 0 && bin<axisMargins.length - 1) {
+    		return axisMargins[bin];
+    	}
+    	return 0.0;
+    }
+    
+    public double getBinHigh(int bin) {    	
+    	return getBinLow(bin+1);
+    }
     /**
      * Calculates and returns the width of the bin specified in the parameter
      * in array indexing format (i.e. for the 1st bin enter 0, the 2nd bin enter 1, etc.)

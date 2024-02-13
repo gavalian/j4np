@@ -7,6 +7,7 @@ package j4np.hipo5.data;
 
 import j4np.hipo5.data.Schema.SchemaBuilder;
 import j4np.utils.FileUtils;
+import j4np.utils.asciitable.Table;
 import j4np.utils.json.Json;
 import j4np.utils.json.JsonArray;
 import j4np.utils.json.JsonObject;
@@ -34,6 +35,12 @@ public class SchemaFactory {
         
     public SchemaFactory(){
         
+    }
+    
+    public void add(SchemaFactory sf){
+        for(Schema sc : sf.getSchemaList()){
+            this.addSchema(sc);
+        }
     }
     
     public void addSchema(Schema schema){
@@ -298,7 +305,27 @@ public class SchemaFactory {
     
     public void show(){
         List<String> schemaList = getSchemaKeys();
+        int nrows = schemaList.size();
+        String[]  header = new String[]{"order", "schema name","group","item","elements", "size"};
+        String[][]  data = new String[nrows][6];
+        
         Collections.sort(schemaList);
+        
+        int counter = 0;
+        for(int i = 0; i < nrows; i++){
+            Schema sc = this.getSchema(schemaList.get(i));
+                data[counter][0] = "" + (i+1);
+                data[counter][1] = sc.getName();
+                data[counter][2] = "" + sc.getGroup();
+                data[counter][3] = "" + sc.getItem();
+                data[counter][4] = "" + sc.getElements();
+                data[counter][5] = "" + sc.getEntryLength();
+                counter++;
+        }
+        String table = Table.getTable(header,data, new Table.ColumnConstrain(1,42));
+        System.out.println("| SCHEMA FACTORY - revision 5.01-dub");
+        System.out.println(table);
+    /*
         for(int i = 0; i < schemaList.size(); i++){
             Schema schema = getSchema(schemaList.get(i));
             System.out.println(String.format("%24s : (%5d,%5d) size = %4d", 
@@ -306,12 +333,12 @@ public class SchemaFactory {
                     schema.getGroup(),
                     schema.getItem(),
                     schema.getEntryLength()));
-        }
+        }*/
     }
     
     public static void main(String[] args){
         SchemaFactory factory = new SchemaFactory();
-        factory.initFromDirectory("/Users/gavalian/Work/Software/project-6a.0.0/Distribution/clas12-offline-software/etc/bankdefs/hipo4");
+        factory.initFromDirectory("/Users/gavalian/Work/Software/project-10.8/distribution/coatjava/etc/bankdefs/hipo4");
         factory.show();
         List<Schema> schemas = factory.getSchemaList();
         

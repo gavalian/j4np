@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import twig.data.DataGroup;
 import twig.data.H1F;
+import twig.data.H2F;
 
 /**
  *
@@ -46,11 +47,17 @@ public class MonitorPhysReaction  extends MonitorWorker {
         
         DataGroup group = new DataGroup("Physics",layout);        
         group.setRegionAttributes("mt=10,mb=50,fc=#FAF5ED");
-        for(int i = 0; i < 15; i++){ 
+        H2F hwf  = new H2F( "hWf",120,0.6,1.8,60,-3.14,3.14);
+        H2F hq2f = new H2F("hQ2f",120,0.6,1.8,80,0.0,4.0);
+        group.add(hwf, 0, "F");
+        group.add(hq2f, 1, "F");
+        group.add(hwf, 2, "F");
+        
+        for(int i = 3; i < 15; i++){ 
             group.add( H1F.book(
                     String.format("vertex_%d",i+1) ,
                     String.format("v:vertex (sector %d):counts",(i)%6+1),
-                    "fc=72",120,-20,10)
+                    "fc=72",120,0.4,1.8)
                     , i, "");
         }
         this.dataGroups.add(group);
@@ -58,13 +65,16 @@ public class MonitorPhysReaction  extends MonitorWorker {
         LorentzVector t = LorentzVector.withPxPyPzM(0, 0, 0.0, 0.938);
         LorentzVector cm = LorentzVector.from(b).add(t);
         
-        VectorOperator v1 = new VectorOperator(cm,"[11]-[211]");
-        VectorOperator v2 = new VectorOperator(cm,"[11]-[211]-[-211]");
-        
-        vops.add(v2); vops.add(v1);    
+        VectorOperator v1 = new VectorOperator(cm,"-[11]-[211]");
+        VectorOperator v2 = new VectorOperator(cm,"-[11]-[211]-[-211]");
+        VectorOperator v3 = new VectorOperator(cm,"-[11]");
+        VectorOperator v4 = new VectorOperator(new LorentzVector(), "[11]");
+        VectorOperator v5 = new VectorOperator(b, "-[11]");
+        vops.add(v2); vops.add(v1); vops.add(v3); vops.add(v4); vops.add(v5);
         
         filters.add(new EventFilter("11:211:X+:X-:Xn"));
         filters.add(new EventFilter("11:211:-211:X+:X-:Xn"));
+        filters.add(new EventFilter("11:X+:X-:Xn"));
     }
     
     @Override
@@ -75,15 +85,31 @@ public class MonitorPhysReaction  extends MonitorWorker {
         int sector = getSector(banks[0],banks[1]);
         if(sector>0){
             physEvent.read(e);
+            //System.out.println(" doing analysis sector = " + sector);
+            modifier.modify(physEvent);
             if(filters.get(0).isValid(physEvent)==true){
+                //System.out.println("\t filter 0 is true ");
                 vops.get(0).apply(physEvent);
+                //System.out.println(vops.get(0).vector().mass());
                 ((H1F) getGroups().get(0).getData().get(sector-1+3)).fill(vops.get(0).vector().mass());
             }
             if(filters.get(1).isValid(physEvent)==true){
+                //System.out.println("\t filter 1 is true ");
                 vops.get(1).apply(physEvent);
-                ((H1F) getGroups().get(1).getData().get(sector-1+9)).fill(vops.get(1).vector().mass());
+                //System.out.println("operator 1 is : " + vops.get(0).vector().mass());
+                ((H1F) getGroups().get(0).getData().get(sector-1+9)).fill(vops.get(1).vector().mass());
             }
-        }                
+            
+            if(filters.get(2).isValid(physEvent)==true){
+                //System.out.println("\t filter 1 is true ");
+                vops.get(2).apply(physEvent);
+                vops.get(3).apply(physEvent);
+                vops.get(4).apply(physEvent);
+                //System.out.println("operator 1 is : " + vops.get(2).vector().mass() + " " + vops.get(3).vector().phi());
+                ((H2F) getGroups().get(0).getData().get(0)).fill(vops.get(2).vector().mass(),vops.get(3).vector().phi());
+                ((H2F) getGroups().get(0).getData().get(1)).fill(vops.get(2).vector().mass(),-vops.get(4).vector().mass());
+            } 
+        }
     }
     
     public int getSector(Bank particle, Bank track){

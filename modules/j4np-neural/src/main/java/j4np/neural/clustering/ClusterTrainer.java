@@ -28,6 +28,7 @@ import javax.visrec.ml.data.DataSet;
 import twig.data.AsciiPlot;
 import twig.data.H1F;
 import twig.data.H2F;
+import twig.data.TDirectory;
 import twig.graphics.TGCanvas;
 
 /**
@@ -275,11 +276,17 @@ public class ClusterTrainer {
             //System.out.println(Arrays.toString(output));
             finder.normalizeLog(output);
             
-            H1F hi = new H1F("hi",0.5,112.5,list.getList().get(i).labels());
-            H1F ho = new H1F("ho",0.5,112.5,output);
+            H1F hi = new H1F("desired",0.5,112.5,list.getList().get(i).labels());
+            H1F ho = new H1F("output",0.5,112.5,output);
             H2F h2 = H2F.create(112, 6, list.getList().get(i).features());
+            h2.setName("input");
             
+            if(i>1&&i<150){
+                TDirectory.export("evaluation.twig", "inference/"+i, hi);
             
+                TDirectory.export("evaluation.twig", "inference/"+i, ho);
+                TDirectory.export("evaluation.twig", "inference/"+i, h2);
+            }
             System.out.println("===========================");
             AsciiPlot.drawh2(h2);
             AsciiPlot.drawh1box(hi);

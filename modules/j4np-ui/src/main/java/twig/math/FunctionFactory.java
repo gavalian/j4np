@@ -144,6 +144,13 @@ public class FunctionFactory {
         return Math.exp(-0.5*(lambda+Math.exp(-lambda)));
     }
     
+    public static double breihtWigner(double x, double mean, double gamma){
+        double g2 = gamma*0.5;
+        double df = x - mean;
+        double denom = Math.PI*2* ( df*df + g2*g2 );
+        return gamma/denom;
+    }
+    
     public static Func1D  createFunction(int type){
         if(type == 0){
             F1D func3 = new F1D("func3","[p0]+[p1]*x+[amp]*gaus(x,[mean],[sigma])",0.0,5.4);

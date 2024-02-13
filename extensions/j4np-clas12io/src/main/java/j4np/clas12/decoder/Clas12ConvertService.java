@@ -18,20 +18,36 @@ import j4np.hipo5.io.HipoReader;
  * @author gavalian
  */
 public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
+    
     SchemaFactory factory = new SchemaFactory();
     //CompositeNode    iter = null;
     DatabaseManager manager = new DatabaseManager();
+    String          directory = null;
     
     public Clas12ConvertService(){
+        //iter = new CompositeNode(1,1,"i",8196); iter.setRows(0);
+    }
+    
+    public Clas12ConvertService(String sdir){
+        directory = sdir;
         //iter = new CompositeNode(1,1,"i",8196); iter.setRows(0);
     }
     
     @Override
     public boolean init(HipoReader src) {
         //factory.initFromDirectory("/Users/gavalian/Work/Software/project-10.8/distribution/coatjava/etc/bankdefs/hipo4/");
+    if(directory==null){
         String env = System.getenv("CLAS12DIR");
+        if(env==null){
+            System.out.println("\n\n\nERROR: CLAS12DIR is not defined\n");
+            System.exit(-1);
+        }
         factory.initFromDirectory(env+"/etc/bankdefs/hipo4");
         factory.show();
+    } else {
+        factory.initFromDirectory(directory);
+        factory.show();
+    }
         return true;
     }
     
@@ -43,13 +59,20 @@ public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
         CompositeNode    iter = new CompositeNode(1,1,"i",8196); iter.setRows(0);
         CompositeNode      ts = new CompositeNode(1,1,"il",8196);
         
+        
+        //e.scanShow();
+        
         cnode.setRows(0);
         e.read(hnode, 42, 1);
         e.read(   ts, 42, 2);
         e.read(cnode, 42, 11);
         e.read(anode, 42, 12);
         
-        e.reset();        
+        //System.out.println(" hnode = " + hnode.getRows());
+        //System.out.println(" cnode = " + cnode.getRows());
+        //System.out.println(" anode = " + anode.getRows());
+        
+        e.reset();
 
         if(hnode.getRows()==1){
             Bank b = factory.getBank("RUN::config", 1);
@@ -62,11 +85,7 @@ public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
             e.write(b);
         }
         
-        
-
-        //System.out.println("------------");
-
-        //getIterator(cnode,17,iter);
+        //e.scanShow();
         
         Bank rf = this.createTDC(cnode, 17, "RF::tdc", iter);
         e.write(rf);
@@ -86,38 +105,7 @@ public class Clas12ConvertService extends DataWorker<HipoReader,Event> {
         
         Bank hta = this.createADC(anode,  15, "HTCC::adc", iter);
         e.write(hta);
-        //System.out.printf(" get Rows = %d , position %d , row 17 = %d\n" , cnode.getRows(),  e.scan(33, 1), iter.getRows());
-        //cnode.print();
-        /*
-        getIterator(cnode, 6, iter);
-        int nrows6 = iter.getRows();
-        Bank bdc = factory.getBank("DC::tdc", nrows6);
-        for(int r = 0; r < nrows6; r++){
-            int row = iter.getInt(0, r);
-            bdc.putByte(  0, r, (byte) cnode.getInt(1, row));
-            bdc.putByte(  1, r, (byte) cnode.getInt(2, row));
-            bdc.putShort( 2, r, (short) cnode.getInt(3, row));
-            bdc.putByte(  3, r, (byte) cnode.getInt(4, row));
-            bdc.putInt(   4, r,   cnode.getInt(5, row));
-            
-        }
-        e.write(bdc);
-        
-        getIterator(cnode, 12, iter);
-        int nrows12 = iter.getRows();
-        Bank bft = factory.getBank("FTOF::tdc", nrows12);
-        for(int r = 0; r < nrows12; r++){
-            int row = iter.getInt(0, r);
-            bft.putByte(  0, r, (byte) cnode.getInt(1, row));
-            bft.putByte(  1, r, (byte) cnode.getInt(2, row));
-            bft.putShort( 2, r, (short) cnode.getInt(3, row));
-            bft.putByte(  3, r, (byte) cnode.getInt(4, row));
-            bft.putInt(   4, r,   cnode.getInt(5, row));
-            
-        }
-        e.write(bft);
-        */
-        
+
         
     }
  

@@ -59,6 +59,7 @@ public class NeuralClassifier {
             if(output[i]>max){ max = output[i]; index = i;}
         return index;
     }
+    
     public void evaluate(Tracks trk){
         float[]  input = new float[6];
         float[] output = new float[3];
@@ -155,11 +156,11 @@ public class NeuralClassifier {
     
     public float[] evaluate(float[] input){
         float[] output = new float[3];
-        model.feedForward(input, output);
+        //model.feedForward(input, output);
+        model.feedForwardSoftmax(input, output);
         return output;
     }
-    
-    
+        
     public void evaluate(NeuralDataList list){
         float[]  input = new float[6];
         float[] output = new float[3];

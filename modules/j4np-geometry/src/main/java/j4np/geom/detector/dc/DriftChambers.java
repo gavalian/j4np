@@ -70,8 +70,7 @@ public class DriftChambers {
     public void getSuperlayerPath(Path3D path, int superlayer){
         path.clear();
         int bottom = (superlayer-1)*6+1;
-        int    top = (superlayer-1)*6+6;
-        
+        int    top = (superlayer-1)*6+6;        
         Line3D line = new Line3D();
         this.getLayerLine(line, bottom);
         path.addPoint(line.origin().x(),line.origin().y(),line.origin().z());

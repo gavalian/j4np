@@ -518,6 +518,8 @@ public class TGRegion extends Node2D implements StyleNode {
                 case "mr": this.getInsets().right(Integer.parseInt(pair[1])); break;
                 case "mt": this.getInsets().top(Integer.parseInt(pair[1])); break;
                 case "mb": this.getInsets().bottom(Integer.parseInt(pair[1])); break;
+                case "xdiv": this.axisFrame.getAxisX().getAttributes().setAxisTickMarkCount(Integer.parseInt(pair[1])); break;
+                case "ydiv": this.axisFrame.getAxisY().getAttributes().setAxisTickMarkCount(Integer.parseInt(pair[1])); break;
                 default: break;
             }
         } else 

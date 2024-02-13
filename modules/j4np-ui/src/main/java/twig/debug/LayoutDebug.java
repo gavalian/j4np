@@ -79,9 +79,25 @@ public class LayoutDebug {
         for(int i = 0; i < 4; i++) c.region(i*4).set( "al=y");
         c.region(12).set("al=xy");
     }
+    
+    public static void combinedGrid(){
+        CanvasLayout layout = new CanvasLayout();
+        layout.addColumn(0, 0.4, new double[]{0.33,0.33,0.33});
+        layout.addGrid(  0.4, 0.00, 0.6, 0.33, 3, 2);
+        layout.addGrid(  0.4, 0.66, 0.6, 0.33, 3, 2);
+        TGCanvas c = new TGCanvas(800,800);
+        c.view().divide(layout);
+        List<H1F> h = TDataFactory.createHistograms(15,true);
+        for(int i = 0; i < h.size(); i++) c.cd(i).draw(h.get(i));
+        for(int i = 0; i < h.size(); i++){
+            c.region(i).set("ml=15,mr=10,mt=10,mb=0,fc=#FAF5ED,al=n");
+        }
+    }
+    
     public static void main(String[] args){
         //LayoutDebug.divideWithLayout();
         //LayoutDebug.dataGroupLayout();
-        LayoutDebug.gridView();
+        //LayoutDebug.gridView();
+        LayoutDebug.combinedGrid();
     }
 }

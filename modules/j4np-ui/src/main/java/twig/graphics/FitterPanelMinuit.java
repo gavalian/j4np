@@ -68,6 +68,7 @@ public class FitterPanelMinuit  extends JDialog implements ActionListener {
         "[p0]+[p1]*x", "[p0]+[p1]*x+[p2]*x*x",        
         "[p0]+[p1]*x+[amp]*gaus(x,[mean],[sigma])", 
         "[p0]+[p1]*x+[p2]*x*x+[amp]*gaus(x,[mean],[sigma])",
+        "[p0]+[p1]*exp((x-[b])*[c])"
     };
     
     public FitterPanelMinuit(List<DataSet> datalist, Frame parent){

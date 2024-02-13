@@ -56,7 +56,6 @@ public class DecayKinematics {
         return List.of(results[0],results[1]);
     }
     
-
     public static List<LorentzVector> decay(LorentzVector parent, double[] childrenMass, double theata, double phi, Frame frame){
         LorentzVector[] results = DecayKinematics.decay(parent, 
                 childrenMass[0], childrenMass[1], theata, phi);

@@ -22,7 +22,7 @@ public class MonitorDataVertex extends MonitorWorker {
     Bank[] banks = null;
     public MonitorDataVertex(){
         super("Vertex");
-        banks = factory.getBanks(new String[]{"REC::Particle","REC::Track"}, 32);
+        banks = factory.getBanks(new String[]{"REC::Particle","REC::Track","REC::Scintilator"}, 32);
         init();
     }
     
@@ -58,12 +58,30 @@ public class MonitorDataVertex extends MonitorWorker {
                     "fc=79",120,0.0,10.5), i, "");
         }
         this.getGroups().add(groupm);
+        
+        CanvasLayout layout2 = new CanvasLayout();
+        //layout2.addColumn(0, 0.25, new double[]{0.33,0.33,0.33});
+        layout2.addColumn(0.0, 0.25, CanvasLayout.uniform(6));
+        layout2.addColumn(0.50, 0.25, CanvasLayout.uniform(6));
+        layout2.addColumn(0.75, 0.25, CanvasLayout.uniform(6));
+        DataGroup groupt = new DataGroup("Timing",layout2);
+        for(int i = 0; i < 18; i++){ 
+            group.add( H1F.book(
+                    String.format("vertex_%d",i+1) ,
+                    String.format("v:vertex (sector %d):counts",(i)%6+1),
+                    "fc=72",120,-2,2)
+                    , i + 3, "");
+        }
     }
     
     @Override
     void process(Event e) {
         e.read(banks);
         int nrows = banks[0].getRows();
+        
+        getTimingHistograms(banks[0],banks[2]);
+        
+        
         for(int i = 0; i < nrows; i++){
             int    pid = banks[0].getInt("pid", i);
             int     ch = banks[0].getInt("charge", i);
@@ -80,8 +98,9 @@ public class MonitorDataVertex extends MonitorWorker {
             }*/
             Vector3 vec = new Vector3(banks[0].getFloat("px", i),
                     banks[0].getFloat("py", i),banks[0].getFloat("pz", i));
+            
             offset += 3;
-            if(offset>=0){
+            if(offset>=3){
                 int sector = getSector(banks[1],i);
                 if(sector>0) {
                     ((H1F) getGroups().get(0).getData().get(offset+(sector-1))).fill(vz);
@@ -90,14 +109,27 @@ public class MonitorDataVertex extends MonitorWorker {
                     //double pz = banks[0].getFloat("pz", i);
                     ((H1F) getGroups().get(1).getData().get(offset - 3 +(sector-1))).fill(vec.mag());
                 }
+                
             }
             
             if(pad>=0){
                 ((H2F) getGroups().get(0).getData().get(pad)).fill(vz,vec.phi());
             }
+            
+            
         }
     }
     
+    public void getTimingHistograms(Bank part, Bank sci){
+        if(part.getRows()==0) return;
+        
+        int pid = part.getInt(0, 0);
+        int st = Math.abs(part.getInt("status", 0));
+        if(pid!=11) return;
+        if(st>2000&&st<3000){
+            
+        }
+    }
     public int getSector(Bank b, int order){
         for(int i = 0 ; i < b.getRows(); i++){
             if(b.getInt("pindex",i) == order ) return b.getInt("sector", i);

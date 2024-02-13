@@ -162,6 +162,7 @@ public class LorentzVector {
 	public void boost(double bx, double by, double bz) {
 		double b2 = bx * bx + by * by + bz * bz;
 		double gamma = 1.0 / Math.sqrt(1.0 - b2);
+                //System.out.println(" B2 = " + b2 + " gamma = " + gamma);
 		// System.out.println("GAMMA = " + gamma + " b2 = " + b2);
 		double bp = bx * px() + by * py() + bz * pz();
 		double gamma2 = b2 > 0 ? (gamma - 1.0) / b2 : 0.0;

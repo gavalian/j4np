@@ -91,8 +91,6 @@ public abstract class PhysicsEvent {
         }
         return -1;
     }
-            
-    
     
     public int countByPid(int pid){
         int counter = 0;

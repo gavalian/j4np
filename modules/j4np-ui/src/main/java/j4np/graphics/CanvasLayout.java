@@ -50,6 +50,19 @@ public class CanvasLayout {
         return x;
     }
     
+    public CanvasLayout addGrid(double xpos, double ypos, double width, double height, int xdiv, int ydiv){
+        double  xStep = width/xdiv;
+        double  yStep = height/ydiv;
+
+        for(int y = 0; y < ydiv; y++){
+            for(int x = 0; x < xdiv; x++){
+                double xPosition = xpos + x*xStep;
+                double yPosition = ypos + y*yStep;
+                this.regionLayouts.add(new Rectangle2D.Double(xPosition, yPosition, xStep, yStep));
+            }
+        }
+        return this;
+    }
     public CanvasLayout addRow(double ystart, double ysize, double[] xsizes){
         double xstart = 0.0;
         for(int i = 0; i < xsizes.length; i++){

@@ -301,6 +301,12 @@ public class H2F implements DataSet {
         for(int i = 0; i < h.hBuffer.length; i++) h.hBuffer[i] = data[i];
         return h;
     }
+    
+    public static H2F[] duplicate(int count, String title, int binsX, double minX, double maxX, int binsY, double minY, double maxY){
+        H2F[] hc = new H2F[count];
+        for(int loop = 0; loop < count; loop++) hc[loop] = new H2F(title,binsX,minX,maxX,binsY,minY,maxY);
+        return hc;
+    }
     /**
      * divides the content of each bin in the histogram to the 
      * maximum bin.
@@ -430,7 +436,19 @@ public class H2F implements DataSet {
             }
         }
     }
-    
+    public H2F crop(int startX, int startY, int binsX, int binsY){
+        double minX = this.getAxisX().getBinLow(startX);
+        double maxX = this.getAxisX().getBinHigh(startX+binsX);
+        double minY = this.getAxisY().getBinLow(startY);
+        double maxY = this.getAxisY().getBinHigh(startY+binsY);
+        H2F h = new H2F(this.getName()+"_cropped",binsX, minX, maxX, binsY, minY, maxY);
+        for(int x = 0; x < binsX; x++){
+            for(int y = 0; y < binsY; y++){
+                h.setBinContent(x, y, this.getBinContent(x+startX, y+startY));
+            }
+        }
+        return h;
+    }    
     public ArrayList<H1F>  getSlicesX(){
         ArrayList<H1F>  slices = new ArrayList<H1F>();
         for(int loop = 0; loop < this.getXAxis().getNBins(); loop++){

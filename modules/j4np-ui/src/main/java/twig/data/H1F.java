@@ -92,6 +92,11 @@ public class H1F  implements DataSet {
     	setName(name);
     }
     
+    public static H1F[] duplicate(int count, String title, int binsX, double minX, double maxX){
+        H1F[] hc = new H1F[count];
+        for(int loop = 0; loop < count; loop++) hc[loop] = new H1F(title,binsX,minX,maxX);
+        return hc;
+    }
     /**
      * Creates a 1-D Histogram with the specified name, number of bins, and minimum and maximum
      * x-axis values
