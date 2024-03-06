@@ -54,10 +54,12 @@ public class TGCanvas extends JFrame implements ActionListener {
     public TGCanvas(String name, int xsize, int ysize){
         StudioWindow.changeLook();
         CANVAS_DEFAULT_WIDTH  = xsize;
-        CANVAS_DEFAULT_HEIGHT = ysize;  
+        CANVAS_DEFAULT_HEIGHT = ysize;
+
         dataCanvasTitle = name;
-        this.setTitle(name);
+        this.setTitle(name);        
         initUI(true);
+        dataCanvas.setName(name);
     }
     
     public TGCanvas(String name, int xsize, int ysize, boolean exitOnClose){
@@ -67,6 +69,7 @@ public class TGCanvas extends JFrame implements ActionListener {
         dataCanvasTitle = name;
         this.setTitle(name);
         initUI(exitOnClose);
+        dataCanvas.setName(name);
     }
     
     private void initUI(boolean closeOnExit){

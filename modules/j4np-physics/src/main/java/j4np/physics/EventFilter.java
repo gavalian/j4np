@@ -369,7 +369,7 @@ public class EventFilter {
     
     public static void main(String[] args){
         EventFilter filter = new EventFilter();
-        filter.setFilter("11:2212:3c");        
+        filter.setFilter("11:2212:3c");
         System.out.println(filter);
     }
 }

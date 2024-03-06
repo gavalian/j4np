@@ -65,7 +65,9 @@ public class PhysicsReaction extends Tree {
                 int status = event.status(i);
                 if(Math.abs(status)>=2000&&Math.abs(status)<3000){
                     event.status(i, 1);
-                } else { event.status(i, -1);}
+                    double chi2 = event.chi2(i);
+                    if(Math.abs(chi2)>5.0) event.status(i, -1);
+                } else { event.status(i, -1); }
             }
         }
     };
@@ -453,6 +455,18 @@ public class PhysicsReaction extends Tree {
     
     public static DataGroup statistics(String file, EventModifier modifier, String[] filters){        
         return PhysicsReaction.statistics(file, "REC::Particle", modifier, filters);
+    }
+    
+    
+    public static DataGroup statistics(String file, String bank){        
+        return PhysicsReaction.statistics(file, bank, PhysicsReaction.FORWARD_ONLY_CHI2PID, 
+                new String[]{
+                    "11:X+:X-:Xn", 
+                    "11:1c:X+:X-:Xn",
+                    "11:2c:X+:X-:Xn",
+                    "11:3c:X+:X-:Xn",
+                    "2c:X+:X-Xn", "3c:X+:X-:Xn"
+                } );
     }
     
     public static DataGroup statistics(String file, String bank, EventModifier modifier, String[] filters){

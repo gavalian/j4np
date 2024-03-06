@@ -6,6 +6,7 @@
 package j4np.hipo5.io;
 
 import j4np.data.base.DataEvent;
+import j4np.data.base.DataFrame;
 import j4np.data.base.DataSync;
 import j4np.hipo5.base.HeaderType;
 import j4np.hipo5.base.Reader;
@@ -16,6 +17,7 @@ import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Node;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
+import j4np.utils.io.OptionParser;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -46,7 +48,7 @@ public class HipoWriter implements DataSync {
     private List<Event>   headerEvents = new ArrayList<>();
 
     private final  Map<Long,RecordOutputStream> outputStreams = new HashMap<>();
-    private final  RecordOutputStream     defaultOutputStream = new RecordOutputStream();
+    private  RecordOutputStream     defaultOutputStream = null;//new RecordOutputStream();
             
 //    private List<HipoDataSorter>           sorterList = new ArrayList<HipoDataSorter>();
     private String          rewriteMode = "RECREATE";
@@ -143,6 +145,8 @@ public class HipoWriter implements DataSync {
         //System.out.println("RECORD SIZE = " + this.maximumRecordSize);
         writer.setCompressionType(compressionType);
         
+        defaultOutputStream = new RecordOutputStream(ByteOrder.LITTLE_ENDIAN,this.maximumRecordEvents,this.maximumRecordSize,2);
+        
         RecordOutputStream record = new RecordOutputStream();
 
         List<Schema> schemas = schemaFactory.getSchemaList();
@@ -201,6 +205,7 @@ public class HipoWriter implements DataSync {
         outStream.getHeader().setUserRegisterFirst(id);
         outputStreams.put(id, outStream);
     }
+    
     public void addEvent(Event event, long eventTag){
         
         if(event.getEventBufferSize()<=16) return;
@@ -380,6 +385,11 @@ public class HipoWriter implements DataSync {
     public boolean add(DataEvent event) {
         this.addEvent((Event) event); return true;
     }
+
+    @Override
+    public synchronized void addFrame(DataFrame frame) {
+        for(int i = 0; i < frame.getCount(); i++) this.add(frame.getEvent(i));
+    }
     
     public static class WriterBucketConfiguration {
         long writerTag     = 0;
@@ -390,5 +400,33 @@ public class HipoWriter implements DataSync {
             numberOfBytes  = __nb;
             numberOfEvents = __nev;
         }
+    }
+    
+    public static void main(String[] args){
+        OptionParser p = new OptionParser("Writer debugger");
+        p.addRequired("-o","output file name");
+        p.addRequired("-r","record size in megabytes");
+        
+        p.parse(args);
+        
+        String input = p.getInputList().get(0);
+        String output = p.getOption("-o").stringValue();
+        int    recordSize = p.getOption("-r").intValue();
+        
+        HipoReader r = new HipoReader(input);
+        HipoWriter w = new HipoWriter();
+        w.setMaxSize(recordSize*1024*1024);
+        w.setMaxEvents(1_000_000);
+        
+        w.getSchemaFactory().copy(r.getSchemaFactory(), true);
+        
+        w.open(output);
+        Event e = new Event();
+        
+        while(r.hasNext()){
+            r.next(e);w.addEvent(e);
+        }
+        
+        w.close();
     }
 }

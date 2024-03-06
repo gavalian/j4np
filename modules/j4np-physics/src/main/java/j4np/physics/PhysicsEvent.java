@@ -22,6 +22,7 @@ public abstract class PhysicsEvent {
     abstract public int   charge(int index);
     abstract public int   pid(int index);        
     abstract public int   status(int index);
+    abstract public double  chi2(int index);
     abstract public void  status(int index, int value);
     abstract public void  vector(Vector3 v, int index);
     abstract public void  vertex(Vector3 v, int index);    

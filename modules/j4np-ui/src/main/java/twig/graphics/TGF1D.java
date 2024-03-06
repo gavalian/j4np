@@ -88,7 +88,13 @@ public class TGF1D extends TDataNode2D {
             yc = r.getY() + r.getHeight() - tr.relativeY(point.y, r);
             path.lineTo(xc, yc);
         }
-        
+        if(this.getOptions().contains("F")==true){
+            if(fillColor>=0){
+                Color lColor = style.getPalette().getColor(fillColor);
+                g2d.setColor(lColor);
+                g2d.fill(path);
+            }
+        }
         if(lineColor>=0){
             Color lColor = style.getPalette().getColor(lineColor);
             g2d.setColor(lColor);

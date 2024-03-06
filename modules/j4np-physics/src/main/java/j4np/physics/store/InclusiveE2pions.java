@@ -35,6 +35,22 @@ public class InclusiveE2pions extends PhysicsReaction {
         this.addModifier(new EventModifierStore.EventModifierForward());
     }
      
+     public InclusiveE2pions(double energy, String file, String bank, String filter){
+        super(filter,energy);
+        this.initialize();
+        HipoReader r = new HipoReader(file);
+        this.setDataSource(r,bank);
+        this.addModifier(new EventModifierStore.EventModifierForward());
+    }
+     
+     public InclusiveE2pions(double energy, String file, String bank, String filter, EventModifier modifier){
+        super(filter,energy);
+        this.initialize();
+        HipoReader r = new HipoReader(file);
+        this.setDataSource(r,bank);
+        this.addModifier(modifier);
+    }
+     
     @Override
     public void configChange(){
         System.out.println("reconfiguring");

@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,7 @@ public class FileUtils {
                 }
             }
         }
+        Collections.sort(fileList);
         return fileList;
     }
     /**
@@ -75,6 +77,7 @@ public class FileUtils {
         for(String file : files){
             if(file.endsWith(ext)==true) accepted.add(file);
         }
+        Collections.sort(accepted);
         return accepted;
     }
     /**

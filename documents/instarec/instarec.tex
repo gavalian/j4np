@@ -1,34 +1,46 @@
-\documentclass[preprint,12pt]{elsarticle}
+\documentclass[a4paper,11pt]{article}
+\pdfoutput=1 % if your are submitting a pdflatex (i.e. if you have
+             % images in pdf, png or jpg format)
+
+\usepackage{jinstpub} % for details on the use of the package, please
+                     % see the JINST-author-manual
+\usepackage{lineno}
+%\linenumbers
+
 \usepackage{graphicx}
-\usepackage[margin=1.0in]{geometry}
 \usepackage{color, colortbl}
 \usepackage{hyperref}
 \usepackage{float}
 % \usepackage[affil-it]{authblk}
 \usepackage{subcaption}
-\newcommand{\note}[1]{\textcolor{blue}{#1}}
-\definecolor{LightCyan}{rgb}{0.88,1,1}
-\definecolor{LightRose}{rgb}{1,0.88,0.88}
-\definecolor{LightGreen}{rgb}{0.88,1,0.88}
+%\newcommand{\note}[1]{\textcolor{blue}{#1}}
+%\definecolor{LightCyan}{rgb}{0.88,1,1}
+%\definecolor{LightRose}{rgb}{1,0.88,0.88}
+%\definecolor{LightGreen}{rgb}{0.88,1,0.88}
 
 \title{Real Time Charged Track Reconstruction for CLAS12}
-\author[1]{Gagik Gavalian}
 
+\author[a,1]{Gagik Gavalian}
 % \affiliation[1]{organization={CRTC, Department of Computer Science, Old Dominion University}, city={Norfolk, VA}, country={USA}}
-\address[1]{Jefferson Lab, Newport News, VA, USA}
+\affiliation[a]{Jefferson Lab, Newport News, VA, USA}
 %\address[2]{CRTC, Department of Computer Science, Old Dominion University, Norfolk, VA, USA}
 %\address[3]{INFN, Sezione di Genova, 16146 Genova, Italy}
 
-\begin{document}
 
-%\begin{titlepage}
-\begin{abstract}
+\abstract{
 This paper presents the results of charged particle track reconstruction in CLAS12 using artificial intelligence. In our approach, we 
-use machine learning algorithms to reconstruct tracks, including their momentum and direction, with high accuracy from raw hits in CLAS12
-drift chambers. The reconstruction is performed in real-time (with the rate of data acquisition) and allows the identification of event topologies in real time.
-This approach revolutionizes the nuclear physics experiments' data processing, allowing us to identify and categorize the experimental data on the fly, and will lead to a significant reduction in experiment data processing. It also can be used in streaming readout applications leading to more efficient data acquisition and post processing.
+use machine learning algorithms to reconstruct tracks, including their momentum and direction, with high accuracy from raw hits of the CLAS12
+drift chambers. The reconstruction is performed in real-time, with the rate of data acquisition, and allows for the identification of event topologies in real-time.
+This approach revolutionizes the Nuclear Physics experiments' data processing, allowing us to identify and categorize the experimental data on the fly, and will lead to a significant reduction in experiment data processing. It can also be used in streaming readout applications leading to more efficient data acquisition and post-processing.
+}
 
-\end{abstract}
+\collaboration[a]{On behalf of CLAS12 collaboration}
+
+\proceeding{AI4EIC2023 \\
+   November 28-December 1\\
+  Catholic University of America, Washington D.C.}
+  
+\begin{document}
 %\end{titlepage}
 \maketitle
 
@@ -53,7 +65,7 @@ The CLAS12 (CEBAF Large Acceptance Spectrometer for 12 GeV) detector is a state-
 \begin{figure}[h!]
 \centering
 \centerline{\includegraphics[width=0.7\columnwidth]{images/CLAS12-side.png}}
-\caption{The CLAS12 detector in the Hall~B beamline ~\cite{Burkert:2020akg} . The electron beam enters from the right and impinges on
+\caption{The CLAS12 detector in the Hall~B beamline. The electron beam enters from the right and impinges on
   the production target located in the center of the solenoid magnet shown at the right (upstream) end of CLAS12,
   where other detector components are also visible. Scattered electrons and forward-going particles are detected
   in the Forward Detector (FD), consisting of the High Threshold Cherenkov Counter (HTCC) (yellow), 
@@ -66,7 +78,7 @@ Key features and capabilities of the CLAS12 detector include:
 
 \begin{itemize}
 
-\item{\bf Large Acceptance: }As its name suggests, CLAS12 has a large angular and momentum acceptance. This feature is crucial for detecting particles over a wide range of angles and energies, allowing comprehensive analysis of nuclear reactions.
+\item{\bf Large Acceptance: } As its name suggests, CLAS12 has a large angular and momentum acceptance. This feature is crucial for detecting particles over a wide range of angles and energies, allowing comprehensive analysis of nuclear reactions.
 \item{\bf Electron Beam Experiments:} CLAS12 is designed to investigate the interactions of high-energy electrons with nucleons and nuclei. By scattering electrons off target materials, scientists can probe the internal structure of nucleons and the dynamics of the strong force.
 \item{\bf High Luminosity:} The detector operates at high luminosities, enabling it to collect a vast amount of data from electron scattering experiments. This high data rate is essential for studying rare processes and achieving statistically significant results.
 \item{\bf Sophisticated Detection Systems:} CLAS12 consists of various subsystems designed to detect different types of particles and measure their properties. These include drift chambers for tracking charged particles, time-of-flight counters for particle identification, calorimeters for measuring energy, and Cherenkov detectors for identifying electrons.
@@ -81,7 +93,7 @@ The CLAS12~\cite{Burkert:2020akg} forward detector is built around a six-coil to
 which divides the active detection area into six azimuthal regions, called ``sectors''. Each sector is 
 equipped with three regions of drift chambers~\cite{Mestayer:2020saf} designed to detect charged 
 particles produced by the interaction of an electron beam with a target. Each region consists of two 
-chambers (called super-layers), each of them having 6 layers of wires. Each layer  in a super-layer 
+chambers (called super-layers), each of them having six layers of wires. Each layer  in a super-layer 
 contains 112 signal wires, making a super-layer a $6\times112$ cell matrix. 
 The schematic view of all sectors and super-layers is shown in Figure~\ref{fig:drift_chambers}.
 
@@ -90,12 +102,12 @@ The schematic view of all sectors and super-layers is shown in Figure~\ref{fig:d
 \includegraphics[width=0.32\columnwidth]{images/evt_05.pdf}
 \includegraphics[width=0.32\columnwidth]{images/evt_26.pdf}
 \includegraphics[width=0.32\columnwidth]{images/evt_35.pdf}
-\caption{Example View for Drift Chambers (all 6 sectors). The points show wire hits for each of the layers in the drift chambers and the lined indicate reconstructed tracks by the conventional tracking algorithm. } 
+\caption{Example views of the six sectors of the Drift Chambers of CLAS12. The points show wire hits for each of the layers in the drift chambers and the lines indicate reconstructed tracks by the conventional CLAS12 tracking algorithm. } 
 \label{fig:drift_chambers}
 \end{figure}
 
-Particles that originate at the interaction vertex travel through the magnetic field and pass through all 
-three regions of the drift chambers in a given sector are reconstructed by tracking algorithms. First, 
+Particles that originate from the interaction vertex travel through the magnetic field and pass through all 
+three regions of the drift chambers in a given sector and are reconstructed by tracking algorithms. First, 
 in each super-layer adjacent wires with a signal are grouped into segments. Track candidates are constructed 
 by connecting segments in each super-layer to form a track trajectory. Then each track candidate is fitted through 
 a magnetic field to calculate the quality of the track ($\chi^2$), and the track candidates with $\chi^2$ below the cut value
@@ -103,11 +115,11 @@ are saved for further refinement using Kalman-filter~\cite{Kalman1960}.
 
 The positions of these segments in each super-layer are used to fit the track trajectory 
 to derive initial parameters, such as momentum and direction (called hit-based tracking).  After the initial selection, good track candidates 
-(shown in Figure~\ref{fig:drift_chambers} with lines) are passed through a Kalman-filter~\cite{Kalman1960} to 
+(shown in Figure~\ref{fig:drift_chambers} with lines) are passed through a Kalman-filter to 
 refine measured parameters further (called time-based tracking).
 
 At the first stage of the tracking, the tracks are identified using only the hit positions (wire number). The precision 
-of the reconstructed track parameters using only hit positions are worse than the final calculated parameters from time-based tracking, but they are sufficient to calculate physics quantities from the event and identify desired reactions in the event. 
+of the reconstructed track parameters using only hit positions are worse ($\sim3\%$) than the final calculated parameters from time-based tracking, but they are sufficient to calculate physics quantities from the event and identify desired reactions in the event. 
 
 %The entire tracking code in CLAS12 consists of the following stages:
 %\begin{itemize}
@@ -117,12 +129,13 @@ of the reconstructed track parameters using only hit positions are worse than th
 %\item Process tracks through Kalman filter
 %\end{itemize}
 
-The AI/ML is already used in the CLAS12 track reconstruction process at different stages. First a Convolutional
-Auto-Encoder is used to de-noise the drift chamber hits~\cite{Thomadakis:2022zcd}, which leads to improved cluster
-identification in each super-layer. Then after the clustering, the track candidates are identified using the AI MLP classifier,
+The CLAS12 track reconstruction process is already making use of AI at different stages.
+First a Convolutional
+Autoencoder is used to de-noise the drift chamber hits~\cite{Thomadakis:2022zcd}, which leads to improved cluster
+identification in each super-layer. Then after the clustering, the track candidates are identified using a Multilayer perceptron (MLP) classifier,
 which identifies 6-super-layer and 5-super-layer track candidates~\cite{Gavalian:2020oxg}. The combined result of
 de-noising and AI-assisted track candidate identification used in CLAS12 leads to an increase in statistics of multi-particle 
-final states from $50\%-75\%$ (depending on kinematics)~\cite{Gavalian:2020xmc}. 
+final states from $50\%-75\%$ depending on kinematics~\cite{Gavalian:2020xmc}. 
 Furthermore, an Artificial Intelligence approach to track reconstruction was developed to estimate track parameters 
 (such as momentum and direction) based on cluster positions of the track~\cite{Thomadakis:2023ebe}, it was shown that 
 the AI-estimated track parameters are closer to the values reconstructed using the Kalman-filter than the 
@@ -130,12 +143,12 @@ conventional hit-based tracking.
 
 The developed AI tools for CLAS12 reconstruction can identify tracks from their cluster pattern and estimate the track parameters.
 If combined with the clustering algorithm, this chain may provide a complete track reconstruction solely based on AI algorithms and
-may potentially be used in real time with data acquisition. 
+may potentially be used in real-time with data acquisition. 
 
-\section{Track Finding Neural Networks}
+\section{Track finding using Neural Networks approach}
 
-Traditionally the segments are identified in the tracking code by iterating over the hits in each super-layer, however, this algorithm requires the knowledge of magnetic field and it is not very performant. To achieve a real-time track reconstruction a segment-finding neural network was developed using Convolutional Logistic Regression Network.
-The hit data from each drift chamber super-layer was presented as an image of size $112\times6$ used as an input to convolutional layers and the output was an array of $112$ numbers where the positions of the segments were set to 1.  The training sample was constructed using segments found by the conventional segment-finding algorithm. The input images and the output array can be seen in Figure~\ref{fig:segment_finding}. 
+Traditionally the segments are identified in the tracking code by iterating over the hits in each super-layer, however, this algorithm requires the knowledge of the CLAS12 magnetic field and it is not very performant ($\sim 15 ms/event$). To achieve a real-time track reconstruction, a segment-finding neural network was developed using a Convolutional Logistic Regression Network.
+The hit data from each drift chamber super-layer was presented as an image of size $112\times6$ used as an input to convolutional layers and the output was an array of $112$ numbers where the values of the bin corresponding to the position of the segment was set to 1.  The training sample was constructed using segments found by the conventional segment-finding algorithm. The input images and the output array can be seen in Figure~\ref{fig:segment_finding}. 
 
 \begin{figure}[h!]
 \centering
@@ -145,12 +158,12 @@ The hit data from each drift chamber super-layer was presented as an image of si
 \includegraphics[width=0.32\columnwidth]{images/nn_c_event_128.pdf}
 \includegraphics[width=0.32\columnwidth]{images/nn_c_event_130.pdf}
 \includegraphics[width=0.32\columnwidth]{images/nn_c_event_148.pdf}
-\caption{Examples of cluster reconstruction CNN, the top plot (marked as "input") shows the input image of size $112\times6$ for the CNN, the histogram below (marked "desired") shows the reconstructed segments average wire position from the conventional segment finding algorithm, and the histogram below (marked  "predicted") shows the predicted segment position by the CNN.} 
+\caption{Examples of cluster reconstructions using the CNN approach, the top plot (marked as "input") shows the input image of size $112\times6$ for the CNN, the histogram below (marked "desired") shows the reconstructed segments average wire position from the conventional segment finding algorithm, and the histogram below (marked  "predicted") shows the predicted segment position by the CNN.} 
 \label{fig:segment_finding}
 \end{figure}
 
 After identifying clusters in each super-layer the track classification neural network~\cite{Gavalian:2020oxg} is used to identify tracks in the event.
-Examples of track classification can be seen in Figure~\ref{fig:track_classifier}. Once the tracks are identified in the event the track parameters (segment positions) are passed to another neural network which predicts the particle momentum and direction~\cite{Thomadakis:2023ebe}
+Examples of track classification can be seen in Figure~\ref{fig:track_classifier}. Once the tracks are identified in the event the track parameters (consisting of six numbers representing the segment positions in each super-layer) are passed to another neural network which predicts the particle momentum and direction~\cite{Thomadakis:2023ebe}.
 
 %The performance of the neural network was $2~ms$ per event (each event contains 36 super layers). The performance of the segment identification efficiency is shown in Figure~\ref{fig:segment_eff}.
 
@@ -160,40 +173,53 @@ Examples of track classification can be seen in Figure~\ref{fig:track_classifier
 \includegraphics[width=0.23\columnwidth]{images/track_classifier_18.pdf}
 \includegraphics[width=0.23\columnwidth]{images/track_classifier_32.pdf}
 \includegraphics[width=0.23\columnwidth]{images/track_classifier_35.pdf}
-\caption{Example of track identification using MLP neural network. The solid lines connecting segments show all combinations of the tracks considered by the neural network and the dashed lines show tracks identified by the network.} 
+\caption{Examples of track identification using MLP neural network. The solid lines connecting segments show all combinations of the tracks considered by the neural network and the dashed lines show tracks identified by the network.} 
 \label{fig:track_classifier}
 \end{figure}
 
-By using three neural networks (segment finder, track classifier, and track parameter estimator), the tracks in each event are reconstructed based only on hit positions in the drift chambers. 
+By using three neural networks (a segment finder, a track classifier, and a tracker parameter estimator), the tracks in each event are reconstructed based only on hit positions in the drift chambers. 
 %The performance of the neural network was $2~ms$ per event (each event contains 36 super layers). The performance of the segment identification efficiency is shown in Figure~\ref{fig:segment_eff}.
 
-\section{The Reconstruction}
+\section{A reconstruction algorithm based on neural networks}
 
-Combining the segment-finding neural network with our existing track-finding and parameter-extraction networks allowed for the construction of a workflow that was capable of fast-track reconstruction to be used online. The schematic view of the workflow is shown in Figure~\ref{fig:workflow}.
+Combining the segment-finding neural network with our existing track-finding and parameter-extraction networks allowed for the construction of a workflow that is capable of fast-track reconstruction and can be used online. The schematic view of the workflow is shown in Figure~\ref{fig:workflow}.
 The drift chamber data from the experimental setup was used to construct images ($112\times6$ arrays) filled with hits, and segments were identified 
 using the segment-finding neural network. Then a track candidate list was constructed for each sector using segments from each of 6 super-layers.
-The tracks were identified from the candidate list using track classification neural network~\ref{Thomadakis:2022zcd}, and then the track parameters were inferred using track parameter estimator neural network. In the output of the workflow, the data structure was created containing particles reconstructed in the event. The whole workflow works at a speed of $450-500~Hz$ in a single thread, using 48 cores we were able to run the reconstruction at approximately $22~kHz$, for comparison the experiment collects data at $12~kHz$ (depending on the incident beam current and the target type).
-Using reconstructed track parameter physics analysis can be performed to identify specific final states in the data, however, since no particle identification is performed at this level some assumptions have to be made about the particle types when analyzing the data. In the following example, we isolated events that contain 2 negative and 1 positive track and extracted the signal for $\rho^\circ$, with its decay to $\pi^+\pi^-$ pair. In one case it was assumed that the first negative particle is the electron and the second one is $\pi^-$ and in the second case the opposite. The positive track is assumed to be $\pi^+$. The invariant mass of two pions was constructed, the electron momentum was used to calculate transferred momentum to $\rho^\circ$ and a cut was applied to clean the sample. The resulting distribution of invariant mass of two pions (by combining both combinatorial assumptions) can be seen in Figure~\ref{fig:rho}.
+
+\vspace{0.3in}
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.5\columnwidth]{images/rho_meson_instarec.pdf}
-\caption{Invariant mass of $\pi^+\pi^-$ ($\rho^\circ(770)$) using tracks reconstructed by InstaRec using Neural Networks. The performance of the AI track reconstruciton algorithm is $22~kHz$ using 48 cores.} 
+\includegraphics[width=0.85\columnwidth]{images/workflow.png}
+\caption{The CLAS12 raw data is passed through four neural networks with the last one outputting the full parameters of the tracks (momentum and direction), which can be used for the identification of the event topology and  and physics analysis.} 
+\label{fig:workflow}
+\end{figure}
+
+The tracks were identified from the candidate list using track classification neural network~\cite{Thomadakis:2022zcd}, and then the track parameters were inferred using track parameter estimator neural network. In the output of the workflow, a data structure is created containing particles reconstructed in the event. The whole workflow reaches a speed of $450-500${~\rm Hz} in a single thread, using 48 cores we were able to run the reconstruction at approximately $22${~\rm kHz}, for comparison the experiment collects data at $12${~\rm kHz} (depending on the incident beam current and the target type).
+Using reconstructed track parameters physics analysis can be performed to identify specific final states in the data. However, since no particle identification is performed at this level, some assumptions have to be made about the particle types when analyzing the data. 
+In the following example, we isolated events that contain two negative and one positive tracks and extracted the signal for the $\rho$ meson decaying into a pion pair ($\rho\rightarrow \pi^+ \pi^-$). In one case it was assumed that the first negative particle is the electron and the second one is $\pi^-$ and in the second case the opposite. The positive track is assumed to be $\pi^+$. The invariant mass of two pions was constructed, the electron momentum was used to calculate the transferred momentum to $\rho^\circ$ and a cut was applied to clean the sample. The resulting distribution of the invariant mass of two pions (obtained by combining both combinatorial assumptions) can be seen in Figure~\ref{fig:rho} (right). 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\columnwidth]{images/instarec_recons.pdf}
+\caption{The missing mass of $e(H)\rightarrow e^\prime\pi^+\pi^-X$ is shown with a proton peak visible at the mass value of $0.938~GeV$ (left). The invariant mass of $\pi^+ \pi^-$ is shown (right). The $\rho$ peak is visible at $770$ {\rm MeV}.  }
+%The performance of the AI track reconstruction algorithm is $22${~\rm kHz} using 48 cores.} 
 \label{fig:rho}
 \end{figure}
 
-As can be seen from the figure the $\rho$ meson is identified with good resolution in the data stream without resorting to computationally extensive data processing procedures. The resolution of the extracted peak is worse than what is achieved by conventional methods after the time-based Kalman-filter tracking, but sufficient enough to isolate the events for further processing. 
+Similarly, we can calculate the missing mass of the scattered electron and two pions to identify the missing proton, shown in Figure~\ref{fig:rho} (left). 
+As it can be seen from the figure the $\rho$ meson is identified with good resolution ($\sim 2\%$) in the data stream without resorting to computationally extensive data processing procedures. The resolution of the extracted peak is worse than what is achieved by conventional methods after the time-based Kalman-filter tracking, but sufficient enough to isolate the events for further processing. 
 
 \section{Discussion}
 
-The developments discussed in this article have huge implications for the future of Nuclear Physics experiments, specifically for experiments designed to measure multiple reactions. 
-CLAS12 is a large acceptance spectrometer, and data collected during an experiment can be used to analyze (explore) many physics reactions. This presents some challenges in the procedure of obtaining the data. Traditionally the entire data set for the experiment has to be processed by computer farms, which typically can take up to 6 months, then the data has to be analyzed to extract the events of interest that match specific topology patterns (i.e. particles in the final state), which may comprise the fraction of the entire data set. Additionally, when improvements are made to the reconstruction code that can improve processed data quality, it is impossible to re-process a large data set again due to limitations on compute time. Many of the analyses end up analyzing data that is significantly less than a percent of the entire data set. If the experimental data was tagged with the types of physics reactions in the events, the extraction and processing of specific data samples would be significantly faster and even possible to do on one computer over a weekend. This can significantly decrease the computing requirements of an experiment and lead to massive energy savings.
+The developments discussed in this article have huge implications for the future of Nuclear Physics experiments, specifically for multi-purpose experiments, such as CLAS12 at JLab or EPIC at the future EIC. CLAS12 is a large acceptance spectrometer, and data collected during an experiment can be used to analyze (measure) many physics reactions. This presents some challenges in the procedure of obtaining the data. Traditionally an entire dataset has to be processed by computer farms, which can typically take up to 6 months, and then the data has to be analyzed to extract the events of interest that match specific topology patterns (i.e. particles in the final state), which may comprise the fraction of the entire dataset. Additionally, when improvements are made to the reconstruction code that can improve the quality of the processed data, it is difficult to re-process the data set again due to limitations on allocated computing time. Many of the analyses end up analyzing data that is significantly less than a percent of the entire dataset. If the experimental data was tagged with the types of physics reactions in the events, the extraction and processing of specific data samples would be significantly faster and even possible to do on one computer over a weekend. (The estimate is based on our tests with an M3 Macbook Pro, capable of processing one run from an experiment in 20 minutes utilizing 10 threads, one could process 144 runs in one weekend, more than collected during one experiment). This can significantly decrease the computing requirements of an experiment and lead to massive energy savings.
+A hierarchical data format, specifically designed to store events categorized by any key criteria, is used (HIPO) to store CLAS12 data~\cite{Gavalian:hipo}.
+The online reconstruction will use the event tagging capability of HIPO to arrange events in the output stream according to their topology. This allows reading only relevant events to pass through reconstruction algorithms minimizing the processing time of relevant events matching specific analysis criteria.
+In conclusion, in the modern era of Artificial Intelligence and increased data volumes produced by Nuclear Physics experiments, similar approaches to identifying physics in the data stream and facilitating data processing and analysis workflows must be employed. This work is a step towards solving 
+the challenges of optimal event identification and data storage for modern Nuclear Physics experiments.
 
-In CLAS12 a hierarchical data format is used~\cite{Gavalian:hipo} (HIPO) to store experimental data, specifically designed to store events categorized by any key criteria. The online reconstruction will use the event tagging capability of HIPO to arrange events in the output stream according to their topology. This allows reading only relevant events to pass through reconstruction algorithms minimizing the processing time of relevant events matching specific analysis criteria.
-
-In conclusion, in the modern era of Artificial Intelligence and increased data volumes of Nuclear Physics experiments experiments must use similar approaches of identifying physics in the data stream and facilitating data processing and analysis workflows. This work is the first step in solving  optimal data identification and storage challenges for modern experimental setups.
-
-\section{Acknowledgments}
+%\section{Acknowledgments}
+\acknowledgments
 
 This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Nuclear Physics under contract DE-AC05-06OR23177, and
  %This research was sponsored in part from Jefferson Lab grant no. XXX, SURA grant No. CNF-19-04, 

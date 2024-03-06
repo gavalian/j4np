@@ -11,5 +11,6 @@ package j4np.data.base;
 public interface DataSync {
     public boolean open(String filename);
     public boolean add(DataEvent event);
+    public void    addFrame(DataFrame frame);
     public void    close();
 }

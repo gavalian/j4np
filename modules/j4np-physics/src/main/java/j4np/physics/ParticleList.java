@@ -58,4 +58,9 @@ public class ParticleList extends PhysicsEvent {
     public void vertex(Vector3 v, int index) {
         v.copy(particles.get(index).vertex());
     }
+
+    @Override
+    public double chi2(int index) {
+        return 0.0;
+    }
 }

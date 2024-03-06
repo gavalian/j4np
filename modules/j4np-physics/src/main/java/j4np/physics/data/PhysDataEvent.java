@@ -27,7 +27,9 @@ public class PhysDataEvent extends PhysicsEvent {
     protected Bank     configBank = null;
     
     protected int  index_status = -1;
+    protected int    index_chi2 = -1;
     protected int  index_charge = -1;
+    
     protected PropertyList properties = new PropertyList();
     
     public PhysDataEvent(){}
@@ -42,7 +44,11 @@ public class PhysDataEvent extends PhysicsEvent {
         if(sc.hasEntry("charge")==true){
             index_charge = sc.getEntryOrder("charge");
         }
-    }    
+        
+        if(sc.hasEntry("chi2pid")==true){
+            index_chi2 = sc.getEntryOrder("chi2pid");
+        }
+    }
     
     public void init(HipoReader r){
         properties.init(r);
@@ -119,6 +125,13 @@ public class PhysDataEvent extends PhysicsEvent {
                 dataBank.getFloat("vx", index), dataBank.getFloat("vy", index), 
                 dataBank.getFloat("vz", index)
                 );
+    }
+
+    @Override
+    public double chi2(int index) {
+        if(index_status>=0)
+            return dataBank.getFloat(index_chi2, index);
+        return 0.0;
     }
     
     public static class PropertyList {

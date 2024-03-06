@@ -789,7 +789,7 @@ public class HipoReader implements DataSource {
     }
 
     @Override
-    public int nextFrame(DataFrame frame) {
+    public synchronized int nextFrame(DataFrame frame) {
 
         int frameSize = frame.getCount();
         int   counter = 0;

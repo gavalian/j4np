@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import twig.config.TDataAttributes;
+import twig.math.F1D;
 
 /**
  * Defines the class to create a basic 1D Histogram
@@ -697,6 +698,24 @@ public class H1F  implements DataSet {
         for(int bin = 0; bin < h1.getXaxis().getNBins(); bin++){
             result.set(h1.getBinContent(bin), h1.getBinError(bin));
             denom.set(h2.getBinContent(bin), h2.getBinError(bin));
+            result.subtract(denom);
+            h1div.setBinContent(bin, result.number());
+            h1div.setBinError(bin, result.error());
+        }
+        return h1div;
+    } 
+    
+    public static H1F sub(H1F h1, F1D func){
+        
+        H1F h1div = new H1F(h1.getName()+"_sub_func",
+                h1.getXaxis().getNBins(),
+                h1.getXaxis().min(),h1.getXaxis().max());
+        StatNumber   result = new StatNumber();
+        StatNumber   denom  = new StatNumber();
+        for(int bin = 0; bin < h1.getXaxis().getNBins(); bin++){
+            double center = h1.getAxisX().getBinCenter(bin);
+            result.set(h1.getBinContent(bin), h1.getBinError(bin));
+            denom.set(func.evaluate(center),0.0);
             result.subtract(denom);
             h1div.setBinContent(bin, result.number());
             h1div.setBinError(bin, result.error());

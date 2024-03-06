@@ -30,6 +30,7 @@ echo 'copying jars and exacutable'
 cp -r modules/j4np-package/bin j4np-${version}/.
 cp -r modules/j4np-package/etc j4np-${version}/.
 cp -r modules/j4np-package/scripts j4np-${version}/.
+cp -r modules/j4np-neural/etc/networks j4np-${version}/etc/.
 cp modules/j4np-package/target/*with-dependencies.jar j4np-${version}/lib/core/j4np-${version}.jar
 #cp extensions/j4np-analysis/target/*with-dependencies.jar j4np-${version}/lib/ext/.
 cp extensions/j4ml-track/target/*with-dependencies.jar j4np-${version}/lib/ext/.
