@@ -4,6 +4,7 @@
  */
 package j4np.neural.classifier;
 
+import j4np.neural.finder.NeuralClassifierModel;
 import deepnetts.net.layers.activation.ActivationType;
 import j4ml.data.ConfusionMatrix;
 import j4ml.data.DataEntry;

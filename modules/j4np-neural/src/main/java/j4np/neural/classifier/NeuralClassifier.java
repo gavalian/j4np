@@ -25,6 +25,8 @@ import java.util.List;
 public class NeuralClassifier {
     
     EJMLModel model = null;//new EJMLModel();
+    EJMLModel modelFixer = null;//new EJMLModel();
+    
     private Schema  clusters = null;
     private Schema    tracks = null;
     
@@ -46,11 +48,20 @@ public class NeuralClassifier {
         ArchiveProvider ap = new ArchiveProvider(networkFile);
         int runNumber = ap.findEntry(run);
         
-        String archiveFile = String.format("network/%d/%s/trackClassifier.network",runNumber,"default");        
+        String archiveFile = String.format("network/%d/%s/trackClassifier.network",runNumber,"default"); 
+        String archiveFixer = String.format("network/%d/%s/trackFixer.network",runNumber,"default"); 
         List<String> networkContent = ArchiveUtils.getFileAsList(networkFile,archiveFile);
+        List<String> networkFixer = ArchiveUtils.getFileAsList(networkFile,archiveFile);
+        
         model = EJMLModel.create(networkContent);
+        modelFixer = EJMLModel.create(networkFixer);
+        
         model.setType(EJMLModel.ModelType.SOFTMAX);        
+        
+        System.out.println("== CLASSIFIER ==");
         System.out.println(model.summary());
+        System.out.println("==== FIXER ====");
+        System.out.println(modelFixer.summary());
     }
     
     public int getHighestIndex(float[] output){
@@ -132,7 +143,7 @@ public class NeuralClassifier {
             float cm = b.getFloat("mean", r);
             
             constructor.add(s, sl, id, cm);
-        }        
+        } 
         //System.out.println("========== PROCESSING EVENT ");
         //constructor.show();
         

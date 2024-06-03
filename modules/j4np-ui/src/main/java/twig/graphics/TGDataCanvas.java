@@ -713,7 +713,44 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                 }
             }
         }
-        
+        if(e.getActionCommand().compareTo("resize_500x500")==0){
+            this.setSize(500, 500);
+        }
+        if(e.getActionCommand().compareTo("resize_800x800")==0){
+            this.setSize(800, 800);
+        }
+        if(e.getActionCommand().compareTo("resize_900x600")==0){
+            this.setSize(900, 600);
+        }
+        if(e.getActionCommand().compareTo("resize_600x900")==0){
+            this.getParent().setSize(600, 900);
+            this.setSize(600, 900);
+        }
+        if(e.getActionCommand().compareTo("resize_custom")==0){
+            JTextField titleX = new JTextField();
+                    JTextField titleY = new JTextField();
+                    titleX.setText("500");
+                    titleY.setText("500");
+                    Object[] message = {
+                        "Size X:", titleX,
+                        "Size Y:", titleY
+                    };
+                    
+                    int option = JOptionPane.showConfirmDialog(null, 
+                            message, "Login", JOptionPane.OK_CANCEL_OPTION);
+                    if (option == JOptionPane.OK_OPTION) {
+                        this.setSize(
+                                Integer.parseInt(titleX.getText()),
+                        Integer.parseInt(titleY.getText()));
+                    }
+            this.setSize(500, 500);
+        }
+        if(e.getActionCommand().compareTo("set_style_presentation")==0){
+            TStyle.setStyle(TStyle.TwigStyle.PRESENTATION);
+        }
+        if(e.getActionCommand().compareTo("set_style_article")==0){
+            TStyle.setStyle(TStyle.TwigStyle.ARTICLE);
+        }
         if(e.getActionCommand().compareTo("axis_limits_y")==0){
             if(popupProvider.region!=null){        
                 JTextField min = new JTextField();
@@ -802,7 +839,10 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                         "divide_c_2x2","divide_c_3x1","divide_c_1x3",
                         "divide_c_2x3","divide_c_3x3","divide_c_4x2"}
                     );
-            
+            this.addMenu(menu, "Resize", 
+                    new String[]{"500x500","800x800", "900x600","600x900","Custom"}, 
+                    new String[]{"resize_500x500","resize_800x800","resize_900x600","resize_600x900","resize_custom"}
+                    );
             menu.add(new JSeparator());
             
             //addMenuItem(menu, "New Canvas");
@@ -848,6 +888,11 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
                     new String[]{"Set Palette" ,"Set Palette 2D"}, 
                     new String[]{"set_canvas_palette", "set_canvas_palette_2d"}
             );
+            this.addMenu(menu, "Style", 
+                    new String[]{"Presentation" ,"Article"}, 
+                    new String[]{"set_style_presentation", "set_style_article"}
+            );
+            
         }
         
         @Override

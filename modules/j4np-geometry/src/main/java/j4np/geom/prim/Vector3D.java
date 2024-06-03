@@ -147,6 +147,12 @@ public final class Vector3D implements Transformable, Showable {
         setY(y);
         setZ(z);
     }
+    
+    public void setXYZ(String x, String y, String z) {
+        setX(Double.parseDouble(x));
+        setY(Double.parseDouble(y));
+        setZ(Double.parseDouble(z));
+    }
     /**
      * Sets the x component.
      * @param x the x component
@@ -205,6 +211,7 @@ public final class Vector3D implements Transformable, Showable {
     public double phi() {
         return atan2(y,x);
     }
+    
     public double costheta() {
         final double tol = 1e-6;
         double l = this.r();

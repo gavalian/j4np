@@ -43,6 +43,16 @@ public class DataVector {
         return v;
     }
     
+    public static DataVector range(int count, double start, double increment){
+        DataVector v = new DataVector();
+        for(int loop = 0; loop < count; loop++) v.add(start + loop*increment);
+        return v;
+    }
+    
+    public static DataVector range(int start, int end){
+        return DataVector.range(end-start+1, start, 1.0);
+    }
+    
     public DataVector(double[] data){
         this.set(data);
     }
@@ -141,6 +151,19 @@ public class DataVector {
     }
     
     public boolean isOrdered(){ return isVectorOrdered;}
+    
+   
+    public float[] toFloat(){
+        float[] data = new float[this.datavec.size()];
+        for(int i = 0; i < data.length; i++) data[i] = datavec.get(i).floatValue();
+        return data;
+    }
+    
+    public double[] toDouble(){
+        double[] data = new double[this.datavec.size()];
+        for(int i = 0; i < data.length; i++) data[i] = datavec.get(i).doubleValue();
+        return data;
+    }
     
     public int findBin(double value){
         return this.findBin(value,0);
@@ -251,6 +274,31 @@ public class DataVector {
         }
         return str.toString();
     }
+    
+    public static DataVector add(DataVector a, DataVector b){
+        DataVector v = new DataVector();
+        for(int i = 0; i < a.getSize(); i++) v.add(a.getValue(i)+b.getValue(i));
+        return v;
+    }
+    
+    public static DataVector sub(DataVector a, DataVector b){
+        DataVector v = new DataVector();
+        for(int i = 0; i < a.getSize(); i++) v.add(a.getValue(i)-b.getValue(i));
+        return v;
+    }
+    
+    public static DataVector res(DataVector a, DataVector b){
+        DataVector v = new DataVector();
+        for(int i = 0; i < a.getSize(); i++) if(a.getValue(i)!=0.0) v.add((a.getValue(i)-b.getValue(i))/a.getValue(i));
+        return v;
+    }
+    
+    public static DataVector div(DataVector a, DataVector b){
+        DataVector v = new DataVector();
+        for(int i = 0; i < a.getSize(); i++) if(b.getValue(i)!=0.0) v.add((a.getValue(i)/b.getValue(i)));
+        return v;
+    }
+    
     /**
      * Returns the number of entries in the vector
      * @return size

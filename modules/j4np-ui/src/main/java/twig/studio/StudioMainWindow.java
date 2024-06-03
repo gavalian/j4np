@@ -84,6 +84,11 @@ public class StudioMainWindow extends JFrame implements ActionListener {
             System.out.println(" main window : adding left panel...");
             this.add(leftPane,BorderLayout.LINE_START);
         }
+        
+        if(this.bottomPane!=null){
+            System.out.println(" main window : adding bottom panel...");
+            this.add(bottomPane,BorderLayout.PAGE_END);
+        }
         this.pack();
         this.setSize(Xsize,Ysize);
     }

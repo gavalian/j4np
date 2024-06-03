@@ -273,7 +273,7 @@ public class InstaRec {
     }
     
     public static void drawStages(int stage){
-        TGCanvas c = new TGCanvas("dc_stages_"+stage, 300,350);
+        TGCanvas c = new TGCanvas("dc_stages_"+stage, 400,450);
         //c.setName("dc_stages_"+stage);
         //c.setTitle("dc stages");
         GraphErrors gt[] = new GraphErrors[4];
@@ -284,7 +284,7 @@ public class InstaRec {
         
         
         
-        int noise = 250;
+        int noise = 120;
         if(stage>2) noise = 40;
         GraphErrors gn = InstaRec.noise(noise);
         
@@ -292,15 +292,22 @@ public class InstaRec {
             GraphErrors go = InstaRec.outline(i);
             c.draw(go,"Lsame");
         }
-        gn.attr().set("mc=#FF9800,ms=12");
+        gn.attr().set("mc=32,ms=12,mo=2,mw=1");
         c.draw(gn,"Psame");
         for(int i = 0; i < gt.length; i++){
-            gt[i].attr().set("mc=3,mo=3,ms=12");
+            gt[i].attr().set("mc=32,ms=12,mo=2,mw=1");
             c.draw(gt[i],"Psame");
         }
 
-        String[] attr = new String[]{"lc=#5F8670,mc=#5F8670,mo=#5F8670",
-            "lc=#3559E0,mc=#3559E0,mo=#3559E0","lc=#B80000,mc=#B80000,mo=#B80000","lc=6,mc=6"};
+        String[] attr = new String[]{
+            "mc=35,mo=5,mw=1,ms=12,ls=2,lc=5",
+            "mc=35,mo=5,mw=1,ms=12,ls=2,lc=5",
+            "mc=35,mo=5,mw=1,ms=12,ls=2,lc=5",
+            "mc=35,mo=5,mw=1,ms=12,ls=2,lc=5"};
+            //"lc=#5F8670,mc=#5F8670,mo=#5F8670",
+            //"lc=#3559E0,mc=#3559E0,mo=#3559E0",
+            //"lc=#B80000,mc=#B80000,mo=#B80000",
+            //"lc=6,mc=6"};
         int ntracks = stage;
         for(int k = 0; k < ntracks; k++){
             gt[k].attr().set(attr[k]);
@@ -374,11 +381,11 @@ public class InstaRec {
         //ir.makePlot2D(b[2],b[0]);
         
         //InstaRec.drawDenoise();
-        InstaRec.drawRegression();
-       // InstaRec.drawStages(1);
-       // InstaRec.drawStages(2);
+        //InstaRec.drawRegression();
+        InstaRec.drawStages(1);
+        InstaRec.drawStages(2);
        // InstaRec.drawStages(3);
-       // InstaRec.drawStages(4);
+        InstaRec.drawStages(4);
         
         //InstaRec.CLASLogo();
     }

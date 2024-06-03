@@ -27,6 +27,10 @@ public class TextFileWriter {
         
     }
     
+    public TextFileWriter(String txtfile){
+        this.open(txtfile);
+    }
+    
     public void open(String filename){
         try {
             writer = new BufferedWriter(new OutputStreamWriter(

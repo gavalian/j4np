@@ -6,6 +6,7 @@
 package j4ml.data;
 
 import j4np.utils.io.DataArrayUtils;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -150,5 +151,18 @@ public class DataEntry {
             if(output[i]>maxval){ maxval = output[i]; maxbin = i;}
         }
         return maxbin;
+    }
+    
+    public static float[] combine(List<float[]> f){
+        int size = 0;
+        for(float[] a : f) size += a.length;
+        float[] result = new float[size];
+        int counter = 0;
+        for(int i = 0; i < f.size(); i++){
+            for(int l = 0; l < f.get(i).length; l++){
+                result[counter] = f.get(i)[l]; counter++;
+            }
+        }
+        return result;
     }
 }

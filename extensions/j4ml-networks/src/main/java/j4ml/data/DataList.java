@@ -12,6 +12,7 @@ import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import javax.visrec.ml.data.DataSet;
 import twig.data.DataVector;
 import twig.data.H1F;
@@ -33,6 +34,25 @@ public class DataList extends Tree {
     
     public void add(DataEntry pair){
         dataList.add(pair);
+    }
+    
+    public void add(DataEntry pair, boolean check){
+        
+        if(check==false) { dataList.add(pair); return; }
+        boolean pass = true;
+        for(int i = 0; i < pair.features().length; i++){
+            if(pair.features()[i]<0||pair.features()[i]>1.00){
+                pass = false; break;
+            }
+        }
+        
+        for(int i = 0; i < pair.labels().length; i++){
+            if(pair.labels()[i]<0||pair.labels()[i]>1.00){
+                pass = false; break;
+            }
+        }
+        
+        if(pass==true) dataList.add(pair);
     }
     
     public List<DataEntry> getList(){ return dataList;}
@@ -81,6 +101,16 @@ public class DataList extends Tree {
         int[] index = new int[size];
         for(int i = 0 ; i < size; i++) index[i] = start + i;
         return index;
+    }
+    
+    public void reduce(int size){
+        Random r = new Random();
+        //System.out.println(" reducing ......");
+        while(this.dataList.size()>size){
+            //System.out.println(" size = " + this.dataList.size() + "  requred = " + size);
+            int which = r.nextInt(dataList.size());
+            this.dataList.remove(which);
+        }
     }
     
     public void  turnClassifier(int nclasses){

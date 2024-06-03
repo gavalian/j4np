@@ -43,6 +43,12 @@ public class Vector3 {
         fZ = z;  
     }
     
+    public void set(String x, String y, String z){
+        this.setXYZ(
+                Double.parseDouble(x),Double.parseDouble(y),Double.parseDouble(z)
+        );        
+    }
+    
     public static Vector3 from(Vector3 v){
         Vector3 vec = new Vector3(v.x(),v.y(),v.z());
         return vec;

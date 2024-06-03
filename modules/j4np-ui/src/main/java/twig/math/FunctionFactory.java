@@ -131,8 +131,39 @@ public class FunctionFactory {
     		}
     	}
     }
+    
     public static double  gauss(double x, double mean, double sigma){
         return Math.exp(-(x-mean)*(x-mean)/(2.0*sigma*sigma));
+    }
+    
+    public static double voigt(double x, double mean, double width, double sigma){
+        double s = (sigma>0) ? sigma : -sigma ;
+        double w = (width>0) ? width : -width ;
+        
+        double coef= -0.5/(s*s);
+        double arg = x - mean;
+        if (s==0. && w==0.) return 1.;
+        
+        // Breit-Wigner for zero sigma
+        if (s==0.) return (1./(arg*arg+0.25*w*w));
+        
+        // Gauss for zero width
+        if (w==0.) return Math.exp(coef*arg*arg);
+        
+        // actual Voigtian for non-trivial width and sigma
+        double c = 1./(Math.sqrt(2.)*s);
+        double a = 0.5*c*w;
+        double u = c*arg;
+        
+        return 0;  
+    }
+    
+    public static double faddeva(double re, double im){
+        double a1_re = re*re - im*im;
+        double a1_im = re*im;
+        
+        //edouble a2_re = 
+        return 1;
     }
     
     public static double getRandMinMax(double min, double max){

@@ -26,8 +26,8 @@ public class DriftChamberTools {
     
     public static int TRACK_COLOR = 5;
     public static int TRACK_TRAJ_WIDTH = 2;
-    public static int TRACK_CLUSTER_SIZE = 8;
-    public static int DC_HIT_SIZE = 8;
+    public static int TRACK_CLUSTER_SIZE = 5;
+    public static int DC_HIT_SIZE = 5;
     public static int DC_HIT_COLOR = 81;
     
     public  DriftChambers driftChambers = new DriftChambers();

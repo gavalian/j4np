@@ -9,6 +9,7 @@ import j4np.utils.io.TextFileReader;
 import java.util.ArrayList;
 import java.util.List;
 import twig.config.TDataAttributes;
+import twig.math.Func1D;
 
 /**
  *
@@ -18,13 +19,13 @@ public class GraphErrors implements DataSet {
 
     //public static final String[] MARKERNAME = {"Circle", "Square", "Triangle", "Inverted Triangle"};
 
-    private final DataVector dataX = new DataVector();
-    private final DataVector dataY = new DataVector();
-    private final DataVector dataEX = new DataVector();
-    private final DataVector dataEY = new DataVector();
+    protected final DataVector dataX = new DataVector();
+    protected final DataVector dataY = new DataVector();
+    protected final DataVector dataEX = new DataVector();
+    protected final DataVector dataEY = new DataVector();
 
-    private String graphName = "graphErrors";
-    private TDataAttributes graphAttr = new TDataAttributes();
+    protected String graphName = "graphErrors";
+    protected TDataAttributes graphAttr = new TDataAttributes();
 
     //private Func1D fitFunction = null;
 
@@ -32,6 +33,15 @@ public class GraphErrors implements DataSet {
         initAttributes();
     }
 
+    
+    public GraphErrors(String name, DataVector x, Func1D func){
+        this.graphName = name;
+        for(int i = 0; i < x.getSize(); i++){
+            this.addPoint(x.getValue(i), func.evaluate(x.getValue(i)));
+        }
+        this.initAttributes();
+    }
+    
     public GraphErrors(String name, DataVector grX, DataVector grY) {
         //setName(name);
         for (int i = 0; i < grX.getSize(); i++) {
@@ -100,7 +110,7 @@ public class GraphErrors implements DataSet {
         initAttributes();
     }
 
-    private void initAttributes() {
+    protected final void initAttributes() {
         
     }
 

@@ -519,6 +519,43 @@ public class PhysicsReaction extends Tree {
         System.out.println();
         return group;
     }
+     public static DataGroup statistics(String file, PhysDataEvent phys,  EventModifier modifier, String[] filters){      
+         EventFilter[] list = new EventFilter[filters.length];
+        for(int i = 0; i < filters.length; i++){            
+            list[i] = new EventFilter(filters[i]);
+        }
+        return PhysicsReaction.statistics(file, phys, modifier, list);
+     }
+     
+     public static DataGroup statistics(String file, PhysDataEvent phys,  EventModifier modifier, EventFilter[] filters){ 
+        
+        DataGroup group = new DataGroup(1,1);
+        //H1F[] topology = new H1F[filters.length];        
+        //new H1F("topology_"+(i+1),filters.length,0.5,filters.length+0.5);
+        H1F topology = new H1F("topology",filters.length,0.5,filters.length+0.5);
+        topology.attr().setFillColor(3);
+        group.add(topology, 0, "");
+        
+        PhysicsReaction r = new PhysicsReaction("X+:X-:Xn",10.5);
+        r.setDataSource(new HipoReader(file),phys);
+        r.addModifier(modifier);
+        int counter = 0;
+        while(r.next()==true){
+            for(int i = 0; i < filters.length; i++){
+                if(filters[i].isValid(r.getPhysicsEvent())==true) 
+                    topology.incrementBinContent(i);
+            }
+            counter++;
+        }
+        
+        System.out.printf(">>> statisctics (processed = %9d)\n",counter);
+        for(int k = 0; k < filters.length; k++){
+            System.out.printf("%2d >> %24s : %6d %8.5f\n",
+                    k,filters[k].getFilterString(),(int) topology.getBinContent(k),topology.getBinContent(k)/counter);
+        }
+        System.out.println();
+        return group;
+    }
      
      public static void filter(List<String> files, EventModifier modifier, String[] filters){
          PhysicsReaction.filter(files, "filter_output", "REC::Particle", modifier, filters);

@@ -1,6 +1,31 @@
 [
     
     {
+	"name":"cvtml::clusters",
+	"group": 4400,
+	"item" : 27,
+	"info" : "bank containing the cluster information from BST",
+	"entries": [
+	    {"name":"id",     "type":"S", "info":"cluster id pointing to another bank possibly"},
+	    {"name":"status", "type":"S", "info":"status indicate if the cluster is noise or used for a track"},
+	    {"name":"sector", "type":"B", "info":""},
+	    {"name":"layer" , "type":"S", "info":""},
+	    {"name":"xo",     "type":"F", "info":"x origin coordinate of the cluster"},
+	    {"name":"yo",     "type":"F", "info":"y origin coordinate of the cluster"},
+	    {"name":"zo",     "type":"F", "info":"z origin coordinate of the cluster"},
+	    {"name":"xe",     "type":"F", "info":"x    end coordinate of the cluster"},
+	    {"name":"ye",     "type":"F", "info":"x    end coordinate of the cluster"},
+	    {"name":"ze",     "type":"F", "info":"x    end coordinate of the cluster"},
+	    {"name":"x",      "type":"F", "info":"vertex x, of associated track"},
+	    {"name":"y",      "type":"F", "info":"vertex y, of associated track"},
+	    {"name":"z",      "type":"F", "info":"vertex y, of associated track"},
+	    {"name":"p",      "type":"F", "info":"associated track momentum"},
+	    {"name":"th",     "type":"F", "info":"associated track theta (rad)"},
+	    {"name":"fi", "    type":"F", "info":"associated track phi (rad)"}
+	]
+    },
+
+    {
         "name": "nnet::clusters",
         "group": 4200,
         "item" : 11,

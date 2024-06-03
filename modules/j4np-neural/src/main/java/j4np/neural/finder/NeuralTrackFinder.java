@@ -4,13 +4,14 @@
  */
 package j4np.neural.finder;
 
+import j4np.data.base.DataEvent;
 import j4np.data.base.DataFrame;
 import j4np.data.base.DataSource;
 import j4np.data.base.DataSync;
+import j4np.data.base.DataWorker;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
-import j4np.neural.classifier.NeuralClassifierModel;
 import j4np.neural.clustering.NeuralClusterModel;
 import j4np.neural.regression.NeuralRegressionModel;
 import j4np.utils.base.ArchiveProvider;
@@ -22,7 +23,7 @@ import java.util.List;
  *
  * @author gavalian
  */
-public class NeuralTrackFinder {
+public class NeuralTrackFinder extends DataWorker {
     
     protected NeuralClassifierModel classifier = new NeuralClassifierModel();
     protected NeuralRegressionModel regression = new NeuralRegressionModel();
@@ -161,5 +162,15 @@ public class NeuralTrackFinder {
         for(String t : files){
             NeuralTrackFinder.reconstruct(t);
         }
+    }
+
+    @Override
+    public boolean init(DataSource src) {
+        loadNetwork(); return true;
+    }
+
+    @Override
+    public void execute(DataEvent e) {
+       this.processEvent((Event) e);
     }
 }

@@ -608,9 +608,16 @@ public class H1F  implements DataSet {
     }
     
     public void divide(double number){
+        StatNumber   nom = new StatNumber();
+        StatNumber denom = new StatNumber(number,0);
+        
         for(int i = 0; i < this.getAxis().getNBins(); i++)
         {
-            this.histogramData[i] = (float) (this.histogramData[i]/number);
+            nom.set(this.histogramData[i], this.histogramDataError[i]);
+            nom.divide(denom);
+            
+            this.histogramData[i] = nom.number();//(float) (this.histogramData[i]/number);
+            this.histogramDataError[i] = nom.error();
         }
     }
     /**

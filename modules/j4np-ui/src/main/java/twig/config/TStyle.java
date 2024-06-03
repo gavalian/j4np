@@ -199,14 +199,59 @@ public class TStyle {
         TStyle style = TStyle.getInstance();
         
         if(type == TwigStyle.PRESENTATION){
-           style.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+            
+            style.styleProperties.setProperty("h2d.stats.font.name",  "PT Serif");
+            style.styleProperties.setProperty("h2d.stats.font.size",  "20");
+            style.styleProperties.setProperty("h2d.stats.font.style", "plain");
+        
+            style.setDefaultAxisLabelFont(new Font("PT Serif",Font.PLAIN,20));
+            style.setDefaultAxisTitleFont(new Font("PT Serif",Font.PLAIN,24));
+            style.setDefaultPaveTextFont(new Font("PT Serif",Font.PLAIN,24));
+            
+            String fn = "PT Serif";
+            style.attributeAxisX.setAxisLabelFont(new Font(fn,Font.PLAIN,20) );
+            style.attributeAxisY.setAxisLabelFont(new Font(fn,Font.PLAIN,20) );
+            style.attributeAxisX.setAxisTitleFont(new Font(fn,Font.PLAIN,24) );
+            style.attributeAxisY.setAxisTitleFont(new Font(fn,Font.PLAIN,24) );        
+            style.attributeAxisZ.setAxisLabelFont(new Font(fn,Font.PLAIN,20) );
+            style.attributeAxisZ.setAxisTitleFont(new Font(fn,Font.PLAIN,24) );
+        
+           /*style.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
            style.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
            
            style.getAxisAttrX().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
            style.getAxisAttrY().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
            style.getAxisAttrX().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
            style.getAxisAttrY().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
-           style.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));
+           style.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));*/
+        }
+        
+        if(type == TwigStyle.ARTICLE){
+            
+            style.styleProperties.setProperty("h2d.stats.font.name",  "PT Serif");
+            style.styleProperties.setProperty("h2d.stats.font.size",  "18");
+            style.styleProperties.setProperty("h2d.stats.font.style", "plain");
+        
+            style.setDefaultAxisLabelFont(new Font("PT Serif",Font.PLAIN,18));
+            style.setDefaultAxisTitleFont(new Font("PT Serif",Font.PLAIN,20));
+            style.setDefaultPaveTextFont(new Font("PT Serif",Font.PLAIN,20));
+            
+            String fn = "PT Serif";
+            style.attributeAxisX.setAxisLabelFont(new Font(fn,Font.PLAIN,18) );
+            style.attributeAxisY.setAxisLabelFont(new Font(fn,Font.PLAIN,18) );
+            style.attributeAxisX.setAxisTitleFont(new Font(fn,Font.PLAIN,20) );
+            style.attributeAxisY.setAxisTitleFont(new Font(fn,Font.PLAIN,20) );        
+            style.attributeAxisZ.setAxisLabelFont(new Font(fn,Font.PLAIN,18) );
+            style.attributeAxisZ.setAxisTitleFont(new Font(fn,Font.PLAIN,20) );
+        
+           /*style.setDefaultAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.setDefaultAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           
+           style.getAxisAttrX().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.getAxisAttrY().setAxisLabelFont(new Font("Palatino",Font.PLAIN,18));
+           style.getAxisAttrX().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           style.getAxisAttrY().setAxisTitleFont(new Font("Palatino",Font.PLAIN,20));
+           style.setDefaultPaveTextFont(new Font("Palatino",Font.PLAIN,20));*/
         }
         
         if(type == TwigStyle.PRESENTATION_BOLD){           

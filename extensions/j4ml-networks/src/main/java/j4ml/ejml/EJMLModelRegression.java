@@ -24,6 +24,8 @@ public class EJMLModelRegression {
         model.printSummary();
     }
     
+    public EJMLModel getModel(){return model;}
+    
     public static void main(String[] args){
     
         CsvDataProvider provider = new CsvDataProvider("mc_particle_train.csv",6,3);

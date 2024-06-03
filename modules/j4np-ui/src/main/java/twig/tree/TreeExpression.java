@@ -35,6 +35,14 @@ public class TreeExpression {
             }
     };
     
+    Function funcVec3r = new Function("vec3r", 3) {
+            @Override
+            public double apply(double... args) {
+                return Math.sqrt(args[0]*args[0] + 
+                        args[1]*args[1]);
+            }
+    };
+    
     Function funcVec3t = new Function("vec3t", 3) {
             @Override
             public double apply(double... args) {
@@ -108,7 +116,7 @@ public class TreeExpression {
         String[] variables = new String[expVariables.size()];
         for(int i=0; i < variables.length; i++) variables[i] = expVariables.get(i);        
         ExpressionBuilder builder = new ExpressionBuilder(treeExpression)
-                .function(funcVec3f).function(funcVec3p).function(funcVec3t);
+                .function(funcVec3f).function(funcVec3p).function(funcVec3t).function(funcVec3r);
         builder.functions(userDefined);
         builder.variables(variables);
         //System.out.println("expression = " + treeExpression);

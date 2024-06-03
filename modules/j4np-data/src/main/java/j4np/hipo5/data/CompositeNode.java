@@ -52,6 +52,7 @@ public class CompositeNode extends BaseHipoStructure {
         int size = rowLength*rows + formatLength;      
         require(size);
         this.setGroup(group).setItem(item).setType(10).setFormatAndLength(format, rowLength*rows);
+        this.setRows(0);
     }
     
     public void refactor(int group, int item, String format){

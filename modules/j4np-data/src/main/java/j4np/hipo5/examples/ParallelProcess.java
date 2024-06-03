@@ -5,7 +5,7 @@
 package j4np.hipo5.examples;
 
 import j4np.hipo5.data.Bank;
-import j4np.hipo5.data.Evaluator;
+import j4np.hipo5.data.Query;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.io.HipoChain;
@@ -69,7 +69,7 @@ public class ParallelProcess {
             @Override
             public void execute(Event e) {
 
-                Evaluator eval = new Evaluator(schemas[0],"sqrt(px*px+py*py+pz*pz)");
+                Query eval = new Query(schemas[0],"sqrt(px*px+py*py+pz*pz)");
                 //Bank bc = new Bank(schemas[0]);
                 //e.read(bc);
                 //bc.show();

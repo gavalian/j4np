@@ -180,10 +180,13 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
         
         DataFrame<Event>  frame = new DataFrame<>();
         HipoReader       source = new HipoReader();
+        HipoWriter         sync = new HipoWriter();
+        
+        sync.open("output.h5");
         
         source.open(file);
         
-        
+       
         DataWorker<HipoReader,Event> worker = new DataWorker<HipoReader,Event>(){
 
             public final AtomicInteger counter = new AtomicInteger(0);
@@ -221,7 +224,7 @@ public class DataStream<R extends DataSource,K extends DataSync, T extends DataE
         
         for(int i = 0; i < 8; i++){ frame.addEvent(new Event());}
         str.threads(4);
-        str.withSource(source).withFrame(frame).consumer(worker).run();
+        str.withSource(source).withOutput(sync).withFrame(frame).consumer(worker).run();
         
         str.show();
         //str.source(source).frame(frame).consumer();                

@@ -38,23 +38,23 @@ public class ReactionProtonX extends PhysicsReaction {
         this.vecOprators.clear();
         this.operEntries.clear();
         
-        this.addVector(this.getVector(), "-[11,0]-[211]-[11,1,0.13957]"); // 0
-        this.addVector(this.getVector(), "-[11,1]-[211]-[11,0,0.13957]"); // 1   
-        this.addVector( "[11,1,0.13957]+[211]"); // 2
-        this.addVector( "[11,0,0.13957]+[211]"); // 3
+        this.addVector(this.getVector(), "-[11,0]-[211]-[-211,0,0.13957]"); // 0
+        this.addVector(this.getVector(), "-[11,0]-[211]-[-211,0,0.13957]"); // 1   
+        this.addVector( "[-211]+[211]"); // 2
+        this.addVector( "[-211]+[211]"); // 3
         
         this.addVector("[11,0]"); // 4
-        this.addVector("[11,1]"); // 5
+        this.addVector("[-211,0]"); // 5
         this.addVector("[211]"); // 6
         
         this.addVector(this.getVector(),"-[11,0]"); // 7
-        this.addVector(this.getVector(),"-[11,1]"); // 8
+        this.addVector(this.getVector(),"-[-211,0]"); // 8
         
         this.addVector(this.getBeamVector(),"-[11,0]"); // 9
-        this.addVector(this.getBeamVector(),"-[11,1]"); // 10
+        this.addVector(this.getBeamVector(),"-[-211,0]"); // 10
                 
         this.addVector(LorentzVector.withPxPyPzM(0, 0, 10.6, 0.0005),
-                "-[11,0]-[211]-[11,1,0.13957]"); // 11
+                "-[11,0]-[211]-[-211,0,0.13957]"); // 11
         
         VectorOperatorCustom vop = new VectorOperatorCustom(this.getBeamVector());
         

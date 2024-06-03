@@ -62,12 +62,17 @@ public class InclusiveE2pions extends PhysicsReaction {
         this.vecOprators.clear();
         this.operEntries.clear();
         this.addVector(this.getVector(), "-[11]-[211]-[-211]");
+        
         this.addVector("[211]+[-211]");
         this.addVector( "[11]");
         this.addVector( "[211]");
         this.addVector( "[-211]");
         
+        this.addVector(this.getVector(), "-[11]");
+        this.addVector(this.getBeamVector(), "-[11]");
+        
         this.addEntry("mx",     0, VectorOperator.OperatorType.MASS);
+
         
         this.addEntry("mpipi",  1, VectorOperator.OperatorType.MASS);
         this.addEntry("e_p",    2, VectorOperator.OperatorType.P);
@@ -81,6 +86,8 @@ public class InclusiveE2pions extends PhysicsReaction {
         this.addEntry("pim_p",   4, VectorOperator.OperatorType.P);
         this.addEntry("pim_th",  4, VectorOperator.OperatorType.THETA);
         this.addEntry("pim_phi", 4, VectorOperator.OperatorType.PHI);
+        this.addEntry("w2",      5, VectorOperator.OperatorType.MASS2);
+        this.addEntry("q2",      6, VectorOperator.OperatorType.MASS2);
         
         EventModifier modifier = new EventModifier(){
             @Override

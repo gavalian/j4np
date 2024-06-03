@@ -42,7 +42,7 @@ cp extensions/j4ml-classifier/target/*with-dependencies.jar j4np-${version}/lib/
 #----------------------------------------------------
 # package it, and distribute it if the flag is set
 #----------------------------------------------------
-tar -cf j4np-${version}.tar j4np-${version}
+gtar -cf j4np-${version}.tar j4np-${version}
 gzip j4np-${version}.tar
 #----------------------------------------------------
 # Copy local distribution

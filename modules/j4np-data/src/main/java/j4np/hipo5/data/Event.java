@@ -206,7 +206,7 @@ public class Event implements DataEvent {
         int index = scan(__group, __item);
         if(index<0) return false;
         int length = scanLength(__group, __item);
-        System.out.println("LENGTH = " + length);
+        //System.out.println("LENGTH = " + length);
         
         int nextPosition = index + 8 + length;
         int eventLength  = getEventBufferSize();
@@ -260,6 +260,28 @@ public class Event implements DataEvent {
         if(position<0) { node.reset(); return;}
         int   length = this.scanLengthAt(group,item, position);
         node.initFromBuffer(this.eventBuffer.array(), position, length+8);
+    }
+    
+    public void showAt(int position){
+        
+        short group_p = eventBuffer.getShort( position    );
+        byte  item_p  = eventBuffer.get(      position + 2);
+        byte  type_p  = eventBuffer.get(      position + 3);
+        int   size_w  = eventBuffer.getInt(   position + 4);
+        int   length  = size_w&0x00FFFFFF;
+        int   format  = size_w>>24&0x000000FF;
+        System.out.printf("[%8d, %5d] t [%3d] f [%4d] s [%5d] ", 
+                group_p, item_p, type_p, format, length );
+        if(format>0) {
+            System.out.printf(" desc [ ");        
+            for(int i = 0; i < format; i++){
+                System.out.printf("x%02X ", eventBuffer.get(position+8+i));
+            } System.out.printf("] ");
+        }
+        
+        int howMany = Math.min(12, length);
+        for(int r = 0; r < howMany; r++) System.out.printf("x%02X ",eventBuffer.get(position+8+format+r));
+        System.out.printf("\n");
     }
     
     public Node read(Node node, int position){        

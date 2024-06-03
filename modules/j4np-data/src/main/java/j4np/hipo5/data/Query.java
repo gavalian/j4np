@@ -7,16 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
-import net.objecthunter.exp4j.function.Function;
+
 import net.objecthunter.exp4j.operator.Operator;
 /**
  *
  * @author gavalian
  */
-public class Evaluator {
+public class Query {
+    
         private int             counter = 0;
         private Expression         expr = null;
-        private List<String>    varList = new ArrayList<String>();
+        private List<String>    varList = new ArrayList<>();
         
         static Operator operatorGT = new Operator(">", 2, true, Operator.PRECEDENCE_MULTIPLICATION) {
             @Override
@@ -75,11 +76,11 @@ public class Evaluator {
             }
         };
         
-        public Evaluator( Schema schema,String expression){
+        public Query( Schema schema,String expression){
             initExpression(expression,schema);
         }
         
-        public Evaluator(Bank b,String expression){
+        public Query(Bank b,String expression){
             initExpression(expression,b.getSchema());
         }
         

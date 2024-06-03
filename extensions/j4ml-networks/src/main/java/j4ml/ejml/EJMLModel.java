@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.io.IOException;
+import java.util.Random;
 import org.ejml.simple.SimpleMatrix;
 
 /**
@@ -401,6 +402,23 @@ public class EJMLModel {
             writer.writeString(str.toString());
         }
         writer.close();
+    }
+    
+    
+    public void benchmark(int iter){
+        float[]  input = new float[this.inputSize];
+        float[] output = new float[this.outputSize];
+        
+        Random r = new Random();
+        for(int i = 0; i < input.length; i++) input[i] = r.nextFloat();
+        for(int i = 0; i < output.length; i++) output[i] = r.nextFloat();
+        long then = System.currentTimeMillis();
+        for(int i = 0; i < iter; i++){
+            this.feedForward(input, output);
+        }
+        long now = System.currentTimeMillis();
+        double hz = ((double) iter) /(now-then);
+        System.out.printf("iterations %d, time = %d \n", iter, now-then);
     }
     
     public static void main(String[] args) {

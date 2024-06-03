@@ -56,7 +56,7 @@ public class ReactionKStar extends PhysicsReaction {
         this.addEntry("ksf"    , 2, OperatorType.PHI);
 
         this.addEntry("ksphi" , 6, OperatorType.PHI);
-        this.addEntry("mmkp" , 7, OperatorType.MASS);
+        this.addEntry("mmkp" ,  7, OperatorType.MASS);
     }
     
     public static class VectorOperatorPhi extends VectorOperator {
@@ -91,7 +91,8 @@ public class ReactionKStar extends PhysicsReaction {
              
              ex.unit();
              ez.unit();
-             Vector3 ey = ex.cross(ez);
+             //Vector3 ey = ex.cross(ez);// original implementation
+             Vector3 ey = ez.cross(ex);
              
              double xc = this.opVector.vect().dot(ex);
              double yc = this.opVector.vect().dot(ey);
