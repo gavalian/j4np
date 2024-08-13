@@ -26,11 +26,9 @@ public class NeuralRegressionModel {
     private        Schema tracks = null;
     private        Schema particles = null;
     
-    double[]   rotateMatrix = new double[]{0.0,-60.0,-120.,-180,-240.0,-300.0};
-    
+    double[]   rotateMatrix    = new double[]{0.0,-60.0,-120.,-180,-240.0,-300.0};    
     double[]   normalizePosMin = new double[]{ 0., 0.0,  -1.5};
-    double[]   normalizePosMax = new double[]{10., 1.0,   0.5};
-    
+    double[]   normalizePosMax = new double[]{10., 1.0,   0.5};    
     double[]   normalizeNegMin = new double[]{0.,  0.0 , -0.5};
     double[]   normalizeNegMax = new double[]{10., 1.0  , 1.5};
     

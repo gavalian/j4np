@@ -374,7 +374,53 @@ public class InstaRec {
         c3.region().axisLimitsX(-0.5, 50);
     }
     
+    public static GraphErrors getHoneyComb(int length){
+        GraphErrors g = new GraphErrors();
+        for(int i = 0; i < 6; i++){
+            for(int k = 0; k < length; k++){
+                g.addPoint(k+0.5*(i%2), i);
+            }
+        }
+        return g;
+    }
     
+    public static void honeycomb(){
+        TGCanvas c = new TGCanvas("segment",610,320);
+        GraphErrors g = InstaRec.getHoneyComb(18);
+        g.attr().setMarkerStyle(9);
+        g.attr().setMarkerSize(25);
+        g.attr().setMarkerColor(21);
+        g.attr().setMarkerOutlineWidth(1);
+        g.attr().setMarkerOutlineColor(1);
+        
+        c.draw(g); c.region().axisLimitsY(-1, 6);
+        c.region().getAxisFrame().getAxisX().getAttributes().setAxisLineDraw(Boolean.FALSE);
+        c.region().getAxisFrame().getAxisX().getAttributes().setAxisBoxDraw(Boolean.FALSE);
+        c.region().getAxisFrame().getAxisX().getAttributes().setAxisLabelsDraw(Boolean.FALSE);
+        
+        c.region().getAxisFrame().getAxisY().getAttributes().setAxisLineDraw(Boolean.FALSE);
+        c.region().getAxisFrame().getAxisY().getAttributes().setAxisBoxDraw(Boolean.FALSE);
+        c.region().getAxisFrame().getAxisY().getAttributes().setAxisLabelsDraw(Boolean.FALSE);
+        
+        GraphErrors c1 = new GraphErrors();
+        c1.attr().set("ms=25,mc=74,mw=1,mo=1,mt=9");
+        //c1.addPoint(5, 0);
+        c1.addPoint(5.5, 1);
+        //c1.addPoint(6, 2);
+        //c1.addPoint(6.5, 3);
+        c1.addPoint(7, 4);
+        //c1.addPoint(7.5, 5);
+        
+        /*GraphErrors c2 = new GraphErrors();
+        c2.attr().set("ms=25,mc=74,mw=1,mo=1,mt=9");
+        c2.addPoint(7, 0);
+        c2.addPoint(7.5, 1);
+        c2.addPoint(8, 2);
+        c2.addPoint(8.5, 3);*/
+        //c1.addPoint(7, 4);
+        //c1.addPoint(7.5, 5);
+        c.draw(c1,"same");//.draw(c2,"same");
+    }
     public static void main(String[] args){
         //InstaRec.drawEvent();
         
@@ -382,11 +428,13 @@ public class InstaRec {
         
         //InstaRec.drawDenoise();
         //InstaRec.drawRegression();
-        InstaRec.drawStages(1);
-        InstaRec.drawStages(2);
+        //InstaRec.drawStages(1);
+        //InstaRec.drawStages(2);
        // InstaRec.drawStages(3);
-        InstaRec.drawStages(4);
+        //InstaRec.drawStages(4);
         
         //InstaRec.CLASLogo();
+        
+        InstaRec.honeycomb();
     }
 }

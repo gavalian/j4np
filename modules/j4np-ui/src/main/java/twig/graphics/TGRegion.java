@@ -464,25 +464,25 @@ public class TGRegion extends Node2D implements StyleNode {
     
     public void setAxisColor(Color c){
         this.axisFrame.getAxisX().getAttributes().setAxisLabelColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         this.axisFrame.getAxisY().getAttributes().setAxisLabelColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         this.axisFrame.getAxisZ().getAttributes().setAxisLabelColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         
         this.axisFrame.getAxisX().getAttributes().setAxisTitleColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         this.axisFrame.getAxisY().getAttributes().setAxisTitleColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         this.axisFrame.getAxisZ().getAttributes().setAxisTitleColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         
         this.axisFrame.getAxisX().getAttributes().setAxisLineColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         this.axisFrame.getAxisY().getAttributes().setAxisLineColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
         this.axisFrame.getAxisZ().getAttributes().setAxisLineColor(
-                TPalette.createColor(c.getRGB(),c.getGreen(),c.getBlue(),255));
+                TPalette.createColor(c.getRed(),c.getGreen(),c.getBlue(),255));
     }
     
     private void setAxisDrawOptions(String options){

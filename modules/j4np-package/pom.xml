@@ -25,7 +25,13 @@
        <artifactId>j4np-neural</artifactId>
        <version>${revision}</version>
      </dependency>
-      <dependency>
+     <dependency>
+        <groupId>j4np</groupId>
+        <artifactId>j4np-instarec</artifactId>
+        <version>${revision}</version>
+    </dependency>
+    
+     <dependency>
         <groupId>j4np</groupId>
         <artifactId>j4np-physics</artifactId>
         <version>${revision}</version>

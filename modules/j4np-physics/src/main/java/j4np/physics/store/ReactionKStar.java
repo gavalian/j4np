@@ -27,6 +27,11 @@ public class ReactionKStar extends PhysicsReaction {
         this.initialize();
     }
     
+    public ReactionKStar(String filter, double energy){
+        super(filter,energy);
+        this.initialize();
+    }
+    
     public final void initialize(){
         this.vecOprators.clear();
         this.operEntries.clear();

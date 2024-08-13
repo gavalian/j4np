@@ -79,6 +79,10 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         background = back;
     }
     
+    public void setBackground2D(Background2D back){
+        background = back;
+    }
+    
     public void setBackgroundColor(Color col){
         backgroundColor = col;
     }
@@ -113,6 +117,7 @@ public class Canvas2D extends JPanel implements MouseInputListener {
         */
         int w = this.getSize().width;
         int h = this.getSize().height;
+        
         List<Color> colors = Background2D.getColorPalette(0);
         
         Background2D.BACKGROUND_POPULATION = 80;

@@ -21,6 +21,7 @@ public class Trajectory2 {
     public double     probability = 0.0; 
     public int[]            index = new int[2];
     public int             status = 0;
+    
     public Trajectory2(){
         
     }

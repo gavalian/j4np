@@ -461,11 +461,17 @@ public class PhysicsReaction extends Tree {
     public static DataGroup statistics(String file, String bank){        
         return PhysicsReaction.statistics(file, bank, PhysicsReaction.FORWARD_ONLY_CHI2PID, 
                 new String[]{
-                    "11:X+:X-:Xn", 
+                    "11:X+:X-:Xn",
+                    "11:321:X+:X-:Xn",
+                    "11:-321:X+:X-:Xn",
+                    "11:211:-211:X+:X-:Xn",
+                    "11:2212:-211:X+:X-:Xn",
+                    "11:2212:211:X+:X-:Xn",                    
                     "11:1c:X+:X-:Xn",
                     "11:2c:X+:X-:Xn",
-                    "11:3c:X+:X-:Xn",
-                    "2c:X+:X-Xn", "3c:X+:X-:Xn"
+                    "11:3c:X+:X-:Xn",              
+                    "2c:X+:X-Xn", 
+                    "3c:X+:X-:Xn"
                 } );
     }
     

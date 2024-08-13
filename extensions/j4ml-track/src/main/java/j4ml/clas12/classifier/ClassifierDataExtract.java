@@ -297,29 +297,34 @@ public class ClassifierDataExtract extends OptionApplication {
                 
                 int bin = ClassifierDataExtract.getTrackBin(trkSelect.get(0),this.pMinimum,this.pMaximum);
                 
-                int chargeBin = bin+1;
-                if(charge<0) chargeBin += 20;
-                int thetaBin = this.occupancy2D.getYAxis().getBin(
-                        Math.toDegrees(trkVec.theta())
-                );
+                if(bin<0&&bin>=20) bin = -1;
                 
-                if(chargeBin>=1&&chargeBin<=40&&thetaBin>=0&&thetaBin<24){
+                if(bin>=0){
+                    int chargeBin = bin+1;
+                    if(charge<0) chargeBin += 20;
+                    int thetaBin = this.occupancy2D.getYAxis().getBin(
+                            Math.toDegrees(trkVec.theta())
+                    );
                     
-                    int bc =  (int) occupancy2D.getBinContent(chargeBin-1, thetaBin);
                     
-                    
-                    occupancy[chargeBin-1] = occupancy[chargeBin-1] + 1;
-                    
-                    boolean writeStatus = true;
-                    if(occupancy[chargeBin-1]>this.binMaxWrite) writeStatus=false;
-                    //if(bc>this.binMaxWrite) writeStatus=false;
-                    if(writeStatus==true){
-                        occupancy2D.setBinContent(chargeBin-1, thetaBin, bc+1);
-                        //System.out.println(">>> " + trkSelect.get(0));
-                        List<Node> trkNodes = ClassifierDataExtract.getNode(trkSelect.get(0));                        
-                        result.addAll(clusters);
-                        result.addAll(trkNodes);
-                        activeEventTag = chargeBin;
+                    if(chargeBin>=1&&chargeBin<=40&&thetaBin>=0&&thetaBin<24){
+                        
+                        int bc =  (int) occupancy2D.getBinContent(chargeBin-1, thetaBin);
+                        
+                        
+                        occupancy[chargeBin-1] = occupancy[chargeBin-1] + 1;
+                        
+                        boolean writeStatus = true;
+                        if(occupancy[chargeBin-1]>this.binMaxWrite) writeStatus=false;
+                        //if(bc>this.binMaxWrite) writeStatus=false;
+                        if(writeStatus==true){
+                            occupancy2D.setBinContent(chargeBin-1, thetaBin, bc+1);
+                            //System.out.println(">>> " + trkSelect.get(0));
+                            List<Node> trkNodes = ClassifierDataExtract.getNode(trkSelect.get(0));                        
+                            result.addAll(clusters);
+                            result.addAll(trkNodes);
+                            activeEventTag = chargeBin;
+                        }
                     }
                 }
             }

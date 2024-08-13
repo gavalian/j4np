@@ -163,8 +163,8 @@ public class RecordOutputStream {
             RECORD_BUFFER_SIZE = maxBufferSize + ONE_MEG;
         }
 
-        System.out.printf("RECORD:::DEBUG , the record buffer size = %d, max buffer %d, max events = %d\n",
-                this.RECORD_BUFFER_SIZE,this.MAX_BUFFER_SIZE,this.MAX_EVENT_COUNT);
+        //System.out.printf("RECORD:::DEBUG , the record buffer size = %d, max buffer %d, max events = %d\n",
+        //        this.RECORD_BUFFER_SIZE,this.MAX_BUFFER_SIZE,this.MAX_EVENT_COUNT);
         allocate();
     }
 

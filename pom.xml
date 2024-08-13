@@ -59,6 +59,7 @@
     <module>modules/j4np-geometry</module>
     <module>modules/j4np-data</module>
     <module>modules/j4np-ui</module>
+    <module>modules/j4np-instarec</module>
     <module>modules/j4np-clas12</module>
     <module>modules/j4np-neural</module>
     <module>modules/j4np-package</module>   

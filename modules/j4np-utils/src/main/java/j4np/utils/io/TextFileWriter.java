@@ -41,6 +41,12 @@ public class TextFileWriter {
         }
     }
     
+    public static void write(String file, List<String> lines){
+        TextFileWriter w = new TextFileWriter(file);
+        for(String line: lines) w.writeString(line);
+        w.close();
+    }
+    
     public void writeDouble(double[] array){
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < array.length; i++){

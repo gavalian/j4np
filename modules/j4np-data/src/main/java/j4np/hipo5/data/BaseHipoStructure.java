@@ -151,6 +151,18 @@ public class BaseHipoStructure {
         }
     }
     
+    public void require(int nbytes, boolean exact){
+        if(exact==false) {require(nbytes); return;}
+        
+        //if(structBuffer.capacity()<nbytes){
+            /*System.out.printf("data buffer expansion : require = %8d, size set = %8d\n",
+                    nbytes,size);*/
+            structBuffer = ByteBuffer.wrap(new byte[nbytes]);
+            structBuffer.order(bufferOrder);
+            //System.out.println(" capacity = " + structBuffer.capacity());
+        //}
+    }
+    
     protected ByteBuffer getByteBuffer(){
         return structBuffer;
     }

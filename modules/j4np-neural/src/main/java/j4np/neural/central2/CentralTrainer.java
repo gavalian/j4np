@@ -13,6 +13,7 @@ import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,9 @@ public class CentralTrainer {
             counter++; if(counter>max) break;
             r.nextEvent(b);
             List<Trajectory2> traj = Constructor.getTrajectories(b[0]);
-            Constructor.updateTrajectory(b[0], traj);                                   
+            //System.out.printf(" event #%d trajectort size = %d\n", counter,traj.size());
+            
+            Constructor.updateTrajectory(b[0], traj); 
             List<Trajectory2> traj2 = Constructor.filter(traj, 6);
             for(int i = 0; i < traj2.size(); i++){
                 List<float[]> features = Constructor.getFeatures(b[0], traj2.get(i));
@@ -49,6 +52,34 @@ public class CentralTrainer {
             
         }
         return data;
+    }
+    public void debug(String file, int nevent){
+        HipoReader r = new HipoReader(file);
+        Bank[] b = r.getBanks("cvtml::clusters");
+        Event event = new Event();
+        r.getEvent(event, nevent);
+        
+        event.read(b);
+        List<Trajectory2> traj2 = Constructor.getTrajectories(b[0]);
+        List<Trajectory2> traj = new ArrayList<>();
+        
+        //for(int i = 0 ; i < traj2.size();i++){
+        //    if(traj2.get(i).segments.get(0).ring==1&&traj2.get(i).segments.get(0).sector==1) traj.add(traj2.get(i));
+        //}
+        
+        Constructor.updateTrajectory(b[0], traj);
+        System.out.printf("event #%d trajectory %d\n",nevent,traj.size());
+        for(int i = 0; i < traj.size(); i++){
+            //if(traj.get(i).status!=0){ 
+                //System.out.printf("%4d : %4d    %f %f, %f\n",i, traj.get(i).status,
+                //        57.29*traj.get(i).segments.get(0).theta(),57.29*traj.get(i).segments.get(1).theta(),
+                //        57.29*traj.get(i).segments.get(0).theta()-57.29*traj.get(i).segments.get(1).theta()
+                //);
+                System.out.println(traj.get(i));
+            //}
+            
+        }
+        
     }
     
     public void evaluate(String file, int max){
@@ -136,15 +167,18 @@ public class CentralTrainer {
         data.shuffle();
         regression.init(new int[]{24,24,24,8,2});
         
-        regression.train(data, 5000);
+        regression.train(data, 2024);
         
         regression.save("cvt6.network");
     }
     public static void main(String[] args){
         CentralTrainer tr = new CentralTrainer();
-        String file = "/Users/gavalian/Work/Software/project-10.8/study/central/MLSample1.hipo";
-        String file2 = "/Users/gavalian/Work/Software/project-10.8/study/central/MLSample2.hipo";
-        //tr.train(file, 4000);
-        tr.evaluate(file, 40000);
+        String file = "/Users/gavalian/Work/Software/project-10.8/study/central/MLSample1_wHits.hipo";
+        String file2 = "/Users/gavalian/Work/Software/project-10.8/study/central/MLSample2_wHits.hipo";
+        String file3 = "/Users/gavalian/Work/Software/project-10.8/study/central/MLSample_1_r.hipo";
+        String file4 = "/Users/gavalian/Work/Software/project-10.8/study/central/MLSample_2_r.hipo";
+        //tr.train(file3, 12000);
+        //tr.evaluate(file3, 1000);
+        tr.debug(file, 208);
     }
 }

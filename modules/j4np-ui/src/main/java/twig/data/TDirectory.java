@@ -90,6 +90,10 @@ public class TDirectory implements TreeProvider {
         //return this;
     }
     
+    public static void export(String file, String directory, DataGroup group){
+        DataSetSerializer.exportDataGroup(group, file, directory);
+    }
+    
     protected void executeTimer(){
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
         String timeStampFile = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());

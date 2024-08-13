@@ -80,7 +80,9 @@ public class NeuralTrackFinder extends DataWorker {
             classifier.process(e);
             regression.processEvent(e);
         } catch (Exception ex){
+            ex.printStackTrace();
             System.out.println("::::: neural finder - something went wrong.....");
+            e.scanShow();
         }
         //e.scanShow();
     }

@@ -304,7 +304,9 @@ public class H2F implements DataSet {
     
     public static H2F[] duplicate(int count, String title, int binsX, double minX, double maxX, int binsY, double minY, double maxY){
         H2F[] hc = new H2F[count];
-        for(int loop = 0; loop < count; loop++) hc[loop] = new H2F(title,binsX,minX,maxX,binsY,minY,maxY);
+        for(int loop = 0; loop < count; loop++) hc[loop] = new H2F(
+                String.format("%s_%d",title,loop+1),binsX,minX,maxX,binsY,minY,maxY
+        );
         return hc;
     }
     /**
@@ -449,23 +451,34 @@ public class H2F implements DataSet {
         }
         return h;
     }    
+    
     public ArrayList<H1F>  getSlicesX(){
+        return this.getSlicesX("");
+    }
+    public ArrayList<H1F>  getSlicesX(String attributes){
         ArrayList<H1F>  slices = new ArrayList<H1F>();
         for(int loop = 0; loop < this.getXAxis().getNBins(); loop++){
             H1F slice = this.sliceX(loop);
             slice.setName(this.getName()+"_"+loop);
             slice.attr().setTitleX(attr().getTitleY());
+            slice.attr().set(attributes);
+                        slice.setEntries((long) slice.integral());
             slices.add(slice);
         }
         return slices;
     }
-    
     public ArrayList<H1F>  getSlicesY(){
+        return this.getSlicesY("");
+    }
+    
+    public ArrayList<H1F>  getSlicesY(String attributes){
         ArrayList<H1F>  slices = new ArrayList<H1F>();
         for(int loop = 0; loop < this.getYAxis().getNBins(); loop++){
             H1F slice = this.sliceY(loop);
             slice.setName(this.getName()+"_"+loop);
             slice.attr().setTitleX(attr().getTitleX());
+            slice.attr().set(attributes);
+            slice.setEntries((long) slice.integral());
             slices.add(slice);
         }
         return slices;

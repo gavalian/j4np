@@ -89,9 +89,11 @@ public class DataSetSerializer {
         if(type.compareTo("twig.data.DataGroup")==0){
             JsonArray datasets = jsonObject.get("datasets").asArray();
              String           name = jsonObject.get("name").asString();
+             String     attributes = jsonObject.get("attributes").asString();
              int           columns = jsonObject.get("columns").asInt();
              int              rows = jsonObject.get("rows").asInt();
              DataGroup grp = new DataGroup(name,columns,rows);
+             grp.setRegionAttributes(attributes);
              for(int i = 0; i < datasets.size(); i++){
                  DataSet ds = DataSetSerializer.load(archive, directory + "/" + datasets.get(i).asString());
                  grp.getData().add(ds);

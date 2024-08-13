@@ -48,11 +48,15 @@ public class DeepNettsClassifier {
     
     FeedForwardNetwork      neuralNet = null;
     BackpropagationTrainer   trainer  = null;
+    boolean cutomPrintout = true;
     
     public DeepNettsClassifier(){
         
     }
     
+    public void setPrintout(boolean flag){
+        this.cutomPrintout = flag;
+    }
     public void load(String filename) {
         try {
             neuralNet =  FileIO.createFromFile(filename, FeedForwardNetwork.class);
@@ -88,7 +92,7 @@ public class DeepNettsClassifier {
         trainer.setLearningRate(0.001f);
         trainer.setMomentum(0.9f);
         
-        trainer.setOptimizer(OptimizerType.SGD);
+        trainer.setOptimizer(OptimizerType.MOMENTUM);
         trainer.setMaxEpochs(2000);
         
     }
@@ -296,7 +300,7 @@ public class DeepNettsClassifier {
         
         ProgressListener pl = new ProgressListener(nEpochs);
         
-        LogManager.shutdown();
+        if(this.cutomPrintout==true) LogManager.shutdown();
         
         //LoggerContext ctx = (LoggerContext) LogManager.getContext(false);        
         //Configuration config = ctx.getConfiguration();
@@ -305,7 +309,8 @@ public class DeepNettsClassifier {
         //System.out.println("check logger = " + LogManager.exists(DeepNetts.class.getName()));
         //System.out.println("check logger = " + log.isInfoEnabled());
         
-        trainer.addListener(pl);
+        if(this.cutomPrintout==true) trainer.addListener(pl);
+        
         System.out.println("*********");
         System.out.println("* Start Training Network with data set size = " + trSet.getItems().size());
         System.out.println("*********");

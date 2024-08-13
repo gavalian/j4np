@@ -103,6 +103,10 @@ public class Constructor {
                 bmt.addAll(seg);
             }
         
+        //System.out.printf(" Ref size = %d, BMT size = %d\n",ref.size(),bmt.size());
+        //for(int i = 0; i < bmt.size();i++) System.out.println(bmt.get(i));
+        
+        
         for(int cbst = 0; cbst < ref.size(); cbst++){
             for(int cbmt = 0; cbmt < bmt.size(); cbmt++){
                 Trajectory2 trj = new Trajectory2();

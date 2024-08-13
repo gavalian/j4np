@@ -107,8 +107,7 @@ public class DeepNettsNetwork {
         return dataset;
     }
     
-    public void evaluate(DataList ds){
-        
+    public void evaluate(DataList ds){        
         for(int i = 0; i < ds.getList().size(); i++){
             float[]  input  = ds.getList().get(i).floatFirst();
             float[]  output = neuralNet.predict(input);
@@ -116,21 +115,8 @@ public class DeepNettsNetwork {
             for(int r = 0; r < result.length; r++) { result[r] = output[r];}
             ds.getList().get(i).setInfered(result);
         }
-       /* DataList p = new DataList();
-        DataSet set = this.convert(ds);
-        Iterator iter = set.iterator();
-        
-        while(iter.hasNext()){
-            TabularDataSet.Item  item = (TabularDataSet.Item) iter.next();
-            float[]  input  = item.getInput().getValues();
-            float[] desired = item.getTargetOutput().getValues();
-            float[]  output = neuralNet.predict(input);
-            double[]  first = DataArrayUtils.toDouble(input);
-            double[] second = DataArrayUtils.toDouble(output);
-            p.add(new DataEntry(first,second));
-        }*/
-        //return p;
     }
+    
     private DataSet convert(DataList list){
         
         int nInputs = list.getList().get(0).getFirst().length;
@@ -164,6 +150,7 @@ public class DeepNettsNetwork {
         LogManager.shutdown();
         
         trainer.addListener(pl);
+        
         System.out.println("*********");
         System.out.println("* Start Training Network with data set size = " + trSet.getItems().size());
         System.out.println("* Trainer learning rate  = " + this.learningRate);

@@ -103,6 +103,12 @@ public class DataEntry {
     public float[] features(){ return this.first;}
     public float[] labels(){return this.second;}
     
+    public float[] featuresCopy(){
+        float[] fc = new float[first.length];
+        for(int i = 0; i < fc.length; i++) fc[i] = first[i];
+        return fc;
+    }
+    
     public double[] featuresDouble(){ return first==null? null:DataArrayUtils.toDouble(first);}
     public double[] labelsDouble(){return second==null? null:DataArrayUtils.toDouble(second);}
     

@@ -57,6 +57,16 @@ public class DataGroup {
         layout.show();
     }
     
+    /*public DataGroup(String name, int xsize, int ysize, List<DataSet> dataset){
+        this.groupName = name;
+        this.canvasDivisionX = xsize; this.canvasDivisionY = ysize;
+        for(int r = 0; r < xsize*ysize; r++) 
+            groupRegions.add(new DataGroupRegion(r));
+        layout = CanvasLayout.grid(xsize, ysize);
+        layout.show();
+        for(int i = 0; i < dataset.size(); i++) this.
+    }*/
+    
     public DataGroup(String name, CanvasLayout lo){
         this.groupName = name;
         this.layout = lo;
@@ -176,6 +186,8 @@ public class DataGroup {
         str.append("\"type\":\"datagroup\",\n");
         str.append(String.format("\"class\":\"%s\",\n",DataGroup.class.getName()));
         str.append(String.format("\"name\":\"%s\",\n",getName()));
+        str.append(String.format("\"attributes\":\"%s\",\n",this.regionAttributes));
+        
         str.append(String.format("\"columns\":%d, \"rows\":%d,\n",this.canvasDivisionX,this.canvasDivisionY));
         str.append("\"datasets\": [");
         for(int i = 0; i < this.groupData.size(); i++){
@@ -352,6 +364,7 @@ public class DataGroup {
         
         JsonObject jsonObject = (JsonObject) Json.parse(json);
         String           name = jsonObject.get("name").asString();
+        String     attributes = jsonObject.get("attributes").asString();
         int           columns = jsonObject.get("columns").asInt();
         int              rows = jsonObject.get("rows").asInt();
         DataGroup grp = new DataGroup(name,columns,rows);

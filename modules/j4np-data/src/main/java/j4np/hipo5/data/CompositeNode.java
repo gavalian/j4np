@@ -49,8 +49,9 @@ public class CompositeNode extends BaseHipoStructure {
         dataDescriptor.parse(format);
         int rowLength = dataDescriptor.getStructureLength();
         int formatLength = format.length();
-        int size = rowLength*rows + formatLength;      
-        require(size);
+        int size = rowLength*rows + formatLength + 8;
+        //System.out.printf(" ---- %d %d %d %d\n", rowLength, formatLength, size, 8);
+        require(size, true);
         this.setGroup(group).setItem(item).setType(10).setFormatAndLength(format, rowLength*rows);
         this.setRows(0);
     }
@@ -184,6 +185,22 @@ public class CompositeNode extends BaseHipoStructure {
         }
     }
     
+    public short getShort( int entry, int row){
+        int offset = getDataOffset() + 
+                row * dataDescriptor.structureLength + 
+                dataDescriptor.getEntryOffset(entry);
+        int type = dataDescriptor.getEntryType(entry);
+        return  structBuffer.getShort(offset);            
+    }
+    
+    protected byte getByte( int entry, int row){
+        int offset = getDataOffset() + 
+                row * dataDescriptor.structureLength + 
+                dataDescriptor.getEntryOffset(entry);
+        int type = dataDescriptor.getEntryType(entry);
+        return  structBuffer.get(offset);
+    }
+    
     public long getLong(int entry, int row){
         int offset = getDataOffset() + 
                 row * dataDescriptor.structureLength + 
@@ -193,6 +210,14 @@ public class CompositeNode extends BaseHipoStructure {
         
         System.out.printf("structure::get : error expected type = %d (type was %d)\n",8,type);
         return 0L;       
+    }
+    
+    protected float getFloat( int entry, int row){
+        int offset = getDataOffset() +
+                row * dataDescriptor.structureLength + 
+                dataDescriptor.getEntryOffset(entry);
+        int type = dataDescriptor.getEntryType(entry);
+        return structBuffer.getFloat(offset);        
     }
     
     public double getDouble( int entry, int row){
@@ -270,6 +295,9 @@ public class CompositeNode extends BaseHipoStructure {
         }
     }
     
+    public void print(int row){
+        System.out.println(this.rowToString(row));
+    }
     
     /**
      * Descriptor class is used in data Structure to define
@@ -545,6 +573,25 @@ public class CompositeNode extends BaseHipoStructure {
         return true;
     }
     
+    
+    public void copy(Bank b){
+        int nentries = this.getEntries();        
+        int    nrows = this.getRows();
+        b.setRows(nrows);
+        for(int row = 0; row < nrows; row++){
+            for(int entry = 0; entry < nentries; entry++){
+                int type = this.getEntryType(entry);
+                switch(type){
+                    case 1: b.putByte(entry, row, this.getByte(entry, row) ); break;
+                    case 2: b.putShort(entry, row, this.getShort(entry, row) ); break;
+                    case 3: b.putInt(entry, row, this.getInt(entry, row) ); break;
+                    case 4: b.putFloat(entry, row, this.getFloat(entry, row) ); break;
+                    default: break;
+                }
+            }
+        }
+    }
+    
     public static void main(String[] args){
         
         CompositeNode node1 = CompositeNode.random(12);
@@ -555,6 +602,12 @@ public class CompositeNode extends BaseHipoStructure {
         node1.setRows(3);
         node1.show();
         node1.print();
+        
+        
+        CompositeNode node2 = new CompositeNode(1,1,"bbii",1024);
+        
+        System.out.println(node2.getMaxRows());
+        System.out.println(node2.getCapacity());
         /*
         CompositeNode node1 = CompositeNode.random(12);
         

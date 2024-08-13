@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import org.jfree.pdf.PDFDocument;
 import org.jfree.pdf.PDFGraphics2D;
 import org.jfree.pdf.Page;
+import twig.config.TPalette;
 import twig.config.TStyle;
 import twig.data.DataSet;
 import twig.data.H1F;
@@ -54,7 +55,9 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     
     public TGDataCanvas(){
         TStyle style = TStyle.getInstance();
-        Color color = style.getDefaultCanvasColor();//TStyle.getInstance().getPalette().getColor(style.getCanvasBackgroundColor());
+        
+        Color color = style.getDefaultCanvasColor();
+        //TStyle.getInstance().getPalette().getColor(style.getCanvasBackgroundColor());
         if(color!=null){
             Background2D back = Background2D.createBackground(color.getRed(),color.getGreen(),color.getBlue());
             setBackground(back);
@@ -149,6 +152,31 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
         updateTimer = new Timer("EmbeddeCanvasTimer");
         updateTimer.scheduleAtFixedRate(timerTask, 30, interval);
     }*/
+    
+    protected void set(String item, String value){
+        
+        if(item.compareTo("bc")==0){
+            if(value.compareTo("null")==0||value.compareTo("NULL")==0){
+                this.setBackground2D(null);
+            } else if(value.startsWith("#") == true){
+                Color c = TPalette.colorFromString(value);
+                this.setBackground2D(Background2D.createBackground(c.getRed(),c.getGreen(),c.getBlue()));
+            } else {
+                Color c =  TStyle.getInstance().getPalette().getColor(Integer.parseInt(value));
+                this.setBackground2D(Background2D.createBackground(c.getRed(),c.getGreen(),c.getBlue()));
+            }            
+        }
+        
+        
+    }
+    
+    public void set(String arguments){
+        String[] tokens = arguments.split(",");
+        for(int j = 0; j < tokens.length; j++){
+            String[] pair = tokens[j].split("=");
+            if(pair.length==2) this.set(pair[0].trim(), pair[1].trim());
+        }
+    }
     
     public TGDataCanvas addLabels(double x, double y, char start){
         int nRegions = this.count();

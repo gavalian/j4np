@@ -4,6 +4,8 @@
  */
 package j4np.neural.networks;
 
+import deepnetts.net.layers.activation.ActivationType;
+import j4ml.deepnetts.DeepNettsNetwork;
 import j4np.neural.classifier.NeuralClassifier;
 import j4np.neural.data.Tracks;
 import j4np.neural.data.TrackReader;
@@ -25,5 +27,6 @@ public class NeuralTrainer {
         nc.evaluate(list);
         
         list.show();
+
     }
 }

@@ -173,11 +173,21 @@ public class HipoTree extends Tree {
          w.close();
          System.out.printf(" file : tree ==> %s exported rows = %d\n",file,nLinesWritten);
     }
-    
     public static void fromCsv(String expression, String csvFile){
+        String[] names = expression.split(":");
+        int[]  columns = new int[names.length];
+        for(int i = 0; i < columns.length; i++) columns[i] = i;
+        fromCsv(expression,columns,csvFile);
+    }
+    
+    public static void fromCsv(String expression, int[] columns, String csvFile){
         
         String hipoFile = csvFile.replaceAll(".csv", ".h5");
         String[] names = expression.split(":");
+        if(names.length!=columns.length){
+            System.out.println("csv:: error mismatch in mumber of agruments; return;"); return;
+        }
+        
         SchemaBuilder builder = new SchemaBuilder("t::tree",1120,1);
         for(int i = 0; i < names.length; i++)
             builder.addEntry(names[i], "F", "");
@@ -207,7 +217,8 @@ public class HipoTree extends Tree {
                     String[] data = lines.get(i).split(",");
                     if(data.length>=names.length){
                         for(int item = 0; item < names.length; item++){
-                            float value = Float.parseFloat(data[item].trim());
+                            int index = columns[item];
+                            float value = Float.parseFloat(data[index].trim());
                             b.putFloat(item, i, value);
                         }
                     } else {

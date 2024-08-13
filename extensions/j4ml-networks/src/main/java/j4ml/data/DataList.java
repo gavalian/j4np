@@ -73,8 +73,31 @@ public class DataList extends Tree {
                 dataList.get(size-1-dataShowLimit+i).show();
             }
         }
-        
     }
+    
+
+    public static DataList generateRandom(DataList list, int minReplace, int maxReplace, float[] label){
+        DataList result = new DataList();
+        Random r = new Random();
+        for (int i = 0; i < list.getList().size(); i++){
+            int which = r.nextInt(15)+2;
+            if(which+i>=list.getList().size()){
+                which = i-which;
+            } else {
+                which = which + i;
+            }
+            float[] original  = list.getList().get(i).featuresCopy();
+            float[] reference = list.getList().get(which).features();
+            int howMany = r.nextInt(maxReplace-minReplace) + minReplace;
+            for(int k = 0; k < howMany; k++){
+                int order = r.nextInt(original.length);
+                original[order] = reference[order];
+            }
+            result.add(new DataEntry(original,label));
+        }
+        return result;
+    }
+    
     public static DataSet convert(DataList list){
         int  nInputs = list.getList().get(0).features().length;
         int nOutputs = list.getList().get(0).labels().length;

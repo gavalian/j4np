@@ -86,6 +86,7 @@ public class HipoReader implements DataSource {
     }
     
     public HipoReader(String file, long... tags){
+        this.setDebugMode(0);
         this.setTags(tags);
         this.open(file);
     }

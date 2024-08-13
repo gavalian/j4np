@@ -17,7 +17,7 @@ import twig.graphics.TGCanvas;
  */
 public class PaletteDebug2D {
     public static void draw2D(){
-        TGCanvas c = new TGCanvas();
+        TGCanvas c = new TGCanvas(500,500);
         TStyle.getInstance().getPalette().palette2d().setPalette(TPalette2D.PaletteName.kNeon);        
         H2F h = TDataFactory.createH2F(800000, 120);
         h.attr().setTitleX("random gaussian X");
