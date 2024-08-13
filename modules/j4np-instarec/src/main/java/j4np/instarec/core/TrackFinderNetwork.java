@@ -199,7 +199,7 @@ public class TrackFinderNetwork {
         
     }
     
-    public Tracks process(Bank b){
+    public Tracks processBank(Bank b){
         
         Tracks result = new Tracks(100);
         result.dataNode().setRows(0);
@@ -253,7 +253,7 @@ public class TrackFinderNetwork {
     
     public void processEvent(Event e){
         Bank[] hbc = e.read(schemas.get(0));      
-        Tracks t = this.process(hbc[0]);
+        Tracks t = this.processBank(hbc[0]);
         if(t!=null){
             if(t.getRows()>0) {
                 Bank b = new Bank(schemas.get(1),t.getRows());
@@ -264,7 +264,7 @@ public class TrackFinderNetwork {
         }
     }
     
-    public void process(Event e){
+    public void processBank(Event e){
         
         Bank[] bankhb = e.read(schemas.get(0));       
         Bank   banksg = new Bank(schemas.get(1),bankhb[0].getRows());

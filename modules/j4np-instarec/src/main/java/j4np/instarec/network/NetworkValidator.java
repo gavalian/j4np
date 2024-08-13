@@ -159,7 +159,7 @@ public class NetworkValidator {
         while(r.nextEvent(b)==true){            
             DataExtractor.getTracks(cvTracks, b[0],b[1]);
             NetworkValidator.getStatsInference(cvTracks, net, histo);
-            Tracks aiTracks = net.process(b[1]);
+            Tracks aiTracks = net.processBank(b[1]);
             
             NetworkValidator.getStatsReconstruction(cvTracks, aiTracks, histo);
             //aiTracks.show();
@@ -247,7 +247,7 @@ public class NetworkValidator {
         while(r.nextEvent(b)==true){
             
             DataExtractor.getTracks(cvTracks, b[0],b[1]);
-            Tracks aiTracks = net.process(b[1]);
+            Tracks aiTracks = net.processBank(b[1]);
             //b[2].show();
             //System.out.println("-------------------------");
             //cvTracks.show();
