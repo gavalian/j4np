@@ -17,6 +17,7 @@ import j4np.instarec.utils.EJMLModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -212,9 +213,15 @@ public class TrackFinderNetwork {
         
         TrackBuffer buffer = new TrackBuffer();
         TrackFinderUtils.fillConstructor(buffer.constructor, b);
-        
+        //b.show();
+        //buffer.constructor.show();
         for(int s = 0; s < 6; s++){
             buffer.constructor.sectors[s].create(buffer.tracks, s+1, cuts);
+            /*for(int sl = 0; sl < 6; sl++){
+                System.out.println("superlayer # " + sl); buffer.constructor.sectors[s].superLayers[sl].print();
+            }
+            System.out.println(" SECTOR # " + (s+1));
+            buffer.tracks.show();*/
             this.evaluate(buffer.tracks);
             //this.validate(buffer.tracks);
             TrackFinderUtils.copyFromTo(buffer.tracks, result);
@@ -252,6 +259,29 @@ public class TrackFinderNetwork {
     }
     
     public void processEvent(Event e){
+        
+        Schema schema = schemas.get(0);
+        int nRowLength = schemas.get(0).getEntryLength();
+        int       size = e.scanLength(schema.getGroup(),schema.getItem());
+
+        if(size>0){
+            int rows = size/nRowLength;
+            //int sanity = size%nRowLength;
+            //System.out.println("row Length = " + nRowLength + " size = " + size + "  rows = " + rows + " / " + sanity);
+            Bank b = new Bank(schema, rows+7);
+            e.read(b);
+            Tracks t = this.processBank(b);
+            if(t!=null){
+                if(t.getRows()>0) {
+                    Bank br = new Bank(schemas.get(1),t.getRows());
+                    t.dataNode().copy(br);
+                    //b.show();
+                    e.write(br);
+                }
+            }
+            //b.show();
+        }
+        /*
         Bank[] hbc = e.read(schemas.get(0));      
         Tracks t = this.processBank(hbc[0]);
         if(t!=null){
@@ -261,7 +291,7 @@ public class TrackFinderNetwork {
                 //b.show();
                 e.write(b);
             }
-        }
+        }*/
     }
     
     public void process(Event e){
@@ -367,11 +397,40 @@ public class TrackFinderNetwork {
         }
     }
     
+    public void show(Bank b, int sector){
+        TrackBuffer buff = new TrackBuffer();
+        TrackFinderUtils.fillConstructor(buff.constructor, b);
+        buff.constructor.sectors[sector-1].create(buff.tracks, sector);
+        this.evaluate(buff.tracks);
+        buff.tracks.show();
+    }
+    
+    public void evaluate(int[] array, Bank b){
+        Map<Integer,Integer> map = b.getMap("id");
+        float[] f = new float[12];
+        float[] a = new float[12];
+        for(int i = 0; i < 6; i++){
+            float w1 = b.getFloat("wireL1",map.get(array[i]));
+            float w6 = b.getFloat("wireL6",map.get(array[i]));
+            
+            f[i*2] = w1/112.0f;
+            f[i*2+1] = w6/112.0f;
+            a[i*2] = w1;
+            a[i*2+1] = w6;
+        }
+        float[] result = new float[3];
+        this.instarec.getClassifier().feedForwardSoftmax(f, result);
+        System.out.println("EVALUATE::");
+        System.out.println(Arrays.toString(a));
+        System.out.println(Arrays.toString(f)+" ==> " + Arrays.toString(result));
+    }
+    
     public static void main(String[] args){
         
         //String file = "rec_clas_005342.evio.00000.hipo";
         
         String file = "rec_clas_005342.evio.00370.hipo";
+        //String file = "wout.h5";
         TrackFinderNetwork net = new TrackFinderNetwork();
         net.init("etc/networks/clas12default.network", 2);
         
@@ -380,7 +439,6 @@ public class TrackFinderNetwork {
         
         HipoWriter w = HipoWriter.create("wout.h5", r);
         
-
         Event e = new Event();
         
         //for(int i = 0; i < 2000; i++){

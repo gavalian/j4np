@@ -117,9 +117,11 @@ public class TrackConstructor {
             StringBuilder str = new StringBuilder();
             int nrows = superLayers[layer].getRows();
             for(int i = 0; i < nrows; i++){
-                str.append(String.format(" %4d : %7.4f", 
+                str.append(String.format(" %4d : %7.4f %7.4f", 
                         superLayers[layer].getInt(0, i),
-                        superLayers[layer].getDouble(1, i)));
+                        superLayers[layer].getDouble(1, i),
+                        superLayers[layer].getDouble(2, i)
+                        ));
             }
             return str.toString();
         }

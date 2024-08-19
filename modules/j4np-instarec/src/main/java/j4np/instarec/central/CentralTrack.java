@@ -5,6 +5,7 @@
 package j4np.instarec.central;
 
 import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Query;
 import j4np.hipo5.io.HipoReader;
 import j4np.instarec.utils.EJMLModel;
 import j4np.utils.io.TextFileReader;
@@ -12,6 +13,7 @@ import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import twig.data.H1F;
 import twig.graphics.TGCanvas;
 
@@ -217,40 +219,92 @@ public class CentralTrack {
         return true;
     }
     
+    public int findCluster(Bank b, int index){
+        int sector = b.getInt("sector", index);
+        int  layer = b.getInt("layer", index);
+        System.out.println(" sector / layer = " + sector + " " + layer);
+        for(int i = 0; i < b.getRows(); i++){
+            if(i!=index){
+                int sc = b.getInt("sector", i);
+                int lc = b.getInt("layer", i);
+                if(sc==sector&&lc==layer) return i;
+            }
+        }
+        return -1;
+    }
+    
     public void extract(String file){
         
         HipoReader r = new HipoReader(file);        
         Bank[] b = r.getBanks("cvtml::seeds","cvtml::clusters","RUN::config");
         TextFileWriter w = new TextFileWriter("central2.csv");
         int counter = 0; int counter_all = 0;
-        while(r.nextEvent(b)==true){            
-            List<CentralTrack> tracks = getTracks(b[0]);
+        Random rn = new Random();
+        while(r.nextEvent(b)==true){
             
-            counter_all++;
-            
+            List<CentralTrack> tracks = getTracks(b[0]);            
+            counter_all++;            
             
             for(CentralTrack t : tracks){
+                
                 if(CentralTrack.valid(t, b[1])) counter++;
                 
                 if(t.status==1&&CentralTrack.valid(t, b[1])){
-                    
-                    List<CentralTrack> tt = CentralTrack.getSegmented(t);
+
+                    CentralTrack trk = CentralTrack.getSegment(t, 0);
+                    if(trk!=null){
+                        System.out.println("================");
+                        Query q = new Query(b[1],"status==1");
+                        List<Integer> index = q.getIterator(b[1]);
+                        System.out.println(Arrays.toString(t.index));
+                        System.out.println(Arrays.toString(trk.index));
+                        int which = rn.nextInt(4);
+                        int it = this.findCluster(b[1], trk.index[which]-1);
+                        for(Integer indx : index) System.out.printf("%3d ",indx+1);
+                        System.out.println();
+                        System.out.println(" index = " + it + " " + b[1].getInt("sector",it) + " / " + b[1].getInt("layer",it));
+                        int[] iitt = new int[6]; for(int j = 0; j < 6; j++) iitt[j] = t.index[j]-1;
+                        int[] iiff = new int[6]; for(int j = 0; j < 6; j++) iiff[j] = t.index[j]-1;
+                        iiff[which] = it;
+                        
+                        System.out.println(Arrays.toString(iitt));
+                        System.out.println(Arrays.toString(iiff));
+
+                        if(it>=0){
+                            StringBuilder st = new StringBuilder();
+                            StringBuilder sf = new StringBuilder();
+                            for(int k = 0; k < 6; k++) {
+                                float[] f = CentralUtils.getFeatures(b[1], iitt[k]);
+                                st.append(Arrays.toString(f));
+                            }
+                            for(int k = 0; k < 6; k++) {
+                                float[] f = CentralUtils.getFeatures(b[1], iiff[k]);
+                                sf.append(Arrays.toString(f));
+                            }
+                            System.out.println(st.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", ""));                            
+                            System.out.println(sf.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", ""));
+                            w.writeString(st.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", "")+",1,0");
+                            w.writeString(sf.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", "")+",0,1");
+                            
+                        }
+                    }
+                    //b[0].show();
+                    //b[1].show();
+                  /*  List<CentralTrack> tt = CentralTrack.getSegmented(t);
                     List<CentralTrack> tracksF = getSeeds(b[0],false);
-                    
                     
                     for(int i = 0; i < tracksF.size(); i++){
                         CentralTrack trk = CentralTrack.getSegment(tracksF.get(i), 0);
+                        
                         if(trk!=null){
                             System.out.println("********* " + CentralTrack.valid(trk, b[1]));
                             String label = "1,0";
-                            if(CentralTrack.valid(trk, b[1])==false) label = "0,1";
-                            
-                            
+                            if(CentralTrack.valid(trk, b[1])==false) label = "0,1";                                                        
                             String sf = CentralUtils.getFeaturesString(b[1], trk.index) + label;
-                            
-                            w.writeString(sf);
+                            if(CentralTrack.valid(trk, b[1])==true) 
+                                w.writeString(sf);
                         }
-                    }
+                    }*/
                                         
                 }
             }
@@ -263,7 +317,7 @@ public class CentralTrack {
     
     public static void main(String[] args){
         
-        String file = "/Users/gavalian/Work/Software/project-10.8/study/central/MLSample_1_test.hipo";
+        String file = "/Users/gavalian/Work/Software/project-11.0/study/central/AISample_1.hipo";
     
         CentralTrack central = new CentralTrack();
         

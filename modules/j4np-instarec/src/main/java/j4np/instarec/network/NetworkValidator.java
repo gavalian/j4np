@@ -429,23 +429,59 @@ public class NetworkValidator {
         }
     
     }
+    
+    public static void compare(String file){
+        HipoReader r = new HipoReader(file);
+        HipoWriter w = HipoWriter.create(file+"_missing.h5", r);
+        Bank[] b = r.getBanks("ai::tracks","instarec::tracks");
+        Event e = new Event();
+        int ait = 0;
+        int irt = 0;
+        while(r.next(e)){
+            e.read(b);
+            boolean goodEvent = true;
+            //if(b[0].getRows()>0){
+            for(int j = 0; j < b[0].getRows(); j++){
+                int[] cid = b[0].getIntArray(6, "c1", j);
+
+                if(TrackFinderUtils.isComplete(cid)==true){
+                    ait++;
+                    boolean match = false;
+                    System.out.println(Arrays.toString(cid));
+                    for(int n = 0; n < b[1].getRows();n++){
+                        int[] cidb = b[1].getIntArray(6, "c1", n);
+                        System.out.println("\t" + Arrays.toString(cidb));
+                        if(TrackFinderUtils.isSame(cid, cidb)) match = true;
+                    }
+                    System.out.println(" match = " + match);
+                    if(match==true) irt++;
+                    if(match==false) goodEvent = false;
+                }
+            }
+            if(goodEvent==false) w.addEvent(e);
+            //}
+        }
+        w.close();
+        System.out.printf("ai / ir = %d / %d\n",ait,irt);
+    }
     public static void main(String[] args){
-        String file = "../rec_clas_005342.evio.00000.hipo";
-        //String file = "rec_clas_005342.evio.00370.hipo";
+        //String file = "../rec_clas_005342.evio.00000.hipo";
+        String file = "rec_clas_005342.evio.00370.hipo";
         String file2 = "wout.h5";
         //NetworkValidator.filter("wout.h5");
         
+        NetworkValidator.compare(file2);
         //file = "wout_out_2.h5";
         
         //NetworkValidator.multiplicity(file2,"etc/networks/clas12default.network",2);
         
         //NetworkValidator.checkInference(file);
-        
+        /*
         try {
             NetworkValidator.classifier2(file, "etc/networks/clas12default.network", 2);
            
         } catch (Exception ex) {
             Logger.getLogger(NetworkValidator.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 }

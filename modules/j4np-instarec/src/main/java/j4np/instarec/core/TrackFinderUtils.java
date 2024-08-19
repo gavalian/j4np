@@ -18,6 +18,17 @@ public class TrackFinderUtils {
         
     }
     
+    
+    public static boolean isComplete(int[] cid){
+        for(int k = 0; k < cid.length; k++) if(cid[k]<=0) return false;
+        return true;
+    }
+    
+    public static boolean isSame(int[] cida, int[] cidb){
+        for(int k = 0; k < cida.length; k++) if(cida[k]!=cidb[k]) return false;
+        return true;
+    }
+    
     public static void getSegmentBank(Bank segments, Bank hbclusters){
         int nrows = hbclusters.getRows();
         segments.setRows(nrows);
@@ -105,6 +116,7 @@ public class TrackFinderUtils {
                         bank.getFloat("wireL1", r),
                         bank.getFloat("wireL6", r)
                 );
+                //System.out.println(" row value   " + r + " " + bank.getFloat("wireL6", r));
             }
         }
     }
