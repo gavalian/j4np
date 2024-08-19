@@ -264,7 +264,7 @@ public class TrackFinderNetwork {
         }
     }
     
-    public void processBank(Event e){
+    public void process(Event e){
         
         Bank[] bankhb = e.read(schemas.get(0));       
         Bank   banksg = new Bank(schemas.get(1),bankhb[0].getRows());

@@ -66,8 +66,8 @@
     <module>extensions/j4ml-networks</module>    
 
 
-    <module>extensions/j4ml-track</module>
-    <module>extensions/j4np-clas12io</module> 
+   <!-- <module>extensions/j4ml-track</module>
+    <module>extensions/j4np-clas12io</module> -->
 <!--    <module>extensions/j4ml-classifier</module>  -->
 <!--	 <module>extensions/j4np-analysis</module>
     -->

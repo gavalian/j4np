@@ -430,8 +430,8 @@ public class NetworkValidator {
     
     }
     public static void main(String[] args){
-        //String file = "rec_clas_005342.evio.00000.hipo";
-        String file = "rec_clas_005342.evio.00370.hipo";
+        String file = "../rec_clas_005342.evio.00000.hipo";
+        //String file = "rec_clas_005342.evio.00370.hipo";
         String file2 = "wout.h5";
         //NetworkValidator.filter("wout.h5");
         
@@ -442,7 +442,7 @@ public class NetworkValidator {
         //NetworkValidator.checkInference(file);
         
         try {
-            NetworkValidator.classifier(file, "etc/networks/clas12default.network", 2);
+            NetworkValidator.classifier2(file, "etc/networks/clas12default.network", 2);
            
         } catch (Exception ex) {
             Logger.getLogger(NetworkValidator.class.getName()).log(Level.SEVERE, null, ex);
