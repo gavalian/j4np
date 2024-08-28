@@ -372,9 +372,9 @@ public class NetworkValidator {
         String file3 = "recon_denoising_after_update15b_10k.hipo";
         //NetworkValidator.filter("wout.h5");
         
-        //NetworkValidator.classifier(file, "clas12default.network", 15, true);
-        //NetworkValidator.multiplicity(file2,15);        
-        NetworkValidator.regression(file, "clas12default.network", 15, 1, 1);
+        NetworkValidator.classifier(file, "etc/networks/clas12default.network", 15, true);
+        NetworkValidator.multiplicity(file2,15);        
+        //NetworkValidator.regression(file, "clas12default.network", 15, 1, 1);
         //NetworkValidator.compare(file3);
         //file = "wout_out_2.h5";
         

@@ -482,12 +482,12 @@ public class TrackFinderNetwork {
         
         //String file = "rec_clas_005342.evio.00000.hipo";
         
-        //String file = "rec_clas_005342.evio.00370.hipo";
-        String file = "recon_noSegmentRemoval_allCandCrossLists_noSeedCut_newConvChoiceRoutine_toTB.hipo";
+        String file = "rec_clas_005342.evio.00370.hipo";
+        //String file = "recon_noSegmentRemoval_allCandCrossLists_noSeedCut_newConvChoiceRoutine_toTB.hipo";
         //String file = "wout.h5";
         TrackFinderNetwork net = new TrackFinderNetwork();
-        //net.init("etc/networks/clas12default.network", 2);
-        net.init("clas12default.network", 15);
+        net.init("etc/networks/clas12default.network", 2);
+        //net.init("clas12default.network", 15);
         
         HipoReader r = new HipoReader(file);
         net.init(r.getSchemaFactory());
