@@ -182,12 +182,13 @@ public class H3F implements DataSet {
         return null;
     }
     
-    public H2F sliceZ(int zBin){
-        
-        H2F h2 = new H2F("SLICE of " + zBin + " Z bin",
+    public H2F sliceZ(int zBin){        
+        H2F h2 = new H2F(this.hName + "_slice_z_" + zBin,
                 xAxis.getNBins(),xAxis.min(), xAxis.max(),
                 yAxis.getNBins(),yAxis.min(), yAxis.max()
         );
+        h2.attr().setTitleX(this.dataAttr.getTitleX());
+        h2.attr().setTitleY(this.dataAttr.getTitleY());
         double value = 0.0;
         for(int xb = 0; xb < xAxis.getNBins(); xb++){
             for(int yb = 0; yb < yAxis.getNBins(); yb++){

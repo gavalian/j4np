@@ -25,9 +25,9 @@ public class DataTrainer {
         List<float[]> listNeg = new ArrayList<>();
         List<float[]> listFalse = new ArrayList<>();
         
-        for(int i =  1; i <= 20; i++) listNeg.addAll(DataExtractor.load(file, i, max, false));
-        for(int i = 21; i <= 40; i++) listPos.addAll(DataExtractor.load(file, i, max, false));
-        for(int i =  1; i <= 40; i++) listFalse.addAll(DataExtractor.loadFalse(file, i, max));
+      //  for(int i =  1; i <= 20; i++) listNeg.addAll(DataExtractor.readRegression(file, i, max, false));
+       // for(int i = 21; i <= 40; i++) listPos.addAll(DataExtractor.readRegression(file, i, max, false));
+       // for(int i =  1; i <= 40; i++) listFalse.addAll(DataExtractor.loadFalse(file, i, max));
         
         System.out.printf("List Size : negative = %9d, positove = %9d, false = %9d\n",listNeg.size(), listPos.size(), listFalse.size());
         TextFileWriter w = new TextFileWriter("classifier.csv");

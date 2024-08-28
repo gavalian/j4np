@@ -148,17 +148,21 @@ public class HipoDoctor {
                         doContinue = false;
                     }
                     recordNumber++;
-                    
-                    this.inputRecordStream.readRecord(inStreamRandom, recordPosition);
-                    nEvents = this.inputRecordStream.getEntries();
-            
-                    //System.out.println("RECORD Entries # " + nEvents);
-                    for(int k = 0; k < nEvents; k++){
-                        eventsRecovered++;
-                        int   eventSize = inputRecordStream.getEventLength(k);
-                        event.require(eventSize);
-                        inputRecordStream.copyEvent(event.getEventBuffer(), 0, k);
-                        writer.addEvent(event);
+                    try {
+                        this.inputRecordStream.readRecord(inStreamRandom, recordPosition);
+                        nEvents = this.inputRecordStream.getEntries();
+                        
+                        //System.out.println("RECORD Entries # " + nEvents);
+                        for(int k = 0; k < nEvents; k++){
+                            eventsRecovered++;
+                            int   eventSize = inputRecordStream.getEventLength(k);
+                            event.require(eventSize);
+                            inputRecordStream.copyEvent(event.getEventBuffer(), 0, k);
+                            writer.addEvent(event);
+                        }
+                    } catch (Exception e){
+                        System.out.println("doctor:: unable to decompress the record.");
+                        doContinue = false;
                     }
                 } else {
                     doContinue = false;

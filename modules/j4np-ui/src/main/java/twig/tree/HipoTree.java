@@ -180,6 +180,15 @@ public class HipoTree extends Tree {
         fromCsv(expression,columns,csvFile);
     }
     
+    public static void fromCsv(int ncolumns, String file){
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < ncolumns; i++){
+            if(i!=0) str.append(":");
+            str.append(String.format("c%d", i+1));
+        }
+        HipoTree.fromCsv(str.toString(), file);
+    }
+    
     public static void fromCsv(String expression, int[] columns, String csvFile){
         
         String hipoFile = csvFile.replaceAll(".csv", ".h5");

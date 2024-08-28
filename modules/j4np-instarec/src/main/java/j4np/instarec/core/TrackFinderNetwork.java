@@ -12,8 +12,8 @@ import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
 import j4np.instarec.core.TrackConstructor.CombinationCuts;
 import j4np.instarec.network.DataExtractor;
-import j4np.instarec.utils.EJMLLoader;
 import j4np.instarec.utils.EJMLModel;
+import j4np.physics.Vector3;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +24,16 @@ import java.util.Map;
  * @author gavalian
  */
 public class TrackFinderNetwork {
+    
+    
+    
+    public enum NetworkMode {        
+        FIXER_12, FIXER_6, CLASSIFIER_12, CLASSIFIER_6  
+    };
+    
+    
+    NetworkMode modeFixer = NetworkMode.FIXER_6;
+    NetworkMode modeClassifier = NetworkMode.CLASSIFIER_6;
     
     EJMLModel modelClassifier = null;
     EJMLModel      modelFixer = null;
@@ -140,15 +150,26 @@ public class TrackFinderNetwork {
         }
     }
     
+    public TrackFinderNetwork setClassifierMode(NetworkMode mode){
+        this.modeClassifier = mode; return this;
+    }
+    
     public void evaluate(Tracks trk){
         
         float[]  input = new float[12];
         float[] output = new float[3];
+        float[] input6 = new float[6];
         
         int nrows = trk.getRows();
         for(int row = 0; row < nrows; row++){
-            trk.getInput12(input, row);
-            instarec.getClassifier().feedForwardSoftmax(input, output);
+        
+            if(this.modeClassifier==NetworkMode.CLASSIFIER_12){
+                trk.getInput12(input, row);
+                instarec.getClassifier().feedForwardSoftmax(input, output);
+            } else {
+                trk.getInput6(input6, row);
+                instarec.classifier6.feedForwardSoftmax(input6, output);
+            }
             int index = EJMLModel.getLabel(output);
             /*if (Float.isNaN(output[0])){
                 System.out.println(Arrays.toString(input)+" => " + Arrays.toString(output));
@@ -158,6 +179,7 @@ public class TrackFinderNetwork {
                 trk.dataNode().putFloat(1,row, 0.0f);
             } else {
                 trk.dataNode().putShort(0,row,(short) index);
+                trk.dataNode().putShort(3, row, (short) (index==1?-1:1));
                 trk.dataNode().putFloat(1,row, output[index]);
             }
         }
@@ -178,7 +200,38 @@ public class TrackFinderNetwork {
             }
         }
     }
+    
+    public void evaluateParameters(Tracks tracks){
+        float[]  input = new float[12];
+        float[] output = new float[3];
         
+        int nrows = tracks.getRows();
+        
+        for(int j = 0; j < nrows; j++){
+            int sector = tracks.sector(j);
+            int charge = tracks.charge(j);
+            int order  = charge>0?1:0;
+            try {
+                if(instarec.regression[order][sector-1]!=null){
+                    tracks.getInput12(input, j);
+                    instarec.regression[order][sector-1].feedForwardTanhLinear(input, output);
+                    //System.out.println("--- sector = " + sector);
+                    //System.out.println("input -- " + Arrays.toString(input));
+                    //System.out.println("output -- " + Arrays.toString(output));
+                    
+                    Vector3 vec = tracks.getVector(j, output);                    
+                    //System.out.println(vec.mag() + "   " + vec);
+                    tracks.dataNode().putFloat(5, j, (float) vec.x());
+                    tracks.dataNode().putFloat(6, j, (float) vec.y());
+                    tracks.dataNode().putFloat(7, j, (float) vec.z());
+                }
+                
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+    
     public void constructor(Event e, TrackBuffer buffer){
         Bank[] b = e.read(schemas.get(0));
         TrackFinderUtils.fillConstructor(buffer.constructor, b[0]);
@@ -253,7 +306,7 @@ public class TrackFinderNetwork {
             //System.out.printf(" before = %5d , after = %5d\n",before,after);
             //System.out.printf("sector %d - seeds %d\n",s+1,buffer.tracks.getRows());
         }
-        
+        this.evaluateParameters(result);
         //result.show();        
         return result;
     }
@@ -429,10 +482,12 @@ public class TrackFinderNetwork {
         
         //String file = "rec_clas_005342.evio.00000.hipo";
         
-        String file = "rec_clas_005342.evio.00370.hipo";
+        //String file = "rec_clas_005342.evio.00370.hipo";
+        String file = "recon_noSegmentRemoval_allCandCrossLists_noSeedCut_newConvChoiceRoutine_toTB.hipo";
         //String file = "wout.h5";
         TrackFinderNetwork net = new TrackFinderNetwork();
-        net.init("etc/networks/clas12default.network", 2);
+        //net.init("etc/networks/clas12default.network", 2);
+        net.init("clas12default.network", 15);
         
         HipoReader r = new HipoReader(file);
         net.init(r.getSchemaFactory());

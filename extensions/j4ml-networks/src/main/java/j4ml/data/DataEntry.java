@@ -99,6 +99,19 @@ public class DataEntry {
         label[which] = 1.0f;
         this.second = label;
     }
+    public DataEntry copy(){
+        float[] ff = new float[this.first.length];
+        float[] ll = new float[this.second.length];
+        System.arraycopy(this.first, 0, ff, 0, ff.length);
+        System.arraycopy(this.second, 0, ll, 0, ll.length);
+        return new DataEntry(ff,ll);
+    }
+    
+    public DataEntry copy(float[] labels){
+        float[] ff = new float[this.first.length];
+        System.arraycopy(this.first, 0, ff, 0, ff.length);
+        return new DataEntry(ff,labels);
+    }
     
     public float[] features(){ return this.first;}
     public float[] labels(){return this.second;}
@@ -111,6 +124,11 @@ public class DataEntry {
     
     public double[] featuresDouble(){ return first==null? null:DataArrayUtils.toDouble(first);}
     public double[] labelsDouble(){return second==null? null:DataArrayUtils.toDouble(second);}
+    public boolean checkRange(){
+        for(int i = 0; i < this.first.length; i++)
+            if(first[i]<0.0f||first[i]>1.0f) return false;
+        return true;
+    }
     
     public void show(){
         if(first!=null)

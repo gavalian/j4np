@@ -22,10 +22,16 @@ public class TTabCanvas extends JFrame implements ActionListener  {
     private JPanel     canvasPane = null;
     private int CANVAS_DEFAULT_WIDTH  = 600;
     private int CANVAS_DEFAULT_HEIGHT = 500;
-    private String[] tabs = new String[]{"DC","EC"};
+    private String[] tabs = new String[]{"default"};
     
     public TTabCanvas(){
         StudioWindow.changeLook();
+        this.initUI(null,false);
+    }
+    
+    public TTabCanvas(String... tabnames){
+        StudioWindow.changeLook();
+        tabs = tabnames;
         this.initUI(null,false);
     }
     
@@ -50,9 +56,9 @@ public class TTabCanvas extends JFrame implements ActionListener  {
         if(closeOnExit==true) setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //JMenuBar menuBar = this.createMenuBar();
         //setJMenuBar(menuBar);
-         canvasPane = new JPanel();
+        canvasPane = new JPanel();
         canvasPane.setLayout(new BorderLayout());
-        dataCanvas = new TTabDataCanvas();
+        dataCanvas = new TTabDataCanvas(tabs);
         dataCanvas.setSize(this.CANVAS_DEFAULT_WIDTH, this.CANVAS_DEFAULT_HEIGHT);
         
         

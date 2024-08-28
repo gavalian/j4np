@@ -28,8 +28,10 @@ import java.util.logging.Logger;
 import twig.data.DataGroup;
 import twig.data.H1F;
 import twig.data.H2F;
+import twig.data.H3F;
 import twig.data.TDirectory;
 import twig.graphics.TGCanvas;
+import twig.graphics.TTabCanvas;
 
 /**
  *
@@ -70,7 +72,83 @@ public class NetworkValidator {
     }
     
     
+    public static List<Integer> getShares(Bank b, int[] cid){
+        List<Integer> iter = new ArrayList<>();        
+        for(int i = 0; i < b.getRows(); i++){
+            int[] lid = b.getIntArray(6, "c1", i);
+            if(Tracks.match(lid, cid)>0) iter.add(i);
+        }
+        return iter;
+    }
     
+    public static int highest(Bank b, List<Integer> iter){
+        if(b.getRows()==0) return -1;
+        int     max = 0;
+        double prob = b.getFloat("prob", 0);
+        for(int i = 0; i < iter.size(); i++){
+            int idx = iter.get(i);
+            if(b.getFloat("prob", idx)>prob){ prob = b.getFloat("prob", idx); max = idx;}
+        }
+        return max;
+    }
+    
+    public static void multiplicity(String file, int run){
+        
+        HipoReader r = new HipoReader(file);
+        Bank[] b = r.getBanks("TimeBasedTrkg::TBTracks","HitBasedTrkg::Clusters"
+                ,"instarec::tracks");
+        
+        Tracks cvtr = new Tracks(128);
+        Vector3 vec = new Vector3();
+        
+        H3F h = new H3F(6,0.5,6.5,40,0.0,10.0,6,0.5,6.5);
+        h.setName("multiplicity");
+        h.attr().setTitleX("Sector");
+        h.attr().setTitleY("P [GeV]");
+        
+        int[] cid = new int[6];
+        int counter = 0; int ohno = 0; int miss = 0;
+        while(r.nextEvent(b)){
+            DataExtractor.getTracks(cvtr, b[0], b[1]);
+            //cvtr.show();
+            for(int i = 0; i < cvtr.getRows(); i++){
+                
+                if(cvtr.count(i)==6){
+                
+                    cvtr.vector(vec, i);
+                    int sector = cvtr.sector(i);
+                    
+                    cvtr.getClusters(cid, i);
+                    
+                    List<Integer> iter = NetworkValidator.getShares(b[2], cid);
+                    counter++;
+                    h.fill(sector, vec.mag(), 1);
+                    if(iter.size()==0){
+                        System.out.println(" Ohhh nooooo.... "); ohno++;
+                        h.fill(sector, vec.mag(), 3);
+                    } else if (iter.size()>3){
+                        int  highest = NetworkValidator.highest(b[2], iter);
+                        int[] aid = b[2].getIntArray(6, "c1", highest);
+                        int match = Tracks.match(aid, cid);
+                        if(match<6&&match>0) {
+                            h.fill(sector, vec.mag(), 2);
+                            miss++;
+                            System.out.println(iter.size() + " " + b[2].getFloat("prob",highest) + "  " + match);
+                        }
+                    }
+                }
+            }
+            
+        }        
+        
+        List<H2F> slicesZ = h.getSlicesZ();
+        DataGroup grp1 = NetworkValidator.createGroup(slicesZ, new int[]{0,1,2},
+                new String[]{"fc=86","fc=46","fc=82"}, "fc=#EEEDED,mt=15,mb=45,mr=15");
+        grp1.setName("Multiplicity");
+        TDirectory.export("validation.twig", 
+                String.format("validation/%d/classifier",run), grp1);
+        System.out.println("processed " + counter + "  oh noo = "  + ohno + " miss = " + miss);
+    }
     
     public static int[] shares(int[] clusters, Tracks trk){
         int[] stats = new int[]{0,0};
@@ -90,293 +168,148 @@ public class NetworkValidator {
         return stats;
     }
     
-    public static void getStatsInference(Tracks trk, TrackFinderNetwork net, Histograms hist){
-        Vector3 vec = new Vector3();
-        float[]   feat = new float[12];
-        float[]    out = new float[3];
+ 
+    
+   
         
-        for(int i = 0; i < trk.getRows(); i++){
-            int charge = trk.charge(i);
-            int sector = trk.sector(i);
-            trk.vector(vec, i);
-            if(trk.count(i)==6){
-                trk.getInput12(feat, i);
-                net.network().getClassifier().feedForwardSoftmax(feat, out);
-                int label = EJMLModel.getLabel(out);
-                int index = 0; if(charge>0) index = 1;
-                hist.data[index].fill(sector, vec.mag());
-                if(out[index+1]<0.5) {
-                    hist.data[index+2].fill(sector, vec.mag());
+    public static DataGroup createGroup(List<H2F> h, int[] index, String[] attrs, String options){
+        int xbins = h.get(0).getAxisX().getNBins();
+        int ybins = index.length;
+        DataGroup group = new DataGroup(xbins,ybins);
+        group.setRegionAttributes(options);
+        
+        int region = 0;
+        for(int i = 0; i < index.length; i++){
+            List<H1F> h1l = h.get(index[i]).getSlicesX(attrs[i]);
+            for(H1F h1 : h1l){
+                group.add(h1, region, "");region++;
+            }
+        }
+        return group;
+    }
+    public static void regression(String file, String networkFile, int run, int sector, int charge){
+        HipoReader r = new HipoReader(file);                
+        Bank [] b = r.getBanks("TimeBasedTrkg::TBTracks","HitBasedTrkg::Clusters","RUN::config");
+        String name = charge>0?"p":"n";
+        
+        Tracks cvtr = new Tracks(100); 
+        
+        InstaRecNetworks net = new InstaRecNetworks();
+        net.init(networkFile, run);
+        net.show();
+        List<String> lines = TextFileReader.readFile(networkFile);
+        EJMLModel model = null;
+        try {
+            model = EJMLLoader.load(networkFile, String.format("%d/%s/trackregression12.network",sector,name),run,"default");
+        } catch (Exception ex) {
+            Logger.getLogger(NetworkValidator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        float[] feat = new float[12];
+        float[]  out = new float[3];
+        Vector3 vec = new Vector3();
+        
+        while(r.nextEvent(b)){
+            DataExtractor.getTracks(cvtr, b[0], b[1]);
+            for(int i = 0; i < cvtr.getRows(); i++){
+                if(cvtr.count(i)==6&&cvtr.sector(i)==sector&&cvtr.charge(i)==charge){
+                    cvtr.getInput12(feat, i);
+                    cvtr.vector(vec, i);
+                    //model.feedForwardTanhLinear(feat, out);
+                    
+                    int which = charge<0?0:1;
+                    net.getRegression()[which][sector-1].feedForwardTanhLinear(feat, out);
+                    Vector3 vrec = cvtr.getVector(i, out);
+                    System.out.println(Arrays.toString(feat) + "  ==> " + Arrays.toString(out));
+                    System.out.println(vec);
+                    System.out.println(vrec);
                 }
             }
-            
-            if(trk.count(i)==5){
-                
-            }
         }
     }
     
-    public static void getStatsReconstruction(Tracks cvtrk, Tracks aitrk, Histograms hist){
-        Vector3    vec = new Vector3();
-        
-        int[]     clusters = new int[6];
-        float[]       feat = new float[12];
-        float[]        out = new float[3];
-        
-        for(int i = 0; i < cvtrk.getRows(); i++){
-            int charge = cvtrk.charge(i);
-            int sector = cvtrk.sector(i);
-            cvtrk.getClusters(clusters, i);
-            cvtrk.vector(vec, i);
-            
-            int index = 0; if(charge>0) index = 1;
-            hist.data[4+index].fill(sector, vec.mag());
-            
-            if(cvtrk.count(i)==6){
-               int[] stats = NetworkValidator.shares(clusters, aitrk);
-               if(stats[0]==0){ hist.data[6+index].fill(sector, vec.mag());}
-               if(stats[1]>0) { hist.data[8+index].fill(sector, ((double)stats[1]));}
-            }
-        }
-    }
-    
-    public static void classifier(String file, String network, int run) throws Exception{
+    public static void classifier(String file, String network, int run, boolean flag){
         
         HipoReader r = new HipoReader(file);                
         Bank [] b = r.getBanks("TimeBasedTrkg::TBTracks","HitBasedTrkg::Clusters","RUN::config");
         
         Tracks cvTracks = new Tracks(100);        
-        TrackFinderNetwork net = new TrackFinderNetwork();        
+        InstaRecNetworks net = new InstaRecNetworks();
         net.init(network, run);
         
-        Histograms histo = new Histograms(12,6,0.5,6.5,20,0.0,10.0);
+        net.show();
         
+        float[] f12 = new float[12];
+        float[]  f6 = new float[6];
+        float[] out = new float[3];
+        
+        H3F h = new H3F(6,0.5,6.5,40,0.0,10.0,8,0.5,8.5);
+        h.setName("classifier");
+        h.attr().setTitleX("Sector");
+        h.attr().setTitleY("P [GeV]");
         Vector3 vec = new Vector3();
-        Vector3 vrt = new Vector3();
-        
-        int[] clusters = new int[6];
-        
-        while(r.nextEvent(b)==true){            
-            DataExtractor.getTracks(cvTracks, b[0],b[1]);
-            NetworkValidator.getStatsInference(cvTracks, net, histo);
-            Tracks aiTracks = net.processBank(b[1]);
-            
-            NetworkValidator.getStatsReconstruction(cvTracks, aiTracks, histo);
-            //aiTracks.show();
-        }
-        
-        DataGroup ginf = histo.getGroup("Performance", new String[]{"fc=2","fc=32","fc=6","fc=86"} , new int[]{0,2,1,3});
-        DataGroup grec = histo.getGroup("PerformanceRec", new String[]{"fc=2","fc=32","fc=6","fc=86"} , new int[]{4,6,5,7});
-        DataGroup gmul = histo.getGroup("MultiplicityRec", new String[]{"fc=32","fc=86"} , new int[]{8,9});
-        
-        TGCanvas c = new TGCanvas();
-        ginf.draw(c.view(), true);
-        
-        TGCanvas c1 = new TGCanvas();
-        grec.draw(c1.view(), true);
-        
-        TGCanvas c2 = new TGCanvas("multiplicity",1200,900);
-        gmul.draw(c2.view(), true);
-        
-    }
-    public static void classifier2(String file, String network, int run) throws Exception{
-        
-        HipoReader r = new HipoReader(file);                
-        Bank [] b = r.getBanks("TimeBasedTrkg::TBTracks","HitBasedTrkg::Clusters","RUN::config");
-        
-        Tracks cvTracks = new Tracks(100);
-        
-        TrackFinderNetwork net = new TrackFinderNetwork();
-        
-        net.init(network, run);
-        
-        float[]  features = new float[12];
-        float[] features6 = new float[12];
-        float[]    output = new float[3];
-        
-        H2F[] hrec   = new H2F[]{ 
-            new H2F("hnegrec",6,0.5,6.5,20,0.0,10.0),
-            new H2F("hposrec",6,0.5,6.5,20,0.0,10.0)
-        };
-        
-        H2F[] hunrec = new H2F[]{ 
-            new H2F("hnegunrec",6,0.5,6.5,20,0.0,10.0),
-            new H2F("hposunrec",6,0.5,6.5,20,0.0,10.0)
-        };
-        
-        H2F[] htracks = new H2F[]{ 
-            new H2F("htrackspos",6,0.5,6.5,20,0.0,10.0),
-            new H2F("htracksneg",6,0.5,6.5,20,0.0,10.0)
-        };
-        
-        H2F[] htracksunrec = new H2F[]{ 
-            new H2F("htracksposunrec",6,0.5,6.5,20,0.0,10.0),
-            new H2F("htracksnegunrec",6,0.5,6.5,20,0.0,10.0)
-        };
-        
-        H2F[] hmult = new H2F[]{ 
-            new H2F("hmultpos",6,0.5,6.5,100,-0.5,99.5),
-            new H2F("hmultneg",6,0.5,6.5,100,-0.5,99.5)
-        };
-        
-        hrec[0].attr().setTitleY("P (+) [GeV]");
-        hrec[1].attr().setTitleY("P (-) [GeV]");
-        hunrec[0].attr().setTitleY("P (+) [GeV]");
-        hunrec[1].attr().setTitleY("P (-) [GeV]");
-        
-        
-        H2F[] hrec5   = new H2F[]{ 
-            new H2F("hnegrec5",6,0.5,6.5,20,0.0,10.0),
-            new H2F("hposrec5",6,0.5,6.5,20,0.0,10.0)
-        };
-        
-        H2F[] hunrec5 = new H2F[]{ 
-            new H2F("hnegunrec5",6,0.5,6.5,20,0.0,10.0),
-            new H2F("hposunrec5",6,0.5,6.5,20,0.0,10.0)
-        };
-        
-        hrec5[0].attr().setTitleY("P (+) [GeV]");
-        hrec5[1].attr().setTitleY("P (-) [GeV]");
-        hunrec5[0].attr().setTitleY("P (+) [GeV]");
-        hunrec5[1].attr().setTitleY("P (-) [GeV]");
-        
-        Vector3 vec = new Vector3();
-        Vector3 vrt = new Vector3();
-        int[] clusters = new int[6];
         
         while(r.nextEvent(b)==true){
             
             DataExtractor.getTracks(cvTracks, b[0],b[1]);
-            Tracks aiTracks = net.processBank(b[1]);
-            //b[2].show();
-            //System.out.println("-------------------------");
-            //cvTracks.show();
-            //aiTracks.show();
-            //tr.show();
-            for(int i = 0; i < cvTracks.getRows(); i++){
-                if(cvTracks.count(i)==6){
-                    cvTracks.getInput12(features, i);
-                    cvTracks.vector(vec, i);
-                    net.network().getClassifier().feedForwardSoftmax( features, output);
-                    
-                    int index = 1; if(cvTracks.charge(i)>0) index = 2;
-                    //System.out.printf(" %3d : %s\n",i, Arrays.toString(output));
-
-                    if(output[index]>0.5) hrec[index-1].fill(cvTracks.sector(i), vec.mag());
-                        else { 
-                        hunrec[index-1].fill(cvTracks.sector(i), vec.mag());
-                        //System.out.println("features 6 : " + Arrays.toString(features) + " array " + Arrays.toString(output));
-                        //System.out.println("ROW = " + i);
-                        //tr.show();
-                    }
-                    cvTracks.getClusters(clusters, i);
-                    //cvTracks.show(i);
-                    int[] stats = NetworkValidator.shares(clusters, aiTracks);
-                    if(stats[0]==1){ htracks[index-1].fill(cvTracks.sector(i), vec.mag());}
-                    else { 
-                        htracksunrec[index-1].fill(cvTracks.sector(i), vec.mag());
-                    }
-                    hmult[index-1].fill(cvTracks.sector(i), stats[1]);
-                }
-                
-                if(cvTracks.count(i)==5){
-                    cvTracks.getInput12(features, i);
-                    cvTracks.vector(vec, i);
-                    net.network().getFixer().feedForwardReLULinear(features, features6);
-                    //System.out.println(" features 5 = " + Arrays.toString(features));
-                    //System.out.println(" features 6 = " + Arrays.toString(features6));
-                    for(int j = 0; j < features.length; j++) if(features[j]<0.00001) features[j] = features6[j];
-                    net.network().getClassifier().feedForwardSoftmax(features, output);
-                    //System.out.println(Arrays.toString(output));
-                    int index = 1; if(cvTracks.charge(i)>0) index = 2;
-                    if(output[index]>0.5) hrec5[index-1].fill(cvTracks.sector(i), vec.mag());
-                        else { 
-                        hunrec5[index-1].fill(cvTracks.sector(i), vec.mag());                        
-                    }                      
-                }
-            }
-        }
-        
-        DataGroup group = new DataGroup("Performance",6,4);
-        
-        group.setRegionAttributes("fc=#EEEDED,mt=15,mb=45,mr=15");
-        List<H1F> list0 = hrec[0].getSlicesX("fc=42,lw=2,lc=2");
-        List<H1F> list1 = hrec[1].getSlicesX("fc=46,lw=2,lc=6");
-        List<H1F> list2 = hunrec[0].getSlicesX("fc=82,lw=2,lc=2");
-        List<H1F> list3 = hunrec[1].getSlicesX("fc=86,lw=2,lc=6");
-        
-        for(int i = 0; i < list0.size(); i++) group.add(list0.get(i), i   , "");
-        for(int i = 0; i < list2.size(); i++) group.add(list2.get(i), i+6, "");        
-        for(int i = 0; i < list1.size(); i++) group.add(list1.get(i), i+12 , "");
-        for(int i = 0; i < list3.size(); i++) group.add(list3.get(i), i+18, "");
-        
-        DataGroup group5 = new DataGroup("Performance5",6,4);
-        group5.setRegionAttributes("fc=#EEEDED,mt=15,mb=45,mr=15");
-        List<H1F> list05 = hrec5[0].getSlicesX("fc=42,lw=2,lc=2");
-        List<H1F> list15 = hrec5[1].getSlicesX("fc=46,lw=2,lc=6");
-        List<H1F> list25 = hunrec5[0].getSlicesX("fc=82,lw=2,lc=2");
-        List<H1F> list35 = hunrec5[1].getSlicesX("fc=86,lw=2,lc=6");
-        
-        for(int i = 0; i < list05.size(); i++) group5.add(list05.get(i), i   , "");
-        for(int i = 0; i < list25.size(); i++) group5.add(list25.get(i), i+6, "");        
-        for(int i = 0; i < list15.size(); i++) group5.add(list15.get(i), i+12 , "");
-        for(int i = 0; i < list35.size(); i++) group5.add(list35.get(i), i+18, "");        
-        
-        
-        DataGroup groupE = new DataGroup("Efficiency",6,6);
-        groupE.setRegionAttributes("fc=#EEEDED,mt=15,mb=45,mr=15");
-        
-        List<H1F> list0E = htracks[0].getSlicesX("fc=42,lw=2,lc=2");
-        List<H1F> list1E = htracks[1].getSlicesX("fc=46,lw=2,lc=6");
-        List<H1F> list2E = hmult[0].getSlicesX("fc=82,lw=2,lc=2");
-        List<H1F> list3E = hmult[1].getSlicesX("fc=86,lw=2,lc=6");
-        List<H1F> list4E = htracksunrec[0].getSlicesX("fc=82,lw=2,lc=2");
-        List<H1F> list5E = htracksunrec[1].getSlicesX("fc=86,lw=2,lc=6");
-        
-        for(int i = 0; i < list0E.size(); i++) groupE.add(list0E.get(i), i   , "");
-        for(int i = 0; i < list2E.size(); i++) groupE.add(list2E.get(i), i+6, "");        
-        for(int i = 0; i < list4E.size(); i++) groupE.add(list4E.get(i), i+12, "");
-        for(int i = 0; i < list1E.size(); i++) groupE.add(list1E.get(i), i+18 , "");
-        for(int i = 0; i < list3E.size(); i++) groupE.add(list3E.get(i), i+24, "");  
-        for(int i = 0; i < list5E.size(); i++) groupE.add(list5E.get(i), i+30, "");  
-        
-        TDirectory.export("validation.twig", 
-                String.format("validation/%d/classifier",run), group);
-        
-        TDirectory.export("validation.twig", 
-                String.format("validation/%d/classifier",run), group5);
-        
-        TDirectory.export("validation.twig", 
-                String.format("validation/%d/classifier",run), groupE);
-        
-        TGCanvas c = new TGCanvas();
-        group.draw(c.view(), true);
-    }
-    
-    public static class Histograms {
-        public H2F[] data = null;
-        public String region = "fc=#EEEDED,mt=15,mb=45,mr=15";
-        public Histograms(int count, int binsx, double xmin, double xmax, int binsy, double ymin, double ymax){
-            data = new H2F[count];
-            for(int i = 0; i < data.length; i++)
-                data[i] = new H2F("h2_"+i,binsx,xmin,xmax,binsy,ymin,ymax);
-        }
-        
-        public DataGroup getGroup(String name, String[] options, int[] order){
-            DataGroup group = new DataGroup(name,6,order.length);
-            group.setRegionAttributes(region);
             
-            int counter = 0;
-            for(int i = 0; i < order.length; i++){
-                List<H1F> hx = data[order[i]].getSlicesX(options[i]);
-                for(int k = 0; k < hx.size(); k++){
-                    group.add(hx.get(k), counter, "");
-                    counter++;
+            
+            //cvTracks.show();
+            
+            for(int row = 0; row < cvTracks.getRows(); row++){
+                if(cvTracks.count(row)==6){
+                    cvTracks.getInput6( f6, row);
+                    cvTracks.getInput12(f12, row);
+                    cvTracks.vector(vec, row);
+                    
+                    int charge = cvTracks.charge(row);
+                    int sector = cvTracks.sector(row);                 
+                    int bin = charge<0?1:2;                    
+                    
+                    net.getClassifier6().feedForwardSoftmax(f6, out);
+                    int label6 = EJMLModel.getLabel(out);
+                    
+                    int statsBin = label6==bin?1:2;
+                    if(charge>0) statsBin += 2;
+                    h.fill(sector, vec.mag(), statsBin);
+                    net.getClassifier().feedForwardSoftmax(f12, out);
+                    
+                    int label12 = EJMLModel.getLabel(out);
+                    
+                    statsBin = label12==bin?5:6;
+                    if(charge>0) statsBin += 2;
+                    h.fill(sector, vec.mag(), statsBin);
                 }
             }
-            return group;
         }
+        
+        List<H2F> slicesZ = h.getSlicesZ();
+        
+        TTabCanvas c = new TTabCanvas("NET-6","NET-12");
+        
+        DataGroup grp1 = NetworkValidator.createGroup(slicesZ, new int[]{0,1,2,3},
+                new String[]{"fc=86","fc=46","fc=82","fc=42"}, "fc=#EEEDED,mt=15,mb=45,mr=15");
+        DataGroup grp2 = NetworkValidator.createGroup(slicesZ, new int[]{4,5,6,7},
+                new String[]{"fc=86","fc=46","fc=82","fc=42"},"fc=#EEEDED,mt=15,mb=45,mr=15");
+        
+        grp1.draw(c.getDataCanvas().activeCanvas(), true);
+        c.getDataCanvas().setSelected(1);
+        grp2.draw(c.getDataCanvas().activeCanvas(), true);
+        
+        grp1.setName("Efficiency");
+        grp2.setName("Efficiency12");
+        
+        TDirectory.export("validation.twig", 
+                String.format("validation/%d/classifier",run), grp1);
+        TDirectory.export("validation.twig", 
+                String.format("validation/%d/classifier",run), grp2);
+        //c.getDataCanvas().activeCanvas()
+        /*c.getDataCanvas().activeCanvas().divide(2, 4);
+        System.out.println(slicesZ.size());
+        for(int i = 0; i < 8; i++)
+            c.getDataCanvas().activeCanvas().region(i).draw(slicesZ.get(i).projectionY());
+        */
     }
+            
     
     public static void filter(String file){
         Tracks tml = new Tracks(100);
@@ -430,47 +363,19 @@ public class NetworkValidator {
     
     }
     
-    public static void compare(String file){
-        HipoReader r = new HipoReader(file);
-        HipoWriter w = HipoWriter.create(file+"_missing.h5", r);
-        Bank[] b = r.getBanks("ai::tracks","instarec::tracks");
-        Event e = new Event();
-        int ait = 0;
-        int irt = 0;
-        while(r.next(e)){
-            e.read(b);
-            boolean goodEvent = true;
-            //if(b[0].getRows()>0){
-            for(int j = 0; j < b[0].getRows(); j++){
-                int[] cid = b[0].getIntArray(6, "c1", j);
+    
 
-                if(TrackFinderUtils.isComplete(cid)==true){
-                    ait++;
-                    boolean match = false;
-                    System.out.println(Arrays.toString(cid));
-                    for(int n = 0; n < b[1].getRows();n++){
-                        int[] cidb = b[1].getIntArray(6, "c1", n);
-                        System.out.println("\t" + Arrays.toString(cidb));
-                        if(TrackFinderUtils.isSame(cid, cidb)) match = true;
-                    }
-                    System.out.println(" match = " + match);
-                    if(match==true) irt++;
-                    if(match==false) goodEvent = false;
-                }
-            }
-            if(goodEvent==false) w.addEvent(e);
-            //}
-        }
-        w.close();
-        System.out.printf("ai / ir = %d / %d\n",ait,irt);
-    }
     public static void main(String[] args){
         //String file = "../rec_clas_005342.evio.00000.hipo";
         String file = "rec_clas_005342.evio.00370.hipo";
         String file2 = "wout.h5";
+        String file3 = "recon_denoising_after_update15b_10k.hipo";
         //NetworkValidator.filter("wout.h5");
         
-        NetworkValidator.compare(file2);
+        //NetworkValidator.classifier(file, "clas12default.network", 15, true);
+        //NetworkValidator.multiplicity(file2,15);        
+        NetworkValidator.regression(file, "clas12default.network", 15, 1, 1);
+        //NetworkValidator.compare(file3);
         //file = "wout_out_2.h5";
         
         //NetworkValidator.multiplicity(file2,"etc/networks/clas12default.network",2);

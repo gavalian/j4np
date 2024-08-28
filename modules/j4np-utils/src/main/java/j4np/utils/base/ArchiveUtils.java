@@ -71,7 +71,7 @@ public class ArchiveUtils {
         return path2.replaceAll("//", "/");
     }
     
-    public static void writeFile(String zipfile, String outputName, List<String> fileLines){
+    public static synchronized void writeFile(String zipfile, String outputName, List<String> fileLines){
         InputStream stream = null;
         try {
             stream = ArchiveUtils.createFromList(fileLines);

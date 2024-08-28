@@ -30,7 +30,7 @@ public class CentralUtils {
     public static float[] getFeatures(Bank b, int index){
         int layer = b.getInt("layer", index);
         int status = b.getInt("status", index);
-        System.out.println(" status = " + status);
+        //System.out.println(" status = " + status);
         float[] f = new float[4];
         if(layer>=1&&layer<=6){
             Vector3D v = new Vector3D();

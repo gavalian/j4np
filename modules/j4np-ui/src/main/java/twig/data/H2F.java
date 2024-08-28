@@ -801,7 +801,7 @@ public class H2F implements DataSet {
      * @return 			a slice of the x bins on the specified y bin as a 1-D Histogram
      */
     public H1F sliceX(int xBin) {
-        String name = "Slice of " + xBin + " X Bin";
+        String name =  hName + "_slice_X_" + xBin;
         double yMin = yAxis.min();
         double yMax = yAxis.max();
         int    yNum = yAxis.getNBins();
@@ -819,7 +819,7 @@ public class H2F implements DataSet {
      * @return 			a slice of the x bins on the specified y bin as a 1-D Histogram
      */
     public H1F sliceX(int xBin, H1F sliceX) {
-        String name = "Slice of " + xBin + " X Bin";
+        String name = hName + "_slice_X_" + xBin;
         double yMin = yAxis.min();
         double yMax = yAxis.max();
         int    yNum = yAxis.getNBins();
@@ -836,7 +836,7 @@ public class H2F implements DataSet {
      * @return 	a slice of the y bins on the specified x bin as a 1-D Histogram
      */
     public H1F sliceY(int yBin) {
-        String name = "Slice of " + yBin + " Y Bin";
+        String name = this.hName + "_slice_Y_" + yBin;
         double xMin = xAxis.min();
         double xMax = xAxis.max();
         int    xNum = xAxis.getNBins();

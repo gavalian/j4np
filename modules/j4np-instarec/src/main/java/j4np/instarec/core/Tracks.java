@@ -128,7 +128,12 @@ public class Tracks  {
         }
     }
     
-
+    public static int match(int[] a, int[] b){
+        int count = 0; 
+        for(int i  = 0; i < a.length; i++) if(a[i]==b[i]) count++;
+        return count;
+    }
+    
     public void getInput(float[] input, int row) {
         int nrows = bank.getRows();
         for(int i = 0; i < 6; i++) input[i] = (float) (bank.getDouble(17+i, row)/112.0);
@@ -139,6 +144,15 @@ public class Tracks  {
         for(int i = 0; i < 6; i++){
             input[i*2  ] = (float) (bank.getDouble(17+i, row)/112.0);
             input[i*2+1] = (float) (bank.getDouble(23+i, row)/112.0);
+        }
+    }
+    
+    public void getInput6(float[] input, int row) {
+        int nrows = bank.getRows();
+        for(int i = 0; i < 6; i++){
+            float w1 = (float) bank.getDouble(17+i, row);
+            float w6 = (float) bank.getDouble(23+i, row);
+            input[i] = (0.5f*(w6+w1))/112.0f;
         }
     }
     

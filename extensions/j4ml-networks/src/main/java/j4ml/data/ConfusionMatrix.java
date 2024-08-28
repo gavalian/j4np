@@ -46,7 +46,7 @@ public class ConfusionMatrix {
         return mc;
     }
     
-    public double[] getConfisionMatrixFlat(){
+    public double[] getConfusionMatrixFlat(){
         double[][] mc = this.getConfusionMatrix();
         double[] mcflat = new double[labelCount*labelCount];
         int index = 0;

@@ -5,10 +5,16 @@
  */
 package j4ml.deepnetts;
 
+import deepnetts.data.MLDataItem;
 import deepnetts.data.TabularDataSet;
+import deepnetts.eval.ClassifierEvaluator;
 import deepnetts.net.FeedForwardNetwork;
+import deepnetts.net.NeuralNetwork;
+import deepnetts.net.layers.AbstractLayer;
 import deepnetts.net.layers.activation.ActivationType;
+import deepnetts.net.loss.LossFunction;
 import deepnetts.net.loss.LossType;
+import deepnetts.net.loss.MeanSquaredErrorLoss;
 import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
 import j4ml.data.DataEntry;
@@ -19,8 +25,11 @@ import j4np.utils.json.Json;
 import j4np.utils.json.JsonArray;
 import j4np.utils.json.JsonObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.visrec.ml.data.DataSet;
+import javax.visrec.ml.eval.EvaluationMetrics;
+import javax.visrec.ml.eval.Evaluator;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -35,12 +44,18 @@ public class DeepNettsNetwork {
     ActivationType hiddenActivation = ActivationType.RELU;
     ActivationType   lastActivation = ActivationType.SIGMOID;
     
+    private boolean hasListener = false;
+    
+    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(DeepNettsNetwork.class.getName());
     LossType           lossFunction = LossType.MEAN_SQUARED_ERROR;
     double learningRate = 0.001;
+    int    emptyCycle = 5;
+    private transient Evaluator<NeuralNetwork, DataSet<? extends MLDataItem>> eval = new ClassifierEvaluator();
     
     public DeepNettsNetwork(){
         
     }
+    public void setEmptyCicle(int ec){ emptyCycle = ec;}
     
     public final DeepNettsNetwork outputActivation(ActivationType type){
         this.lastActivation = type; return this;
@@ -65,7 +80,7 @@ public class DeepNettsNetwork {
         b.addInputLayer(layers[0]);
         
         for(int i = 1; i < layers.length-1; i++){
-            b.addFullyConnectedLayer(layers[i], this.hiddenActivation);
+            b.addFullyConnectedLayer(layers[i], this.hiddenActivation);            
         }
         
         b.addOutputLayer(layers[layers.length-1], this.lastActivation)
@@ -77,7 +92,7 @@ public class DeepNettsNetwork {
         System.out.println(neuralNet);
         
         trainer = neuralNet.getTrainer();
-        trainer.setMaxError(0.000004f);
+        trainer.setMaxError(0.0000000004f);
         trainer.setLearningRate((float) this.learningRate);
         trainer.setMomentum(0.9f);
         
@@ -139,17 +154,86 @@ public class DeepNettsNetwork {
         this.train(converted, nEpochs);
     }
     
+    public void train(DataList dpl){
+        DataSet converted = this.convert(dpl);
+        this.train(converted);
+    }
+    public void showWeights(int layer){
+        System.out.println(Arrays.toString(neuralNet.getLayers().get(layer).getWeights().getValues()));
+    }
+    
+    public void train(DataSet trSet){
+        trainer.setMaxEpochs(this.emptyCycle);
+        LogManager.shutdown();
+        trainer.train(trSet);
+    }
+    
+    public void train2(DataList dpl, int nEpochs, String json){
+        DataSet converted = this.convert(dpl);
+        this.train2(converted, nEpochs, json);
+    }
+    
+    public void train2(DataSet<? extends MLDataItem> trSet, int nEpochs, String json){
+        
+        MeanSquaredErrorLoss lossFunc = new MeanSquaredErrorLoss(neuralNet);
+        System.out.println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println(">>>>   LETS START ");
+        
+        if(json!=null){
+            for (AbstractLayer layer : neuralNet.getLayers()) {
+                layer.setLearningRate((float) this.learningRate);
+                layer.setMomentum(0.9f);
+                layer.setOptimizerType(OptimizerType.SGD);
+            }
+            neuralNet.setOutputLabels(trSet.getTargetColumnsNames());
+        }
+        
+        lossFunc.reset();
+        
+        float totalTrainingLoss = 0;
+        float trainAccuracy = 0;
+        float prevTotalLoss = 0, totalLossChange;
+        long startTraining, endTraining, trainingTime, startEpoch, endEpoch, epochTime;
+        float[] outputError;
+        
+        if(json!=null) this.updateWeights(json);
+        
+        for(int i = 0; i < nEpochs; i++){
+            
+            //trSet.shuffle();
+            for (MLDataItem dataSetItem : trSet){
+                neuralNet.setInput(dataSetItem.getInput());
+                outputError = lossFunc.addPatternError(neuralNet.getOutput(), dataSetItem.getTargetOutput().getValues());
+                neuralNet.setOutputError(outputError);
+                neuralNet.backward();
+                
+                totalTrainingLoss = lossFunc.getTotal();
+                totalLossChange = totalTrainingLoss - prevTotalLoss;
+                prevTotalLoss = totalTrainingLoss;
+                //trainAccuracy = calculateAccuracy(trSet);
+            }
+            int epoch = i;
+            LOGGER.info("Epoch:"  + epoch + ", Time:"  + "ms, TrainError:" + totalTrainingLoss + ", TrainErrorChange:"  + ", TrainAccuracy: " + trainAccuracy);
+            
+        }
+     }
+    
+    private float calculateAccuracy(DataSet<? extends MLDataItem> validationSet) {
+        EvaluationMetrics pm = eval.evaluate(neuralNet, validationSet);
+        return pm.get(EvaluationMetrics.ACCURACY);
+    }
     public void train(DataSet trSet, int nEpochs){
         
         //trainer.setCheckpointEpochs(100);
         trainer.setMaxEpochs(nEpochs);
-        System.out.println("adding listener ");
+        //System.out.println("adding listener ");
         
         DeepNettsClassifier.ProgressListener pl = new DeepNettsClassifier.ProgressListener(nEpochs);
         
         LogManager.shutdown();
         
-        trainer.addListener(pl);
+        if(hasListener==false){ trainer.addListener(pl); hasListener = true;}
         
         System.out.println("*********");
         System.out.println("* Start Training Network with data set size = " + trSet.getItems().size());
@@ -157,6 +241,8 @@ public class DeepNettsNetwork {
         System.out.println("*********");
         //trainer.setMaxEpochs(25);
         //for(int k = 0; k < nEpochs/25; k++){ 
+        //System.out.println(Arrays.toString(neuralNet.getLayers().get(1).getWeights().getValues()));
+        
         trainer.train(trSet);       
         
         System.out.println("*********");
@@ -222,7 +308,7 @@ public class DeepNettsNetwork {
         }
         return stream;
     }
-    
+        
     public static EJMLModel getNetwork(List<String> json){
         StringBuilder str = new StringBuilder();
         for(String line : json) str.append(line);
@@ -245,6 +331,38 @@ public class DeepNettsNetwork {
         }
         writer.close();
     }
+    
+    public void updateWeights(String json){
+        JsonObject jsonObject = (JsonObject) Json.parse(json);
+        JsonArray      layers = jsonObject.get("layers").asArray();
+        int        layersSize = layers.size();
+        
+        int[]    layout = new int[layersSize];
+        
+        for(int i = 0; i < layersSize; i++){ layout[i] = layers.get(i).asInt();}
+        
+        if(layout.length==neuralNet.getLayers().size()){
+            JsonArray weights = jsonObject.get("weights").asArray();
+            JsonArray  biases = jsonObject.get("biases").asArray();
+            for(int layer = 0; layer < weights.size(); layer++){
+                float[] weight = getFloatArray(weights.get(layer).asArray());
+                float[]   bias = getFloatArray(biases.get(layer).asArray());
+                neuralNet.getLayers().get(layer+1).getWeights().setValues(weight);
+                neuralNet.getLayers().get(layer+1).setBiases(bias);
+            }
+        } else {
+            System.out.println(" problem ");
+        }
+        
+    }
+    
+    private float[] getFloatArray(JsonArray array){        
+        float[] result = new float[array.size()];
+        for(int i = 0; i < result.length; i++)
+            result[i] = array.get(i).asFloat();
+        return result;
+    }
+    
     public void fromJson(String json){
         
         JsonObject jsonObject = (JsonObject) Json.parse(json);
@@ -258,8 +376,8 @@ public class DeepNettsNetwork {
             System.out.println("--- error");
         }
         
-        JsonArray layers = jsonObject.get("layers").asArray();
-        int   layersSize = layers.size();
+        JsonArray      layers = jsonObject.get("layers").asArray();
+        int        layersSize = layers.size();
         int[]    layersLayout = new int[layersSize];
         
         for(int i = 0; i < layersSize; i++){
@@ -345,7 +463,11 @@ public class DeepNettsNetwork {
         System.out.println(n.getJson());
         
         DeepNettsNetwork nr = new DeepNettsNetwork();
-        nr.fromJson(n.getJson());
+        nr.init(new int[]{2,2,3});
+        
+        //System.out.println(" Layers " + nr.neuralNet.getLayers().size());
+        nr.updateWeights(n.getJson());
+        //nr.fromJson(n.getJson());
         //List<String> network = n.getNetworkStream();
     }
 }

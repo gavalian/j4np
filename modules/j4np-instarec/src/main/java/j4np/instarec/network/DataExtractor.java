@@ -263,16 +263,33 @@ public class DataExtractor {
         }
         return data;
     }
+        
+    public static List<DataPair>  generate6(List<DataPair> pairs, int minShift, int maxShift){
+        Random r = new Random();
+        List<DataPair> gen = new ArrayList<>();
+        return gen;
+    }
+    
+    public static List<DataPair> readRegression(String file, int max){
+        List<DataPair> dataList = new ArrayList<>();
+        for(int i = 1; i <= 40; i++){
+            List<DataPair> entry = DataExtractor.readRegression(file, i, max);
+            dataList.addAll(entry);
+        }
+        return dataList;
+    }
     /**
      * Loading data from file for AI training. 
      * @param file
      * @param tag
      * @param max
+     * @param regression
      * @return 
      */
-    public static List<float[]> load(String file, int tag, int max, boolean regression){
+    public static List<DataPair> readRegression(String file, int tag, int max){
+        
         HipoReader r = new HipoReader(file,tag);
-        List<float[]> dataList = new ArrayList<>();
+        List<DataPair> dataList = new ArrayList<>();
         
         Tracks tr = new Tracks(120);        
         Event  ev = new Event();
@@ -286,21 +303,24 @@ public class DataExtractor {
                 //System.out.println(" count = " + tr.count(0));
                 //for(int i = 0; i < data.length; i++) data[i] = (float) (tr.dataNode().getDouble(17+i, 0)/112.);
                 tr.getInput12(data, 0);
-                if(regression==true){
-                    float[] datar = new float[18];
-                    for(int i = 0; i < data.length; i++) datar[i] = data[i];
-                    Vector3 v = new Vector3();
-                    tr.vector(v, 0);
-                    float[] reg = tr.getVectorOutput(v, 0);
-                    for(int i = 12; i < 15; i++) datar[i] = reg[i-12];
-                    datar[15] = tr.sector(0);
-                    datar[16] = tr.charge(0);
-                    tr.vertex(v, 0);
-                    datar[17] = (float) ((v.z() + 15)/20);
-                    dataList.add(datar);
-                } else {
-                    dataList.add(data);
-                }
+                int charge = tr.charge(0);
+                //if(regression==true){
+                
+                float[] output = new float[8];
+                output[0] = tr.sector(0);
+                output[1] = 0.0f;
+                
+                if(charge<0) { output[2] = 1.0f; output[3] = 0.0f;}
+                else { output[2] = 0.0f; output[3] = 1.0f; }
+                
+                //for(int i = 0; i < data.length; i++) datar[i] = data[i];
+                Vector3 v = new Vector3();
+                tr.vector(v, 0);
+                float[] reg = tr.getVectorOutput(v, 0);
+                for(int i = 0; i < 3; i++) output[i+4] = reg[i];
+                tr.vertex(v, 0);
+                output[7] = (float) ((v.z() + 15)/20);
+                dataList.add(new DataPair(data,output));
             }
         }
         return dataList;
@@ -394,15 +414,6 @@ public class DataExtractor {
         return dataList;
     }
     
-    public static List<float[]> load(String file, int max, boolean regression){
-        List<float[]> dataList = new ArrayList<>();
-        for(int i = 1; i <= 40; i++){
-            List<float[]> entry = DataExtractor.load(file, i, max,regression);
-            dataList.addAll(entry);
-        }
-        return dataList;
-    }
-    
     public static void loadFalse(String file, int tag, String network, int run, int max){
         
         HipoReader r = new HipoReader(file,tag);
@@ -483,36 +494,34 @@ public class DataExtractor {
     
     public static void main(String[] args){
 
-        String file = "../ml_data_1.hipo";
+        String file = "ml_data_1.hipo";
         
        // --- DataExtractor.loadFalse(file, 1,"",2,24000);
         
-       TextFileWriter w = new TextFileWriter("data.csv");
+       TextFileWriter w = new TextFileWriter("datafixer.csv");
        
-       for(int i = 0; i < 40; i++){
-           List<DataPair>  pairs = DataExtractor.loadDataTrue(file,i+1,12000);           
-           List<DataPair>  pairsf = DataExtractor.generateFalse(pairs);
-           pairs.addAll(pairsf);
-           Collections.shuffle(pairs);
+       for(int b = 20; b>0; b--){                  
            
-           List<String> lines = DataExtractor.convert(pairs);
-           for(String l : lines){ w.writeString(l);}
-
+           List<DataPair> list = DataExtractor.readRegression(file, b, 122000);
+           List<String>   lines = DataExtractor.convert(list);
            
-           /*    List<DataPair>  pairs = DataExtractor.loadData(file,i+1,2200);
-           List<DataPair> pairs2 = DataExtractor.loadData(file,i+21,2200);
+           for(String s : lines) {
+               w.writeString(s);//System.out.println(s);
+           }
            
-           System.out.println(" tag = " + i + "  pairs = " + pairs.size());
-           //System.out.println(" data size = " + pairs.size());
-       
-           List<String> lines = DataExtractor.convert(pairs);
-           for(String l : lines){ w.writeString(l);}
-           List<String> lines2 = DataExtractor.convert(pairs2);
-           for(String l : lines2){ w.writeString(l);}*/
+           List<DataPair> listp = DataExtractor.readRegression(file, b+20, 122000);
+           List<String>   linesp = DataExtractor.convert(listp);
+           
+           for(String s : linesp) {
+               w.writeString(s);//System.out.println(s);
+           }
        }
-       
        w.close();
-        /*
+       /*for(DataPair pair : list){
+           System.out.println(Arrays.toString(pair.input) + " " + Arrays.toString(pair.output));           
+       }*/
+       
+       /*
         if(args.length>0){
             List<String> files = Arrays.asList(args);
             Collections.sort(files);
@@ -521,18 +530,6 @@ public class DataExtractor {
         }*/
         
         
-        //List<float[]> data = DataExtractor.loadFalse(file, 4, 4500);
-        
-        /*
-        TextFileWriter w = new TextFileWriter("output.csv");
-
-        for(int bin = 1; bin <=40; bin++){
-            List<float[]> data = DataExtractor.load(file, bin, 35000, true); 
-            for(float[] d : data){
-                //System.out.println(DataArrayUtils.floatToString(d, ","));
-                w.writeString(DataArrayUtils.floatToString(d, ","));
-            }
-        }
-        w.close();*/
+       
     }
 }

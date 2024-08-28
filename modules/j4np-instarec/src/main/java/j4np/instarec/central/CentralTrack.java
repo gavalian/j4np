@@ -5,9 +5,12 @@
 package j4np.instarec.central;
 
 import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Query;
 import j4np.hipo5.io.HipoReader;
+import j4np.hipo5.io.HipoWriter;
 import j4np.instarec.utils.EJMLModel;
+import j4np.physics.Vector3;
 import j4np.utils.io.TextFileReader;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
@@ -32,8 +35,8 @@ public class CentralTrack {
     
     public static int[][] patterns = new int[][]{
         {0,1,2,3,   4,  5}, {0,1,2,3,   6,  8}, {0,1,2,3,   6, 10},
-        //{0,1,2,3,   6,  7}, {0,1,2,3,   6,  8}, {0,1,2,3,   6, 10},     
-        {0,1,2,3,   6,  9}, {0,1,2,3,   8,  9}, {0,1,2,3,   9, 10},        
+        {0,1,2,3,   6,  7}, {0,1,2,3,   6,  8}, {0,1,2,3,   6, 10},     
+        //{0,1,2,3,   6,  9}, {0,1,2,3,   8,  9}, {0,1,2,3,   9, 10},        
         {0,1,2,3,   7, 11}, {0,1,2,3,   8, 11}, {0,1,2,3,  10, 11},        
         //-------------
         {0,1,4,5,   6,  7}, {0,1,4,5,   6,  8}, {0,1,4,5,   6, 10},        
@@ -233,15 +236,109 @@ public class CentralTrack {
         return -1;
     }
     
+    public double distance(Bank b, int index1, int index2){
+        Vector3 v1 = new Vector3(
+                b.getFloat("xo", index1),
+                b.getFloat("yo", index1),
+                b.getFloat("zo", index1)
+        );
+        Vector3 v2 = new Vector3(
+                b.getFloat("xo", index2),
+                b.getFloat("yo", index2),
+                b.getFloat("zo", index2)
+        );
+        return Math.sqrt( ( v1.x() - v2.x())*( v1.x() - v2.x())
+                + ( v1.y() - v2.y())*( v1.y() - v2.y())
+                + ( v1.z() - v2.z())*( v1.z() - v2.z())
+        ) ;
+    }
+    
+    public void extract2(String file){
+        HipoReader r = new HipoReader(file);        
+        Bank[] b = r.getBanks("cvtml::seeds","cvtml::clusters","RUN::config");
+        
+        HipoWriter hw = HipoWriter.create("central.h5", r);
+        Event event = new Event();
+        
+        TextFileWriter w = new TextFileWriter("central2.csv");
+        int counter = 0; int counter_all = 0;
+        Random rn = new Random();
+        while(r.next(event)==true){
+            event.read(b);
+            
+            CentralTracks tracks = new CentralTracks();
+            
+            for(int i = 0; i < b[0].getRows(); i++){
+                int[] cid = b[0].getIntArray(12, "cl1", i);
+                tracks.fill(cid);
+            }
+            System.out.println("--new event");
+            //tracks.show();
+            List<int[]> list = new ArrayList<>();
+            for(int j = 0; j < tracks.node().getRows(); j++){
+                int[] data = new int[6];
+                tracks.getSubTrack(j, data, 0);
+                if(tracks.isComplete(data)&&list.size()==0&&tracks.status(data, b[1])==1){
+                    list.add(data);
+                }
+            }
+            
+            System.out.println("size = " + list.size());
+            if(list.size()==1){
+                int[] cid = list.get(0);
+                System.out.println(Arrays.toString(list.get(0)));
+                //String dataTrue = Arrays.toString(list.get(0)).replaceAll("\\[", "").replaceAll("\\]", "");
+                int which = rn.nextInt(4);
+                int it = -1;
+                
+                for(int kk = 0; kk < 6; kk++){                                    
+                    int itk = this.findCluster(b[1], cid[kk]);
+                    double md = 100.0;
+                    if(itk>=0){
+                        double dist = this.distance(b[1], itk, cid[kk]);
+                        if(dist<md){
+                            md = dist; it = itk; which = kk;
+                        }
+                        //System.out.printf("%5d , distance = %f\n",kk,this.distance(b[1], itk, cid[kk]));
+                    }
+                }
+                //System.out.println("which = " + which +  " cid = " + cid[which] + " it = " + it);
+
+                if(it>=0){
+                    int[] cidf = new int[6];
+                    for(int i = 0; i < 6; i++) cidf[i] = cid[i];
+                    double dist = this.distance(b[1], it, cid[which]);
+                    System.out.printf(", distance = %f\n",this.distance(b[1], it, cid[which]));
+                    cidf[which] = it;
+                    System.out.println(Arrays.toString(cid));
+                    System.out.println(Arrays.toString(cidf));
+                    
+                    float[] ft = tracks.getFeatures(cid, b[1]);
+                    float[] ff = tracks.getFeatures(cidf, b[1]);
+                    String dataTrue = Arrays.toString(ft).replaceAll("\\[", "").replaceAll("\\]", "");
+                    String dataFalse = Arrays.toString(ff).replaceAll("\\[", "").replaceAll("\\]", "");
+                   if(dist<10&&dist>1){
+                       w.writeString(dataTrue+",1.0,0.0");                   
+                       w.writeString(dataFalse+",0.0,1.0");
+                   }
+                }
+            }
+        }
+        w.close();
+    }
     public void extract(String file){
         
         HipoReader r = new HipoReader(file);        
         Bank[] b = r.getBanks("cvtml::seeds","cvtml::clusters","RUN::config");
+        
+        HipoWriter hw = HipoWriter.create("central.h5", r);
+        Event event = new Event();
+        
         TextFileWriter w = new TextFileWriter("central2.csv");
         int counter = 0; int counter_all = 0;
         Random rn = new Random();
-        while(r.nextEvent(b)==true){
-            
+        while(r.next(event)==true){
+            event.read(b);
             List<CentralTrack> tracks = getTracks(b[0]);            
             counter_all++;            
             
@@ -251,26 +348,28 @@ public class CentralTrack {
                 
                 if(t.status==1&&CentralTrack.valid(t, b[1])){
 
-                    CentralTrack trk = CentralTrack.getSegment(t, 0);
+                    CentralTrack trk = CentralTrack.getSegment(t, 3);
                     if(trk!=null){
-                        System.out.println("================");
+                        //hw.addEvent(event);
+                        //System.out.println("================");
                         Query q = new Query(b[1],"status==1");
                         List<Integer> index = q.getIterator(b[1]);
                         System.out.println(Arrays.toString(t.index));
                         System.out.println(Arrays.toString(trk.index));
                         int which = rn.nextInt(4);
                         int it = this.findCluster(b[1], trk.index[which]-1);
-                        for(Integer indx : index) System.out.printf("%3d ",indx+1);
-                        System.out.println();
-                        System.out.println(" index = " + it + " " + b[1].getInt("sector",it) + " / " + b[1].getInt("layer",it));
+                        //for(Integer indx : index) System.out.printf("%3d ",indx+1);
+                        //System.out.println();
+                        //System.out.println(" index = " + it + " " + b[1].getInt("sector",it) + " / " + b[1].getInt("layer",it));
                         int[] iitt = new int[6]; for(int j = 0; j < 6; j++) iitt[j] = t.index[j]-1;
                         int[] iiff = new int[6]; for(int j = 0; j < 6; j++) iiff[j] = t.index[j]-1;
                         iiff[which] = it;
                         
-                        System.out.println(Arrays.toString(iitt));
-                        System.out.println(Arrays.toString(iiff));
+                        //System.out.println(Arrays.toString(iitt));
+                        //System.out.println(Arrays.toString(iiff));
 
                         if(it>=0){
+                            hw.addEvent(event);
                             StringBuilder st = new StringBuilder();
                             StringBuilder sf = new StringBuilder();
                             for(int k = 0; k < 6; k++) {
@@ -281,8 +380,8 @@ public class CentralTrack {
                                 float[] f = CentralUtils.getFeatures(b[1], iiff[k]);
                                 sf.append(Arrays.toString(f));
                             }
-                            System.out.println(st.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", ""));                            
-                            System.out.println(sf.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", ""));
+                            //System.out.println(st.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", ""));                            
+                            //System.out.println(sf.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", ""));
                             w.writeString(st.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", "")+",1,0");
                             w.writeString(sf.toString().replaceAll("\\]\\[", ",").replaceAll("\\]", "").replaceAll("\\[", "")+",0,1");
                             
@@ -310,6 +409,7 @@ public class CentralTrack {
             }
             
         }
+        hw.close();
         w.close();        
         System.out.println(" counter = " + counter + "  " + counter_all);
         
@@ -317,13 +417,13 @@ public class CentralTrack {
     
     public static void main(String[] args){
         
-        String file = "/Users/gavalian/Work/Software/project-11.0/study/central/AISample_1.hipo";
+        String file = "/Users/gavalian/Work/Software/project-11.0/study/central/AISample_2.hipo";
     
         CentralTrack central = new CentralTrack();
         
         //central.process(file);
         
-        central.extract(file);
+        central.extract2(file);
         
         /*
         HipoReader r = new HipoReader(file);

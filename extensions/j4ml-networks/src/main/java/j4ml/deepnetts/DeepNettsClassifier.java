@@ -355,6 +355,7 @@ public class DeepNettsClassifier {
         private long          lastTime = 0L;
         private int   printoutInterval = 12;
         private int       dataInterval = 1;
+        private double    previousLoss = 1.0;
         
         private List<Double>  lossList = new ArrayList<>();
         private List<Double>   accList = new ArrayList<>();
@@ -369,10 +370,16 @@ public class DeepNettsClassifier {
             long now = System.currentTimeMillis();
             long elapsed = now - this.lastTime;
             
-            return String.format(" [%5d/%5d], loss = %e , time %12d msec, accuracy = %12.8f",
+            double change = tr.getTrainingLoss() - previousLoss;
+            String direction = "\u2191";
+            
+            if(change<0) direction = "\u2193";
+            
+            return String.format(" [%5d/%5d], loss = %e , %3s %14e time %12d msec, accuracy = %12.8f",
                     epochCounter,maxEpochs,
-                    tr.getTrainingLoss(), elapsed,
+                    tr.getTrainingLoss(), direction, change, elapsed,
                     tr.getTrainingAccuracy());
+            
         }
         
         @Override
@@ -390,7 +397,8 @@ public class DeepNettsClassifier {
                 System.out.print("."); System.out.flush();
                 
                 if(epochCounter%this.printoutInterval==0){                    
-                    System.out.println(statusString(te.getSource()));                            
+                    System.out.println(statusString(te.getSource())); 
+                    previousLoss = te.getSource().getTrainingLoss();
                     //System.out.println("\n");
                 }
                 

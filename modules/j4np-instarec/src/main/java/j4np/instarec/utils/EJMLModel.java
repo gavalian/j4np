@@ -29,6 +29,7 @@ public class EJMLModel {
     
     private SimpleMatrix[] LAYERS = null;
     private SimpleMatrix[] BIASES = null;
+    
     private int inputSize;
     private int outputSize;
     
