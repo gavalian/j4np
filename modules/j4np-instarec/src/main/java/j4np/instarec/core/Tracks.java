@@ -195,6 +195,11 @@ public class Tracks  {
         return -1;
     }
     
+    public static int countClusters(int[] cid){
+        int count = 0; for(int i = 0; i < cid.length; i++)
+            if(cid[i]>0) count++;
+        return count;
+    }
     public double distance(int row, float[] features){
         //int counter = 0;
         double distance = 0.0;

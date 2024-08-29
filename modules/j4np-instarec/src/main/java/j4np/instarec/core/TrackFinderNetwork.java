@@ -195,7 +195,7 @@ public class TrackFinderNetwork {
             trk.getInput12(input, row);        
             int which = TrackFinderUtils.which(input);
             if(which>=0){
-                instarec.getFixer().feedForward(input, output);
+                instarec.getFixer().feedForwardReLULinear(input, output);
                 trk.dataNode().putFloat(17+which, row, output[which]*112);
             }
         }
@@ -328,6 +328,7 @@ public class TrackFinderNetwork {
                 if(t.getRows()>0) {
                     Bank br = new Bank(schemas.get(1),t.getRows());
                     t.dataNode().copy(br);
+                    e.remove(br.getSchema());
                     //b.show();
                     e.write(br);
                 }
@@ -482,11 +483,12 @@ public class TrackFinderNetwork {
         
         //String file = "rec_clas_005342.evio.00000.hipo";
         
-        String file = "rec_clas_005342.evio.00370.hipo";
+        //String file = "rec_clas_005342.evio.00370.hipo";
+        String file = "cook_very_new.h5";
         //String file = "recon_noSegmentRemoval_allCandCrossLists_noSeedCut_newConvChoiceRoutine_toTB.hipo";
         //String file = "wout.h5";
         TrackFinderNetwork net = new TrackFinderNetwork();
-        net.init("etc/networks/clas12default.network", 2);
+        net.init("etc/networks/clas12default.network", 16);
         //net.init("clas12default.network", 15);
         
         HipoReader r = new HipoReader(file);

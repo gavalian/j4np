@@ -271,6 +271,7 @@ public class TrackConstructor {
                                         list.dataNode().putShort( 3, row, (short) 0);
                                         row++;
                                         list.dataNode().setRows(row);
+                                        if(row>=list.dataNode().getMaxRows()-5) return;
                                     }
                                     //data.add(means);
                                 }

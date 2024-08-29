@@ -109,7 +109,20 @@ public class NetworkValidator {
         int[] cid = new int[6];
         int counter = 0; int ohno = 0; int miss = 0;
         while(r.nextEvent(b)){
-            DataExtractor.getTracks(cvtr, b[0], b[1]);
+            DataExtractor.getTracks(cvtr, b[0], b[1]);  
+            
+            /*
+            System.out.println("---event ");
+            for(int j = 0; j < b[2].getRows(); j++){
+                int[] ids = b[2].getIntArray(6, "c1", j);
+                int index = cvtr.findMatch(ids);
+                int count = Tracks.countClusters(cid);
+                System.out.printf("--- %d %d  count = %d %f %s\n",j,index, count,
+                        b[2].getFloat("prob", j),Arrays.toString(ids));
+            }
+            cvtr.show();
+            */
+
             //cvtr.show();
             for(int i = 0; i < cvtr.getRows(); i++){
                 
@@ -166,11 +179,7 @@ public class NetworkValidator {
         }
 
         return stats;
-    }
-    
- 
-    
-   
+    }            
         
     public static DataGroup createGroup(List<H2F> h, int[] index, String[] attrs, String options){
         int xbins = h.get(0).getAxisX().getNBins();
@@ -247,7 +256,8 @@ public class NetworkValidator {
         h.attr().setTitleX("Sector");
         h.attr().setTitleY("P [GeV]");
         Vector3 vec = new Vector3();
-        
+        int count5 = 0;
+        int count5m = 0;
         while(r.nextEvent(b)==true){
             
             DataExtractor.getTracks(cvTracks, b[0],b[1]);
@@ -271,7 +281,7 @@ public class NetworkValidator {
                     int statsBin = label6==bin?1:2;
                     if(charge>0) statsBin += 2;
                     h.fill(sector, vec.mag(), statsBin);
-                    net.getClassifier().feedForwardSoftmax(f12, out);
+                    if(net.getClassifier()!=null )net.getClassifier().feedForwardSoftmax(f12, out);
                     
                     int label12 = EJMLModel.getLabel(out);
                     
@@ -279,9 +289,36 @@ public class NetworkValidator {
                     if(charge>0) statsBin += 2;
                     h.fill(sector, vec.mag(), statsBin);
                 }
+                if(cvTracks.count(row)==5){
+                    count5++;
+                    int[] cid = new int[6];
+                    cvTracks.getInput12(f12, row);
+                    cvTracks.getClusters(cid, row);
+                    int which = TrackFinderUtils.which(f12);
+                    
+                    
+                   // System.out.println("---\n---");
+                   // System.out.printf(" %d  - %s\n", which, Arrays.toString(f12));
+                    float[] fixed = new float[12];
+                    net.getFixer().feedForwardReLULinear(f12,fixed);
+
+                    //System.out.println(" fixed - " + Arrays.toString(fixed));
+                    f12[which] = fixed[which]; f12[which+1] = fixed[which+1];
+                    float[] input =  new float[6];
+                    for(int k = 0; k < 6; k++) input[k] = 0.5f*(f12[2*k]+f12[2*k+1]);
+                    float[] output = new float[3];
+                    net.getClassifier6().feedForwardSoftmax(input, output);
+                    if(output[0]>0.5){
+                        System.out.println("oooops");
+                        cvTracks.show(row); count5m++;
+                    }
+                    //System.out.println(Arrays.toString(output));
+                }
             }
+            
+
         }
-        
+        System.out.println("----- " + count5 + "  - " + count5m);
         List<H2F> slicesZ = h.getSlicesZ();
         
         TTabCanvas c = new TTabCanvas("NET-6","NET-12");
@@ -369,11 +406,13 @@ public class NetworkValidator {
         //String file = "../rec_clas_005342.evio.00000.hipo";
         String file = "rec_clas_005342.evio.00370.hipo";
         String file2 = "wout.h5";
+
         String file3 = "recon_denoising_after_update15b_10k.hipo";
+        String file4 = "cook_very_new.h5";
         //NetworkValidator.filter("wout.h5");
         
-        NetworkValidator.classifier(file, "etc/networks/clas12default.network", 15, true);
-        NetworkValidator.multiplicity(file2,15);        
+        NetworkValidator.classifier(file4, "etc/networks/clas12default.network", 15, true);
+        //NetworkValidator.multiplicity(file2,16);        
         //NetworkValidator.regression(file, "clas12default.network", 15, 1, 1);
         //NetworkValidator.compare(file3);
         //file = "wout_out_2.h5";

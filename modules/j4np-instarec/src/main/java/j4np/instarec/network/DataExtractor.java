@@ -90,7 +90,7 @@ public class DataExtractor {
         for(int row = 0; row < trkg.getRows(); row++){       
             double chi2 = trkg.getFloat("chi2", row);
             double vz = trkg.getFloat("Vtx0_z", row);
-            if(chi2<500&&vz>-15&&vz<5&&chi2<500){
+            if(chi2<500&&vz>-15&&vz<5&&chi2<800){
                 for(int i = 0; i < ids.length; i++) ids[i] = trkg.getInt(index+i, row);
                 tracks.dataNode().setRows(nodeRows+1);                
                 tracks.dataNode().putShort(2, nodeRows, (short)trkg.getInt("sector", row));
