@@ -201,6 +201,10 @@ public class TextFileReader {
         return array;
     }
     
+    public float getAsFloat(int column){
+        return  Float.parseFloat(entryTokens.get(column));
+    }
+    
     public float[] getAsFloatArray(int start, int length){
         float[] array = new float[length];
         for(int i = 0; i < array.length; i++){
@@ -241,6 +245,13 @@ public class TextFileReader {
         double[] rows = new double[columns.length];
         for(int i = 0; i < rows.length; i++)
             rows[i] = getAsDouble(columns[i]);
+        return rows;
+    }
+    
+    public float[] getAsFloat(int[] columns){
+        float[] rows = new float[columns.length];
+        for(int i = 0; i < rows.length; i++)
+            rows[i] = getAsFloat(columns[i]);
         return rows;
     }
     

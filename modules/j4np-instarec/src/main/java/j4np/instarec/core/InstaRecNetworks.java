@@ -6,9 +6,8 @@ package j4np.instarec.core;
 
 import j4np.instarec.utils.EJMLLoader;
 import j4np.instarec.utils.EJMLModel;
+import j4np.instarec.utils.NeuralModel;
 import j4np.utils.asciitable.Table;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -24,6 +23,9 @@ public class InstaRecNetworks {
     
     int       runnumber = -1;
     
+    
+    NeuralModel classifierModel = null;
+    
     public InstaRecNetworks(){
         
     }
@@ -35,6 +37,15 @@ public class InstaRecNetworks {
     public final void init(String networkFile, int run){
         this.init(networkFile, run,"default");
     }
+    
+    public final void initJson(String networkFile, int run, String variation){
+        classifierModel = NeuralModel.archiveFile(networkFile, "trackclassifier12.json", run, variation);
+    }
+    
+    public NeuralModel getClassifierModel(){
+        return this.classifierModel;
+    }
+    
     
     public final void init(String networkFile, int run, String variation){
         

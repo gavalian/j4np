@@ -19,6 +19,7 @@ import deepnetts.net.train.BackpropagationTrainer;
 import deepnetts.net.train.opt.OptimizerType;
 import j4ml.data.DataEntry;
 import j4ml.data.DataList;
+import j4ml.data.DataTransformer;
 import j4ml.ejml.EJMLModel;
 import j4np.utils.io.TextFileWriter;
 import j4np.utils.json.Json;
@@ -51,6 +52,9 @@ public class DeepNettsNetwork {
     double learningRate = 0.001;
     int    emptyCycle = 5;
     private transient Evaluator<NeuralNetwork, DataSet<? extends MLDataItem>> eval = new ClassifierEvaluator();
+    
+    
+    //protected DataTransformer inputTransformer = null;
     
     public DeepNettsNetwork(){
         
@@ -140,7 +144,9 @@ public class DeepNettsNetwork {
         TabularDataSet  dataset = new TabularDataSet(nInputs,nOutputs);
         for(int k = 0; k < list.getList().size(); k++){
             float[]  inBuffer = list.getList().get(k).floatFirst();
-            float[] outBuffer = list.getList().get(k).floatSecond();            
+            float[] outBuffer = list.getList().get(k).floatSecond();                         
+            
+            
             dataset.add(new TabularDataSet.Item(inBuffer, outBuffer));                
         }
         
@@ -148,7 +154,7 @@ public class DeepNettsNetwork {
         dataset.setColumnNames(names);
         return dataset;
     }
-    
+                
     public void train(DataList dpl, int nEpochs){
         DataSet converted = this.convert(dpl);
         this.train(converted, nEpochs);
@@ -266,7 +272,7 @@ public class DeepNettsNetwork {
         str.append("[");
         for(int i = 0; i < array.length; i++){
             if(i!=0) str.append(",");
-            str.append(String.format("%e", array[i]));
+            str.append(String.format("%.12f", array[i]));
         } str.append("]");
         return str.toString();
     }
@@ -276,7 +282,7 @@ public class DeepNettsNetwork {
         str.append("[");
         for(int i = 0; i < array.length; i++){
             if(i!=0) str.append(",");
-            str.append(String.format("%e", array[i]));
+            str.append(String.format("%.12f", array[i]));
         } str.append("]");
         return str.toString();
     }
@@ -411,15 +417,16 @@ public class DeepNettsNetwork {
     }
     
     public String  getJson(){
+        
         StringBuilder str = new StringBuilder();
-        str.append("{\n\"layers\": ");
+        str.append("{\n\"architecture\": ");
 
         int  nLayers = neuralNet.getLayers().size();
         int[] layers = new int[nLayers];
         
         for(int i = 0; i < nLayers; i++){
             layers[i] = neuralNet.getLayers().get(i).getWidth();
-            neuralNet.getLayers().get(i).init();
+            //neuralNet.getLayers().get(i).init();
         }
         
         str.append(toArray(layers));

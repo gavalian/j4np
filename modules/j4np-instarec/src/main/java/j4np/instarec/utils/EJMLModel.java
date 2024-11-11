@@ -27,8 +27,8 @@ public class EJMLModel {
        SIGMOID_LINEAR, RELU_SIGMOID
     };
     
-    private SimpleMatrix[] LAYERS = null;
-    private SimpleMatrix[] BIASES = null;
+    protected SimpleMatrix[] LAYERS = null;
+    protected SimpleMatrix[] BIASES = null;
     
     private int inputSize;
     private int outputSize;
@@ -91,7 +91,7 @@ public class EJMLModel {
         System.out.println();
     }
     
-    private static SimpleMatrix elementwiseApplyReLU(SimpleMatrix input) {  // Credits to stanfordnlp
+    protected static SimpleMatrix elementwiseApplyReLU(SimpleMatrix input) {  // Credits to stanfordnlp
         SimpleMatrix output = new SimpleMatrix(input);
         for (int i = 0; i < output.numRows(); ++i)
             for (int j = 0; j < output.numCols(); ++j){
@@ -330,11 +330,15 @@ public class EJMLModel {
         assert input.length == inputSize;
 
         SimpleMatrix matrix = new SimpleMatrix(new float[][] {input});
+        //System.out.println("INPUT = " + matrix);
         for (int i = 0; i < LAYERS.length; i++) {
             if (i == LAYERS.length - 1)
                 matrix = elementwiseApplyLinear(matrix.mult(LAYERS[i]).plus(BIASES[i]));
             else
+                //System.out.println("LAS LAYER MATRIX = " + matrix);
                 matrix = elementwiseApplyTanh(matrix.mult(LAYERS[i]).plus(BIASES[i]));
+            
+            //if(i==0) System.out.println(matrix);
         }
 
         for (int i = 0; i < matrix.numCols(); i++)
@@ -348,8 +352,11 @@ public class EJMLModel {
         SimpleMatrix matrix = new SimpleMatrix(new float[][] {input});
         
         for (int i = 0; i < LAYERS.length; i++) {
-            if (i == LAYERS.length - 1)
+            if (i == LAYERS.length - 1){
+                //System.out.println("BEFORE ---\n" + matrix);
                 matrix = ApplySoftmax(matrix.mult(LAYERS[i]).plus(BIASES[i]));
+                //System.out.println("AFTER SOFTMAX \n" + matrix);
+            }
             else
                 matrix = elementwiseApplyReLU(matrix.mult(LAYERS[i]).plus(BIASES[i]));
         }

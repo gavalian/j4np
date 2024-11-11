@@ -181,7 +181,7 @@ public class DeepNettsClassifier {
         str.append("[");
         for(int i = 0; i < array.length; i++){
             if(i!=0) str.append(",");
-            str.append(String.format("%e", array[i]));
+            str.append(String.format("%.12f", array[i]));
         } str.append("]");
         return str.toString();
     }
@@ -191,7 +191,7 @@ public class DeepNettsClassifier {
         str.append("[");
         for(int i = 0; i < array.length; i++){
             if(i!=0) str.append(",");
-            str.append(String.format("%e", array[i]));
+            str.append(String.format("%.12f", array[i]));
         } str.append("]");
         return str.toString();
     }
@@ -353,7 +353,7 @@ public class DeepNettsClassifier {
         private int          maxEpochs = 0;
         private int       epochCounter = 0;
         private long          lastTime = 0L;
-        private int   printoutInterval = 12;
+        private int   printoutInterval = 1;
         private int       dataInterval = 1;
         private double    previousLoss = 1.0;
         

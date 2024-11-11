@@ -4,7 +4,6 @@
  */
 package j4np.instarec.core;
 
-import j4np.hipo5.data.CompositeBank;
 import j4np.hipo5.data.CompositeNode;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Node;
@@ -13,16 +12,16 @@ import j4np.hipo5.io.HipoReader;
 import j4np.physics.Vector3;
 import java.util.ArrayList;
 import java.util.List;
-import twig.data.H1F;
-import twig.graphics.TGCanvas;
 
 /**
  *
  * @author gavalian
  */
-public class Tracks  {
 
+public class Tracks  {    
+    
     CompositeNode bank = null; 
+    
     /**
      * s - status (0)
      * f - probability (1)
@@ -44,6 +43,7 @@ public class Tracks  {
     double[]   normalizeNegMin = new double[]{0.,  0.0 , -0.5};
     double[]   normalizeNegMax = new double[]{10., 1.0  , 1.5};
     
+
     
     public Tracks(){
         bank =  new CompositeNode(32000,1,"sfssf3f3f6i6f6f",100000);
@@ -54,7 +54,7 @@ public class Tracks  {
         bank =  new CompositeNode(32000,1,"sfssf3f3f6i6f6f",rows);
         bank.setRows(0);
     }
-    
+        
     public int count(int row){
         int counter = 0; 
         for(int i = 0; i < 6; i++) if(bank.getInt(11+i, row)>0) counter++;
@@ -147,12 +147,29 @@ public class Tracks  {
         }
     }
     
+    public void getInput12raw(float[] input, int row) {
+        int nrows = bank.getRows();
+        for(int i = 0; i < 6; i++){
+            input[i*2  ] = (float) (bank.getDouble(17+i, row));
+            input[i*2+1] = (float) (bank.getDouble(23+i, row));
+        }
+    }
+    
     public void getInput6(float[] input, int row) {
         int nrows = bank.getRows();
         for(int i = 0; i < 6; i++){
             float w1 = (float) bank.getDouble(17+i, row);
             float w6 = (float) bank.getDouble(23+i, row);
             input[i] = (0.5f*(w6+w1))/112.0f;
+        }
+    }
+    
+    public void getInput6raw(float[] input, int row) {
+        int nrows = bank.getRows();
+        for(int i = 0; i < 6; i++){
+            float w1 = (float) bank.getDouble(17+i, row);
+            float w6 = (float) bank.getDouble(23+i, row);
+            input[i] = (0.5f*(w6+w1));
         }
     }
     
@@ -188,11 +205,20 @@ public class Tracks  {
             if(bank.getInt(11+i, row)==clusters[i]) counter++;
         return counter;
     }
+    
     public int findMatch(int[] clusters){
         for(int i = 0; i < this.getRows(); i++){
             if(this.contains(i, clusters)==6) return i;
         }
         return -1;
+    }
+    
+    public int findPartial(int[] clusters){
+        int count = 0;
+        for(int i = 0; i < this.getRows(); i++){
+            if(this.contains(i, clusters)>0) count++;
+        }
+        return count;
     }
     
     public static int countClusters(int[] cid){
@@ -202,11 +228,12 @@ public class Tracks  {
     }
     public double distance(int row, float[] features){
         //int counter = 0;
-        double distance = 0.0;
+        double distance = 0.0; float[] f = new float[12];
+        this.getInput12(f, row);
         for(int i = 0; i < 12; i++){
-            double f = bank.getDouble(i+17, row)/112.0;
-            distance += Math.sqrt((features[i]-f)*(features[i]-f));
+            distance += Math.sqrt((features[i]-f[i])*(features[i]-f[i]));
         }
+        
         return distance;
     }
     public static double distance(Tracks a, int a_i, Tracks b, int b_i){
@@ -358,6 +385,19 @@ public class Tracks  {
     }
     
     
+    public void reduce(){
+        int nrows = getRows();
+        for(int j = 0; j < nrows; j++){
+            for(int r = j+1 ; r < nrows; r++){
+                //System.out.println( j + " "  + r + " contains = " + contains(j,r));
+                if(contains(j, r)>0){
+                    double ptop = this.probability(j);
+                    double pbtm = this.probability(r);
+                    if(ptop>pbtm&&this.sector(j)>0&&this.status(r)>0) this.setStatus(r, -1); else this.setStatus(j, -1);
+                }
+            }
+        }
+    }
     
     public static void main(String[] args){
         

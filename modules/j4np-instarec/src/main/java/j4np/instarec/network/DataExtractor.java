@@ -18,6 +18,7 @@ import j4np.instarec.core.TrackFinderUtils;
 import j4np.instarec.core.Tracks;
 import j4np.physics.Vector3;
 import j4np.utils.io.DataArrayUtils;
+import j4np.utils.io.TextFileReader;
 import j4np.utils.io.TextFileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,18 @@ public class DataExtractor {
     
     public static record DataPair (float[] input, float[] output){}
    
+    
+    public static List<DataPair> csv(String file, int[] inputs, int[] outputs){
+        List<DataPair>  pairs = new ArrayList<>();
+        TextFileReader r = new TextFileReader(file,",");
+        while(r.readNext()==true){
+            float[] features = r.getAsFloat(inputs);
+            float[]  labels = r.getAsFloat(outputs);
+            pairs.add(new DataPair(features,labels));
+        }
+        return pairs;
+    }
+    
     public static Schema getSchema(){
         Schema.SchemaBuilder schemaBuilder = new Schema.SchemaBuilder("mltr::segments",32100,1);        
         //schema.parse("5I4F3BLL");
@@ -77,6 +90,23 @@ public class DataExtractor {
                     node.setRows(row+1);
                 }
             }
+        }
+    }
+    public static void getTracksInstarec(Tracks tracks, Bank b){
+        int rows = b.getRows();
+        tracks.dataNode().setRows(rows);
+        for(int r = 0; r < rows; r++){
+            tracks.dataNode().putShort(0, r, (short) b.getInt(  0, r));
+            tracks.dataNode().putFloat(1, r,         b.getFloat(1, r));
+            tracks.dataNode().putShort(2, r, (short) b.getInt(  2, r));
+            tracks.dataNode().putShort(3, r, (short) b.getInt(  3, r));
+            tracks.dataNode().putFloat(4, r,         b.getFloat(4, r));
+            for(int j = 0; j < 6; j++){ 
+                tracks.dataNode().putFloat( 5+j, r, b.getFloat( 5+j, r));
+                tracks.dataNode().putFloat(17+j, r, b.getFloat(17+j, r));
+                tracks.dataNode().putFloat(23+j, r, b.getFloat(23+j, r));
+                tracks.dataNode().putInt(  11+j, r, b.getInt(11+j, r));
+            }            
         }
     }
     
@@ -148,8 +178,8 @@ public class DataExtractor {
         w[0] = new HipoWriter();
         w[1] = new HipoWriter();
         
-        w[0].open("ml_1.h5");
-        w[1].open("ml_2.h5");
+        w[0].open("ml_training_1.h5");
+        w[1].open("ml_validate_2.h5");
         
         CompositeNode nodec= new CompositeNode(32000,2,"3i2f",2024);
         
@@ -492,24 +522,19 @@ public class DataExtractor {
         return gen;
     }
     
-    public static void main(String[] args){
-
-        String file = "ml_data_1.hipo";
-        
-       // --- DataExtractor.loadFalse(file, 1,"",2,24000);
-        
-       TextFileWriter w = new TextFileWriter("datafixer.csv");
+    public static void writeFile(String file){
+        TextFileWriter w = new TextFileWriter("datafixer.csv");
        
        for(int b = 20; b>0; b--){                  
            
-           List<DataPair> list = DataExtractor.readRegression(file, b, 122000);
+           List<DataPair> list = DataExtractor.readRegression(file, b, 25000);
            List<String>   lines = DataExtractor.convert(list);
            
            for(String s : lines) {
                w.writeString(s);//System.out.println(s);
            }
            
-           List<DataPair> listp = DataExtractor.readRegression(file, b+20, 122000);
+           List<DataPair> listp = DataExtractor.readRegression(file, b+20, 25000);
            List<String>   linesp = DataExtractor.convert(listp);
            
            for(String s : linesp) {
@@ -517,6 +542,23 @@ public class DataExtractor {
            }
        }
        w.close();
+    }
+    
+    public static void extract(List<String> files){
+        Collections.sort(files);
+            for(String file : files) System.out.println("===>>> " + file);
+            DataExtractor.extract(files, 30,0);
+    }
+    public static void main(String[] args){
+
+        String file = "ml_data_1.hipo";
+        
+        
+        DataExtractor.writeFile(file);
+       // DataExtractor.extract(Arrays.asList("rec_clas_005342.evio.00370.hipo"));
+       // --- DataExtractor.loadFalse(file, 1,"",2,24000);
+        
+       
        /*for(DataPair pair : list){
            System.out.println(Arrays.toString(pair.input) + " " + Arrays.toString(pair.output));           
        }*/

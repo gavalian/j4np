@@ -287,13 +287,17 @@ public class GraphNode3D extends Node2D {
         Graph3D g3h2 = h2.getGraph3D( -0.4);
         Graph3D g3h3 = h3.getGraph3D( -0.3);
         
-        g3h.attr().setFillColor(42);
-        g3h2.attr().setFillColor(42);
-        g3h3.attr().setFillColor(42);
-        GraphNode3D g3node = new GraphNode3D(g3h,"F");
+        g3h.attr().setFillColor(125);
+        g3h2.attr().setFillColor(145);
+        g3h3.attr().setFillColor(160);
         
+        
+        GraphNode3D g3node = new GraphNode3D(g3h,"F");        
         g3node.addData(g3h2, "F");
         g3node.addData(g3h3, "F");
+        
+        
+        
         TGCanvas c2 = new TGCanvas(800,800);
         c2.view().region(0).replace(g3node);
     }

@@ -49,9 +49,16 @@ for(int i = 0; i < 4; i++){
 
 System.out.println("normalization = " + norm);
 TGCanvas c = new TGCanvas("luminosity_scan",600,600);
+c.draw(gn[0],"same");
+c.draw(gn[3],"same");
+c.region().showLegend(0.05,0.3);
+c.draw(func[0],"same");
+c.draw(func[3],"same");
+/*
 for(int i = 0; i < 4; i++) c.draw(gn[i],"same");//.draw(func[i],"same");
 c.region().showLegend(0.05,0.3);
 for(int i = 0; i < 4; i++) c.draw(func[i],"same");
+*/
 c.region().axisLimitsY(0.65,1.05);
 c.repaint();
 //c.region().draw(leg);

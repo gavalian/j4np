@@ -73,7 +73,7 @@ public class Node {
     
     public Node(int group, int item, short[] value){
         createNode(group,item,DataType.SHORT,value.length);
-        for(int i = 0; i < value.length;i++) this.setInt(i, value[i]);        
+        for(int i = 0; i < value.length;i++) this.setShort(i, value[i]);        
     }
     /**
      * Initialize HipoNode from a byte array. 
@@ -514,7 +514,7 @@ public class Node {
         System.arraycopy(array, 0, nodeBuffer.array(), 8, capacity-8);
     }
     
-    public void setShort(int index, short value){
+    public final void setShort(int index, short value){
         if(nodeType!=DataType.SHORT){
             printWrongTypeMessage(DataType.SHORT);
             return;
@@ -555,7 +555,7 @@ public class Node {
                 nodeBuffer.putShort(offset, byte_value);
                 return;
             } else {
-                System.out.println("[HipoNode::setInt] --> setting int value to short failed. Value is "
+                System.out.println("[HipoNode::setInt] --> setting int value to byte failed. Value is "
                 + " out of range. " + value);
                 return;
             }
@@ -571,7 +571,7 @@ public class Node {
         //nodeBuffer.putInt(offset, value);
     } 
     
-    public void setLong(int index, long value){
+    public final void setLong(int index, long value){
         if(nodeType!=DataType.LONG){
             printWrongTypeMessage(DataType.LONG);
             return;

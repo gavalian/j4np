@@ -127,8 +127,8 @@ public class Event implements DataEvent {
         if(this.eventBuffer.capacity()<size){
             //------------------------- fix this here, this should be copying the existing buffer
             //-----------------------------
-            System.out.printf("::: event buffer resizing from %d to %d\n",
-                    this.eventBuffer.capacity(),size);
+            //System.out.printf("::: event buffer resizing from %d to %d\n",
+            //        this.eventBuffer.capacity(),size);
             int occupied = this.getEventBufferSize();
             byte[] bytes = new byte[size+64];
             System.arraycopy(eventBuffer.array(), 0, bytes, 0, occupied);

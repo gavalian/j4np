@@ -233,6 +233,22 @@ public class Bank {
     
     public final Schema getSchema(){ return nodeSchema; }
     
+    public byte[] getByte(String name){
+        int nrows = this.getRows();
+        byte[] column = new byte[nrows];
+        int element = this.getSchema().getEntryOrder(name);
+        for(int r = 0; r < nrows; r++) { column[r] = this.getByte(element, r);}
+        return column;
+    }
+    
+    public short[] getShort(String name){
+        int nrows = this.getRows();
+        short[] column = new short[nrows];
+        int element = this.getSchema().getEntryOrder(name);
+        for(int r = 0; r < nrows; r++) { column[r] = this.getShort(element, r);}
+        return column;
+    }
+    
     public int[] getInt(String name){
         int nrows = this.getRows();
         int[] column = new int[nrows];
@@ -240,6 +256,8 @@ public class Bank {
         for(int r = 0; r < nrows; r++) { column[r] = this.getInt(element, r);}
         return column;
     }
+    
+    
     
     public int getInt(String name, int row){
         int type = this.nodeSchema.getType(name);
@@ -471,6 +489,43 @@ public class Bank {
                         
                     case 8: for(int row = 0; row < nrows; row++) 
                         bank.putLong(order, row, getLong(i,row)); break;
+                        
+                    default: break;
+                }                
+            }
+        }
+    }
+    
+    public void copyTo(Bank bank, int srcRow, int dstRow){
+        
+        int nentries = nodeSchema.getElements();
+        int nrows    = getRows();
+        //bank.setRows(nrows);
+        
+        Schema toSchema = bank.getSchema();
+        for(int i = 0; i < nentries; i++){
+            String name = nodeSchema.getElementName(i);
+            if(toSchema.hasEntry(name)==true){
+                int order = toSchema.getElementOrder(name);
+                int type  = toSchema.getType(order);
+                switch(type){
+                    case 1:  
+                        bank.putByte(order, dstRow, getByte(i,srcRow)); break;
+                    
+                    case 2:  
+                        bank.putShort(order, dstRow, getShort(i,srcRow)); break;
+                        
+                    case 3:  
+                        bank.putInt(order, dstRow, getInt(i,srcRow)); break;
+                        
+                    case 4: 
+                        bank.putFloat(order, dstRow, getFloat(i,srcRow)); break;
+                        
+                    case 5:  
+                        bank.putDouble(order, dstRow, getDouble(i,srcRow)); break;
+                        
+                    case 8: 
+                        bank.putLong(order, dstRow, getLong(i,srcRow)); break;
                         
                     default: break;
                 }                

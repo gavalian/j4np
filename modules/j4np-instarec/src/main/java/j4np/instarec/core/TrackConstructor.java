@@ -246,6 +246,7 @@ public class TrackConstructor {
                                     ids[patterns[i][4]] = superLayers[patterns[i][4]].getInt(0, l5);
                                     
                                     means[missing[i]] = 0.0;
+                                    slope[missing[i]] = 0.0;
                                     ids[missing[i]] = -1;
                                     
                                     /*double m1 = superLayers[0].getDouble(1, l1);
@@ -255,11 +256,11 @@ public class TrackConstructor {
                                     double m5 = superLayers[4].getDouble(1, l5);
                                     double m6 = superLayers[5].getDouble(1, l6);*/
                                     writeTrack = true;
-                                    /*if(cuts!=null){A
+                                    if(cuts!=null){
                                         //writeTrack = true;                                    
                                         //System.out.println("********** INSIDE THE THING " + cuts.validate(m1, m2, m3, m4, m5, m6));
-                                        if(cuts.validate(m1, m2, m3, m4, m5, m6)==false) writeTrack = false;
-                                    } */                                  
+                                        if(cuts.validate(means[0],means[1],means[2], means[3],means[4],means[5])==false) writeTrack = false;
+                                    }                           
                                     
                                     if(writeTrack==true){
                                         for(int kk=0;kk<6;kk++) list.dataNode().putFloat( meansIndex + kk , row, (float) means[kk]);
@@ -283,16 +284,18 @@ public class TrackConstructor {
     }    
     
     public static void main(String[] args){
-        
+        /*
         TrackConstructor tc = new TrackConstructor();
-        tc.add(1, 1, 1,  0.5);
-        tc.add(1, 1, 12,  0.2);
-        tc.add(1, 2, 3,  0.3);
-        tc.add(1, 3, 5,  0.5);
-        //tc.add(1, 3,15,  0.2);
-        tc.add(1, 4, 7,  0.5);
-        tc.add(1, 5, 8,  0.3);
-        tc.add(1, 6, 9,  0.5);
+        
+        tc.add(1, 6, 6,  0.35,0.45);        
+        tc.add(1, 1, 1,  0.10,0.20);
+        tc.add(1, 2, 2,  0.15,0.25);
+        tc.add(1, 3, 3,  0.20,0.30);
+        
+        tc.add(1, 4, 4,  0.25,0.35);
+        tc.add(1, 5, 5,  0.30,0.40);
+        
+
         //tc.add(1, 6, 11, 0.2);
         
         tc.show();
@@ -300,9 +303,26 @@ public class TrackConstructor {
         Tracks tkl = new Tracks();
         tc.sectors[0].create5(tkl,1,null);
         tkl.show();        
-        TrackConstructor.filter(tkl, new int[]{9});
-        System.out.println(" AFTER FILTER");
-        tkl.show();
+        */
+        Combinatorics c = new Combinatorics();
+        
+        c.add(1   ,       1 , 66.9048 , 66.2619);
+        c.add(1,  2   , 73.2000 , 73.2000);
+        c.add(  2,3        ,  70.8571,  70.6429);
+        c.add(2,4 ,  75.3000 , 75.3000);        
+        c.add(3,5, 57.8571 , 56.6429);
+        
+        c.add(3, 6 , 70.7619 , 71.4048);
+        c.add(4,7 ,  59.0952,  57.7381);
+        c.add(4, 8 ,  72.9730 , 73.3784);
+        
+        c.add(5,9  ,  37.8750 , 35.8438);
+        c.add(5, 10 ,  72.2381,  73.5952);
+        c.add(6,11 , 38.0000 , 35.5000);
+       c.add(6, 12 ,  74.7432 , 75.5541);
+        //TrackConstructor.filter(tkl, new int[]{9});
+        //System.out.println(" AFTER FILTER");
+        //tkl.show();
     }
     
 }

@@ -14,6 +14,7 @@ import j4np.instarec.core.TrackConstructor.CombinationCuts;
 import j4np.instarec.network.DataExtractor;
 import j4np.instarec.utils.EJMLModel;
 import j4np.physics.Vector3;
+import j4np.utils.asciitable.Table;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,20 +45,39 @@ public class TrackFinderNetwork {
     
     Bank btb = null;
     
-    CombinationCuts cuts = new CombinationCuts() {
+    private boolean useCuts = true;
+
+    CombinationCuts trackCuts = new CombinationCuts() {
+        double SMALL = 0.000001;
         @Override
         public boolean validate(double m1, double m2, double m3, double m4, double m5, double m6) {
-            if(Math.abs(m1-m2)>15.0) return false;
-            if(Math.abs(m3-m4)>15.0) return false;
-            if(Math.abs(m5-m6)>15.0) return false;
+            if(m1>SMALL&&m2>SMALL) if(Math.abs(m1-m2)>15.0) return false;
+            if(m3>SMALL&&m4>SMALL) if(Math.abs(m3-m4)>15.0) return false;
+            if(m5>SMALL&&m6>SMALL) if(Math.abs(m5-m6)>15.0) return false;
             return true;
         }        
     };
+
+    CombinationCuts    cuts = trackCuts;
+    
+    long[]  candidateStats = new long[6];
+    long[] candidateStats5 = new long[6];
+    long[]   resolvedStats = new long[6];
+    long[]  resolvedStats5 = new long[6];
+    long   eventsProcessed = 0L;
     
     public TrackFinderNetwork(){
         
     }
     
+    
+    public void setUseCuts(boolean flag){
+        if(flag==false){
+            cuts = null;
+        } else {
+            cuts = trackCuts;
+        }
+    }
     public void init(SchemaFactory factory){
        
         schemas.add(factory.getSchema(schemaNames[0]));
@@ -66,7 +86,7 @@ public class TrackFinderNetwork {
         if(factory.hasSchema("instarec::tracks")==true){
             schemas.add(factory.getSchema("instarec::tracks"));
         } else {
-            cfactory.initFromDirectory("etc/");
+            cfactory.initFromDirectory("etc/bankdefs");
             if(cfactory.hasSchema("instarec::tracks")){
                 schemas.add(cfactory.getSchema("instarec::tracks"));
                 factory.addSchema(cfactory.getSchema("instarec::tracks"));
@@ -93,7 +113,10 @@ public class TrackFinderNetwork {
      * @param run 
      */
     public void init(String archive,int run){
+        
         instarec = new InstaRecNetworks(archive,run);
+        instarec.initJson(archive, run, "default");
+        
         instarec.show();
         
         
@@ -129,6 +152,21 @@ public class TrackFinderNetwork {
         }
     }
     
+    public void evaluateOLD(Tracks trk, int row){
+        float[]  input = new float[12];
+        float[] output = new float[3];
+        trk.getInput12(input, row);
+        instarec.getClassifier().feedForwardSoftmax(input, output);
+        int index = EJMLModel.getLabel(output);
+        if(index==0){ 
+            trk.dataNode().putShort(0,row,(short) -1);
+            trk.dataNode().putFloat(1,row, 0.0f);
+        } else {
+            trk.dataNode().putShort(0,row,(short) index);
+            trk.dataNode().putFloat(1,row, output[index]);
+        }
+    }
+    
     public void validate(Tracks trk){
         float[]    input = new float[12];
         float[]  corrupt = new float[12];
@@ -150,11 +188,68 @@ public class TrackFinderNetwork {
         }
     }
     
+    public void printSummary(){
+        String[]  header = new String[]{"sector","candidate (6 SL) /event", 
+            "tracks (6 SL) /event",
+            "candidate (5 SL) /event", "tracks (5 SL) /event"
+        };
+        String[][]  data = new String[6][5];
+        
+        System.out.println("+----------------------------------------+");
+        
+        System.out.println("|    Events Processed : " + this.eventsProcessed);        
+        for(int i = 0; i < 6; i++){
+            data[i][0] = "sector  " + (i+1);
+            data[i][1] = String.format("%.5f", ((double) this.candidateStats [i])/this.eventsProcessed);
+            data[i][2] = String.format("%.5f", ((double) this.resolvedStats [i])/this.eventsProcessed);
+            data[i][3] = String.format("%.5f", ((double) this.candidateStats5[i])/this.eventsProcessed);
+            data[i][4] = String.format("%.5f", ((double) this.resolvedStats5[i])/this.eventsProcessed);
+        }
+        //System.out.println(Arrays.toString(this.candidateStats));
+        //System.out.println(Arrays.toString(this.candidateStats5));
+        
+        String table = Table.getTable(header,data, new Table.ColumnConstrain(0,12)
+                );
+                
+        System.out.println(table);
+    }
+    
     public TrackFinderNetwork setClassifierMode(NetworkMode mode){
         this.modeClassifier = mode; return this;
     }
     
+    
+    public void createCombinations(Bank b, TrackBuffer buffer){
+        buffer.constructor.reset();
+        TrackFinderUtils.fillConstructor(buffer.constructor, b);
+    }
+    
     public void evaluate(Tracks trk){
+        
+        float[]  input = new float[12];
+        float[] output = new float[3];
+        float[] input6 = new float[6];
+        
+        int nrows = trk.getRows();
+        for(int row = 0; row < nrows; row++){        
+                trk.getInput12raw(input, row);
+                instarec.getClassifierModel().predict(input, output);
+                int index = instarec.getClassifierModel().getLabel(output);
+                /*if (Float.isNaN(output[0])){
+                System.out.println(Arrays.toString(input)+" => " + Arrays.toString(output));
+                }*/
+            if(index==0){ 
+                trk.dataNode().putShort(0,row,(short) -1);
+                trk.dataNode().putFloat(1,row, 0.0f);
+            } else {
+                trk.dataNode().putShort(0,row,(short) index);
+                trk.dataNode().putShort(3, row, (short) (index==1?-1:1));
+                trk.dataNode().putFloat(1,row, output[index]);
+            }
+        }
+    }
+    
+    public void evaluateOLD(Tracks trk){
         
         float[]  input = new float[12];
         float[] output = new float[3];
@@ -192,11 +287,22 @@ public class TrackFinderNetwork {
         
         int nrows = trk.getRows();
         for(int row = 0; row < nrows; row++){
-            trk.getInput12(input, row);        
+            trk.getInput12(input, row);
             int which = TrackFinderUtils.which(input);
             if(which>=0){
+                
+                //System.out.println("********** EVENT  + which = " + which);
+                //System.out.println("input  ----- " + Arrays.toString(input));
+                //System.out.println("output ----- " + Arrays.toString(output));
+                
+                //System.out.print("--- track before fixing ");
+                //trk.show(row);
                 instarec.getFixer().feedForwardReLULinear(input, output);
-                trk.dataNode().putFloat(17+which, row, output[which]*112);
+                trk.dataNode().putFloat(17+which/2, row, output[which]*112);
+                trk.dataNode().putFloat(23+which/2, row, output[which+1]*112);
+                                
+                //System.out.print("--- track after  fixing ");
+                //trk.show(row);
             }
         }
     }
@@ -253,7 +359,7 @@ public class TrackFinderNetwork {
         
     }
     
-    public Tracks processBank(Bank b){
+    public Tracks processBank(Bank b){                
         
         Tracks result = new Tracks(100);
         result.dataNode().setRows(0);
@@ -268,19 +374,17 @@ public class TrackFinderNetwork {
         TrackFinderUtils.fillConstructor(buffer.constructor, b);
         //b.show();
         //buffer.constructor.show();
+        int count = 0;
         for(int s = 0; s < 6; s++){
+            count = result.getRows();
             buffer.constructor.sectors[s].create(buffer.tracks, s+1, cuts);
-            /*for(int sl = 0; sl < 6; sl++){
-                System.out.println("superlayer # " + sl); buffer.constructor.sectors[s].superLayers[sl].print();
-            }
-            System.out.println(" SECTOR # " + (s+1));
-            buffer.tracks.show();*/
             this.evaluate(buffer.tracks);
-            //this.validate(buffer.tracks);
+            this.candidateStats[s] += buffer.tracks.getRows();
             TrackFinderUtils.copyFromTo(buffer.tracks, result);
+            this.resolvedStats[s] += result.getRows()-count;
         }
         
-        
+        /*
         List<Integer> excluded = new ArrayList<>();
         int[] cid = new int[6];
         
@@ -293,45 +397,93 @@ public class TrackFinderNetwork {
         //System.out.println(b.getFloat("wireL2", 0));
         
         TrackFinderUtils.fillConstructor(buffer.constructor, b, excluded);
+        int pre5 = result.getRows();
+        
         
         for(int s = 0; s < 6; s++){
-            buffer.constructor.sectors[s].create5(buffer.tracks, s+1, null);
+            count = result.getRows();
+            buffer.constructor.sectors[s].create5(buffer.tracks, s+1, cuts);
+            //buffer.tracks.show();
             this.evaluate5(buffer.tracks);
             this.evaluate(buffer.tracks);
+            
+            this.candidateStats5[s] += buffer.tracks.getRows();
+            // ---- uncomment this ----
+            // TrackFinderUtils.copyFromTo(buffer.tracks, result);
+            
+            
+            this.resolvedStats5[s]  += result.getRows()-count;
             //buffer.tracks.show();
             //int before = result.size();
-            TrackFinderUtils.copyFromTo(buffer.tracks, result);
             //int after = result.size();
             //if(after>before)
             //System.out.printf(" before = %5d , after = %5d\n",before,after);
             //System.out.printf("sector %d - seeds %d\n",s+1,buffer.tracks.getRows());
-        }
-        this.evaluateParameters(result);
+        }*/
+        
+        //System.out.println(" pre/after 5 = " + pre5 + " " + result.getRows() + "   diff -  " + (result.getRows()-pre5));
+        //this.evaluateParameters(result);
         //result.show();        
         return result;
     }
     
+    public Bank recreate(Bank c, Tracks t){
+        int size = t.getRows();
+        
+        Bank cn = new Bank(c.getSchema(),size*6);
+        
+        Map<Integer,Integer> map = c.getMap("id");
+        int counter = 0;
+        for(int r = 0; r < size; r++){
+            for(int j = 0; j < 6; j++){
+                int kk = t.dataNode().getInt(11+j, r);
+                int id = (r+1)*1000 + kk;
+                
+                t.dataNode().putInt(11+j, r, counter+1);                
+                int row = map.get(kk); 
+                c.copyTo(cn,row, counter);
+                cn.putShort("id", counter, (short) (counter+1));
+                counter++;
+            }
+        }
+        return cn;
+    }
+    
     public void processEvent(Event e){
         
-        Schema schema = schemas.get(0);
+        Schema schema  = schemas.get(0);
         int nRowLength = schemas.get(0).getEntryLength();
         int       size = e.scanLength(schema.getGroup(),schema.getItem());
 
         if(size>0){
+            this.eventsProcessed++;
             int rows = size/nRowLength;
             //int sanity = size%nRowLength;
             //System.out.println("row Length = " + nRowLength + " size = " + size + "  rows = " + rows + " / " + sanity);
             Bank b = new Bank(schema, rows+7);
             e.read(b);
             Tracks t = this.processBank(b);
+            
             if(t!=null){
+                if(t.getRows()>0){
+                    Bank br = new Bank(schemas.get(1),t.getRows());
+                    t.dataNode().copy(br);
+                    e.write(br);
+                }
+                /*
                 if(t.getRows()>0) {
+                    
+                    System.out.println("--- recreating");
+                    this.recreate(b, t);
+                    
                     Bank br = new Bank(schemas.get(1),t.getRows());
                     t.dataNode().copy(br);
                     e.remove(br.getSchema());
                     //b.show();
+                    
+                    
                     e.write(br);
-                }
+                }*/
             }
             //b.show();
         }
@@ -483,17 +635,17 @@ public class TrackFinderNetwork {
         
         //String file = "rec_clas_005342.evio.00000.hipo";
         
-        //String file = "rec_clas_005342.evio.00370.hipo";
-        String file = "cook_very_new.h5";
+        String file = "rec_clas_005342.evio.00370.hipo";
+        //String file = "cook_very_new_10.h5";
         //String file = "recon_noSegmentRemoval_allCandCrossLists_noSeedCut_newConvChoiceRoutine_toTB.hipo";
         //String file = "wout.h5";
         TrackFinderNetwork net = new TrackFinderNetwork();
-        net.init("etc/networks/clas12default.network", 16);
+        net.init("etc/networks/clas12gold.network", 0);
         //net.init("clas12default.network", 15);
         
         HipoReader r = new HipoReader(file);
         net.init(r.getSchemaFactory());
-        
+        //net.setUseCuts(false);
         HipoWriter w = HipoWriter.create("wout.h5", r);
         
         Event e = new Event();
@@ -506,5 +658,7 @@ public class TrackFinderNetwork {
             w.addEvent(e);
         }
         w.close();
+        
+        net.printSummary();
     }
 }

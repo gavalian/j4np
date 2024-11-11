@@ -15,6 +15,7 @@ import j4np.instarec.core.TrackFinderUtils;
 import j4np.instarec.core.Tracks;
 import j4np.instarec.utils.EJMLLoader;
 import j4np.instarec.utils.EJMLModel;
+import j4np.instarec.utils.NeuralModel;
 import j4np.physics.Vector3;
 import j4np.utils.io.TextFileReader;
 import j4np.utils.io.TextFileWriter;
@@ -236,6 +237,122 @@ public class NetworkValidator {
         }
     }
     
+    public static void reconstruction(String file){
+        HipoReader r = new HipoReader(file);
+        Bank[] b = r.getBanks("TimeBasedTrkg::TBTracks","HitBasedTrkg::Clusters","TimeBasedTrkg::AITracks", "instarec::tracks");
+        Tracks cvTracks = new Tracks(100);
+        Tracks aiTracks = new Tracks(100);
+        Tracks prTracks = new Tracks(100);
+        
+        int[]  clusters = new int[6];
+        int[] countersP = new int[]{0,0,0,0};
+        int[] countersN = new int[]{0,0,0,0};
+        
+        int[] countersP2 = new int[]{0,0,0,0};
+        int[] countersN2 = new int[]{0,0,0,0};
+        int[] countersAI = new int[]{0,0,0,0};
+        
+        int counter = 0; int counterev = 0; int c2= 0;
+        while(r.nextEvent(b)==true){
+            DataExtractor.getTracks(cvTracks, b[0], b[1]);
+            DataExtractor.getTracks(aiTracks, b[2], b[1]);
+            
+            DataExtractor.getTracksInstarec(prTracks, b[3]);
+            
+            System.out.println("---- event\n");
+            for(int i = 0; i < cvTracks.getRows(); i++){
+                cvTracks.getClusters(clusters, i);
+                if(cvTracks.count(i)==6){
+                    if(cvTracks.charge(i)<0) countersN[0]++; else countersP[0]++;
+                    int match  = aiTracks.findMatch(clusters);
+                    int match2 = prTracks.findMatch(clusters);
+                    if(match <0) if(cvTracks.charge(i)<0) countersN[1]++; else countersP[1]++;
+                    if(match2<0) if(cvTracks.charge(i)<0) countersN[2]++; else countersP[2]++;
+                    //System.out.printf("track %d --> %5d %5d\n",i,match, match2);
+                }
+            }
+            
+            for(int i = 0; i < aiTracks.getRows(); i++){
+                aiTracks.getClusters(clusters, i);
+                if(aiTracks.count(i)==6){
+                    if(aiTracks.charge(i)<0) countersN2[0]++; else countersP2[0]++;
+                    int match  = cvTracks.findMatch(clusters);
+                    int match2 = prTracks.findMatch(clusters);
+                    if(match <0) if(aiTracks.charge(i)<0) countersN2[1]++; else countersP2[1]++;
+                    if(match2<0) if(aiTracks.charge(i)<0) countersN2[2]++; else countersP2[2]++;
+                    //System.out.printf("track %d --> %5d %5d\n",i,match, match2);
+                }
+            }
+            
+            System.out.println("---- Nu Event");
+            //prTracks.show();
+            prTracks.reduce();
+            //System.out.println(" AFTER");
+            //prTracks.show();
+            
+            
+            //prTracks.reduce();
+            //int[] tid = new int[6];            
+            for(int j = 0; j < prTracks.getRows(); j++){
+                if(prTracks.status(j)>0&&prTracks.count(j)==6){
+                    countersAI[0]++;
+                    prTracks.getClusters(clusters, j);
+                    int matchcv = cvTracks.findPartial(clusters);
+                    int matchai = aiTracks.findPartial(clusters);
+                    if(matchcv==0&&matchai==0&&prTracks.probability(j)>0.99) { 
+                        System.out.println(" BIG DIAL.... " + j); countersAI[1]++;
+                        prTracks.show();
+                        aiTracks.show();
+                        cvTracks.show();
+                    }
+                }
+            }
+            
+            /*
+            System.out.println("------- event");
+            boolean flag2 = false;
+            for(int i = 0; i < cvTracks.getRows(); i++){
+                cvTracks.getClusters(clusters, i);
+                if(cvTracks.count(i)==5){           
+                    int match = aiTracks.findMatch(clusters);
+                    //System.out.println("row = " + i + "  match = " + match);
+                    if(match<0) { 
+                        flag2 = true;
+                        //cvTracks.show(i); aiTracks.show();
+                    }
+                }
+            }
+            if(flag2) c2++;
+            boolean flag = false;
+            for(int i = 0; i < aiTracks.getRows(); i++){
+                aiTracks.getClusters(clusters, i); 
+                
+                if(aiTracks.count(i)==5){
+                    int match = cvTracks.findMatch(clusters);
+                    if(match<0&&aiTracks.probability(i)>0.9){
+                        aiTracks.show(i);
+                        System.out.println("--");
+                        cvTracks.show();
+                        counter++; flag = true;
+                    }
+                }
+                
+            }*/
+            //if(flag) counterev++;
+            //cvTracks.show();
+            //aiTracks.show();
+        }
+        System.out.println(" number = " + counter + "  " + counterev + "   " + c2);
+        System.out.println("POSITIVE  : " + Arrays.toString(countersP));
+        System.out.println("NEAGATIVE : " + Arrays.toString(countersN));
+        System.out.println("------");
+        System.out.println("POSITIVE  : " + Arrays.toString(countersP2));
+        System.out.println("NEAGATIVE : " + Arrays.toString(countersN2));
+        System.out.println("------");
+        System.out.println("AI INFERENCE : " + Arrays.toString(countersAI));
+        
+    }
+    
     public static void classifier(String file, String network, int run, boolean flag){
         
         HipoReader r = new HipoReader(file);                
@@ -258,6 +375,7 @@ public class NetworkValidator {
         Vector3 vec = new Vector3();
         int count5 = 0;
         int count5m = 0;
+        
         while(r.nextEvent(b)==true){
             
             DataExtractor.getTracks(cvTracks, b[0],b[1]);
@@ -377,31 +495,59 @@ public class NetworkValidator {
         Tracks tcv = new Tracks(100);
         
         HipoReader r = new HipoReader(file);
-        
+        HipoWriter w = new HipoWriter();
+        w.open("missed.h5");
         Bank[] b = r.getBanks("TimeBasedTrkg::TBTracks","HitBasedTrkg::Clusters");
         float[] f = new float[12]; float[] out = new float[3];
-        InstaRecNetworks net = new InstaRecNetworks("etc/networks/clas12default.network",2);
-        net.show();
-        Event ev = new Event();
+        
+        NeuralModel model = NeuralModel.jsonFile("trackclassifier12.json");
+        System.out.println(model.summary());
+        
+        Event  ev = new Event();
+        Event ev2 = new Event();
+        
+        int[] counter = new int[4];
+        Vector3 v = new Vector3();
         while(r.next(ev)){
             ev.read(b);                        
             DataExtractor.getTracks(tcv, b[0], b[1]);
             for(int i = 0; i < tcv.getRows(); i++){
                 if(tcv.count(i)==6){
-                    tcv.getInput12(f, i);
+                    tcv.getInput12raw(f, i);
+                    model.predict(f, out);
+                    if(tcv.charge(i)<0) counter[0]++; else counter[1]++;
+                    tcv.vertex(v, i);
+                    if(out[0]>0.5){//&&Math.abs(v.x())<2.5&&Math.abs(v.y())<2.5) {
+                        if(tcv.charge(i)<0) counter[2]++; else counter[3]++;
+                        tcv.show(i);
+                        ev2.reset();
+                        Tracks tout = new Tracks(3);
+                        tout.dataNode().setRows(1);
+                        tout.dataNode().copyRow(tcv.dataNode(), i, 0);
+                        //System.out.println(Arrays.toString(out));
+                        //System.out.print(" new row = "); tout.show(0);
+                        ev2.write(tout.dataNode());
+                        w.add(ev2);
+                    }
 
+                    /*
                     net.getClassifier().feedForwardSoftmax(f, out);
                     if(Float.isNaN(out[0])){
                         System.out.println(Arrays.toString(f) + "  " + Arrays.toString(out));
-                    }
+                    }*/
                 }
             }
+            
         }
-    
+        w.close();
+        System.out.println("\n\n " + Arrays.toString(counter));
+    }
+        
+    public static void cook(String file){
+        HipoReader r = new HipoReader(file);
+        Bank[] b = r.getBanks("");
     }
     
-    
-
     public static void main(String[] args){
         //String file = "../rec_clas_005342.evio.00000.hipo";
         String file = "rec_clas_005342.evio.00370.hipo";
@@ -411,15 +557,17 @@ public class NetworkValidator {
         String file4 = "cook_very_new.h5";
         //NetworkValidator.filter("wout.h5");
         
-        NetworkValidator.classifier(file4, "etc/networks/clas12default.network", 15, true);
-        //NetworkValidator.multiplicity(file2,16);        
+        //NetworkValidator.classifier(file4, "etc/networks/clas12default.network", 16, true);
+        
+        //NetworkValidator.reconstruction("recon_00666_20k.h5");
+        //NetworkValidator.multiplicity(file2,16); 
         //NetworkValidator.regression(file, "clas12default.network", 15, 1, 1);
         //NetworkValidator.compare(file3);
         //file = "wout_out_2.h5";
         
         //NetworkValidator.multiplicity(file2,"etc/networks/clas12default.network",2);
         
-        //NetworkValidator.checkInference(file);
+        NetworkValidator.checkInference(file);
         /*
         try {
             NetworkValidator.classifier2(file, "etc/networks/clas12default.network", 2);
