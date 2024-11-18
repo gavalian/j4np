@@ -79,7 +79,7 @@ public class Debug {
             float[] input = get6(data.get(i));
             float[] input12 = get12(data.get(i));
             
-            net.getClassifier6().feedForwardSoftmax(input, output);            
+//            net.getClassifier6().feedForwardSoftmax(input, output);            
 
             System.out.println(Arrays.toString(output)+ " \n");
             System.out.println(Arrays.toString(input12));
@@ -92,7 +92,7 @@ public class Debug {
                 corrupt[w*2] = fixed[w*2]; corrupt[w*2+1] = fixed[w*2+1];
                 normalize(corrupt,112.0f);
                 float[] fi = get6(corrupt);
-                net.getClassifier6().feedForwardSoftmax(fi,output);
+//--                net.getClassifier6().feedForwardSoftmax(fi,output);
                 System.out.println(Arrays.toString(output) + " ==> " + Arrays.toString(corrupt));
                 System.out.println("\n\n");
                 summ += output[2];

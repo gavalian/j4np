@@ -5,6 +5,7 @@
 package j4np.instarec.core;
 
 import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.Leaf;
 import j4np.instarec.core.TrackConstructor.CombinationCuts;
 import java.util.List;
 
@@ -84,7 +85,21 @@ public class TrackFinderUtils {
             }
         }
     }
-    
+    public static void fillConstructor(TrackConstructor tc,Leaf segments){
+        tc.reset();
+        int nrows = segments.getRows();
+        //bank.getSchema().show();
+        for(int r = 0; r < nrows; r++){            
+            tc.add(
+                    segments.getInt(1, r),
+                    segments.getInt(2, r),
+                    r+1,
+                    segments.getDouble(5, r),
+                    segments.getDouble(6, r)                    
+            );
+
+        }
+    }
     public static void fillConstructor(TrackConstructor tc, Bank bank){
         tc.reset();
         int nrows = bank.getRows();

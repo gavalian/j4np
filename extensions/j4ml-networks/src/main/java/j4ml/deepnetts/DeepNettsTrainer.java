@@ -201,7 +201,7 @@ public class DeepNettsTrainer {
         DataSet dataset = trainer.convert(data, transformer);
         System.out.println("");
         
-        trainer.train(dataset, 512);
+        trainer.train(dataset, 12);
         
         trainer.save(next, transformer);
     }

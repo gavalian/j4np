@@ -8,6 +8,7 @@ import j4np.data.base.DataFrame;
 import j4np.data.base.DataSource;
 import j4np.hipo5.data.CompositeNode;
 import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Leaf;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -108,9 +109,9 @@ public class FrameView extends JPanel implements ActionListener {
                     String[] tokens = objectIds.split(",");
                     int type = Integer.parseInt(tokens[3]);
                     if(type==10){
-                        CompositeNode node = new CompositeNode(1024);
-                        dataEvents.get(Integer.parseInt(tokens[0])-1).read(node, 
-                                Integer.parseInt(tokens[1]),Integer.parseInt(tokens[2]));
+                        Leaf node = new Leaf(1024);
+                        /*dataEvents.get(Integer.parseInt(tokens[0])-1).read(node, 
+                                Integer.parseInt(tokens[1]),Integer.parseInt(tokens[2]));*/
                         //node.show();
                         //node.print();
                         NodeTable table = new NodeTable(node);

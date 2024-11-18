@@ -149,6 +149,17 @@ public class Event implements DataEvent {
         }
     }
     
+    public void write(Leaf node){
+        if(node.getLength()>0){
+            int totalLength = node.getLength() + 8;
+            int    position = eventBuffer.getInt(EVENT_LENGTH_OFFSET);
+            this.require(position+totalLength + 24);
+            System.arraycopy(node.getByteBuffer().array(), 0, 
+                eventBuffer.array(), position, totalLength);
+            eventBuffer.putInt(EVENT_LENGTH_OFFSET, position+totalLength);
+        }
+    }
+    
     public void write(Node node){
         int bufferSize = node.getBufferSize();
         if(bufferSize<=8) return;
@@ -260,6 +271,23 @@ public class Event implements DataEvent {
         if(position<0) { node.reset(); return;}
         int   length = this.scanLengthAt(group,item, position);
         node.initFromBuffer(this.eventBuffer.array(), position, length+8);
+    }
+    
+    public void read(Leaf node, int group, int item){
+        int position = scan(group,item);
+        if(position<0) { node.reset(); return;}
+        int   length = this.scanLengthAt(group,item, position);
+        node.initFromBuffer(this.eventBuffer.array(), position, length+8);
+    }
+    
+    public void readAt(Leaf node, int group, int item, int position){
+        if(position<0) { node.reset(); return;}
+        int   length = this.scanLengthAt(group,item, position);
+        node.initFromBuffer(this.eventBuffer.array(), position, length+8);
+    }
+    
+    public void read(Leaf node){        
+        read(node,node.getGroup(),node.getItem());
     }
     
     public void showAt(int position){

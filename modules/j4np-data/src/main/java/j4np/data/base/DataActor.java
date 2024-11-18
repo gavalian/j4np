@@ -4,15 +4,20 @@
  */
 package j4np.data.base;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 
  * @author gavalian
  */
-public abstract class DataActor extends Thread {
+public class DataActor extends Thread {
     
     private DataSource     dataSource = null;
     private DataSync         dataSync = null;
-    private DataFrame<DataEvent>    dataFrame = null;
+    
+    private DataFrame<DataEvent>      dataFrame = null;
+    private List<DataWorker>        dataWorkers = new ArrayList<>();
     
     private long startTime = 0L;
     private long   endTime = 0L;
@@ -43,7 +48,18 @@ public abstract class DataActor extends Thread {
         }
         endTime = System.currentTimeMillis();
     }
+    public void setWorkes(List<DataWorker> wrks){
+        this.dataWorkers.addAll(wrks);
+    }
     
-    public abstract void accept(DataEvent event);
+    public  void accept(DataEvent event){
+        for(DataWorker w : dataWorkers){
+            try {
+                w.accept(event);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
     
 }

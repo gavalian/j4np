@@ -23,8 +23,7 @@ import java.util.List;
  * @author gavalian
  */
 public class DeepNettsIO {
-    
-    
+        
     public static String  toArray(int[] array){
         StringBuilder str = new StringBuilder();
         str.append("[");

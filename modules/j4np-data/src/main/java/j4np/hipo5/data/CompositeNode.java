@@ -505,12 +505,13 @@ public class CompositeNode extends BaseHipoStructure {
                     case 1: node.putByte(e,i,(byte) ( i+1)); break;
                     case 2: node.putShort(e,i, (short) (i+1)); break;
                     case 3: node.putInt(e,i, i+1); break;
-                    case 4: node.putFloat(e,i, i+1); break;
+                    case 4: node.putFloat(e,i, (float) (i+1)); break;
                     case 8: node.putLong(e,i, (i+1)*10); break;
                     default: break;
                 }
             }
         }
+        node.setRows(nrows);
         return node;
     }
     

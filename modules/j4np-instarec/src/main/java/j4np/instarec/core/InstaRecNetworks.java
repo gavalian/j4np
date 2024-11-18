@@ -24,7 +24,8 @@ public class InstaRecNetworks {
     int       runnumber = -1;
     
     
-    NeuralModel classifierModel = null;
+    NeuralModel  classifierModel = null;
+    NeuralModel classifierModel6 = null;
     
     public InstaRecNetworks(){
         
@@ -51,7 +52,7 @@ public class InstaRecNetworks {
         
         runnumber = EJMLLoader.getRun( networkFile, run);
         
-        try {
+        /*try {
             classifier = EJMLLoader.load(networkFile, "trackclassifier12.network", run , "default");
         } catch (Exception e){
             System.out.println("error loading classifier"); classifier = null;
@@ -60,19 +61,20 @@ public class InstaRecNetworks {
         fixer = EJMLLoader.load(networkFile, "trackfixer12.network", run , "default");
        } catch (Exception e){
            System.out.println("error loading fixer"); fixer = null;
-       }
+       }*/
        
        try {
-            classifier6 = EJMLLoader.load(networkFile, "trackclassifier.network", run , "default");
+            classifierModel6 = NeuralModel.archiveFile(networkFile, "trackclassifier6.json", run , "default");
         } catch (Exception e){
-            System.out.println("error loading classifier"); classifier6 = null;
+            System.out.println("error loading classifier"); classifierModel6 = null;
         }
+       /*
        try { 
         fixer6 = EJMLLoader.load(networkFile, "trackfixer6.network", run , "default");
        } catch (Exception e){
            System.out.println("error loading fixer"); fixer6 = null;
-       }
-       
+       }*/
+       /*
        String[] names = new String[]{"n","p"};
        for(int c = 0; c < 2; c++){
            for(int s = 1; s <= 6; s++){
@@ -84,9 +86,9 @@ public class InstaRecNetworks {
                    this.regression[c][s-1] = null;
                }
            }
-       }
+       }*/
     }
-    public EJMLModel getClassifier6(){return classifier6;}
+    public NeuralModel getClassifier6(){return classifierModel6;}
     public EJMLModel[][] getRegression(){return this.regression;};
     public EJMLModel getClassifier(){ return classifier;}
     public EJMLModel      getFixer(){ return fixer;}
@@ -110,7 +112,7 @@ public class InstaRecNetworks {
         data[2][1] = "n/a";
         data[2][2] = "" + runnumber;
         data[2][3] = "disabled";
-        if(classifier6!=null){ data[2][3] = "ok"; data[2][1] = classifier6.summary();}
+        if(classifierModel6!=null){ data[2][3] = "ok"; data[2][1] = classifierModel6.info();}
         data[3][0] = "fixer6";
         data[3][1] = "n/a";
         data[3][2] = "" + runnumber;

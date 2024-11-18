@@ -51,8 +51,8 @@ public class DataBankStore {
     
     public static DataBankStore createTranslate(){
         DataBankStore store = new DataBankStore();
-        store.tdcCache = Clas12NodeUtils.createNodeTDC(  42, 11, 8192);
-        store.tdcNode  = Clas12NodeUtils.createNodeTDC(  42, 11, 8192);
+        store.tdcCache = Clas12NodeUtils.createNodeTDC(  42,  11, 8192);
+        store.tdcNode  = Clas12NodeUtils.createNodeTDC(  42,  11, 8192);
         store.adcCache = Clas12NodeUtils.createNodeADC(  42,  12, 8192);
         store.adcNode  = Clas12NodeUtils.createNodeADC(  42,  12, 8192);
         return store;

@@ -6,6 +6,7 @@ package j4np.instarec.core;
 
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Leaf;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.io.HipoReader;
@@ -248,6 +249,32 @@ public class TrackFinderNetwork {
             }
         }
     }
+    
+    public void evaluate6(Tracks trk){
+        
+        float[]  input = new float[6];
+        float[] output = new float[3];
+        float[] input6 = new float[6];
+        
+        int nrows = trk.getRows();
+        for(int row = 0; row < nrows; row++){        
+                trk.getInput6raw(input, row);
+                instarec.getClassifier6().predict(input, output);
+                int index = instarec.getClassifier6().getLabel(output);
+                /*if (Float.isNaN(output[0])){
+                System.out.println(Arrays.toString(input)+" => " + Arrays.toString(output));
+                }*/
+            if(index==0){ 
+                trk.dataNode().putShort(0,row,(short) -1);
+                trk.dataNode().putFloat(1,row, 0.0f);
+            } else {
+                trk.dataNode().putShort(0,row,(short) index);
+                trk.dataNode().putShort(3, row, (short) (index==1?-1:1));
+                trk.dataNode().putFloat(1,row, output[index]);
+            }
+        }
+    }
+    
     
     public void evaluateOLD(Tracks trk){
         
@@ -500,6 +527,32 @@ public class TrackFinderNetwork {
         }*/
     }
     
+    public void process8(Event e){
+        int position = e.scan(32101, 10);
+        if(position>0){
+            int length = e.scanLengthAt(32101,10,position);
+            Leaf leaf = new Leaf(32101,10,"sbbbbff",length+128);
+            e.readAt(leaf, 32101, 10, position);
+            //leaf.print();
+            
+            Tracks listUn   = new Tracks(100000);
+            Tracks listRe   = new Tracks(300);                
+            TrackConstructor tc = new TrackConstructor(); 
+            TrackFinderUtils.fillConstructor(tc,leaf);
+            //tc.show();
+            for(int sector = 0 ; sector < 6; sector++){
+                tc.sectors[sector].create(listUn, sector+1, cuts);
+
+                evaluate6(listUn);
+                //listUn.show();
+                TrackFinderUtils.copyFromTo(listUn, listRe);
+            }
+            
+            //listRe.show();
+            e.write(listRe.dataNode());
+        }
+    }
+    
     public void process(Event e){
         
         Bank[] bankhb = e.read(schemas.get(0));       
@@ -507,11 +560,10 @@ public class TrackFinderNetwork {
         TrackFinderUtils.getSegmentBank(banksg,bankhb[0]);                
         
         //banksg.show();
-                
+        
         Tracks listUn   = new Tracks(100000);
         Tracks listRe   = new Tracks(300);
-        
-        
+                
         TrackConstructor tc = new TrackConstructor(); 
         
         //TrackFinderUtils.fillConstructor(tc, banksg);
@@ -630,15 +682,7 @@ public class TrackFinderNetwork {
         System.out.println(Arrays.toString(a));
         System.out.println(Arrays.toString(f)+" ==> " + Arrays.toString(result));
     }
-    
-    public static void main(String[] args){
-        
-        //String file = "rec_clas_005342.evio.00000.hipo";
-        
-        String file = "rec_clas_005342.evio.00370.hipo";
-        //String file = "cook_very_new_10.h5";
-        //String file = "recon_noSegmentRemoval_allCandCrossLists_noSeedCut_newConvChoiceRoutine_toTB.hipo";
-        //String file = "wout.h5";
+    public static void processFile(String file){
         TrackFinderNetwork net = new TrackFinderNetwork();
         net.init("etc/networks/clas12gold.network", 0);
         //net.init("clas12default.network", 15);
@@ -653,9 +697,53 @@ public class TrackFinderNetwork {
         //for(int i = 0; i < 2000; i++){
         while(r.hasNext()){
             r.nextEvent(e);
+            
             //System.out.println("----- event");
             net.processEvent(e);
             w.addEvent(e);
+        }
+        w.close();
+        
+        net.printSummary();
+    }
+    public static void main(String[] args){
+        
+        //String file = "rec_clas_005342.evio.00000.hipo";
+        
+        //String file = "rec_clas_005342.evio.00370.hipo";
+        String file = "/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629.hipo";        
+        //String file = "cook_very_new_10.h5";
+        //String file = "recon_noSegmentRemoval_allCandCrossLists_noSeedCut_newConvChoiceRoutine_toTB.hipo";
+        //String file = "wout.h5";
+        TrackFinderNetwork net = new TrackFinderNetwork();
+        net.init("etc/networks/clas12default.network", 0);
+        //net.init("clas12default.network", 15);
+        
+        HipoReader r = new HipoReader(file);
+        net.init(r.getSchemaFactory());
+        Bank[] b = r.getBanks("DC::tdc");
+        
+        Leaf leaf = new Leaf(32101,10,"sbbbbff",2048);
+        
+        //net.setUseCuts(false);
+        HipoWriter w = HipoWriter.create("wout.h5", r);
+        
+        Event e = new Event();
+        DriftChamber dc = new DriftChamber();
+        dc.init(r.getSchemaFactory());
+        //for(int i = 0; i < 200; i++){
+        
+        while(r.hasNext()){
+            r.nextEvent(e);
+            e.read(b);
+            //dc.segmentsFromBank(leaf, b[0]);
+            dc.processEvent(e);
+            //System.out.println("----- event");
+            //leaf.print();
+            //e.scanShow();
+            //net.processEvent(e);
+            net.process8(e);
+            //w.addEvent(e);
         }
         w.close();
         

@@ -232,6 +232,10 @@ public class NeuralModel {
         };
     }
     
+    public String info(){
+        StringBuilder str = new StringBuilder();
+        return "6/12/3";
+    }
     public String summary(){
         
         StringBuilder str = new StringBuilder();
@@ -327,9 +331,9 @@ public class NeuralModel {
     
     public static void main(String[] args){        
         
-        NeuralModel model = NeuralModel.jsonFile("class6.json");
+        NeuralModel model = NeuralModel.jsonFile("class12classifier_8.json");
         System.out.println(model.summary());
-        
+        /*
         List<DataPair>  pairs = DataExtractor.csv("sample.csv", new int[]{0,1,2,3,4,5}, new int[]{6,7,8});
         float[] output = new float[3];
         int counter = 0;
@@ -344,7 +348,7 @@ public class NeuralModel {
             //        Arrays.toString(output));
         }
         long now = System.currentTimeMillis();
-        System.out.printf("  processed = %d , NaNs = %d  - %f  %d\n",pairs.size(), counter, ((double) counter)/pairs.size(),now-then);
+        System.out.printf("  processed = %d , NaNs = %d  - %f  %d\n",pairs.size(), counter, ((double) counter)/pairs.size(),now-then);*/
         /*
         NeuralModel model = NeuralModel.jsonFile("etc/trackregression12_1_n.json");
         EJMLModel    ejml = new EJMLModel("etc/trackregression12_1_n.network");

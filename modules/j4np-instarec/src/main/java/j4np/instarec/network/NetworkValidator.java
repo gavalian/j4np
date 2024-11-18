@@ -393,7 +393,7 @@ public class NetworkValidator {
                     int sector = cvTracks.sector(row);                 
                     int bin = charge<0?1:2;                    
                     
-                    net.getClassifier6().feedForwardSoftmax(f6, out);
+//--                    net.getClassifier6().feedForwardSoftmax(f6, out);
                     int label6 = EJMLModel.getLabel(out);
                     
                     int statsBin = label6==bin?1:2;
@@ -425,7 +425,7 @@ public class NetworkValidator {
                     float[] input =  new float[6];
                     for(int k = 0; k < 6; k++) input[k] = 0.5f*(f12[2*k]+f12[2*k+1]);
                     float[] output = new float[3];
-                    net.getClassifier6().feedForwardSoftmax(input, output);
+//--                    net.getClassifier6().feedForwardSoftmax(input, output);
                     if(output[0]>0.5){
                         System.out.println("oooops");
                         cvTracks.show(row); count5m++;

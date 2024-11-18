@@ -14,10 +14,13 @@ import java.util.logging.Logger;
  * @author gavalian
  */
 public class DataActorStream {
+    
     protected List<DataActor> actors = new ArrayList<>();
     protected DataSource dataSource = null;
     protected DataSync    dataSync = null;
+    
     public DataActorStream addActor(DataActor actor){ actors.add(actor);return this;}
+    public DataActorStream addActor(List<DataActor> actor){ actors.addAll(actor);return this;}
     
     public DataActorStream setSource(DataSource src){
         this.dataSource = src; return this;
@@ -32,7 +35,7 @@ public class DataActorStream {
         for(int t = 0; t < actors.size(); t++) { 
             actors.get(t).setSource(dataSource);
             actors.get(t).setSync(dataSync);
-            actors.get(t).start();        
+            actors.get(t).start();
         }
         
         int active = 0;
@@ -44,13 +47,17 @@ public class DataActorStream {
                 Logger.getLogger(DataActorStream.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            active = 0;
             for(int t = 0; t < actors.size(); t++) 
                 if(actors.get(t).isAlive()==true){ 
                     active++;
                 } else {
                     System.out.printf("actor-stream: actor # %d finished time = %d\n",t+1,actors.get(t).executionTime());
                 }
+
             if(active==0) keep = false;
         }
+        
+        if(this.dataSync!=null) dataSync.close();
     }
 }

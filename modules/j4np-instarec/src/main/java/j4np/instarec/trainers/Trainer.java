@@ -36,6 +36,7 @@ record TrackIndex(int index, int matches, double distance){}
 
 public class Trainer {
     
+    public static int inputSize = 6;
     
     TrackConstructor.CombinationCuts cuts = new TrackConstructor.CombinationCuts() {
         double SMALL = 0.000001;
@@ -111,13 +112,26 @@ public class Trainer {
                 for(int jj = 0; jj < tracks54.size(); jj++){
                     
                     float[] input = new float[12];
+                    float[] input_6 = new float[6];
+                    
                     float[] input54 = new float[12];
+                    float[] input54_6 = new float[6];
+                    
                     tr.getInput12raw(input, 0);
+                    tr.getInput6raw(input_6, 0);
                     tc.getInput12raw(input54, tracks54.get(0).index());
-                
-                    if(charge<0) list.add(new DataEntry(input, new float[]{0.0f,1.0f,0.0f}));
-                    else list.add(new DataEntry(input, new float[]{0.0f,0.0f,1.0f}));
-                    list.add(new DataEntry(input54, new float[]{1.0f,0.0f,0.0f}));
+                    tc.getInput6raw(input54_6, tracks54.get(0).index());
+                    
+                    if(inputSize==6){
+                        if(charge<0) list.add(new DataEntry(input_6, new float[]{0.0f,1.0f,0.0f}));
+                        else list.add(new DataEntry(input_6, new float[]{0.0f,0.0f,1.0f}));
+                        list.add(new DataEntry(input54_6, new float[]{1.0f,0.0f,0.0f}));
+                    } else {
+                        if(charge<0) list.add(new DataEntry(input, new float[]{0.0f,1.0f,0.0f}));
+                        else list.add(new DataEntry(input, new float[]{0.0f,0.0f,1.0f}));
+                        list.add(new DataEntry(input54, new float[]{1.0f,0.0f,0.0f}));
+                    }
+                    
                 }
                 //if(tracks.get(tracks.size()-1).matches()!=6){
                     //System.out.println("--- error in candiadate making.....");
@@ -125,9 +139,7 @@ public class Trainer {
                     //howMany++;
                 //}
             }
-        }
-
-        
+        }        
         //System.out.println(" missed = " + howMany);
         return list;
     }
@@ -145,12 +157,12 @@ public class Trainer {
         data.show();
         
         System.out.println("collisions start");
-        data.collisions();
+        //data.collisions();
         System.out.println("collisions   end");
         
-        FeedForwardNetwork network = DeepNettsTrainer.createClassifier(new int[]{12,24,12,6,3});
+        FeedForwardNetwork network = DeepNettsTrainer.createClassifier(new int[]{6,24,12,6,3});
         EntryTransformer   transformer = new EntryTransformer();
-        transformer.input().add(12, -8, 120);
+        transformer.input().add(6, 0, 112);
         transformer.output().add(3, 0.0, 1.0);
         DeepNettsTrainer   trainer = new DeepNettsTrainer(network);
         trainer.updateLayers();
@@ -327,8 +339,9 @@ public class Trainer {
         //list.show();
         
         Trainer trainer = new Trainer();
+        
         //trainer.classifier("ml_data_1.hipo", "trackclassifier12derived_2.json", 2000);
-        trainer.classifier("ml_data_1.hipo", 100);
+        trainer.classifier("ml_data_1.hipo", 1000);
         //trainer.retrain("rec_clas_005342.evio.00370.hipo");
         
     }

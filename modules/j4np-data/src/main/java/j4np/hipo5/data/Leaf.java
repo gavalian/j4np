@@ -492,9 +492,10 @@ public class Leaf extends BaseHipoStructure {
     }
     
     
-    public static CompositeNode random(int nrows){
+    public static Leaf random(int nrows){
 
-        CompositeNode node = new CompositeNode(144,15,"bsssffl",nrows);
+        Leaf node = new Leaf(144,15,"bsssffl",nrows);
+        node.setRows(nrows);
         int nentries = node.getEntries();
         for(int i = 0; i < nrows; i++){
             for(int e = 0; e < nentries; e++){
@@ -592,20 +593,21 @@ public class Leaf extends BaseHipoStructure {
     
     public static void main(String[] args){
         
-        CompositeNode node1 = CompositeNode.random(12);
+        Leaf node1 = Leaf.random(12);
         node1.show();
         node1.print();
-        
+        /*
         node1.refactor(11, 22, "bss");
         node1.setRows(3);
         node1.show();
         node1.print();
         
         
-        CompositeNode node2 = new CompositeNode(1,1,"bbii",1024);
+        Leaf node2 = new Leaf(1,1,"bbii",1024);
         
         System.out.println(node2.getMaxRows());
         System.out.println(node2.getCapacity());
+        */
         /*
         CompositeNode node1 = CompositeNode.random(12);
         
