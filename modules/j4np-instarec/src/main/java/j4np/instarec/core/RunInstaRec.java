@@ -39,14 +39,17 @@ public class RunInstaRec {
     }
     
     public static void main(String[] args){
-        String file = "/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629_DC.hipo";
+        //String file = "/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629_DC.hipo";
+        String file = "outfile.hipo";
+
+        if(args.length>0) file = args[0];
         HipoReader r = new HipoReader(file);
         
         HipoWriter w = HipoWriter.create("w.h5", r);
         
         DataActorStream stream = new DataActorStream();
         
-        stream.setSource(r);//.setSync(w);
+        stream.setSource(r).setSync(w);
         
                 
         ConverterWorker   convert = new ConverterWorker();
@@ -55,13 +58,13 @@ public class RunInstaRec {
         
         finder.initNetworks();
         
-        List<DataWorker>  workers = Arrays.asList(convert,dcwrk, finder);
+       // List<DataWorker>  workers = Arrays.asList(convert,dcwrk,finder);
+        List<DataWorker>  workers = Arrays.asList(convert,dcwrk,finder);
         
-        List<DataActor>   actors = RunInstaRec.createActors(8, 2048, workers);
+        List<DataActor>   actors = RunInstaRec.createActors(8, 16, workers);
         
         stream.addActor(actors);//.addActor(convert2);//.addActor(convert3).addActor(convert4);
-        
-        
+                
         stream.run();
         
     }

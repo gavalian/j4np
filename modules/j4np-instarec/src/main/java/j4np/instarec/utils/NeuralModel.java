@@ -70,7 +70,7 @@ public class NeuralModel {
     public static NeuralModel json(String json){
         NeuralModel  model = new NeuralModel();
         model.build(json);
-        System.out.println(model.summary());
+        //System.out.println(model.summary());
         return model;
     }
     

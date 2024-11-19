@@ -832,6 +832,26 @@ public class Bank {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public int compare(Bank b, boolean verbose){
+        int diff = 0;
+        boolean isSame = this.getSchema().compare(b.getSchema());
+        if(isSame==false) { System.out.printf("\n Warning: can not compare incompatible banks... %s vs %s\n",
+                this.getSchema().getName(), b.getSchema().getName()); return -1;}
+        for(int row = 0; row < this.getRows(); row++){
+            int elements = this.getSchema().getElements();
+            for(int e = 0; e < elements; e++){
+                int type = this.getSchema().getType(e);
+                switch(type) {
+                    case 1: if(this.getByte(e, row)!=b.getByte(e, row)){ diff++; }; break;
+                    case 2: if(this.getShort(e, row)!=b.getShort(e, row)){ diff++; }; break;
+                    case 3: if(this.getInt(e, row)!=b.getInt(e, row)){ diff++; }; break;
+                    case 4: if(this.getFloat(e, row)!=b.getFloat(e, row)){ diff++; }; break;
+                    default: break;
+                }
+            }
+        }
+        return diff;
+    }
     public static void main(String[] args){
         SchemaBuilder schb = new SchemaBuilder("ai:clusters",1200,1);
         

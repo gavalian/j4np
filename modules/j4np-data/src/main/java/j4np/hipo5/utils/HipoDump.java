@@ -189,6 +189,13 @@ public class HipoDump {
         w.close();
     }
     
+    public void append(String file){
+        HipoReader.append(event, factory, file);
+        /*HipoWriter w = HipoWriter.create(file, reader);
+        for(Event e : this.markedEvent) w.add(event);
+        w.close();*/
+    }
+    
     public static void runOnFile(String input, String selection, String exist){
         
     }

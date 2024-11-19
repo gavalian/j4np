@@ -17,7 +17,7 @@ public class TrackFinderWorker extends DataWorker {
     TrackFinderNetwork finder = new TrackFinderNetwork();
     
     public void initNetworks(){
-        finder.init("etc/networks/clas12default.network", 0);
+        finder.init("etc/networks/clas12default.network", 12);
     }
     
     @Override

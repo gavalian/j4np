@@ -84,6 +84,15 @@ public class Schema {
         return schema.build();
     }
     
+    public boolean compare(Schema sc){
+        int ne1 = this.getElements();
+        int ne2 = sc.getElements();
+        if(ne1!=ne2) return false;
+        for(int e = 0; e < ne1; e++)
+            if(this.getType(e)!=sc.getType(e)) return false;
+        return true;
+    }
+    
     public String getName(){ return name; }
     public int    getGroup(){ return group;}
     public int    getItem(){ return item;}

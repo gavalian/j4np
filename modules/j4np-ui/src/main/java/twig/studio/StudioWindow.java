@@ -11,6 +11,7 @@ import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatSolarizedDarkIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatGradiantoNatureGreenIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatGradiantoDeepOceanIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatHiberbeeDarkIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatHighContrastIJTheme;
 import j4np.utils.io.OptionStore;
@@ -64,6 +65,8 @@ public class StudioWindow extends JFrame implements ActionListener {
         initUI();
         initMenuBar();
         initToolBar();
+        
+        StudioWindow.changeLook("DeepOcean");
     }
     
     private void initToolBar(){
@@ -169,7 +172,7 @@ public class StudioWindow extends JFrame implements ActionListener {
     
     
     public static void changeLook(String name){
-        if(name.compareTo("Flat Light")==0){
+        if(name.compareTo("FlatLight")==0){
             UIManager.put("Tree.paintLines", Boolean.TRUE);
             try {
                 UIManager.setLookAndFeel( new FlatLightLaf() );
@@ -179,10 +182,20 @@ public class StudioWindow extends JFrame implements ActionListener {
             }
         }
         
-        if(name.compareTo("Arc Dark")==0){
+        if(name.compareTo("ArcDark")==0){
             UIManager.put("Tree.paintLines", Boolean.TRUE);
             try {
                 UIManager.setLookAndFeel( new FlatArcDarkOrangeIJTheme() );
+                //SwingUtilities.updateComponentTreeUI(this);
+            } catch (UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(StudioWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if(name.compareTo("DeepOcean")==0){
+            UIManager.put("Tree.paintLines", Boolean.TRUE);
+            try {
+                UIManager.setLookAndFeel( new FlatGradiantoDeepOceanIJTheme() );
                 //SwingUtilities.updateComponentTreeUI(this);
             } catch (UnsupportedLookAndFeelException ex) {
                 Logger.getLogger(StudioWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -380,7 +393,7 @@ public class StudioWindow extends JFrame implements ActionListener {
     }
     
     public static void main(String[] args){
-        StudioWindow.changeLook();        
+        StudioWindow.changeLook();
         StudioWindow frame = new StudioWindow();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(850, 650);

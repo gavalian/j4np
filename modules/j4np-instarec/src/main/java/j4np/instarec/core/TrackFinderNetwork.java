@@ -335,7 +335,7 @@ public class TrackFinderNetwork {
     }
     
     public void evaluateParameters(Tracks tracks){
-        float[]  input = new float[12];
+        float[]  input = new float[6];
         float[] output = new float[3];
         
         int nrows = tracks.getRows();
@@ -346,13 +346,13 @@ public class TrackFinderNetwork {
             int order  = charge>0?1:0;
             try {
                 if(instarec.regression[order][sector-1]!=null){
-                    tracks.getInput12(input, j);
-                    instarec.regression[order][sector-1].feedForwardTanhLinear(input, output);
+                    tracks.getInput6raw(input, j);
+                    instarec.regression[order][sector-1].predict(input, output);
                     //System.out.println("--- sector = " + sector);
                     //System.out.println("input -- " + Arrays.toString(input));
                     //System.out.println("output -- " + Arrays.toString(output));
                     
-                    Vector3 vec = tracks.getVector(j, output);                    
+                    Vector3 vec = tracks.getVector(j, output);
                     //System.out.println(vec.mag() + "   " + vec);
                     tracks.dataNode().putFloat(5, j, (float) vec.x());
                     tracks.dataNode().putFloat(6, j, (float) vec.y());
@@ -548,6 +548,7 @@ public class TrackFinderNetwork {
                 TrackFinderUtils.copyFromTo(listUn, listRe);
             }
             
+            this.evaluateParameters(listRe);
             //listRe.show();
             e.write(listRe.dataNode());
         }

@@ -160,7 +160,7 @@ public class Trainer {
         //data.collisions();
         System.out.println("collisions   end");
         
-        FeedForwardNetwork network = DeepNettsTrainer.createClassifier(new int[]{6,24,12,6,3});
+        FeedForwardNetwork network = DeepNettsTrainer.createClassifier(new int[]{6,12,12,3});
         EntryTransformer   transformer = new EntryTransformer();
         transformer.input().add(6, 0, 112);
         transformer.output().add(3, 0.0, 1.0);

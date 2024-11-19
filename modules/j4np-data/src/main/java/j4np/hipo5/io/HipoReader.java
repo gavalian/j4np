@@ -36,6 +36,7 @@ import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.utils.HipoLogos;
 import j4np.utils.ProgressPrintout;
+import java.io.File;
 
 /**
  *
@@ -63,7 +64,7 @@ public class HipoReader implements DataSource {
     
      /** Number or position of last record to be read. */
     protected int currentRecordLoaded;
-    private   int debugMode = 1;
+    private   int debugMode = 0;
     protected int numberOfEvents = 0;
     
     protected List<Long>  readerTags = new ArrayList<Long>();
@@ -479,6 +480,61 @@ public class HipoReader implements DataSource {
         return event;
     }
     
+    public ByteBuffer nextEventByteBuffer(){
+        
+        int   eventNumber = eventIndex.getEventNumber();
+        int  recordNumber = eventIndex.getRecordNumber();
+        //System.out.println("next event:: event # " + eventNumber + " , record # " + recordNumber);
+        //if(eventNumber<0) eventIndex.advance();        
+        //if( eventNumber == 0 ){
+        if(this.progressPrint==true) this.progress.updateStatus();
+        if( eventNumber < 0 ){
+            long position = this.recordPositions.get(0).getPosition();
+            //System.out.println("next event:: reading first record at position " + position);
+            try {
+                inputRecordStream.readRecord(inStreamRandom, position);
+            } catch (HipoException ex) {
+                Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //System.out.println("next event:: entries " + inputRecordStream.getEntries());
+            //System.out.println(String.format("*****>>>> read record # %5d, events = %8d", 
+            //        0, inputRecordStream.getEntries()));
+            eventIndex.advance();
+        } else {
+            //System.out.println(" event # = " + eventNumber + " record # = " + recordNumber);
+            if(!eventIndex.canAdvance()){
+                System.out.println("can no longer advance");
+                return null;
+            }
+            if(eventIndex.advance()){
+                int    record = eventIndex.getRecordNumber();
+                long position = this.recordPositions.get(record).getPosition();
+                //System.out.println("next event:: reading record # " + record + " at position " + position);
+                try {
+                    inputRecordStream.readRecord(inStreamRandom, position);
+                    //System.out.println(String.format("*****>>>> read record # %5d, events = %8d", 
+                    //        record, inputRecordStream.getEntries()));
+                    
+                } catch (HipoException ex) {
+                    Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        int recordEventNumber = eventIndex.getRecordEventNumber();
+        //System.out.println(" RecordEvent Number = " + recordEventNumber + "   entries " + inputRecordStream.getEntries());
+        int         eventSize = inputRecordStream.getEventLength(recordEventNumber);
+        
+        ByteBuffer event = null;
+        try {
+            //inputRecordStream.copyEvent(event.getEventBuffer(), 0, recordEventNumber);
+             event = inputRecordStream.copyEventBuffer(recordEventNumber);
+        } catch (HipoException ex) {
+            Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //eventIndex.advance();
+        return event;
+    }
+    
     
     public Event emptyRead(Event event){
                 int eventNumber = eventIndex.getEventNumber();
@@ -700,71 +756,7 @@ public class HipoReader implements DataSource {
         }
     }
     
-    public static void main(String[] args){
-        //String filename = "/Users/gavalian/Work/Software/project-7a.0.0/skim_calib_clas_005700.evio.00020.hipo_7.hipo";
-        //String filename = "/Users/gavalian/Work/DataSpace/clas12/ai_dst_005038_ext.hipo";
-        /*String filename = "/Users/gavalian/Work/DataSpace/clas12dst/rec_clas_005038.evio.00390-00394.hipo";
-        HipoReader reader = new HipoReader();
-        reader.open(filename);
-        Event event = new Event();
-        int counter = 0;
-        Bank particles = new Bank(reader.getSchemaFactory().getSchema("REC::Particle"));
-        System.out.println(" number of events = " + reader.getEventCount());
-        long stime = System.currentTimeMillis();       
-        while(reader.hasNext()==true){
-            reader.nextEvent(event);
-            //event.read(particles);
-            //reader.next();
-            counter++;
-        }
-        long etime = System.currentTimeMillis();
-        long ttime = etime - stime;
-        System.out.printf("events processed = # %d , time = %d\n", counter, ttime);
-        */
-        /*
-        if(args.length>0){
-            filename = args[0];
-        }
-        HipoReader reader = new HipoReader();
-        reader.open(filename);
-        reader.scanFileTrailer();
-        reader.redoFileEventIndex();
-        reader.showRecords();
-        
-        Schema schema = reader.getSchemaFactory().getSchema("mc::event");
-        
-        Bank mcEvent = new Bank(schema);
-        
-        int nops = 0;
-        Event event = new Event();
-        int nevents = 0;
-        List<Double> momentum = new ArrayList<Double>();
-        BenchmarkTimer bench = new BenchmarkTimer("Reader");
-        bench.resume();
-        while(reader.hasNext()){
-            if(reader.nextEvent(event)!=null){
-                //event.scan();
-                //event.show();
-                int index = event.scan(schema.getGroup(), schema.getItem());
-                event.read(mcEvent, index);
-               
-                int nrows = mcEvent.getRows();
-                for(int r = 0; r < nrows; r++){
-                    double px = mcEvent.getFloat(1, r);
-                    double py = mcEvent.getFloat(2, r);
-                    double pz = mcEvent.getFloat(3, r);
-                    double mom = Math.sqrt(px*px+py*py+pz*pz);
-                    nops++;
-                    //momentum.add(mom);
-                }
-                //System.out.println("n rows = " + mcEvent.getRows() + " position = " + index);
-                nevents++;
-            }
-        }
-        bench.pause();
-        System.out.println("events processed = " + nevents + " operations = " + nops);
-        System.out.println(bench.toString());*/
-    }
+    
 
     @Override
     public boolean next(DataEvent event) {
@@ -807,4 +799,46 @@ public class HipoReader implements DataSource {
         return counter;        
     }
     
+    public static void append(Event event, SchemaFactory factory, String output){
+        File f = new File(output);
+        if(f.exists()==true){
+            HipoReader r = new HipoReader(output);           
+            HipoWriter w = HipoWriter.create("tmp.h5", factory);
+            Event e = new Event();
+            while(r.next(e)) w.add(event);
+            w.add(event);
+            w.close();
+            File f2 = new File("tmp.h5");
+            f2.renameTo(f);            
+        } else {
+            HipoWriter w = HipoWriter.create(output, factory);
+            w.add(event);
+            w.close();
+        }
+    }
+    public static void main(String[] args){
+        //String filename = "/Users/gavalian/Work/Software/project-7a.0.0/skim_calib_clas_005700.evio.00020.hipo_7.hipo";
+       String file = "/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629_unc.hipo";
+       HipoReader r = new HipoReader(file);
+       Event event = new Event();
+       long size = 0L;
+       long then = System.currentTimeMillis();
+       while(r.hasNext()){
+           r.nextEvent(event);
+           size += event.getEventBuffer().getInt(4);
+       }
+       long now = System.currentTimeMillis();
+       
+       System.out.printf("size = %d, time = %d\n", size, now-then);
+       HipoReader r2 = new HipoReader(file);
+
+       size = 0L;
+       then = System.currentTimeMillis();
+       while(r2.hasNext()){
+           ByteBuffer buffer = r2.nextEventByteBuffer();
+           size += buffer.getInt(4);
+       }
+       now = System.currentTimeMillis();
+       System.out.printf("size = %d, time = %d\n", size, now-then);
+    }
 }

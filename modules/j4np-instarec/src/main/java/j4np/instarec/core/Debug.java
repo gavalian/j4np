@@ -10,6 +10,7 @@ import j4np.hipo5.io.HipoReader;
 import j4np.instarec.network.DataExtractor.DataPair;
 import j4np.instarec.utils.EJMLModel;
 import j4np.utils.io.TextFileReader;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -38,7 +39,45 @@ public class Debug {
         }
         return pairs;
     }
+
+    public static byte[] getRandom(int length){
+        Random r = new Random();
+        byte[] b = new byte[length];
+        for(int i = 0; i < length; i++) b[i] = (byte) r.nextInt(128);
+        return b;
+    }
     
+    public static List<ByteBuffer>  getList(int size, int length){
+        List<ByteBuffer> l = new ArrayList<>();
+        for(int i = 0; i < size; i++) l.add(ByteBuffer.wrap(new byte[length]));
+        return l;
+    }
+    
+    public static void debugTransport(){
+        List<ByteBuffer>  frame = Debug.getList(64, 65*1024);
+        List<ByteBuffer> single = Debug.getList(1, 65*1024*64);
+        byte[] br1 = Debug.getRandom(62*1024);
+        byte[] br2 = Debug.getRandom(62*1024*64);
+        int iter = 500000;
+        
+        long then = System.currentTimeMillis();
+        for(int i = 0; i < iter; i++){
+            for(int j = 0; j < frame.size(); j++){
+                System.arraycopy(br1, 0, frame.get(j).array(), 0, br1.length);
+            }
+        }
+        long  now = System.currentTimeMillis();
+        System.out.printf("iteration = %d, time = %d\n",iter,now-then);
+        then = System.currentTimeMillis();
+        for(int i = 0; i < iter; i++){            
+            System.arraycopy(br2, 0, single.get(0).array(), 0, br2.length/2);            
+        }
+        now = System.currentTimeMillis();
+        System.out.printf("iteration = %d, time = %d\n",iter,now-then);
+        
+        
+        
+    }
     public static void debugThreading(int threads){
         List<String> lines = TextFileReader.readFile("etc/networks/trackclassifier12.network");
         EJMLModel model = EJMLModel.create(lines);
@@ -81,10 +120,12 @@ public class Debug {
     }
     
     public static void main(String[] args){
-        Debug.debugThreading(2);
+        /*Debug.debugThreading(2);
         Debug.debugThreading(4);
         Debug.debugThreading(8);
         Debug.debugThreading(10);
+        */
+        Debug.debugTransport();
        /* HipoReader r = new HipoReader("wout.h5");
         Bank[] b = r.getBanks("HitBasedTrkg::Clusters");
         Event e = new Event();

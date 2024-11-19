@@ -21,7 +21,9 @@ import java.util.List;
 public class DriftChamber {
     
     protected long[] data = new long[12*6*6];
+    
     protected boolean useDenoised = true;
+        
     protected int     minMultiplicity = 3;
     protected int     maxMultiplicity = 10;
     protected int            maxWidth = 4;

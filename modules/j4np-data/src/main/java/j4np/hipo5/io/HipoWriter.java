@@ -197,6 +197,12 @@ public class HipoWriter implements DataSync {
         w.open(file); return w;
     }
     
+    public static HipoWriter create(String file, SchemaFactory f){
+        HipoWriter w = new HipoWriter();
+        w.getSchemaFactory().copy(f);
+        w.open(file); return w;
+    }
+    
     private void addOutputStream(long id){
         //RecordOutputStream outStream = new RecordOutputStream(ByteOrder.LITTLE_ENDIAN,
          //       maximumRecordSize,maximumRecordEvents,compressionType);

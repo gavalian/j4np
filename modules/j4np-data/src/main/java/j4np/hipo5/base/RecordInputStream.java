@@ -240,6 +240,24 @@ public class RecordInputStream {
     public ByteBuffer getEvent(ByteBuffer buffer, int index) throws HipoException {
         return getEvent(buffer, 0, index);
     }
+    //-------- DEBUG code 
+    public ByteBuffer copyEventBuffer(int index) throws HipoException{
+        int firstPosition = 0;
+        if (index > 0) {
+            //System.out.println("header get entries = " + header.getEntries());
+            if (index >= header.getEntries()) {
+                throw new HipoException("index too large");
+            }
+            firstPosition = dataBuffer.getInt((index - 1) * 4);
+        }
+        int lastPosition = dataBuffer.getInt(index * 4);
+        int length = lastPosition - firstPosition;
+        int offset = eventsOffset + firstPosition;
+        if(length*2+offset<dataBuffer.capacity()-1024) length = length*2;
+        ByteBuffer result = ByteBuffer.wrap(dataBuffer.array(), offset, length);
+        result.order(ByteOrder.LITTLE_ENDIAN);
+        return result;
+    }
     
     public void copyEvent(ByteBuffer buffer, int boffset, int index) throws HipoException {
         int firstPosition = 0;

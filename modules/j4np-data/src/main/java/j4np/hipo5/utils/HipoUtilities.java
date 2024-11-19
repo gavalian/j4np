@@ -388,11 +388,19 @@ public class HipoUtilities extends OptionApplication {
             
             if(response.contains("/")==true){
                 String[] tokens = response.split("/");
-                if(tokens[0].startsWith("d")==true){
-                    hd.describe(tokens[1].trim());
-                } else {
-                    hd.show(Integer.parseInt(tokens[0].trim()), Integer.parseInt(tokens[1].trim()));
+                if(tokens.length==2){
+                    if(tokens[0].startsWith("d")==true){
+                        hd.describe(tokens[1].trim());
+                    } else {
+                        hd.show(Integer.parseInt(tokens[0].trim()), Integer.parseInt(tokens[1].trim()));
+                    }
                 }
+                if(tokens.length>2){
+                    if(tokens[0].trim().startsWith("c")==true&&tokens[1].trim().startsWith("append")){
+                        System.out.println("appending to file : " + tokens[2].trim());
+                    }
+                }
+
             } else {
             
                 if(response.startsWith("goto")){

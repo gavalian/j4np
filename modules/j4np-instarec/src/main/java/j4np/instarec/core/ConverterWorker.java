@@ -13,6 +13,8 @@ import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Leaf;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.Schema.SchemaBuilder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -72,6 +74,12 @@ public class ConverterWorker extends DataWorker {
             tdc.putInt(5,  r, b.getInt(4, r));
         }
         ((Event) event).write(tdc);
+        /*
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ConverterWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
     }
     
 }

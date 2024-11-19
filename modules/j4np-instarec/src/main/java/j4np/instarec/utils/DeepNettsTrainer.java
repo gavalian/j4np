@@ -209,6 +209,12 @@ public class DeepNettsTrainer {
                 ActivationType.RELU, ActivationType.SOFTMAX, LossType.MEAN_SQUARED_ERROR);
         return network;
     }
+    
+    public static FeedForwardNetwork createRegression(int[] layers){
+        FeedForwardNetwork network = DeepNettsTrainer.create(layers, 
+                ActivationType.TANH, ActivationType.LINEAR, LossType.MEAN_SQUARED_ERROR);
+        return network;
+    }
     public static void main(String[] args){
         
         String previous = "class12classifier_7.json";

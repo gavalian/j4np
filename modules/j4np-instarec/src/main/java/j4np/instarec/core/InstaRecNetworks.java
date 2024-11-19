@@ -19,11 +19,11 @@ public class InstaRecNetworks {
     EJMLModel fixer = null;
     EJMLModel classifier6 = null;
     EJMLModel fixer6 = null;
-    EJMLModel regression[][] = new EJMLModel[2][6];
+    
+    NeuralModel regression[][] = new NeuralModel[2][6];
     
     int       runnumber = -1;
-    
-    
+        
     NeuralModel  classifierModel = null;
     NeuralModel classifierModel6 = null;
     
@@ -74,22 +74,22 @@ public class InstaRecNetworks {
        } catch (Exception e){
            System.out.println("error loading fixer"); fixer6 = null;
        }*/
-       /*
+       
        String[] names = new String[]{"n","p"};
        for(int c = 0; c < 2; c++){
            for(int s = 1; s <= 6; s++){
-               String file = String.format("%d/%s/trackregression12.network",s,names[c]);
+               String file = String.format("%d/%s/trackregression6.json",s,names[c]);
                try {
-                   this.regression[c][s-1] = EJMLLoader.load(networkFile, file, run , "default");
+                   this.regression[c][s-1] = NeuralModel.archiveFile(networkFile, file, run , "default");
                } catch (Exception ex) {
                    System.out.println("InstaRec:: unsuccessful loading network " + file);
                    this.regression[c][s-1] = null;
                }
            }
-       }*/
+       }
     }
     public NeuralModel getClassifier6(){return classifierModel6;}
-    public EJMLModel[][] getRegression(){return this.regression;};
+    public NeuralModel[][] getRegression(){return this.regression;};
     public EJMLModel getClassifier(){ return classifier;}
     public EJMLModel      getFixer(){ return fixer;}
     
@@ -127,7 +127,7 @@ public class InstaRecNetworks {
                 data[counter+4][1] = "n/a";
                 data[counter+4][2] = "" + runnumber;
                 data[counter+4][3] = "disables";
-                if(this.regression[c][s]!=null) {data[counter+4][3] = "ok"; data[counter+4][1] = this.regression[c][s].summary();}
+                if(this.regression[c][s]!=null) {data[counter+4][3] = "ok"; data[counter+4][1] = this.regression[c][s].info();}
                 counter++;
             }
         }
@@ -161,7 +161,7 @@ public class InstaRecNetworks {
     
     public static void main(String[] args){
         InstaRecNetworks net = new InstaRecNetworks();
-        net.init("clas12default.network", 12);
+        net.init("etc/networks/clas12default.network", 12);
         net.show();
     }
 }

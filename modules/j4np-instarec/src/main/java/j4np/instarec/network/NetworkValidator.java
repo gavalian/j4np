@@ -227,7 +227,7 @@ public class NetworkValidator {
                     //model.feedForwardTanhLinear(feat, out);
                     
                     int which = charge<0?0:1;
-                    net.getRegression()[which][sector-1].feedForwardTanhLinear(feat, out);
+                    //net.getRegression()[which][sector-1].feedForwardTanhLinear(feat, out);
                     Vector3 vrec = cvtr.getVector(i, out);
                     System.out.println(Arrays.toString(feat) + "  ==> " + Arrays.toString(out));
                     System.out.println(vec);
