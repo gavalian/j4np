@@ -55,7 +55,7 @@ public class RunInstaRec {
         
         HipoChain chain = new HipoChain(inputs); 
         
-        chain.setMaxEvents(250);
+        chain.setMaxEvents(2500);
         HipoWriter w = HipoWriter.create(output, chain.getReader());
 
         DataActorStream stream = new DataActorStream();
