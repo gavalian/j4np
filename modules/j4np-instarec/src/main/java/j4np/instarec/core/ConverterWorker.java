@@ -67,6 +67,7 @@ public class ConverterWorker extends DataWorker {
         tdc.setRows(b.getRows());
         //System.out.printf(" rows = %d , leaf = %d\n",b.getRows(), tdc.getRows());
         for(int r = 0; r < b.getRows(); r++){
+            tdc.putByte(0, r, (byte) 6);
             tdc.putByte(1, r, b.getByte(0, r));
             tdc.putByte(2, r, b.getByte(1, r));
             tdc.putShort(3, r, b.getShort(2, r));

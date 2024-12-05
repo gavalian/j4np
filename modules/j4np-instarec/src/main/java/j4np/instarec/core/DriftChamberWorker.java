@@ -59,8 +59,8 @@ public class DriftChamberWorker extends DataWorker {
             drift3.segmentFinder(data, leaf);
             
             ev.write(leaf);
-            System.out.println("----- current LEAF");
-            leaf.print();
+            //System.out.println("----- current LEAF");
+            //leaf.print();
             //ev.scanShow();
             //drift.processEventRaw((Event) event);
         }

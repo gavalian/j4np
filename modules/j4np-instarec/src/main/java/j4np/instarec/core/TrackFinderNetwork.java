@@ -8,6 +8,7 @@ import j4np.data.base.DataFrame;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Leaf;
+import j4np.hipo5.data.Node;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.io.HipoReader;
@@ -547,6 +548,7 @@ public class TrackFinderNetwork {
             int length = e.scanLengthAt(32101,10,position);
             Leaf leaf = new Leaf(32101,10,"sbbbbff",length+128);
             e.readAt(leaf, 32101, 10, position);
+            int[] stats = new int[12];
             //leaf.print();
             
             Tracks listUn   = new Tracks(100000);
@@ -554,17 +556,23 @@ public class TrackFinderNetwork {
             TrackConstructor tc = new TrackConstructor(); 
             TrackFinderUtils.fillConstructor(tc,leaf);
             //tc.show();
+            int previous = 0;
             for(int sector = 0 ; sector < 6; sector++){
                 tc.sectors[sector].create(listUn, sector+1, cuts);
-
+                stats[sector*2] = listUn.getRows();
                 evaluate6(listUn);
                 //listUn.show();
                 TrackFinderUtils.copyFromTo(listUn, listRe);
+                stats[sector*2+1] = listRe.getRows() - previous;
+                previous = listRe.getRows();
             }
             
             this.evaluateParameters(listRe);
             this.cleanup(listRe);
             //listRe.show();
+            Leaf statsLeaf = new Leaf(32000,21,"6i6",1);
+            //Node statsNode = new Node(32000,21, stats);
+            //e.write(statsNode);
             e.write(listRe.dataNode());
         }
     }

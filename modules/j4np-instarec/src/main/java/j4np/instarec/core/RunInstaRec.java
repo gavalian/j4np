@@ -55,7 +55,7 @@ public class RunInstaRec {
         
         HipoChain chain = new HipoChain(inputs); 
         
-        chain.setMaxEvents(120);
+        chain.setMaxEvents(250);
         HipoWriter w = HipoWriter.create(output, chain.getReader());
 
         DataActorStream stream = new DataActorStream();
@@ -73,7 +73,7 @@ public class RunInstaRec {
         
        // List<DataWorker>  workers = Arrays.asList(convert,dcwrk,finder);
         //List<DataWorker>  workers = Arrays.asList(convert,dcwrk, finder);
-        List<DataWorker>  workers = Arrays.asList(dcwrk, finder);
+        List<DataWorker>  workers = Arrays.asList(convert,dcwrk, finder);
         
         List<DataActor>   actors = RunInstaRec.createActors(1,32, workers);
         //for(DataActor a : actors) a.setBenchmark(1);
@@ -86,8 +86,8 @@ public class RunInstaRec {
         
 //        List<String> files = FileUtils.dir("/Users/gavalian/Work/DataSpace/decoded/006677/","*hipo");
        
-        //List<String> files = Arrays.asList("filter_output_1.h5");
-        List<String> files = Arrays.asList("w.h5");
+        //List<String> files = Arrays.asList("output3.hipo");
+        List<String> files = Arrays.asList("wd.h5");
         for(String file : files) System.out.println(file);
         
         
