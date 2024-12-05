@@ -39,12 +39,14 @@ public class NodeTable extends JPanel implements ActionListener {
         this.setLayout(new BorderLayout());
         //scrollPane = new JScrollPane(table);
     }
+    
     public NodeTable(Leaf node){
         this.setLayout(new BorderLayout());
         String[] names = this.getColumnNames(node);
         String[][] data = this.getColumnData(node);
         table = new JTable(data,names);
-        table.getTableHeader().setBackground(Color.ORANGE);
+        //table.getTableHeader().setBackground(new Color(255,210,124));
+        table.getTableHeader().setBackground(Color.MAGENTA);
         scrollPane = new JScrollPane(table);
         this.add(scrollPane,BorderLayout.CENTER);
     }
@@ -88,7 +90,7 @@ public class NodeTable extends JPanel implements ActionListener {
         }
     }
     public static void main(String[] args){
-        Leaf node = Leaf.random(24);
+        Leaf node = Leaf.random(24,"8i6f4s8i5f");
     
         node.show();
         node.print();

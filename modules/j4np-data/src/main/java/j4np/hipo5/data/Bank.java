@@ -9,6 +9,7 @@ import j4np.hipo5.data.Schema.SchemaBuilder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -852,6 +853,59 @@ public class Bank {
         }
         return diff;
     }
+    
+    
+    public int compare2(Bank b, boolean verbose){
+        int diff = 0;
+        boolean isSame = this.getSchema().compare(b.getSchema());
+        if(isSame==false) { System.out.printf("\n Warning: can not compare incompatible banks... %s vs %s\n",
+                this.getSchema().getName(), b.getSchema().getName()); return -2;}
+
+        int nrows = this.getRows();
+        if(nrows!=b.getRows()){
+            //System.out.printf(" different size 1: rows = %d, 2: rows = %d\n",
+            //        this.getRows(),b.getRows()
+            //);
+            return -1;
+        }
+        
+        int elements = this.getSchema().getElements();
+        
+        for(int e = 0; e < elements; e++){
+            int type = this.getSchema().getType(e);
+            //System.out.println(" testing element # " + e);
+            if(type==1||type==2||type==3){
+                int[] array1 = this.getInt(this.getSchema().getElementName(e));
+                int[] array2 = b.getInt(this.getSchema().getElementName(e));
+                int diff2 = 0;
+                for(int j = 0; j < nrows; j++){ 
+                    if(array1[j]!=array2[j]) diff2++;
+                    //System.out.printf("\t-- %d row = %d 1 = %d , 2 = %d\n",e,j,array1[j],array2[j]);
+                }
+                if(diff2>0){
+                    System.out.printf("-- diff : %s \n",this.getSchema().getElementName(e));
+                    System.out.println("\t"+ Arrays.toString(array1));
+                    System.out.println("\t"+ Arrays.toString(array2));
+                    diff += diff2;
+                }
+            }
+            if(type==4||type==8){
+                double[] array1 = this.getDouble(this.getSchema().getElementName(e));
+                double[] array2 = b.getDouble(this.getSchema().getElementName(e));
+                int diff2 = 0;
+                for(int j = 0; j < nrows; j++){ if(array1[j]!=array2[j]) diff2++;}
+                if(diff2>0){
+                    System.out.printf("- diff : %s \n",this.getSchema().getElementName(e));
+                    System.out.println("\t"+ Arrays.toString(array1));
+                    System.out.println("\t"+ Arrays.toString(array2));
+                    diff += diff2;
+                }
+            }            
+        }
+        if(verbose) System.out.printf(" total differences = %d\n",diff);
+        return diff;
+    }
+    
     public static void main(String[] args){
         SchemaBuilder schb = new SchemaBuilder("ai:clusters",1200,1);
         

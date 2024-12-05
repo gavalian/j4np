@@ -151,7 +151,7 @@ public class Event implements DataEvent {
     
     public void write(Leaf node){
         if(node.getLength()>0){
-            int totalLength = node.getLength() + 8;
+            int totalLength = node.getLength() + 8 ;//+ node.getHeaderLength();
             int    position = eventBuffer.getInt(EVENT_LENGTH_OFFSET);
             this.require(position+totalLength + 24);
             System.arraycopy(node.getByteBuffer().array(), 0, 

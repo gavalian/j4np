@@ -93,10 +93,41 @@ public class H1F  implements DataSet {
     	setName(name);
     }
     
+    public H1F(String name, double xMin, double xMax, int[] binHeights) {
+    	set(binHeights.length, xMin, xMax);
+    	for (int i = 0; i < binHeights.length; i++) {
+    		histogramData[i] = binHeights[i];
+                histogramDataError[i] = Math.sqrt(Math.abs(binHeights[i]));
+    	}
+        this.initAttributes();
+    	setName(name);
+    }
+    
     public static H1F[] duplicate(int count, String title, int binsX, double minX, double maxX){
         H1F[] hc = new H1F[count];
         for(int loop = 0; loop < count; loop++) hc[loop] = new H1F(title,binsX,minX,maxX);
         return hc;
+    }
+    
+    public static H1F[] duplicate(int count, String title, H1F h){
+        H1F[] hc = new H1F[count];
+        for(int loop = 0; loop < count; loop++) hc[loop] = 
+                new H1F(title,h.getAxisX().getNBins(),
+                        h.getAxisX().min(),
+                        h.getAxisX().max()
+                );
+        return hc;
+    }
+    
+    public static H1F[] stack(H1F[] hists){
+        H1F[] hstack = H1F.duplicate(hists.length, hists[0].histName, hists[0]);
+        for(int i = 0; i < hstack.length-1; i++){
+            for(int j = i; j < hstack.length; j++){
+                for(int b = 0; b < hstack[i].getAxisX().getNBins(); b++)
+                    hstack[i].setBinContent(b, hstack[i].getBinContent(b)+hstack[j].getBinContent(b));
+            }
+        }
+        return hstack;
     }
     /**
      * Creates a 1-D Histogram with the specified name, number of bins, and minimum and maximum

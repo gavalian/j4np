@@ -14,6 +14,7 @@ import com.formdev.flatlaf.intellijthemes.FlatGradiantoNatureGreenIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatGradiantoDeepOceanIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatHiberbeeDarkIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatHighContrastIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
 import j4np.utils.io.OptionStore;
         
 
@@ -66,7 +67,7 @@ public class StudioWindow extends JFrame implements ActionListener {
         initMenuBar();
         initToolBar();
         
-        StudioWindow.changeLook("DeepOcean");
+        //StudioWindow.changeLook("DeepOcean");
     }
     
     private void initToolBar(){
@@ -196,6 +197,16 @@ public class StudioWindow extends JFrame implements ActionListener {
             UIManager.put("Tree.paintLines", Boolean.TRUE);
             try {
                 UIManager.setLookAndFeel( new FlatGradiantoDeepOceanIJTheme() );
+                //SwingUtilities.updateComponentTreeUI(this);
+            } catch (UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(StudioWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if(name.compareTo("DarkMaterial")==0){
+            UIManager.put("Tree.paintLines", Boolean.TRUE);
+            try {
+                UIManager.setLookAndFeel( new FlatMaterialDarkerIJTheme() );
                 //SwingUtilities.updateComponentTreeUI(this);
             } catch (UnsupportedLookAndFeelException ex) {
                 Logger.getLogger(StudioWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -394,6 +405,7 @@ public class StudioWindow extends JFrame implements ActionListener {
     
     public static void main(String[] args){
         StudioWindow.changeLook();
+        //StudioWindow.changeLook("DarkMaterial");
         StudioWindow frame = new StudioWindow();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(850, 650);

@@ -68,8 +68,21 @@ public class CompositeNode extends BaseHipoStructure {
     
     public final void setRows(int rows){
         int rowLength = dataDescriptor.getStructureLength();
-        int size = rowLength*rows + this.getHeaderLength();
-        setSize(size);
+        int      size = rowLength*rows ;
+        int  nodeSize = size + this.getHeaderLength();
+        if(nodeSize>this.structBuffer.array().length){
+            byte[] buffer = new byte[nodeSize+128];
+            int    length = this.getLength();
+            System.arraycopy(this.structBuffer.array(), 0, buffer, 0, length);
+            this.structBuffer = ByteBuffer.wrap(buffer);
+            this.structBuffer.order(bufferOrder);
+            this.setSizeWord(nodeSize);
+        } else {
+            this.setSizeWord(nodeSize);
+        }
+        //int rowLength = dataDescriptor.getStructureLength();
+        //int size = rowLength*rows + this.getHeaderLength();
+        //setSize(size);
     }
     
     public final int getRows(){

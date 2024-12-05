@@ -75,9 +75,11 @@ public class BaseHipoStructure {
     
     public final void  setFormatAndLength(String format, int dataLenght){
         byte[] fmtbytes = format.getBytes();
+        //System.out.printf(" format =  %s\n", format);
+        //ByteUtils.printByteArray(fmtbytes, 0, 12);
         int wordLength = ((dataLenght+fmtbytes.length)&0x00FFFFFF)|((fmtbytes.length<<24)&0xFF000000);
-        this.structBuffer.putInt(this.DATA_LENGTH_OFFSET, wordLength);        
-        System.arraycopy(fmtbytes, 0, this.structBuffer.array(), 8, fmtbytes.length);
+        this.structBuffer.putInt(this.DATA_LENGTH_OFFSET, wordLength);
+        System.arraycopy(fmtbytes, 0, this.structBuffer.array(), 8, fmtbytes.length);       
     }
     
     public final BaseHipoStructure setGroup(int group){
@@ -173,6 +175,13 @@ public class BaseHipoStructure {
     
     public BaseHipoStructure setIdentifier(int identifier){
         structBuffer.putInt(IDENTIFIER_POSITION, identifier); return this;
+    }
+    
+    public BaseHipoStructure setSizeWord(int size){
+        int hdrSize = this.getHeaderLength();
+        int sizeWord = ((hdrSize<<24)&0xFF000000)|(size&0x00FFFFFF);
+        structBuffer.putInt(BUFFERSIZE_POSITION, sizeWord);
+        return this;
     }
     
     public BaseHipoStructure setSize(int size){

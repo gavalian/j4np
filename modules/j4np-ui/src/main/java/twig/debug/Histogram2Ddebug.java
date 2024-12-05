@@ -18,7 +18,7 @@ public class Histogram2Ddebug {
     
     public static void drawConfusionMatrix(){
         TStyle.getInstance().getPalette().palette2d().setPalette(TPalette2D.PaletteName.kFall);
-        TGCanvas c = new TGCanvas("confusion_matrix",800,500);
+        TGCanvas c = new TGCanvas("confusion_matrix",550,500);
         H2F h = new H2F("h2",3,-0.5,2.5, 3, -0.5,2.5);
         h.attr().setTitleX("True Class");
         h.attr().setTitleY("Predicted Class");

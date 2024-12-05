@@ -11,6 +11,7 @@ import twig.widgets.LatexText.TextRotate;
 import twig.widgets.LatexText.TextAlign;
 import twig.graphics.*;
 import twig.config.*;
+import twig.utils.*;
 //--------------------------------------
 // Utils import
 //--------------------------------------
@@ -43,5 +44,7 @@ import java.util.function.*
 import java.util.prefs.*
 import java.util.regex.*
 import java.util.stream.*
-System.out.println("\n>>> J4NP: imports loaded....\n");
-System.out.println(">>> J4NP: twig,physics,h5....\n");
+
+TwigLogo.printTwigScreen();
+System.out.println("\n>>> Loading: J4NP: imports loaded....\n");
+System.out.println(">>> Loading: J4NP: twig,physics,h5....\n");

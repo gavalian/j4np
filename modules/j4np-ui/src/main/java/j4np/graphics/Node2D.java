@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JPanel;
 
 /**
  *
@@ -64,7 +65,8 @@ public class Node2D {
     private final List<Node2D>            nodeChildren = Collections.synchronizedList(new LinkedList<Node2D>());
     private final Rectangle2D    coordinateTranslation = new Rectangle2D.Double();
     
-    private Node2D        nodeParent = null;        
+    private Node2D         nodeParent = null;
+    private JPanel        superParent = null;
     private String          nodeName = "node";
     
 
@@ -109,6 +111,9 @@ public class Node2D {
          this.popupProvider = pr;
      }*/
      
+    protected void setSuperParent(JPanel panel){ this.superParent = panel;}
+    protected void repaint(){if(this.superParent!=null) this.superParent.repaint();}
+    
     public void drawLayer(Graphics2D g2d, int layer){ 
         
         if(this.nodeBackground!=null){

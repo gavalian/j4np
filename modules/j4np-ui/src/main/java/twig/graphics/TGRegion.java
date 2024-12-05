@@ -500,8 +500,13 @@ public class TGRegion extends Node2D implements StyleNode {
         } else {
             this.axisFrame.getAxisY().getAttributes().setAxisLabelsDraw(false);
             this.axisFrame.getAxisY().getAttributes().setAxisTitlesDraw(false);
+        }        
+    }
+    public void set(String key, String value){
+        if(key.compareTo("axiscolor")==0){
+            Color c = this.getColorByString(value);
+            this.setAxisColor(c);
         }
-        
     }
     private void setByToken(String token){
         if(token.length()<2) return;

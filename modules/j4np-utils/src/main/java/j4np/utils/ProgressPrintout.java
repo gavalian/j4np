@@ -136,6 +136,12 @@ public class ProgressPrintout {
         return String.format("time = %.4f ms, rate = %.4f ms/event", time,rate);
     }
     
+    public static double nanoTimeToHertz(long count, long ntime){
+        double time = (ntime)*1e-6;
+        double rate = 1000.0/(time/count); // this should be in Hz
+        return rate;
+    }
+    
     public static void main(String[] args){
         ProgressPrintout  progress = new ProgressPrintout();
         int loop = 0;

@@ -1,0 +1,62 @@
+\documentclass[preprint,12pt]{elsarticle}
+\usepackage{graphicx}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{color, colortbl}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{lineno}
+
+%\linenumbers
+% \usepackage[affil-it]{authblk}
+\usepackage{subcaption}
+\newcommand{\note}[1]{\textcolor{blue}{#1}}
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\definecolor{LightRose}{rgb}{1,0.88,0.88}
+\definecolor{LightGreen}{rgb}{0.88,1,0.88}
+
+\title{High-Performance Data Format for Scientific Data Analysis}
+
+\author[1]{Gagik Gavalian}
+\address[1]{Jefferson Lab, Newport News, VA, USA}
+
+
+
+\begin{document}
+
+%\begin{titlepage}
+\begin{abstract}
+In this article, we present the High-Performance Output (HiPO) data format developed at Jefferson Laboratory for 
+storing and analyzing data from Nuclear Physics experiments. The format was designed to efficiently store large
+amount of experimental data, utilizing modern fast compression algorithms. The purpose of this development was 
+to provide organized data in the output, facilitating access to relevant information within the large data files. The HiPO
+data format has features that are suited for storing raw detector data, reconstruction data, and the final physics analysis 
+data efficiently, eliminating the need to do data conversions through the lifecycle of experimental data. The HiPO data format
+is implemented in C++ and JAVA, and provides interfaces to Python and Julia, providing users with the choice of data 
+analysis frameworks to use.
+In this paper, we will present the general design and functionalities of the HiPO library and compare the performance of the library with
+ more established data formats used in data analysis in High Energy and Nuclear Physics (such as ROOT and Parquete).
+
+\end{abstract}
+%\end{titlepage}
+\maketitle
+
+
+\input{introduction}
+\input{design}
+\input{format}
+\input{summary}
+
+\newpage
+
+\section{Acknowledgments}
+
+This material is based upon work supported by the U.S. Department of Energy, Office of Science,
+Office of Nuclear Physics under contract DE-AC05-06OR23177, and NSF grant no. CCF-1439079 and
+the Richard T. Cheng Endowment. This work was performed using the Turing and Wahab computing
+clusters at Old Dominion University.
+ 
+\newpage
+\bibliography{references}
+\bibliographystyle{ieeetr}
+
+\end{document}

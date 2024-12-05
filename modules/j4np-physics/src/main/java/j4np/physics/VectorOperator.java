@@ -99,7 +99,20 @@ public class VectorOperator {
             default: return 0.0;
         }
     }
+    
     protected void setVector(LorentzVector lv){this.vec.copy(lv);}
+    
+    public static LorentzVector createEP(double energy){
+        LorentzVector vec = LorentzVector.withPxPyPzM(0.0, 0.0, energy, 0.0005);
+        vec.add(0.0, 0.0, 0.0, 0.938);
+        return vec;
+    }
+    
+    public static VectorOperator create(LorentzVector lv,String oper){
+        VectorOperator vop = VectorOperator.parseOperator(oper);
+        vop.setVector(lv);
+        return vop;
+    }
     
     public static VectorOperator parseOperator(String oper){
         
@@ -266,10 +279,15 @@ public class VectorOperator {
     }
     public static void main(String[] args){
         //VectorOperator op = new VectorOperator(new LorentzVector(),"- [11] + [22] + [22,0] + [2212,1]");
-        VectorOperator op = new VectorOperator(new LorentzVector(),"- [11] + [22] + [22,0] + [2212,1]");
-        op.show();
+        //VectorOperator op = new VectorOperator(new LorentzVector(),"- [11] + [22] + [22,0] + [2212,1]");
+        //op.show();
         
-        VectorOperator op2 =  VectorOperator.parseOperator("[2212]-[211,0,0.497]-[-211,1]");
-        op2.show();
+        //VectorOperator op2 =  VectorOperator.parseOperator("[2212]-[211,0,0.497]-[-211,1]");
+        //op2.show();
+        
+        VectorOperator p = VectorOperator.parseOperator("[2,0,0.139]");
+        //p.("[11,0,0.139]");
+        
+        p.show();
     }
 }

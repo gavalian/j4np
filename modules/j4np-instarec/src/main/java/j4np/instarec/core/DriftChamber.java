@@ -4,6 +4,7 @@
  */
 package j4np.instarec.core;
 
+import j4np.data.base.DataFrame;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Leaf;
@@ -22,8 +23,7 @@ public class DriftChamber {
     
     protected long[] data = new long[12*6*6];
     
-    protected boolean useDenoised = true;
-        
+    protected boolean     useDenoised = true;        
     protected int     minMultiplicity = 3;
     protected int     maxMultiplicity = 10;
     protected int            maxWidth = 4;
@@ -32,19 +32,19 @@ public class DriftChamber {
     
     Pattern[] patterns = null;
     
-    public DriftChamber(){patterns = Pattern.create();}
+    public DriftChamber(){ patterns = Pattern.create(); }
     
-    public void reset(){ Arrays.fill(data, 0L);}
+    public void reset(){ Arrays.fill(data, 0L);}    
+    public void show(){}    
+    public int  sectorOffset(int sector){ return 12*6*(sector-1);}
+    public int  layerOffset( int layer){   return 1; }
+    public int  wireWord( int wire){ return wire<=56?0:1;}
     
-    public void show(){}
-    
-    public int sectorOffset(int sector){ return 12*6*(sector-1);}
-    public int layerOffset(int layer){   return 1; }
-    public int wireWord(int wire){ return wire<=56?0:1;}
-    public int wireShift( int wire){
+    public int  wireShift( int wire){
         int shift = wire<=56?56-wire:56-(wire-56);
         return shift;
     }
+    
     public void init(SchemaFactory factory){
         schemas.add(factory.getSchema("DC::tdc"));
     }
@@ -64,7 +64,7 @@ public class DriftChamber {
         int    wshift = wireShift(wire);
         data[soffset+loffset+word] = data[soffset+loffset+word]|(1L<<wshift);
     }
-
+    
     
     public void show(int sector){
         int offset = 12*6*(sector-1);
@@ -87,7 +87,7 @@ public class DriftChamber {
     
     private void fillSegment(Leaf leaf, int sector, int superlayer, int[] positions, int[] info){
         
-        if(info[1]>minMultiplicity&&info[1]<maxMultiplicity&&info[2]<maxWidth){
+        if(info[1]>minMultiplicity&&info[1]<maxMultiplicity&&info[2]<=maxWidth){
             int row = leaf.getRows();
             int start = info[0];
             double r = 0.0, w = 0.0;
@@ -106,6 +106,7 @@ public class DriftChamber {
             
         }
     }
+    
     public void findSegments(Leaf leaf){
         int[] positions = new int[112];
         int[] info      = new int[3];
@@ -125,6 +126,7 @@ public class DriftChamber {
             }
         }
     }
+    
     public void segmentsFromBank(Leaf leaf, Bank b){
         fillBank(b,useDenoised);
         
@@ -147,7 +149,7 @@ public class DriftChamber {
         }
     }
     
-    private void analyze(int sector, int superlayer, int[] positions){
+    public void analyze(int sector, int superlayer, int[] positions){
         int soffset = sectorOffset(sector);
         int boffset = (superlayer-1)*12;
         int   start = soffset + boffset;
@@ -178,6 +180,18 @@ public class DriftChamber {
         
         this.segmentsFromBank(leaf, b);
         e.write(leaf);
+    }
+    
+    public void processEvent8f(DataFrame<Event> frame){
+        Bank b = new Bank(schemas.get(0),1024);
+        Leaf leaf = new Leaf(32101,10,"sbbbbff",2048);
+        for(int i = 0; i < frame.getCount(); i++){
+            Event e = (Event) frame.getEvent(i);
+            e.read(b);        
+            this.segmentsFromBank(leaf, b);
+            e.write(leaf);
+            leaf.setRows(0);
+        }
     }
     
     public void processEventRaw(Event e){

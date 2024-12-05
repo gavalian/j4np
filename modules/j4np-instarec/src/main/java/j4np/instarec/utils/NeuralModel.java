@@ -234,7 +234,11 @@ public class NeuralModel {
     
     public String info(){
         StringBuilder str = new StringBuilder();
-        return "6/12/3";
+        str.append(this.inputSize);
+        for(int i = 0; i < LAYERS.length; i++){
+            str.append("/").append(LAYERS[i].numCols());
+        }
+        return str.toString();
     }
     public String summary(){
         
@@ -333,6 +337,8 @@ public class NeuralModel {
         
         NeuralModel model = NeuralModel.jsonFile("class12classifier_8.json");
         System.out.println(model.summary());
+        System.out.println(model.info());
+        
         /*
         List<DataPair>  pairs = DataExtractor.csv("sample.csv", new int[]{0,1,2,3,4,5}, new int[]{6,7,8});
         float[] output = new float[3];

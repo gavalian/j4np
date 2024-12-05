@@ -91,11 +91,11 @@ public class TrackFinderUtils {
         //bank.getSchema().show();
         for(int r = 0; r < nrows; r++){            
             tc.add(
-                    segments.getInt(1, r),
                     segments.getInt(2, r),
-                    r+1,
-                    segments.getDouble(5, r),
-                    segments.getDouble(6, r)                    
+                    segments.getInt(3, r),
+                    segments.getInt(1, r),
+                    segments.getDouble(4, r),
+                    segments.getDouble(5, r)                    
             );
 
         }

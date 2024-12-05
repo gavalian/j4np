@@ -4,6 +4,7 @@
  */
 package j4np.instarec.core;
 
+import j4np.data.base.DataFrame;
 import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Leaf;
@@ -333,7 +334,20 @@ public class TrackFinderNetwork {
             }
         }
     }
-    
+    public void cleanup(Tracks tracks){
+        int nrows = tracks.getRows();
+        for(int j = 0; j < nrows-1; j++){
+            for(int i = j+1; i < nrows; i++){
+                if(tracks.status(j)>0){
+                    if(tracks.contains(j, i)>0){
+                        if(tracks.probability(j)>tracks.probability(i)){
+                            tracks.setStatus(i, 0);
+                        } else { tracks.setStatus(j, 0);}
+                    }
+                }
+            }
+        }
+    }
     public void evaluateParameters(Tracks tracks){
         float[]  input = new float[6];
         float[] output = new float[3];
@@ -549,8 +563,44 @@ public class TrackFinderNetwork {
             }
             
             this.evaluateParameters(listRe);
+            this.cleanup(listRe);
             //listRe.show();
             e.write(listRe.dataNode());
+        }
+    }
+    
+    public void process8f(DataFrame<Event> frame){
+        for(int j = 0; j < frame.getCount(); j++){
+            Tracks listUn   = new Tracks(50000);
+            Tracks listRe   = new Tracks(300);   
+            TrackConstructor tc = new TrackConstructor(); 
+            Leaf leaf = new Leaf(32101,10,"2s2b2f3b",2048);
+            
+            Event e = (Event) frame.getEvent(j);
+            int position = e.scan(32101, 10);
+            if(position>0){
+                
+                int length = e.scanLengthAt(32101,10,position);
+                e.readAt(leaf, 32101, 10, position);
+                //leaf.print();
+                
+                listUn.dataNode().setRows(0);
+                listRe.dataNode().setRows(0);
+
+                TrackFinderUtils.fillConstructor(tc,leaf);
+            //tc.show();
+            for(int sector = 0 ; sector < 6; sector++){
+                tc.sectors[sector].create(listUn, sector+1, cuts);
+
+                evaluate6(listUn);
+                //listUn.show();
+                TrackFinderUtils.copyFromTo(listUn, listRe);
+            }
+            
+            this.evaluateParameters(listRe);
+            //listRe.show();
+            e.write(listRe.dataNode());
+        }
         }
     }
     
@@ -733,18 +783,23 @@ public class TrackFinderNetwork {
         DriftChamber dc = new DriftChamber();
         dc.init(r.getSchemaFactory());
         //for(int i = 0; i < 200; i++){
+        DataFrame<Event>  frame = new DataFrame<>();
+        
+        for(int i = 0; i < 8; i++) frame.addEvent(new Event());
         
         while(r.hasNext()){
-            r.nextEvent(e);
-            e.read(b);
+            r.nextFrame(frame);
+            //r.nextEvent(e);
+            //e.read(b);
             //dc.segmentsFromBank(leaf, b[0]);
-            dc.processEvent(e);
-            //System.out.println("----- event");
-            //leaf.print();
-            //e.scanShow();
-            //net.processEvent(e);
-            net.process8(e);
-            //w.addEvent(e);
+            for(int i = 0 ; i < frame.getCount(); i++){
+                dc.processEvent((Event) frame.getEvent(i)); 
+                net.process8((Event) frame.getEvent(i));
+            }
+            /*
+            dc.processEvent8f(frame);
+            net.process8f(frame);
+            */
         }
         w.close();
         

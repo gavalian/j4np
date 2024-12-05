@@ -102,6 +102,14 @@ public class TDirectory implements TreeProvider {
         this.write(exportFileName, timeStamp);
     }
     
+    public void snapshot(String filename){
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        String timeStampFile = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+        String exportFileName = this.autoSaveFile+ "_" + timeStampFile + ".twig";
+        System.out.printf("[%s] snapshot to file -> %s\n",timeStamp,exportFileName);
+        this.write(filename, timeStamp);
+    }
+    
     public static void export(String file, String directory, List<DataSet> data){
         for(DataSet ds : data){
             DataSetSerializer.export(ds, file, directory);

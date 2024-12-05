@@ -43,7 +43,7 @@ public class MarkerTools {
     public static void drawMarkerCyrcle(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
         g2d.setColor(fillColor);
         g2d.fillOval((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
-        if(lineColor!=null){
+        if(lineColor!=null&&lineSize>0){
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(lineSize));
             g2d.drawOval((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
@@ -53,7 +53,7 @@ public class MarkerTools {
     public static void drawMarkerRectangle(Graphics2D g2d, double x, double y, Color fillColor, Color lineColor, int fillSize, int lineSize, int type){
         g2d.setColor(fillColor);
         g2d.fillRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
-        if(lineColor!=null){
+        if(lineColor!=null&&lineSize>0){
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(lineSize));
             g2d.drawRect((int) (x - fillSize/2), (int) (y-fillSize/2), fillSize, fillSize);
@@ -85,7 +85,7 @@ public class MarkerTools {
         
         g2d.fillPolygon(xPoints, yPoints, 4);
         
-        if(lineColor!=null){
+        if(lineColor!=null&&lineSize>0){
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(lineSize));
             g2d.drawPolygon(xPoints, yPoints, 4);
@@ -249,7 +249,7 @@ public class MarkerTools {
         xPoints[3] = (int) (x);
         g2d.fillPolygon(xPoints, yPoints, 4);
         
-        if(lineColor!=null){
+        if(lineColor!=null&&lineSize>0){
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(lineSize));
             g2d.drawPolygon(xPoints, yPoints, 4);
@@ -277,7 +277,7 @@ public class MarkerTools {
         xPoints[3] = (int) (x);
         g2d.fillPolygon(xPoints, yPoints, 4);
         
-        if(lineColor!=null){
+        if(lineColor!=null&&lineSize>0){
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(lineSize));
             g2d.drawPolygon(xPoints, yPoints, 4);
@@ -307,7 +307,7 @@ public class MarkerTools {
         
         g2d.fillPolygon(xPoints, yPoints, 4);
         
-        if(lineColor!=null){
+        if(lineColor!=null&&lineSize>0){
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(lineSize));
             g2d.drawPolygon(xPoints, yPoints, 4);
@@ -337,7 +337,7 @@ public class MarkerTools {
         
         g2d.fillPolygon(xPoints, yPoints, 4);
         
-        if(lineColor!=null){
+        if(lineColor!=null&&lineSize>0){
             g2d.setColor(lineColor);
             g2d.setStroke(new BasicStroke(lineSize));
             g2d.drawPolygon(xPoints, yPoints, 4);

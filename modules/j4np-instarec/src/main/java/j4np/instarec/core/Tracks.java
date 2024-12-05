@@ -18,7 +18,7 @@ import java.util.List;
  * @author gavalian
  */
 
-public class Tracks  {    
+public class Tracks  {
     
     CompositeNode bank = null; 
     
@@ -406,9 +406,14 @@ public class Tracks  {
         list.bank.putFloat(6, 0, 4.6f);
         list.bank.putFloat(7, 0, 3.6f);
         list.bank.setRows(1);
+        System.out.println("size = " + list.bank.getSize() + "  " + list.bank.getRowsSize());
         list.show();
         list.bank.setRows(2);
         list.show();
+        
+        System.out.println(list.bank.getSize());
+        
+        list.bank.show();
         //CompositeNode bank =  new CompositeNode(1,2,"sfssf3f3f6i6f",4);
         //bank.show();
         //bank.print();

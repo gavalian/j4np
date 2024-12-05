@@ -148,7 +148,7 @@ public class NetworkTrainer {
     }
     
     public static void main(String[] args){        
-        for(int s = 1; s <= 6; s++) NetworkTrainer.trainRegression("ml_data_1.hipo","regressionnetwork.json",s,-1);
+        //for(int s = 1; s <= 6; s++) NetworkTrainer.trainRegression("ml_data_1.hipo","regressionnetwork.json",s,-1);
         for(int s = 1; s <= 6; s++) NetworkTrainer.trainRegression("ml_data_1.hipo","regressionnetwork.json",s, 1);
         //NetworkTrainer.trainRegression("ml_data_1.hipo",null,2,-1);
         //NetworkTrainer.validateRegression("ml_data_2.hipo","trackregression6_2_n.json",1,-1);

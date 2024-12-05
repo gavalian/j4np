@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import org.jfree.pdf.PDFDocument;
 import org.jfree.pdf.PDFGraphics2D;
 import org.jfree.pdf.Page;
+import twig.config.TAttributes;
 import twig.config.TPalette;
 import twig.config.TStyle;
 import twig.data.DataSet;
@@ -154,7 +155,7 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
     }*/
     
     protected void set(String item, String value){
-        
+
         if(item.compareTo("bc")==0){
             if(value.compareTo("null")==0||value.compareTo("NULL")==0){
                 this.setBackground2D(null);
@@ -164,14 +165,67 @@ public class TGDataCanvas extends Canvas2D implements ActionListener {
             } else {
                 Color c =  TStyle.getInstance().getPalette().getColor(Integer.parseInt(value));
                 this.setBackground2D(Background2D.createBackground(c.getRed(),c.getGreen(),c.getBlue()));
-            }            
+            }
         }
         
+        if(item.compareTo("axiscolor")==0){
+            for(Node2D node : getGraphicsComponents()){
+                if(node instanceof TGRegion tGRegion) tGRegion.set("axiscolor", value);
+            }
+        }
+        if(item.compareTo("insets")==0){
+
+            int[] insets = TAttributes.getIntArray(value);
+            this.canvasInsets().set(insets[2], insets[0], insets[3], insets[1]);
+            
+            //this.getBounds().setBounds(50, 50, 200, 200);
+            
+            System.out.println("setting insets " + Arrays.toString(insets));
+        }
+        if(item.compareTo("margins")==0){
+            int[] margins = TAttributes.getIntArray(value);
+            for(Node2D node : getGraphicsComponents()){
+                    if(node instanceof TGRegion tGRegion){
+                        tGRegion.getInsets().left(margins[0]);
+                        tGRegion.getInsets().right(margins[1]);
+                        tGRegion.getInsets().top(margins[2]);
+                        tGRegion.getInsets().bottom(margins[3]);
+                    }
+                }
+        }
+        
+        if(item.compareTo("font")==0){
+            if(value.compareTo("null")==0||value.compareTo("NULL")==0){
+                //int counter = 0;
+                for(Node2D node : getGraphicsComponents()){
+                    if(node instanceof TGRegion){
+                        //System.out.println(" setting axis lables false " + counter); counter++;
+                        ((TGRegion) node).getAxisFrame().getAxisX().getAttributes().setAxisLabelsDraw(false);
+                        ((TGRegion) node).getAxisFrame().getAxisX().getAttributes().setAxisTitlesDraw(false);
+                        ((TGRegion) node).getAxisFrame().getAxisY().getAttributes().setAxisLabelsDraw(false);
+                        ((TGRegion) node).getAxisFrame().getAxisY().getAttributes().setAxisTitlesDraw(false);
+                    }
+                }
+            } else {
+               Font f = TAttributes.getFont(value);
+                if(f!=null){
+                    for(Node2D node : getGraphicsComponents()){
+                        if(node instanceof TGRegion){
+                            ((TGRegion) node).getAxisFrame().getAxisX().getAttributes().setAxisLabelFont(f);
+                            ((TGRegion) node).getAxisFrame().getAxisX().getAttributes().setAxisTitleFont(f);
+                            ((TGRegion) node).getAxisFrame().getAxisY().getAttributes().setAxisLabelFont(f);
+                            ((TGRegion) node).getAxisFrame().getAxisY().getAttributes().setAxisTitleFont(f);
+                        }
+                    }
+                }
+            }
+            
+        }
         
     }
     
     public void set(String arguments){
-        String[] tokens = arguments.split(",");
+        String[] tokens = arguments.split(";");
         for(int j = 0; j < tokens.length; j++){
             String[] pair = tokens[j].split("=");
             if(pair.length==2) this.set(pair[0].trim(), pair[1].trim());

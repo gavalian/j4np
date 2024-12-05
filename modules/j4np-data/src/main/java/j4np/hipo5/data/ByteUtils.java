@@ -8,6 +8,7 @@ package j4np.hipo5.data;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.Deflater;
@@ -162,6 +163,36 @@ public class ByteUtils {
             System.out.println(String.format("%4d : ", entry.getKey()) 
                     + String.format("%32s", Integer.toBinaryString(entry.getValue())).replace(' ', '0'));
         }
+    }
+    
+    public static void printByteBuffer(ByteBuffer b, int offset, int wrap){
+        ByteUtils.printByteArray(b.array(), offset, wrap, -1);
+    }
+    
+    public static void printByteBuffer(ByteBuffer b, int offset, int wrap, int max){
+        ByteUtils.printByteArray(b.array(), offset, wrap, max);
+    }
+    
+    public static void printByteArray(byte[] b, int offset, int wrap){
+        ByteUtils.printByteArray(b, offset, wrap, -1);
+    }
+    
+    public static void printByteArray(byte[] b, int offset, int wrap, int max){
+        int count = 0; 
+        int position = offset;
+        boolean keep = true;
+        while(keep){
+            count++;
+            if(position>=b.length){
+                keep = false;
+            } else {
+                System.out.printf("  %02X ", b[position]);
+                if(count%wrap==0) System.out.println();
+            }
+            position++;
+            if(max>0) if(count>max) keep = false;
+        }
+        System.out.println();
     }
     
     public static int getInteger(int data, int bitstart, int bitend){

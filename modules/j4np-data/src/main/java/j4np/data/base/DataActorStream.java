@@ -59,5 +59,9 @@ public class DataActorStream {
         }
         
         if(this.dataSync!=null) dataSync.close();
+        for(int i = 0; i < this.actors.size(); i++){
+            if(this.actors.get(i).getBenchmark()>0)
+                this.actors.get(i).showBenchmark();
+        }
     }
 }

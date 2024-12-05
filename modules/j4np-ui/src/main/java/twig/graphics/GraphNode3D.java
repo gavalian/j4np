@@ -7,11 +7,9 @@ package twig.graphics;
 import j4np.geom.prim.Camera3D;
 import j4np.geom.prim.Line3D;
 import j4np.geom.prim.Point3D;
-import j4np.geom.prim.Quad3D;
 import j4np.geom.prim.Screen3D;
 import j4np.graphics.Node2D;
 import j4np.graphics.Translation2D;
-import j4np.graphics.d3.Node3D;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -62,7 +60,7 @@ public class GraphNode3D extends Node2D {
     }
     
      protected final void refreshCamera(){
-        this.camera.setViewingAngleDeg(18);
+        this.camera.setViewingAngleDeg(24);
         this.camera.incrementRotationX(Math.toRadians(30));
         this.camera.incrementRotationY(Math.toRadians(-30));
         

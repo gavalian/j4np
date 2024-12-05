@@ -367,6 +367,14 @@ public class Canvas2D extends JPanel implements MouseInputListener {
     @Override
     public void mousePressed(MouseEvent e) {
         this.mousePressed.setLocation(e.getX(), e.getY());
+        for(Node2D node : this.graphicsComponents){
+            if(node.getBounds().contains(e.getX(), e.getY())){
+            //if(node.mousePressed(e.getX(), e.getY())==true){
+                this.activeNode = node;
+                node.mousePressed(e.getX(),e.getY());
+                //System.out.printf(" mouse released : well found an active node");
+            }
+        }
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

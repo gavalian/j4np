@@ -8,11 +8,13 @@ import j4np.hipo5.data.Bank;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Schema;
 import j4np.hipo5.data.SchemaFactory;
+import j4np.hipo5.io.HipoChain;
 import j4np.hipo5.io.HipoDoctor;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
 import j4np.utils.FileUtils;
 import j4np.utils.ProgressPrintout;
+import j4np.utils.asciitable.Table;
 import j4np.utils.io.OptionApplication;
 import j4np.utils.io.OptionParser;
 import j4np.utils.io.OptionStore;
@@ -37,7 +39,12 @@ public class HipoUtilities extends OptionApplication {
         parser.addCommand("-filter2", " filter banks from the input files (improved version)");
         parser.addCommand("-info", " printout information about the file");
         parser.addCommand("-doctor", " fix corrupt hipo file");
+        parser.addCommand("-compare", " compare a bank from two different files");
         
+        parser.getOptionParser("-compare").addRequired("-b", "bank name ")
+                .addOption("-e","-1", "event number")
+                .addOption("-p", "false", "print the bank");
+                
         parser.getOptionParser("-filter").addRequired("-o", " output file name ")
                 .addOption("-t", "0", " tag of the events to filter. other tags are written as is.")
                 .addRequired("-b", " filter string separated by (,)")
@@ -162,6 +169,12 @@ public class HipoUtilities extends OptionApplication {
             System.out.println("****>>>> processed events : " + counter);
         }
         writer.close();
+    }
+    
+    public static void split(List<String> files, String pattern, int maxEvents){
+        HipoChain chain = new HipoChain(files);
+        
+        //HipoWriter w = HipoWriter.create(pattern, chain.getReader());
     }
     
     public static void filter(List<String> inputFile, String outputFile, 
@@ -311,6 +324,61 @@ public class HipoUtilities extends OptionApplication {
         writer.close();
     }
     
+    
+    public static void compareBank(String[] banknames, int nevent, boolean verbose, boolean printflag, String file1, String file2){
+        HipoReader r1 = new HipoReader(file1);
+        HipoReader r2 = new HipoReader(file2);
+        
+        Bank[] b1 = r1.getBanks(banknames);
+        Bank[] b2 = r2.getBanks(banknames);
+        int[] diffs = new int[b1.length];
+        int[] rowdiffs = new int[b1.length];
+        
+        System.out.printf("COMPARE FILE 1  NEVENTS %d, FILE 2 NEVENTS %d\n",
+                r1.getEventCount(),r2.getEventCount());
+        
+        Event event1 = new Event();
+        Event event2 = new Event();
+        int counter = 0;
+        while(r1.hasNext()){
+            
+            r1.next(event1); event1.read(b1);
+            r2.next(event2); event2.read(b2);
+
+            for(int i = 0; i < b1.length; i++){
+                int diff = b1[i].compare2(b2[i], false);
+                if(diff<0) {
+                    System.out.printf(">>>:-----------------  Event # %d\n",counter);
+                    System.out.printf(" bank = %18s , rows[1] = %8d, rows[2] = %8d\n",
+                            b1[i].getSchema().getName(),b1[i].getRows(),b2[i].getRows());
+                    rowdiffs[i]++;
+                }
+                if(diff>0) {
+                    System.out.printf(">>>:-----------------  Event # %d\n",counter);
+                    System.out.printf(" bank = %18s , differences = %8d\n",
+                            b1[i].getSchema().getName(),diff);
+                    diffs[i] += diff;
+                }
+            }
+            counter++;
+        }
+        
+        System.out.printf("\ncompare summary \n");
+        System.out.printf("---------------- \n");
+        String[]  header = new String[]{"bank","differneces","rows mismatch"};
+        String[][]  data = new String[b1.length][3];
+        for(int i = 0; i < b1.length; i++){
+            Integer  iv = diffs[i];
+            Integer iv2 = rowdiffs[i];
+            
+            data[i][0] = b1[i].getSchema().getName();
+            data[i][1] = iv.toString();
+            data[i][2] = iv2.toString();
+        }
+        String table = Table.getTable(header,data, new Table.ColumnConstrain(1,12));
+        System.out.println(table);
+    }
+    
     public static void reduceDir(String directory, String output){
         List<String> files = FileUtils.dir(directory,"*.hipo");
         HipoUtilities.reduce(files, output);
@@ -344,8 +412,7 @@ public class HipoUtilities extends OptionApplication {
         System.out.println("\t  g/i: show data for node group=g and item=i");
         
         System.out.println("\n\nthis is the way...\n");
-        
-        
+                
     }
     
     public static void hipoDump(String file, String banksShow, String banksExist, List<Long> tagsList){
@@ -421,6 +488,26 @@ public class HipoUtilities extends OptionApplication {
         
     }
     
+    public static void mergeChunks(List<String> input, String pattern, int nchunks){
+        List<String> inputChunk = new ArrayList<>();
+        List<String> inputBuffer = new ArrayList<>();
+        
+        inputBuffer.addAll(input);
+        
+        boolean keep = true;
+        int counter = 0;
+        while(keep==true){
+            inputChunk.clear();
+            while(inputChunk.size()<nchunks&&inputBuffer.size()>0){
+                inputChunk.add(inputBuffer.get(0)); 
+                inputBuffer.remove(0);
+            }
+            String output = String.format("%s_%06d.h5", pattern, counter);
+            HipoUtilities.merge(output, inputChunk); counter++;
+            if(inputBuffer.size()==0) keep = false;
+        }
+    }
+    
     public static void merge(String output, List<String> inputs){
         
         System.out.printf("::: mergin files : %d\n",inputs.size());
@@ -429,8 +516,7 @@ public class HipoUtilities extends OptionApplication {
         long totalCounter = 0L;
         for(int i = 0; i < inputs.size(); i++){
             HipoReader r = new HipoReader();
-            r.setDebugMode(0);
-            
+            r.setDebugMode(0);            
             try {
                 r.open(inputs.get(i));
                 if(w==null) w = HipoWriter.create(output, r);
@@ -489,6 +575,14 @@ public class HipoUtilities extends OptionApplication {
             
             HipoUtilities.filter2(inputFiles, outputFile, 
                     nodes,regExpression,new int[]{tagToFilter},schemaFilter,maxEvents,compression);            
+        }
+        if(parser.getCommand().compareTo("-compare")==0){
+            List<String>  inputFiles    = parser.getOptionParser("-compare").getInputList();
+            String         bank = parser.getOptionParser("-compare").getOption("-b").stringValue();
+            String[] banks = bank.split(",");
+            Integer       event    = parser.getOptionParser("-compare").getOption("-e").intValue();
+            boolean       print = parser.getOptionParser("-compare").getOption("-p").stringValue().contains("true");
+            HipoUtilities.compareBank(banks, event, true, print, inputFiles.get(0),inputFiles.get(1));
         }
         
         if(parser.getCommand().compareTo("-filter")==0){

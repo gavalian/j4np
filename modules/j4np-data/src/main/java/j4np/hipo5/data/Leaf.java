@@ -45,6 +45,7 @@ public class Leaf extends BaseHipoStructure {
     public Leaf(int group, int item, String format, int rows){        
         dataDescriptor = new DataStructureDescriptor();
         dataDescriptor.parse(format);
+        
         int rowLength = dataDescriptor.getStructureLength();
         int formatLength = format.length();
         int size = rowLength*rows + formatLength + 8;
@@ -66,8 +67,19 @@ public class Leaf extends BaseHipoStructure {
     
     public final void setRows(int rows){
         int rowLength = dataDescriptor.getStructureLength();
-        int size = rowLength*rows + this.getHeaderLength();
-        setSize(size);
+        int      size = rowLength*rows ;
+        int  nodeSize = size + this.getHeaderLength();
+        if(nodeSize>this.structBuffer.array().length){
+            byte[] buffer = new byte[nodeSize+128];
+            int    length = this.getLength();
+            System.arraycopy(this.structBuffer.array(), 0, buffer, 0, length);
+            this.structBuffer = ByteBuffer.wrap(buffer);
+            this.structBuffer.order(bufferOrder);
+            this.setSizeWord(nodeSize);
+        } else {
+            this.setSizeWord(nodeSize);
+        }
+        //setSize(size);
     }
     
     public final int getRows(){
@@ -297,6 +309,41 @@ public class Leaf extends BaseHipoStructure {
         System.out.println(this.rowToString(row));
     }
     
+    
+    public static Leaf getLeaf(int group, int item, Bank b, int... columns){
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < columns.length; i++){
+            int type = b.getSchema().getType(columns[i]);
+            switch(type){
+                case 1: str.append("b"); break;
+                case 2: str.append("s"); break;
+                case 3: str.append("i"); break;
+                case 4: str.append("f"); break;
+                case 5: str.append("d"); break;
+                case 8: str.append("l"); break;
+                default:  str.append("f"); break;
+            }
+        }
+        
+        Leaf leaf = new Leaf(group,item,str.toString(),b.getRows());
+        leaf.setRows(b.getRows());
+        for(int r = 0; r < b.getRows(); r++){
+
+            for(int e = 0; e < columns.length; e++){
+                int type = b.getSchema().getType(columns[e]);
+                switch(type){
+                    case 1: leaf.putByte(e, r, b.getByte(columns[e], r)); break;
+                    case 2: leaf.putShort(e, r, b.getShort(columns[e], r)); break;
+                    case 3: leaf.putInt(e, r, b.getInt(columns[e], r)); break;
+                    case 4: leaf.putFloat(e, r, b.getFloat(columns[e], r)); break;
+                    case 5: leaf.putDouble(e, r, b.getDouble(columns[e], r)); break;
+                    case 8: leaf.putLong(e, r, b.getLong(columns[e], r)); break;
+                    default: break;
+                }
+            }
+        }
+        return leaf;
+    }
     /**
      * Descriptor class is used in data Structure to define
      * the format of the internal buffer.
@@ -491,10 +538,13 @@ public class Leaf extends BaseHipoStructure {
         }
     }
     
-    
     public static Leaf random(int nrows){
+       return Leaf.random(nrows, "bsssffl");
+    }
+    
+    public static Leaf random(int nrows, String format){
 
-        Leaf node = new Leaf(144,15,"bsssffl",nrows);
+        Leaf node = new Leaf(144,15,format,nrows);
         node.setRows(nrows);
         int nentries = node.getEntries();
         for(int i = 0; i < nrows; i++){
@@ -593,9 +643,42 @@ public class Leaf extends BaseHipoStructure {
     
     public static void main(String[] args){
         
-        Leaf node1 = Leaf.random(12);
+        Leaf l1 = new Leaf(30000,1,"bbiif",5);
+        l1.setRows(3);
+        
+        ByteUtils.printByteBuffer(l1.getByteBuffer(), 0, 12, 60);        
+        l1.show();
+        l1.print();
+        
+        l1.setRows(12);
+        ByteUtils.printByteBuffer(l1.getByteBuffer(), 0, 12, 60);
+        l1.print();
+/*        l1.setRows(12);
+//        ByteUtils.printByteBuffer(l1.getByteBuffer(), 0, 12, 60);
+//        l1.show();
+        
+        //l1.setFormatAndLength("ssiif", 48);
+        l1.print();
+        
+*/
+        Event e = new Event();
+        
+        e.write(l1);
+        
+        e.scanShow();
+        
+        Leaf l2 = new Leaf(30000,1,"bbiif",15);
+        
+        
+        e.read(l2);
+        
+        l2.show();
+        l2.print();
+        /*Leaf node1 = Leaf.random(12);
         node1.show();
         node1.print();
+        */
+        
         /*
         node1.refactor(11, 22, "bss");
         node1.setRows(3);
