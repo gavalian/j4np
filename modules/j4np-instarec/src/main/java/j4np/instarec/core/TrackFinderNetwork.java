@@ -570,9 +570,11 @@ public class TrackFinderNetwork {
             this.evaluateParameters(listRe);
             this.cleanup(listRe);
             //listRe.show();
-            Leaf statsLeaf = new Leaf(32000,21,"6i6",1);
+            Leaf statsLeaf = new Leaf(32000,21,"6i6i",1);
+            statsLeaf.setRows(1);
+            for(int i = 0; i < 12; i++) statsLeaf.putInt(0, i, stats[i]);
             //Node statsNode = new Node(32000,21, stats);
-            //e.write(statsNode);
+            e.write(statsLeaf);
             e.write(listRe.dataNode());
         }
     }
