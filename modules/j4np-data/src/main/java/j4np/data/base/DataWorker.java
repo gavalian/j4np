@@ -29,7 +29,9 @@ public  abstract class DataWorker<R extends DataSource,T extends DataEvent> impl
     
     public abstract boolean init(R src);
     public abstract void    execute(T e);
-        
+    public void execute(DataFrame<T> frame){ 
+        System.out.printf("DataWorker:: (%s) : execute(DataFrame<> frame) is not implemented...",name);
+    }
     public boolean  parse(String json){
         return true;
     }

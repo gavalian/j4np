@@ -40,6 +40,7 @@ public class DataActorStream {
         
         int active = 0;
         boolean keep = true;
+        long startTime = System.currentTimeMillis();
         while(keep){
             try {
                 Thread.sleep(500);
@@ -52,16 +53,21 @@ public class DataActorStream {
                 if(actors.get(t).isAlive()==true){ 
                     active++;
                 } else {
-                    System.out.printf("actor-stream: actor # %d finished time = %d\n",t+1,actors.get(t).executionTime());
+                    System.out.printf("actor-stream: actor # %d , processed %12d, finished time = %d\n",t+1,actors.get(t).eventsProcessed,actors.get(t).executionTime());
                 }
 
             if(active==0) keep = false;
         }
-        
+        long endTime = System.currentTimeMillis();
+        long total = 0L;
         if(this.dataSync!=null) dataSync.close();
         for(int i = 0; i < this.actors.size(); i++){
+            total += actors.get(i).eventsProcessed;
             if(this.actors.get(i).getBenchmark()>0)
                 this.actors.get(i).showBenchmark();
         }
+        double time = (endTime-startTime);
+        time = time/1000.0;
+        System.out.printf("stream:: processed = %d, actors = %d, rate = %4f\n",total,actors.size(),((double)total)/time);
     }
 }

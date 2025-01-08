@@ -156,6 +156,7 @@ public class FrameView extends JPanel implements ActionListener {
     }
     
     public static void main(String[] args){
+        
         FrameView view = new FrameView(25);
         Random r = new Random();
         for(int k = 0; k < view.dataEvents.size(); k++)

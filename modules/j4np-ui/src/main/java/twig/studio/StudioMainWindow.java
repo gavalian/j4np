@@ -168,6 +168,8 @@ public class StudioMainWindow extends JFrame implements ActionListener {
     }
     
     public static void main(String[] args){
+        
+        
         StudioMainWindow mw = new StudioMainWindow();
         
         JMenu[] menus = new JMenu[2];

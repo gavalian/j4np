@@ -5,14 +5,17 @@
 package j4np.hipo5.examples;
 
 import j4np.hipo5.data.Bank;
+import j4np.hipo5.data.ByteUtils;
 import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Node;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -193,13 +196,60 @@ public class Compression {
         w[0].close();
         w[1].close();
     }
+    public static void compressFloats(){
+        Random r = new Random();
+        float[] buffer = new float[1024*80];
+        
+        HipoWriter  w = new HipoWriter();
+        HipoWriter ws = new HipoWriter();
+        w.setCompressionType(0); ws.setCompressionType(0);
+        w.open("data.h5"); ws.open("data_swaped.h5");
+        
+        Event e = new Event();
+        for(int j = 0; j < 200; j++){
+            for(int i = 0; i < buffer.length; i++) buffer[i] = r.nextFloat();
+
+            Node n = new Node(12,1, buffer);
+            
+            e.reset(); e.write(n);
+            w.addEvent(e);
+            
+            //System.out.println(" ORIGINAL ");
+            //ByteUtils.printByteArray(n.getBufferData(), 0, 64);
+            
+            ByteBuffer b = ByteBuffer.wrap(n.getBufferData());            
+            b.order(ByteOrder.LITTLE_ENDIAN);
+            for(int k = 8; k < b.array().length-4; k+=4){
+                int cu = b.getInt(k);
+                int nx = b.getInt(k+4);
+                b.putInt(k, cu^nx);
+            }
+            //System.out.println(" PACKED ");
+            //ByteUtils.printByteArray(n.getBufferData(), 0, 64);
+            ByteBuffer d = ByteUtils.getBytePack(b, 8, 4);
+            System.arraycopy(d.array(), 0, n.getBufferData(), 0, n.getBufferData().length);
+            e.reset();e.write(n);
+            ws.addEvent(e);
+            //System.out.println(" ORIGINAL ");
+            //ByteUtils.printByteBuffer(b, 0, 32);
+            //System.out.println(" PACKED ");
+            //ByteUtils.printByteBuffer(d, 0, 32);
+            //n.getBufferData();
+            //System.out.println(" PACKED ");
+            //ByteUtils.printByteArray(n.getBufferData(), 0, 64);
+        }
+        w.close();
+        ws.close();
+    }
     
     public static void main(String[] args){
         
-        String file = "/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629.hipo";
+        //String file = "/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629.hipo";
         
         //Compression.writeFiles(file);
-        Compression.uncompress(file);
+        //Compression.uncompress(file);
+        
+        Compression.compressFloats();
         
         /*
         Compression c = new Compression();

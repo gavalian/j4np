@@ -223,7 +223,10 @@ public class SchemaFactory {
         int hash = hashCode(group,item);
         return this.schemaEntriesGroups.containsKey(hash);
     }
-    
+    public Schema getSchema(int group, int item){
+        int hash = hashCode(group,item);        
+        return this.schemaEntriesGroups.get(hash);
+    }
     public Schema getSchema(String name){
         return this.schemaEntries.get(name);
     }

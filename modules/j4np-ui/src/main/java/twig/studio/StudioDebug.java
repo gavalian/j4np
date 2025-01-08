@@ -4,6 +4,7 @@
  */
 package twig.studio;
 
+import j4np.hipo5.gui.DataSourceComponent;
 import java.util.Random;
 import javax.swing.JFrame;
 import twig.data.H1F;
@@ -51,7 +52,9 @@ public class StudioDebug {
     }
     
     public static void main(String[] args){
-        StudioDebug.debug1();
+        //StudioDebug.debug1();
+        StudioWindow.changeLook();
+        DataSourceComponent.debug();
     }
 
 }

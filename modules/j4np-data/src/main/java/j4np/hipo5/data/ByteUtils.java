@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.Deflater;
@@ -311,9 +312,45 @@ public class ByteUtils {
         return (int) ((word>>(start))&ByteUtils.bitMap.get(index));
     }
     
+    public static ByteBuffer getBytePack(ByteBuffer b, int offset, int step){
+        byte[] r = new byte[b.array().length];
+        ByteBuffer res = ByteBuffer.wrap(r);
+        res.order(b.order());
+        System.arraycopy(b.array(), 0, res.array(), 0, offset);
+        int pos = 0;
+        for(int j = offset; j < r.length; j+= step){
+            res.put(pos+offset, b.get(j)); pos++;
+        }
+        for(int j = offset; j < r.length; j+=step){
+            res.put(pos+offset, b.get(j+1)); pos++;
+        }
+        for(int j = offset; j < r.length; j+= step){
+            res.put(pos+offset, b.get(j+2)); pos++;
+        }
+        for(int j = offset; j < r.length; j+= step){
+            res.put(pos+offset, b.get(j+3)); pos++;
+        }
+        return res;
+    }
+    
     public static void main(String[] args){
         //BioByteUtils.printBitMap();
         //System.out.println(BioByteUtils.getByteString(1245678));
+        byte[] bytes = new byte[20];
+        ByteBuffer b = ByteBuffer.wrap(bytes);
+        
+        b.putInt( 0, 1024);
+        b.putFloat( 4, 0.1f);
+        b.putFloat( 8, 0.4f);
+        b.putFloat(12, 0.8f);
+        b.putFloat(16, 0.16f);
+        
+        ByteUtils.printByteBuffer(b, 0, 32);
+        
+        ByteBuffer r = ByteUtils.getBytePack(b, 4, 4);
+        ByteUtils.printByteBuffer(r, 0, 32);
+        
+        /*
         int header  = 0x00FFFFFF;
         int headerM = ByteUtils.write(header, 4, 10, 12);
         int headerR = ByteUtils.read(headerM, 10,12);
@@ -333,6 +370,6 @@ public class ByteUtils {
         }
         long etime_ = System.currentTimeMillis();
         double time = (etime_-stime_)/1000.0;
-        System.out.println("Deflate speed = " + time + " sec");
+        System.out.println("Deflate speed = " + time + " sec");*/
     }
 }

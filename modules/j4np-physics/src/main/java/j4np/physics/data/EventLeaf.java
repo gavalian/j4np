@@ -2,15 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package j4np.physics;
+package j4np.physics.data;
 
+import j4np.hipo5.data.Event;
 import j4np.hipo5.data.Leaf;
+import j4np.physics.Vector3;
+import j4np.physics.data.PhysDataEvent;
 
 /**
  *
  * @author gavalian
  */
-public class EventLeaf extends PhysicsEvent {
+public class EventLeaf extends PhysDataEvent {
     private Leaf dataLeaf = null;
     
     private int     index_pid = 0;
@@ -57,7 +60,13 @@ public class EventLeaf extends PhysicsEvent {
     public void status(int index, int value) {
         
     }
-
+    @Override
+    public void read(Event event){
+        event.read(dataLeaf);
+        //properties.read(event);
+        //if(configBank!=null) event.read(configBank);
+        //System.out.printf(" bank ");
+    }
     @Override
     public void vector(Vector3 v, int index) {
         v.setXYZ(dataLeaf.getDouble(index_px, index), 

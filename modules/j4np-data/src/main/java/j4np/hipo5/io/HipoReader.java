@@ -37,6 +37,8 @@ import j4np.hipo5.data.SchemaFactory;
 import j4np.hipo5.utils.HipoLogos;
 import j4np.utils.ProgressPrintout;
 import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -815,6 +817,40 @@ public class HipoReader implements DataSource {
             w.add(event);
             w.close();
         }
+    }
+    
+    @Override
+    public boolean configure(){
+        JFileChooser fileChooser = new JFileChooser();
+
+        // Set a title for the dialog
+        fileChooser.setDialogTitle("Select a File");
+
+        // Add filters for .hipo and .h5 file extensions
+        FileNameExtensionFilter hipoFilter = new FileNameExtensionFilter("HIPO Files (*.hipo)", "hipo");
+        FileNameExtensionFilter h5Filter = new FileNameExtensionFilter("HDF5 Files (*.h5)", "h5");
+        
+        // Add filters to the file chooser
+        fileChooser.addChoosableFileFilter(hipoFilter);
+        fileChooser.addChoosableFileFilter(h5Filter);
+
+        // Set one of the filters as the default
+        fileChooser.setFileFilter(hipoFilter);
+
+        // Show the open dialog
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // Get the selected file
+            File selectedFile = fileChooser.getSelectedFile();
+            //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            this.setDebugMode(1);
+            this.open(selectedFile.getAbsolutePath());
+        } else {
+            System.out.println("File selection canceled.");
+        }
+        
+        return true;
     }
     public static void main(String[] args){
         //String filename = "/Users/gavalian/Work/Software/project-7a.0.0/skim_calib_clas_005700.evio.00020.hipo_7.hipo";

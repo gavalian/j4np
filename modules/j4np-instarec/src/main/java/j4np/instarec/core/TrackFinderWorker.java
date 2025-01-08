@@ -5,6 +5,7 @@
 package j4np.instarec.core;
 
 import j4np.data.base.DataEvent;
+import j4np.data.base.DataFrame;
 import j4np.data.base.DataSource;
 import j4np.data.base.DataWorker;
 import j4np.hipo5.data.Event;
@@ -30,4 +31,9 @@ public class TrackFinderWorker extends DataWorker {
         finder.process8((Event) e);
     }
     
+    @Override
+    public void execute(DataFrame e) {
+        //System.out.println("running this");
+        finder.process8f(e);
+    }
 }

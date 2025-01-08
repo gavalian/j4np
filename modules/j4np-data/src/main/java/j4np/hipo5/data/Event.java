@@ -6,6 +6,7 @@
 package j4np.hipo5.data;
 
 import j4np.data.base.DataEvent;
+import j4np.data.base.DataFrame;
 import j4np.data.base.DataNode;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -123,6 +124,17 @@ public class Event implements DataEvent {
         return (scan(group,item)>8);
     }
     
+    public static DataFrame getDataFrame(int count){
+       return Event.getDataFrame(count, 256*1024);
+    }
+    
+    public static DataFrame getDataFrame(int count, int size){
+        DataFrame<Event> frame = new DataFrame<>();
+        for(int i = 0; i < count; i++){
+            frame.addEvent(new Event(size));
+        }
+        return frame;
+    }
     public void require(int size){
         if(this.eventBuffer.capacity()<size){
             //------------------------- fix this here, this should be copying the existing buffer
@@ -741,6 +753,45 @@ public class Event implements DataEvent {
     public boolean verify() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         return true;
+    }
+
+    @Override
+    public String showString() {
+        
+        StringBuilder str = new StringBuilder();
+        int    position = EVENT_HEADER_SIZE;
+        int eventLength = this.eventBuffer.getInt(EVENT_LENGTH_OFFSET);
+        //this.eventNodesMap.reset();
+        str.append(getEventHeaderString());
+        while(position + NODE_HEADER_LENGTH < eventLength){
+            short group = eventBuffer.getShort( position    );
+            //System.out.println(" group = " + group);
+            byte  item  = eventBuffer.get(      position + 2);
+            byte  type  = eventBuffer.get(      position + 3);
+            int   sizeWord  = eventBuffer.getInt( position + 4);
+            int   size  = sizeWord&0x00FFFFFF;
+            int   format = (sizeWord>>24)&0x000000FF;
+            int   rows = 0;
+            switch(type){
+                case 1: rows = size; break;
+                case 2: rows = size>0?size/2:0; break;
+                case 3: rows = size>0?size/4:0; break;
+                case 4: rows = size>0?size/5:0; break;
+                case 5: rows = size>0?size/8:0; break;
+                case 8: rows = size>0?size/8:0; break;
+                default: break;
+            }
+            
+            if(type==1) rows = size;
+            if(type==2) rows = size>0?size/2:0;
+            if(type==3) rows = size>0?size/4:0;
+            
+            str.append(String.format("%6d,%4d, %5d, %4d , %4d, %4d, %5d\n",
+                    group,item, type, position, format, size, rows));
+            //if(__group==group&&__item==item)    return position;
+            position += size + NODE_HEADER_LENGTH;
+        }
+        return str.toString();
     }
     
     public static class EventNodes {

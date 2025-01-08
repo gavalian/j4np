@@ -156,4 +156,9 @@ public class EvioEvent extends BaseStructure implements DataEvent {
     public boolean verify() {
         return true;
     }
+
+    @Override
+    public String showString() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

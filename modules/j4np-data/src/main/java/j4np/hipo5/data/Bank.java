@@ -258,7 +258,21 @@ public class Bank {
         return column;
     }
     
+    public long[] getLong(String name){
+        int nrows = this.getRows();
+        long[] column = new long[nrows];
+        int element = this.getSchema().getEntryOrder(name);
+        for(int r = 0; r < nrows; r++) { column[r] = this.getLong(element, r);}
+        return column;
+    }
     
+    public float[] getFloat(String name){
+        int nrows = this.getRows();
+        float[] column = new float[nrows];
+        int element = this.getSchema().getEntryOrder(name);
+        for(int r = 0; r < nrows; r++) { column[r] = this.getFloat(element, r);}
+        return column;
+    }
     
     public int getInt(String name, int row){
         int type = this.nodeSchema.getType(name);
@@ -906,6 +920,83 @@ public class Bank {
         return diff;
     }
     
+    public String toJson(){
+        StringBuilder str = new StringBuilder();
+        str.append("{\n");
+        
+        
+        for(int i = 0 ; i < this.nodeSchema.getElements(); i++){
+            //str.append("\"").append(this.nodeSchema.getElementName(i)).append("\": ");
+            int    type = this.nodeSchema.getType(i);
+            String name = this.nodeSchema.getElementName(i);
+            if(type==1){                
+                str.append("\"").append(name).append("\": ");
+                byte[] data = getByte(name);
+                str.append(Arrays.toString(data)).append(",\n");
+            }
+            
+            if(type==2){                
+                str.append("\"").append(name).append("\": ");
+                short[] data = getShort(name);
+                str.append(Arrays.toString(data)).append(",\n");
+            }
+            
+            if(type==3){                
+                str.append("\"").append(name).append("\": ");
+                int[] data = getInt(name);
+                str.append(Arrays.toString(data)).append(",\n");
+            }
+            
+            if(type==4){                
+                str.append("\"").append(name).append("\": ");
+                float[] data = getFloat(name);
+                str.append(Arrays.toString(data)).append(",\n");
+            }
+            
+            if(type==5){
+                str.append("\"").append(name).append("\": ");
+                double[] data = this.getDouble(name);
+                str.append(Arrays.toString(data)).append(",\n");
+            }
+            
+            if(type==8){                
+                str.append("\"").append(name).append("\": ");
+                long[] data = this.getLong(name);
+                str.append(Arrays.toString(data)).append(",\n");
+            }
+            
+        }
+        
+        /*str.append("\"name\":\"")
+                .append(this.nodeSchema.getName())
+                .append("\",\n");
+        str.append("\"group\": ").append(this.nodeSchema.getGroup())
+                .append(",\n").append("\"item\": ")
+                .append(this.nodeSchema.getItem()).append("\n");*/
+        str.append("\"schema\": ").append(this.nodeSchema.getJsonString());
+        str.append("\n}");
+        return str.toString();
+    }
+    
+    public Leaf toLeaf(int group, int item){
+        Leaf leaf = new Leaf(group,item,this.nodeSchema.getLefFormat(),this.getRows());
+        leaf.setRows(this.getRows());
+        for(int i = 0; i < nodeSchema.getElements(); i++){
+            int type = nodeSchema.getType(i);
+            for(int r = 0; r < this.getRows(); r++){
+                switch(type){
+                    case 1: leaf.putByte(i, r, this.getByte(i, r)); break;
+                    case 2: leaf.putShort(i, r, this.getShort(i, r)); break;
+                    case 3: leaf.putInt(i, r, this.getInt(i, r)); break;
+                    case 4: leaf.putFloat(i, r, this.getFloat(i, r)); break;
+                    case 5: leaf.putDouble(i, r, this.getDouble(i, r)); break;
+                    case 8: leaf.putLong(i, r, this.getLong(i, r)); break;
+                    default: break;
+                }
+            }
+        }
+        return leaf;
+    }
     public static void main(String[] args){
         SchemaBuilder schb = new SchemaBuilder("ai:clusters",1200,1);
         
@@ -923,5 +1014,9 @@ public class Bank {
         
         System.out.println(bank.bankString());
         System.out.println(bank.bankString());
+        
+        System.out.println(bank.toJson());
+        
+        System.out.println(bank.getSchema().getJsonString());
     }
 }

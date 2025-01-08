@@ -36,7 +36,10 @@ public class DataTree extends Tree {
     public DataTree(String file, int group, int item, int count){
         leaf = new Leaf(1024);
         leafGroup = group; leafItem = item;
-        for(int i = 0; i < count; i++) map.put(String.format("c%d", i), i);
+        for(int i = 0; i < count; i++) { 
+            map.put(String.format("c%d", i+1), i); 
+            branches.add(String.format("c%d", i+1));
+        }
         reader.open(file);
     }
     
@@ -71,8 +74,10 @@ public class DataTree extends Tree {
 
     @Override
     public void reset() {
-        reader.getEvent(treeEvent,0);
-        treeEvent.read(leaf);
+        reader.rewind();
+        treeEvent = reader.nextEvent(treeEvent, leafGroup, leafItem);
+        //reader.getEvent(treeEvent,0);
+        treeEvent.read(leaf, leafGroup, leafItem);
         bankRowCount = leaf.getRows();
         bankRow = 0;
     }
@@ -103,13 +108,16 @@ public class DataTree extends Tree {
     }
     
     public static void main(String[] args){
-        String file = "/Users/gavalian/Work/Software/project-11.0/distribution/j4np/modules/j4np-instarec/chain_output_d.h5";
-        DataTree t = new DataTree(file,32000,1,12);
-        t.next();
+        String file = "/Users/gavalian/Work/Software/project-11.0/distribution/j4np/modules/j4np-instarec/chain_output.h5";
+        DataTree t = new DataTree(file,32000,21,12);
+        t.showBranches();
+        /*t.next();
         
         for(int i = 0; i < 20; i++){
             t.next();
             System.out.println( t.getValue(0));
-        }
+        }*/
+        
+        t.draw("c5","c1>0");
     }
 }

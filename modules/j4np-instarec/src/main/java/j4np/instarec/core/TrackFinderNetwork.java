@@ -548,7 +548,7 @@ public class TrackFinderNetwork {
             int length = e.scanLengthAt(32101,10,position);
             Leaf leaf = new Leaf(32101,10,"sbbbbff",length+128);
             e.readAt(leaf, 32101, 10, position);
-            int[] stats = new int[12];
+            int[] stats = new int[18];
             //leaf.print();
             
             Tracks listUn   = new Tracks(100000);
@@ -559,32 +559,40 @@ public class TrackFinderNetwork {
             int previous = 0;
             for(int sector = 0 ; sector < 6; sector++){
                 tc.sectors[sector].create(listUn, sector+1, cuts);
-                stats[sector*2] = listUn.getRows();
+                stats[sector*3] = listUn.getRows();
                 evaluate6(listUn);
                 //listUn.show();
                 TrackFinderUtils.copyFromTo(listUn, listRe);
-                stats[sector*2+1] = listRe.getRows() - previous;
+                stats[sector*3+1] = listRe.getRows() - previous;
+                stats[sector*3+2] = tc.sectors[sector].getCount();
                 previous = listRe.getRows();
+                
             }
             
             this.evaluateParameters(listRe);
             this.cleanup(listRe);
             //listRe.show();
-            //Leaf statsLeaf = new Leaf(32000,21,"6i6i",2);
-            //statsLeaf.setRows(1);
-            //for(int i = 0; i < 12; i++) statsLeaf.putInt(0, i, stats[i]);
+            Leaf statsLeaf = new Leaf(32000,21,"6i6i6i",2);
+            statsLeaf.setRows(1);
+            for(int i = 0; i < 18; i++) statsLeaf.putInt(i, 0, stats[i]);
             //Node statsNode = new Node(32000,21, stats);
-            //e.write(statsLeaf);
+            e.write(statsLeaf);
             e.write(listRe.dataNode());
         }
     }
     
     public void process8f(DataFrame<Event> frame){
+        
+        Tracks listUn   = new Tracks(50000);
+        Tracks listRe   = new Tracks(300);   
+        TrackConstructor tc = new TrackConstructor(); 
+        Leaf leaf = new Leaf(32101,10,"2s2b2f3b",2048);
+            
         for(int j = 0; j < frame.getCount(); j++){
-            Tracks listUn   = new Tracks(50000);
-            Tracks listRe   = new Tracks(300);   
-            TrackConstructor tc = new TrackConstructor(); 
-            Leaf leaf = new Leaf(32101,10,"2s2b2f3b",2048);
+            //Tracks listUn   = new Tracks(50000);
+            //Tracks listRe   = new Tracks(300);
+            //TrackConstructor tc = new TrackConstructor();
+            //Leaf leaf = new Leaf(32101,10,"2s2b2f3b",2048);
             
             Event e = (Event) frame.getEvent(j);
             int position = e.scan(32101, 10);
@@ -596,21 +604,21 @@ public class TrackFinderNetwork {
                 
                 listUn.dataNode().setRows(0);
                 listRe.dataNode().setRows(0);
-
+                
                 TrackFinderUtils.fillConstructor(tc,leaf);
-            //tc.show();
-            for(int sector = 0 ; sector < 6; sector++){
-                tc.sectors[sector].create(listUn, sector+1, cuts);
-
-                evaluate6(listUn);
-                //listUn.show();
-                TrackFinderUtils.copyFromTo(listUn, listRe);
+                //tc.show();
+                for(int sector = 0 ; sector < 6; sector++){
+                    tc.sectors[sector].create(listUn, sector+1, cuts);
+                    
+                    evaluate6(listUn);
+                    //listUn.show();
+                    TrackFinderUtils.copyFromTo(listUn, listRe);
+                }
+                
+                this.evaluateParameters(listRe);
+                //listRe.show();
+                e.write(listRe.dataNode());
             }
-            
-            this.evaluateParameters(listRe);
-            //listRe.show();
-            e.write(listRe.dataNode());
-        }
         }
     }
     

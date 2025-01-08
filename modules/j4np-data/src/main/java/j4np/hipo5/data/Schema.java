@@ -387,6 +387,22 @@ public class Schema {
         return str.toString();
     }
     
+    public String getLefFormat(){
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < this.getElements(); i++){
+            int type = this.getType(i);
+            switch(type){
+                case 1: str.append("b"); break;
+                case 2: str.append("s"); break;
+                case 3: str.append("i"); break;
+                case 4: str.append("f"); break;
+                case 5: str.append("d"); break;
+                case 8: str.append("l"); break;
+                default: str.append("b"); break;
+            }
+        }
+        return str.toString();
+    }
     
     public static class SchemaEntry {
         

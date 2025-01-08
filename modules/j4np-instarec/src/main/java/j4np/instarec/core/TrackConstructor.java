@@ -126,6 +126,12 @@ public class TrackConstructor {
             return str.toString();
         }
         
+        public int getCount(){
+            int count = 0;
+            for(int i = 0; i < this.superLayers.length; i++) count += this.superLayers[i].getRows();
+            return count;
+        }
+        
         public void show(){
             
             for(int i = 0; i < superLayers.length; i++){                

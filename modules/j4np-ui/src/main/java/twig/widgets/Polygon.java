@@ -29,6 +29,7 @@ public class Polygon implements Widget {
     TAttributesLine  attrLine = new TAttributesLine();
     TAttributesFill  attrFill = new TAttributesFill();
     
+    private boolean isQuadratic = false;
     
     public Polygon(){
         
@@ -55,6 +56,7 @@ public class Polygon implements Widget {
         this.ndfCoord = flag; return this;
     }
     
+    public Polygon setQuardatic(boolean flag){ this.isQuadratic = flag; return this;}
     public TAttributesFill fill(){ return attrFill;}
     public TAttributesLine line(){ return attrLine;}
     
@@ -103,6 +105,12 @@ public class Polygon implements Widget {
         return p;  
     }
     
+    public GeneralPath getPath(){
+        GeneralPath path = new GeneralPath();
+        path.moveTo(points.get(0).x, points.get(0).y);
+        for(int i = 1; i < points.size(); i++) path.lineTo(points.get(i).x, points.get(i).y);
+        return path;
+    }
     
     private void drawLinear(Graphics2D g2d, Rectangle2D r, Translation2D tr){
         TStyle style = TStyle.getInstance();
@@ -137,6 +145,7 @@ public class Polygon implements Widget {
             }
             //System.out.println(" x = " + points.get(i).x + " xc = " + xc);
             //System.out.println(" y = " + points.get(i).y + " yc = " + yc);
+            
             path.lineTo(xc,yc);
         }
         

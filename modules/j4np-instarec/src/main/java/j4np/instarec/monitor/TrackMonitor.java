@@ -13,7 +13,7 @@ import j4np.hipo5.data.Leaf;
 import j4np.hipo5.io.HipoReader;
 import j4np.hipo5.io.HipoWriter;
 import j4np.physics.EventFilter;
-import j4np.physics.EventLeaf;
+import j4np.physics.data.EventLeaf;
 import j4np.physics.LorentzVector;
 import j4np.physics.Vector3;
 import j4np.physics.VectorOperator;

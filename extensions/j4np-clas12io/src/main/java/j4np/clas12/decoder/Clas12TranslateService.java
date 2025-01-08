@@ -72,7 +72,7 @@ public class Clas12TranslateService extends DataWorker<HipoReader,Event> {
                         store.tdcCache.putByte(  1, r, (byte) address[1]);
                         store.tdcCache.putByte(  2, r, (byte) address[2]);
                         store.tdcCache.putShort( 3, r, (byte) address[3]);
-                        store.tdcCache.putByte(  4, r, (byte) (address[4]+1));
+                        store.tdcCache.putByte(  4, r, (byte) (address[4])); // was +1 before
                     }
                 }
                 
@@ -119,7 +119,7 @@ public class Clas12TranslateService extends DataWorker<HipoReader,Event> {
                         store.adcCache.putByte(  1, r, (byte) address[1]);
                         store.adcCache.putByte(  2, r, (byte) address[2]);
                         store.adcCache.putShort( 3, r, (byte) address[3]);
-                        store.adcCache.putByte(  4, r, (byte) (address[4]+1));
+                        store.adcCache.putByte(  4, r, (byte) (address[4]));
                     }
                 }                
                 //event.remove(group, item);

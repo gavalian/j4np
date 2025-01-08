@@ -17,12 +17,14 @@ public class DataActor extends Thread {
     
     private DataSource     dataSource = null;
     private DataSync         dataSync = null;
+    private boolean          runWithFrames = false;
     
     private DataFrame<DataEvent>      dataFrame = null;
     private List<DataWorker>        dataWorkers = new ArrayList<>();
     
-    private long[] workerTimes = null;
-    private long[] workerStats = null;
+    protected long[] workerTimes = null;
+    protected long[] workerStats = null;
+    protected long   eventsProcessed = 0L;
     
     private long startTime = 0L;
     private long   endTime = 0L;
@@ -31,6 +33,7 @@ public class DataActor extends Thread {
     
     public DataActor(){}
     
+    public DataActor setRunWithFrames(boolean flag){ runWithFrames = flag;return this;}
     public DataActor setSource(DataSource src){ dataSource =  src; return this;}
     public DataActor setSync(DataSync sync){      dataSync = sync; return this;}
     public DataActor setDataFrame(DataFrame frame) { dataFrame = frame; return this;}
@@ -40,7 +43,7 @@ public class DataActor extends Thread {
     
     @Override
     public void run(){
-    
+        //System.out.printf(" starting the actor with run with frame = %s\n",this.runWithFrames);
         if(benchmark!=0){
             int size = dataWorkers.size();
             workerTimes = new long[size+2];
@@ -50,19 +53,26 @@ public class DataActor extends Thread {
             int nframes = dataFrame.getCount();
             int nReceived = nframes;
             long now, then;
+
             while(nReceived==nframes){
                 then = System.nanoTime();
                 nReceived = dataSource.nextFrame(dataFrame);
+                this.eventsProcessed += nReceived;                
                 now = System.nanoTime();;
                 workerTimes[0] += (now-then);
                 workerStats[0] += nframes;
                 for(int w = 0; w < size; w++){
                     then = System.nanoTime();
-                    for(int f = 0; f < nframes; f++){
-                        try{
-                            dataWorkers.get(w).execute(dataFrame.getEvent(f));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    
+                    if(this.runWithFrames==true){
+                        dataWorkers.get(w).execute(dataFrame);
+                    } else {
+                        for(int f = 0; f < nframes; f++){
+                            try{
+                                dataWorkers.get(w).execute(dataFrame.getEvent(f));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                     now = System.nanoTime();
@@ -131,7 +141,7 @@ public class DataActor extends Thread {
         long nanoTime = 0L; for(int i = 0 ; i < workerTimes.length; i++) nanoTime += workerTimes[i];
         double r3 = ProgressPrintout.nanoTimeToHertz(workerStats[0],nanoTime);
         str.append("+").append("-".repeat(107)).append("+\n");
-        str.append(String.format("processint rate %12.4f Hz\n", r3));
+        str.append(String.format("| [actor] processing rate %12.4f Hz\n", r3));
         return str.toString();
     }
     

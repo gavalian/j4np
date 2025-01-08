@@ -33,12 +33,12 @@ import java.util.Map;
  */
 public class HipoWriter implements DataSync {
     
-    private Writer               writer = null;
-    private int       maximumRecordSize = 8*1024*1024;
-    private int     maximumRecordEvents = 100000;
-    private int         compressionType = 1;
+    protected Writer               writer = null;
+    private   int       maximumRecordSize = 8*1024*1024;
+    private   int     maximumRecordEvents = 100000;
+    private   int         compressionType = 1;
     
-     private boolean    splitOutputFiles = false;
+    private boolean    splitOutputFiles = false;
     private long      maxOutputFileSize = -1L;
     private int         outputFileCount = -1;
     private String       outputFileName = "";
@@ -48,7 +48,7 @@ public class HipoWriter implements DataSync {
     private List<Event>   headerEvents = new ArrayList<>();
 
     private final  Map<Long,RecordOutputStream> outputStreams = new HashMap<>();
-    private  RecordOutputStream     defaultOutputStream = null;//new RecordOutputStream();
+    protected  RecordOutputStream     defaultOutputStream = null;//new RecordOutputStream();
             
 //    private List<HipoDataSorter>           sorterList = new ArrayList<HipoDataSorter>();
     private String          rewriteMode = "RECREATE";

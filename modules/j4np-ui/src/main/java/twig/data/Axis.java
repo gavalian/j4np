@@ -17,6 +17,7 @@ public class Axis implements Serializable {
         private String axisTitle = "x";
 	private double minVal;
 	private double maxVal;
+        private double axisFactor = 1.0;
 	private boolean isUniform = true;
         
 	/**
@@ -78,7 +79,8 @@ public class Axis implements Serializable {
 	 */
 	public final void set(int bins, double min, double max) {
 		numBins = bins;
-
+                this.isUniform = true;
+                this.axisFactor = 1.0/(max-min);
 		if (min <= max) {
 			minVal = min;
 			maxVal = max;
@@ -186,7 +188,10 @@ public class Axis implements Serializable {
     public int getBin(double xVal) {
         if(xVal<axisMargins[0]) return -1;
         if(xVal>axisMargins[axisMargins.length-1]) return -2;
-        
+        //---- beaware -- this part is no rigorously tested 
+        if(isUniform==true){
+            return (int) (this.numBins*(xVal-this.axisMargins[0])*this.axisFactor);
+        }
     	/*for (int i = 0; i < numBins; i++) {
     		if ((xVal >= axisMargins[i] && xVal < axisMargins[i+1])) {
                     return i;

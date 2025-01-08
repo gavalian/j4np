@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import twig.config.TPalette;
 import twig.config.TStyle;
 import twig.graphics.TGCanvas;
 
@@ -47,6 +48,14 @@ public class BarChartBuilder {
     
     public BarChartBuilder setColors(int[] dc){
         this.colors = dc; return this;
+    }
+    
+    public BarChartBuilder setColors(String... sc){
+        this.colors = new int[sc.length];
+        for(int i = 0; i < this.colors.length; i++){
+            this.colors[i] = TPalette.createColorFromString(sc[i]);
+        }
+        return this;
     }
     public DataGroup build(){
         int  max = getMaxEntries();

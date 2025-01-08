@@ -238,7 +238,7 @@ public class Leaf extends BaseHipoStructure {
         switch(type){
             case 4 : return (double) structBuffer.getFloat(offset);
             case 5 : return structBuffer.getDouble(offset);
-            default: System.out.printf("structure::get : error\n"); return 0.0;
+            default: System.out.printf("structure::get : error , the type of entry = %d is %d (not 4 or 5) \n", entry, type); return 0.0;
         }
     }
     
@@ -563,7 +563,7 @@ public class Leaf extends BaseHipoStructure {
         return node;
     }
     
-    public void copyRow(CompositeNode node, int srcRow, int dstRow){
+    public void copyRow(Leaf node, int srcRow, int dstRow){
         
         int dstrows = this.getRows();
         int srcrows = node.getRows();
@@ -595,7 +595,7 @@ public class Leaf extends BaseHipoStructure {
     }
     
     
-    public boolean copyRows(CompositeNode b, int row, int length){
+    public boolean copyRows(Leaf b, int row, int length){
         int rowSize      = b.getRowsSize();
         int rowSizeLocal = this.getRowsSize();
         if(rowSize!=rowSizeLocal){
@@ -635,6 +635,7 @@ public class Leaf extends BaseHipoStructure {
                     case 2: b.putShort(entry, row, this.getShort(entry, row) ); break;
                     case 3: b.putInt(entry, row, this.getInt(entry, row) ); break;
                     case 4: b.putFloat(entry, row, this.getFloat(entry, row) ); break;
+                    case 5: b.putDouble(entry, row, this.getDouble(entry, row) ); break;
                     default: break;
                 }
             }

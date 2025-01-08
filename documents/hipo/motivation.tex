@@ -1,0 +1,18 @@
+\section{Motivation}
+\label{section-motivation}
+
+In physics experiments, the data goes through several cycles until it is used for physics analysis. 
+
+\begin{itemize}
+\item the signal from the detector components is recorded in its raw form (usually times and accumulated charge), 
+\item then the data is transformed to a form where each response from the detectors is converted to its digital form to values with units ( eV for charge and milliseconds for time). 
+\item reconstruction program analyses data from each detector to identify related signals and combine signals from various detectors to identify particles in each event (collision instance). The produced output contains tables with information about the particles in the event and the responses of each particle in each detector component, helping to identify particle species.
+\item For each physics analysis, different sets of selection algorithms are used to identify the physics reaction in each event and physics observables are calculated based on detected particles in the event, and the output is produced containing a columnar table for final physics analysis 
+\end{itemize}
+
+Traditionally, in CLAS experiments, a different format was used for each stage of the data lifecycle, which adds unnecessary complexity in supporting several data file formats with their conversion tools. There were also several dozen data selection and filtering tools developed by users for each data format that needed maintenance. A similar approach was envisioned for the CLAS12 experiment in its early stages of software development.
+Experienced readers can immediately spot the problem in this kind of approach and easily imagine a more logical approach. 
+To avoid the diversity of data format usage throughout the lifecycle of experimental data, it was decided to use one data format.
+Several prominent data formats were considered, such as ROOT~\cite{Brun:1997pa}, LCIO~\cite{Aplin:2012kj}, and HDF5~\cite{HDF5:2000pa}. While all of them have their strengths, it was found that 
+none of them can be efficiently used in all of the stages of data transformations.
+The High-Performance Output (HiPO) data format was developed for CLAS12 to be used in all stages of experimental data processing. It was designed to be efficient for data processing by reconstruction workflow and for final columnar data analysis.

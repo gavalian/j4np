@@ -55,12 +55,12 @@ public class RunInstaRec {
         
         HipoChain chain = new HipoChain(inputs); 
         
-        chain.setMaxEvents(2500);
+        //chain.setMaxEvents(2500);
         HipoWriter w = HipoWriter.create(output, chain.getReader());
 
         DataActorStream stream = new DataActorStream();
         
-        stream.setSource(chain).setSync(w);
+        stream.setSource(chain);//.setSync(w);
         
         ConverterWorker   convert = new ConverterWorker();
         DriftChamberWorker  dcwrk = new DriftChamberWorker();
@@ -71,27 +71,32 @@ public class RunInstaRec {
 
         //RunInstaRec.benchmark("w.h5", finder);
         
-       // List<DataWorker>  workers = Arrays.asList(convert,dcwrk,finder);
-        //List<DataWorker>  workers = Arrays.asList(convert,dcwrk, finder);
+        //List<DataWorker>  workers = Arrays.asList(finder);
+        //List<DataWorker>  workers = Arrays.asList(convert,dcwrk);//, finder);
         List<DataWorker>  workers = Arrays.asList(convert,dcwrk, finder);
         
-        List<DataActor>   actors = RunInstaRec.createActors(1,32, workers);
-        //for(DataActor a : actors) a.setBenchmark(1);
-        actors.get(0).setBenchmark(1);
+        List<DataActor>   actors = RunInstaRec.createActors(8,256, workers);
+        for(DataActor act : actors) act.setRunWithFrames(false);
+        for(DataActor a : actors) a.setBenchmark(1);
+        //actors.get(0).setBenchmark(1);
+        //actors.get(1).setBenchmark(1);
         stream.addActor(actors);//.addActor(convert2);//.addActor(convert3).addActor(convert4);                
         stream.run();
         
     }
+    
     public static void main(String[] args){
         
 //        List<String> files = FileUtils.dir("/Users/gavalian/Work/DataSpace/decoded/006677/","*hipo");
        
-        //List<String> files = Arrays.asList("output3.hipo");
-        List<String> files = Arrays.asList("wd.h5");
+        //List<String> files = Arrays.asList("/Users/gavalian/Work/Software/project-11.0/distribution/coatjava/output_006595_20k.h5");
+        String data = "/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629_denoised_DC.hipo";
+        List<String> files = Arrays.asList(data);
+        //List<String> files = Arrays.asList("chain_output.h5");
         for(String file : files) System.out.println(file);
         
         
-        RunInstaRec.run(files, "chain_output.h5");
+        RunInstaRec.run(files, "chain_output_class.h5");
 
         //List<String> files = Arrays.asList("/Users/gavalian/Work/DataSpace/decoded/clas_006595.evio.00625-00629.hipo");
         //RunInstaRec.run(files, "chain_output_006595.h5");

@@ -5,14 +5,43 @@
 \usepackage{hyperref}
 \usepackage{float}
 \usepackage{lineno}
-
+\usepackage{tabularx} % For specifying table width
+\usepackage{array}    % For additional column formatting options
 %\linenumbers
 % \usepackage[affil-it]{authblk}
 \usepackage{subcaption}
+\usepackage{listings}
+
 \newcommand{\note}[1]{\textcolor{blue}{#1}}
 \definecolor{LightCyan}{rgb}{0.88,1,1}
 \definecolor{LightRose}{rgb}{1,0.88,0.88}
 \definecolor{LightGreen}{rgb}{0.88,1,0.88}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 
 \title{High-Performance Data Format for Scientific Data Analysis}
 
@@ -27,11 +56,11 @@
 \begin{abstract}
 In this article, we present the High-Performance Output (HiPO) data format developed at Jefferson Laboratory for 
 storing and analyzing data from Nuclear Physics experiments. The format was designed to efficiently store large
-amount of experimental data, utilizing modern fast compression algorithms. The purpose of this development was 
+amounts of experimental data, utilizing modern fast compression algorithms. The purpose of this development was 
 to provide organized data in the output, facilitating access to relevant information within the large data files. The HiPO
 data format has features that are suited for storing raw detector data, reconstruction data, and the final physics analysis 
 data efficiently, eliminating the need to do data conversions through the lifecycle of experimental data. The HiPO data format
-is implemented in C++ and JAVA, and provides interfaces to Python and Julia, providing users with the choice of data 
+is implemented in C++ and JAVA, and provides bindings to FORTRAN, Python, and Julia, providing users with the choice of data 
 analysis frameworks to use.
 In this paper, we will present the general design and functionalities of the HiPO library and compare the performance of the library with
  more established data formats used in data analysis in High Energy and Nuclear Physics (such as ROOT and Parquete).
@@ -42,8 +71,11 @@ In this paper, we will present the general design and functionalities of the HiP
 
 
 \input{introduction}
+\input{motivation}
 \input{design}
 \input{format}
+\input{tagging}
+\input{columnar}
 \input{summary}
 
 \newpage
@@ -55,8 +87,29 @@ Office of Nuclear Physics under contract DE-AC05-06OR23177, and NSF grant no. CC
 the Richard T. Cheng Endowment. This work was performed using the Turing and Wahab computing
 clusters at Old Dominion University.
  
-\newpage
-\bibliography{references}
-\bibliographystyle{ieeetr}
+ 
+\begin{thebibliography}{}
+%\cite{Aplin:2012kj}
+\bibitem{Brun:1997pa}
+R.~Brun and F.~Rademakers,
+``ROOT: An object oriented data analysis framework,''
+Nucl. Instrum. Meth. A \textbf{389} (1997), 81-86
+doi:10.1016/S0168-9002(97)00048-X
+\bibitem{Aplin:2012kj}
+S.~Aplin, J.~Engels, F.~Gaede, N.~A.~Graf, T.~Johnson and J.~McCormick,
+``LCIO: A Persistency Framework and Event Data Model for HEP,''
+doi:10.1109/NSSMIC.2012.6551478
+
+\bibitem{HDF5:2000pa}
+The HDF Group,  http://www.hdfgroup.org/HDF5/
+
+%\cite{Brun:1997pa}
+
+%3821 citations counted in INSPIRE as of 08 Jan 2025
+%12 citations counted in INSPIRE as of 08 Jan 2025
+\end{thebibliography}
+%\newpage
+%\bibliography{references}
+%\bibliographystyle{ieeetr}
 
 \end{document}

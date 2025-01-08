@@ -66,5 +66,5 @@ public interface DataSource {
      * 
      * @return returns true if initialization was successful
      */
-    default boolean configue(){ return true;}
+    default boolean configure(){ return true;}
 }

@@ -12,5 +12,6 @@ import java.nio.ByteBuffer;
  * @author gavalian
  */
 public interface DataEvent extends DataBuffer {
-    public void        getAt(DataNode node, int position);  
+    public void        getAt(DataNode node, int position);
+    public String      showString();
 }
