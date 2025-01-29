@@ -17,6 +17,12 @@ import j4np.hipo5.data.Structure;
  */
 public class Hipo2Hipo4Worker extends DataWorker {
 
+    protected int containerSize = 4*1024;
+    
+    public Hipo2Hipo4Worker(int size){
+        containerSize = size;
+    }
+    
     @Override
     public boolean init(DataSource src) {
         return true;
@@ -26,7 +32,7 @@ public class Hipo2Hipo4Worker extends DataWorker {
     public void execute(DataEvent e) {
         Event ev = (Event) e;
         
-        Structure struct = new Structure(32000,120,12,2*1024);
+        Structure struct = new Structure(32000,120,12,containerSize);
         
         ev.move(struct, 32101, 10);
         ev.move(struct, 32000, 1);
