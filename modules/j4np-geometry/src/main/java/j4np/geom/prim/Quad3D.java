@@ -4,6 +4,7 @@
  */
 package j4np.geom.prim;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -29,16 +30,17 @@ public class Quad3D implements Face3D {
         q.points[3].set( sizeX*0.5, -sizeY*0.5,0.0);
         return q;
     }
+    
     public Point3D[] points(){return this.points;}
     
-    /*public static Quad3D rectXY(int xsize, int ysize){
+    public static Quad3D rectYZ(double ysize, double zsize){
         Quad3D quad = new Quad3D();
-        quad.point(0).set(-xsize, -ysize, 0);
-        quad.point(1).set(-xsize,  ysize, 0);
-        quad.point(2).set( xsize,  ysize, 0);
-        quad.point(3).set( xsize, -ysize, 0);
+        quad.point(0).set( 0.0, -ysize*0.5, -zsize*0.5);
+        quad.point(1).set( 0.0, -ysize*0.5,  zsize*0.5);
+        quad.point(2).set( 0.0,  ysize*0.5,  zsize*0.5);
+        quad.point(3).set( 0.0,  ysize*0.5, -zsize*0.5);
         return quad;
-    }*/
+    }
     
     public static Quad3D rectXZ(double xsize, double zsize){
         Quad3D quad = new Quad3D();
@@ -47,6 +49,13 @@ public class Quad3D implements Face3D {
         quad.point(2).set( xsize*0.5, 0,  zsize*0.5);
         quad.point(3).set( xsize*0.5, 0, -zsize*0.5);
         return quad;
+    }
+    
+    public double distance(Point3D point){
+        double distance = 0.0;
+        for(Point3D p : points)            
+            distance += point.distance(p);
+        return distance*0.25;
     }
     
     @Override
@@ -101,4 +110,18 @@ public class Quad3D implements Face3D {
             System.out.println("\t"+points[i]);
     }
     
+    public static class ZBuffer implements Comparator<Quad3D> {
+        private Point3D origin = null;
+        public ZBuffer(Point3D from){
+            origin = from;
+        }
+        
+        @Override
+        public int compare(Quad3D o1, Quad3D o2) {
+            double d1 = o1.distance(origin);
+            double d2 = o2.distance(origin);
+            return Double.compare(d2, d1);
+        }
+        
+    }
 }

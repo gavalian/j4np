@@ -41,9 +41,9 @@ public class DataActor extends Thread {
     public DataActor setBenchmark(int flag){ benchmark = flag; return this;}
     public int       getBenchmark(){return benchmark;}
     
-    @Override
-    public void run(){
-        //System.out.printf(" starting the actor with run with frame = %s\n",this.runWithFrames);
+    
+    
+    private void runWithoutFrames(){
         if(benchmark!=0){
             int size = dataWorkers.size();
             workerTimes = new long[size+2];
@@ -108,6 +108,79 @@ public class DataActor extends Thread {
         }
     }
     
+    @Override
+    public void run(){
+        //System.out.printf(" starting the actor with run with frame = %s\n",this.runWithFrames);
+        if(benchmark!=0){
+            int size = dataWorkers.size();
+            workerTimes = new long[size+2];
+            workerStats = new long[size+2];
+            Arrays.fill(workerStats, 0L);
+            Arrays.fill(workerTimes, 0L);
+            int nframes = dataFrame.getCount();
+            int nReceived = nframes;
+            long now, then;
+
+            while(nReceived==nframes){
+                then = System.nanoTime();
+                nReceived = dataSource.nextFrame(dataFrame);
+                this.eventsProcessed += nReceived;                
+                now = System.nanoTime();;
+                workerTimes[0] += (now-then);
+                workerStats[0] += nframes;
+                for(int w = 0; w < size; w++){
+                    then = System.nanoTime();
+                    
+                    if(this.runWithFrames==true){
+                        dataWorkers.get(w).execute(dataFrame);
+                    } else {
+                        for(int f = 0; f < nframes; f++){
+                            try{
+                                dataWorkers.get(w).execute(dataFrame.getEvent(f));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    now = System.nanoTime();
+                    workerTimes[w+1] += (now-then);
+                    workerStats[w+1] += nframes;
+                }
+                if(this.dataSync!=null) {
+                    then = System.nanoTime();
+                    dataSync.addFrame(dataFrame);
+                    now = System.nanoTime();
+                    workerTimes[size+1] += (now-then);
+                    workerStats[size+1] += nframes;
+                }
+            }
+        } else {
+        
+            startTime = System.currentTimeMillis();
+            int size = dataFrame.getCount();
+            int nReceived = size;
+            while(nReceived==size){
+                nReceived = dataSource.nextFrame(dataFrame);
+                
+                if(this.runWithFrames==true){
+                    for(int w = 0; w < this.dataWorkers.size(); w++)
+                        dataWorkers.get(w).execute(dataFrame);
+                } else {
+                    for(int k = 0; k < nReceived; k++){
+                        try{
+                            this.accept(dataFrame.getEvent(k));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                
+                if(this.dataSync!=null) dataSync.addFrame(dataFrame);
+            }
+            endTime = System.currentTimeMillis();
+        }
+    }
+    
     public void setWorkes(List<DataWorker> wrks){
         this.dataWorkers.addAll(wrks);
     }
@@ -146,7 +219,7 @@ public class DataActor extends Thread {
     }
     
     public void showBenchmark(){
-        System.out.println("Data Actor Benchmark\n");
+        System.out.printf("Data Actor Benchmark )run with frames = %s)\n",this.runWithFrames);
         System.out.println(this.getBenchmarkString());
         System.out.println("---\n");
     }

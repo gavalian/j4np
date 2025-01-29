@@ -273,10 +273,13 @@ public class TGH2Node3D extends Node2D {
             //System.out.println("zv = " + zv/normalization);
             //Color c = TStyle.getInstance().getPalette().palette2d().getColor3D(zv, 0, 1, true);
             Color c = dataMesh.getColor(i);
-            camera.fillPath(g2d, screen, true, c, new Color(80,80,80), this.defaultStroke, quad.points());
+            Color ct = new Color(c.getRed(),c.getGreen(),c.getBlue(),220);
+            camera.fillPath(g2d, screen, true, ct, new Color(80,80,80), this.defaultStroke, quad.points());
            //camera.fillPath(g2d, screen, true, new Color(50,150,255,75), new Color(80,80,80), this.defaultStroke, quad.points());
+           
            //camera.drawPath(g2d, screen, true, new Color(50,150,255,25), this.defaultStroke, quad.points());
-           //camera.drawPath(g2d, screen, true, Color.BLACK, this.defaultStroke, quad.points());
+           //Color color = 
+           //camera.drawPath(g2d, screen, true, c, this.defaultStroke, quad.points());
            
         }
     }
@@ -334,7 +337,7 @@ public class TGH2Node3D extends Node2D {
         public int getCount(){
             return (h2.getAxisX().getNBins()-1)*(h2.getAxisY().getNBins()-1);
         }
-    }        
+    }
         
     public static void main(String[] args){
         TStyle.getInstance().getPalette().palette2d().setPalette(TPalette2D.PaletteName.kBird);

@@ -21,8 +21,7 @@ the data read is not useful and the program spends unnecessary I/O cycles puttin
 
 To solve this problem, the HiPO data format introduces a tagging feature for storing data. As mentioned before, each record kept in the file contains a unique
 tag identifier and this information is stored in the file footer along with the record's positions and sizes. This allows sorting events into separate records during
-the writing of the file, which will organize similar events together. The Listing~\ref{lst:write_tagged} shows an example of how to tag events by the number of 
-rows contained in a table that lists clusters from the previous example. 
+the writing of the file, which will organize similar events together. The Listing~\ref{lst:write_tagged} shows an example of how to tag events by the number of rows contained in a table that lists clusters from the previous example. 
 
 \rule{16.5cm}{0.4pt}
 \begin{lstlisting}[language=java, caption=Java example to create and write primitive types into an event, label=lst:write_tagged]
@@ -36,11 +35,9 @@ Bank[] b = r.getBanks("data::clusters");
 Event event = new Event();
 while(r.next(event)){
   event.read(b);
-  if(b[0].getRows()>=5){
-      event.setTag(5);
-  } else {
-  	event.setTag(b[0].getRows());
-  }
+  if(b[0].getRows()>=5) event.setTag(5);
+  if(b[0].getRows()==2) event.setTag(2);
+  if(b[0].getRows()==3) event.setTag(3);
   w.addEvent(event);
 }
 w.close();
@@ -51,7 +48,7 @@ rows in the "clusters" bank can be read without any overhead of going through th
 rows in the "clusters" bank are equal to 2 or are larger than 4 as shown in Listing~\ref{lst:read_tagged}.
 
 \rule{16.5cm}{0.4pt}
-\begin{lstlisting}[language=java, caption=Java example to sort events in the output file depending on number of rows in the table, label=lst:write_tagged]
+\begin{lstlisting}[language=java, caption=Java example to sort events in the output file depending on number of rows in the table, label=lst:read_tagged]
 // Writing arrays into an Event
 HipoReader r = new HipoReader();
 r.setTags(2,5); // read only tag=2 and tag=5
@@ -63,8 +60,8 @@ while(r.nextEvent(b)){
 \end{lstlisting}
 
 Only the bank "data::clusters" containing two rows and/or more than four rows is read in the Listing~\ref{lst:write_tagged}, however, then the event is written to the output file and the entire event with all the banks and nodes is written, but the decision on how to partition a file is based only on one bank. 
-
-
+This feature is used in CLAS12 to tag events based on the event topology (number of detected particles and their types), which makes easier reading reading 
+only relevant events from the data file for analysis.
 
 
 %Example usages:

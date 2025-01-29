@@ -344,6 +344,7 @@ public class Tuple {
         int bin = (int) (value*100);
         return bin;
     }
+    
     public static void benchmark1(){
         Tuple t = new Tuple();
         t.setBranches("c1:c2:c3:c4:c5:c6:c7:c8:c9:10:c11:c12");
@@ -375,10 +376,47 @@ public class Tuple {
         System.out.printf(" time = %d\n",now-then);
         System.out.println(" processed rows = " + counter);
     }
+    
+    public static void benchmark(){
+        
+        Tuple t = new Tuple();
+        t.setBranches("c1:c2:c3:c4");
+        
+        t.open("tuple.h5");
+        
+        float[] data = new float[4];
+        int counter = 0;
+        long then = System.currentTimeMillis();
+        
+        double[] h1d = new double[100];
+        double[] h2d = new double[100];
+        double[] h3d = new double[100];
+        double[] h4d = new double[100];
+        int nbuckets = t.getBuckets();
+        
+        int bin = 0;
+        while(t.next(data)){
+            counter++;
+            bin = t.getBin(data[0]);
+            h1d[bin]++;
+            bin = t.getBin(data[1]);
+            h2d[bin]++;
+            bin = t.getBin(data[2]);
+            h3d[bin]++;
+            bin = t.getBin(data[3]);
+            h4d[bin]++;
+            //System.out.println(Arrays.toString(data));
+        }
+        long now = System.currentTimeMillis();
+        
+        System.out.printf(" time = %d\n",now-then);
+        System.out.println(" processed rows = " + counter);
+        System.out.println(Arrays.toString(h1d));
+    }
     public static void main(String[] args){
         
         for(int i = 0 ; i < 5; i++) 
-            Tuple.benchmark1();
+            Tuple.benchmark();
         /*Tuple t = new Tuple();
         t.setBranches("c1:c2:c3:c21");
         t.open("tuple.h5");

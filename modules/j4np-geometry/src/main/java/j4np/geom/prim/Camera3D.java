@@ -6,10 +6,10 @@
 
 package j4np.geom.prim;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 
 /**
@@ -126,13 +126,30 @@ public class Camera3D implements Transformable {
     public Camera3D(CameraParameters cp){
         defaultParameters = cp;
     }
-        
+    
+    public static Camera3D cameraYZ(double view, double distance){
+        Camera3D c = new Camera3D(view, new Point3D(0,0,distance));
+        c.rotateY(Math.toRadians(-90));
+        return c;
+    }
    
     public Camera3D(){        
         this.movePosition(-200);
         this.moveDirection(0.0, 0.0);
     }
     
+    public void zoom(double factor){
+        double mag = defaultParameters.position.distance(0, 0, 0);
+        double phi = Math.atan2(defaultParameters.position.y(),defaultParameters.position.x());
+        double  th = Math.acos(defaultParameters.position.z()/mag);
+        mag = mag + factor*mag;
+        defaultParameters.position.set(
+                mag*Math.sin(th)*Math.cos(phi), 
+                mag*Math.sin(th)*Math.sin(phi), 
+                mag*Math.cos(th)                 
+        );
+        this.adjust();
+    }
     
     public void reset(){
         cameraPoint.set(defaultParameters.position.x(),
@@ -209,6 +226,8 @@ public class Camera3D implements Transformable {
         this.adjust();
     }
     
+    public Point3D getLocation(){ return cameraPoint;}
+    
     public final void moveDirection(double angleY, double angleX){
                 
         
@@ -255,7 +274,7 @@ public class Camera3D implements Transformable {
 
     @Override
     public void rotateY(double angle) {
-         this.cameraPoint.rotateY(angle);
+        this.cameraPoint.rotateY(angle);
         this.cameraNormal.rotateY(angle);
         this.cameraDirection.rotateY(angle);
         this.cameraScreen.rotateY(angle);
@@ -371,7 +390,7 @@ public class Camera3D implements Transformable {
         }
         
     }
-    public void drawPath(Graphics2D g2d, Screen3D screen, boolean closed, Color c, BasicStroke stroke, Point3D... points){
+    public void drawPath(Graphics2D g2d, Screen3D screen, boolean closed, Color c, Stroke stroke, Point3D... points){
         GeneralPath path = new GeneralPath();
         getPath(path,screen, closed,points);
         g2d.setColor(c);g2d.setStroke(stroke);
@@ -379,7 +398,7 @@ public class Camera3D implements Transformable {
     }
     
     public void fillPath(Graphics2D g2d, Screen3D screen,boolean closed, Color fc, Color c, 
-            BasicStroke stroke, Point3D... points){
+            Stroke stroke, Point3D... points){
         GeneralPath path = new GeneralPath();
         getPath(path,screen, closed,points);
         g2d.setColor(fc);
@@ -410,7 +429,7 @@ public class Camera3D implements Transformable {
         }
     }
     
-    public void drawLine(Graphics2D g2d, Screen3D screen, Line3D original, BasicStroke stroke, Color color){
+    public void drawLine(Graphics2D g2d, Screen3D screen, Line3D original, Stroke stroke, Color color){
         g2d.setColor(color); g2d.setStroke(stroke);
         getLine(original,projectedObjectLine);
         g2d.drawLine(

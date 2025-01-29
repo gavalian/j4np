@@ -16,13 +16,15 @@ public class H1FPerformance {
     public static void benchmark(){
         float[] data = new float[128000];
         Random r = new Random();
-        for(int i = 0; i < data.length; i++) data[i] = (float) (r.nextGaussian()*0.1+0.5);
+        for(int i = 0; i < data.length; i++) data[i] = (float) (r.nextFloat());
         
-        int iter = 1000;
+        int iter = 10000;
         H1F h = new H1F("h",120,0.0,1.0);
         long then = System.currentTimeMillis();
         for(int i = 0; i < iter; i++){
             for(int d = 0; d < data.length; d++){
+                //int bin = h.getAxisX().getBin(data[d]);
+                //h.setBinContent(bin, 0.1);
                 h.fill(data[d]);
             }
         }
@@ -32,7 +34,25 @@ public class H1FPerformance {
         TGCanvas c = new TGCanvas();
         c.draw(h);
     }
-    
+    public static void benchmarkAxis(){
+        float[] data = new float[128000];
+        Random r = new Random();
+        for(int i = 0; i < data.length; i++) data[i] = (float) (r.nextGaussian()*0.1+0.5);
+        
+        int iter = 10000;
+        H1F h = new H1F("h",120,0.0,1.0);
+        long then = System.currentTimeMillis();
+        for(int i = 0; i < iter; i++){
+            for(int d = 0; d < data.length; d++){
+                int bin = h.getAxisX().getBin(data[d]);
+            }
+        }
+        long now = System.currentTimeMillis();
+        
+        System.out.printf(" entries = %d, time = %d\n",h.getEntries(), now-then);
+        TGCanvas c = new TGCanvas();
+        c.draw(h);
+    }
     public static void main(String[] args){
 
        for(int i = 0; i < 5; i++) H1FPerformance.benchmark();

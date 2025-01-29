@@ -43,12 +43,10 @@
 
 \lstset{style=mystyle}
 
-\title{High-Performance Data Format for Scientific Data Analysis}
+\title{High-Performance Data Format for Scientific Data Storage and Analysis}
 
 \author[1]{Gagik Gavalian}
-\address[1]{Jefferson Lab, Newport News, VA, USA}
-
-
+\address[1]{Thomas Jefferson National Accelerator Facility, Newport News, VA, USA}
 
 \begin{document}
 
@@ -63,38 +61,42 @@ data efficiently, eliminating the need to do data conversions through the lifecy
 is implemented in C++ and JAVA, and provides bindings to FORTRAN, Python, and Julia, providing users with the choice of data 
 analysis frameworks to use.
 In this paper, we will present the general design and functionalities of the HiPO library and compare the performance of the library with
- more established data formats used in data analysis in High Energy and Nuclear Physics (such as ROOT and Parquete).
+ more established data formats used in data analysis in High Energy and Nuclear Physics (such as ROOT and Parquete). In columnar data analysis, HiPO surpasses established data formats in performance and can be effectively applied to data analysis in other scientific fields.
 
 \end{abstract}
 %\end{titlepage}
 \maketitle
 
-
 \input{introduction}
 \input{motivation}
-\input{design}
 \input{format}
 \input{tagging}
 \input{columnar}
 \input{summary}
 
-\newpage
-
 \section{Acknowledgments}
 
 This material is based upon work supported by the U.S. Department of Energy, Office of Science,
 Office of Nuclear Physics under contract DE-AC05-06OR23177, and NSF grant no. CCF-1439079 and
-the Richard T. Cheng Endowment. This work was performed using the Turing and Wahab computing
-clusters at Old Dominion University.
+the Richard T. Cheng Endowment. 
  
  
 \begin{thebibliography}{}
 %\cite{Aplin:2012kj}
+%\cite{CLAS:2003umf}
+\bibitem{CLAS:2003umf}
+B.~A.~Mecking \textit{et al.} [CLAS],
+``The CEBAF Large Acceptance Spectrometer (CLAS),''
+Nucl. Instrum. Meth. A \textbf{503} (2003), 513-553
+doi:10.1016/S0168-9002(03)01001-5
+\bibitem{Burkert:2020akg}
+Burkert, V.D. and others, The CLAS12 Spectrometer at Jefferson Laboratory, Nucl. Instrum. Meth. A \textbf{959},163419 (2020)
 \bibitem{Brun:1997pa}
 R.~Brun and F.~Rademakers,
 ``ROOT: An object oriented data analysis framework,''
 Nucl. Instrum. Meth. A \textbf{389} (1997), 81-86
 doi:10.1016/S0168-9002(97)00048-X
+
 \bibitem{Aplin:2012kj}
 S.~Aplin, J.~Engels, F.~Gaede, N.~A.~Graf, T.~Johnson and J.~McCormick,
 ``LCIO: A Persistency Framework and Event Data Model for HEP,''
@@ -103,10 +105,12 @@ doi:10.1109/NSSMIC.2012.6551478
 \bibitem{HDF5:2000pa}
 The HDF Group,  http://www.hdfgroup.org/HDF5/
 
-%\cite{Brun:1997pa}
+\bibitem{PARKQUET:2020jk}
+Apache Parquet, https://parquet.apache.org
 
-%3821 citations counted in INSPIRE as of 08 Jan 2025
-%12 citations counted in INSPIRE as of 08 Jan 2025
+\bibitem{hipo5p0:2025jk}
+The HiPO Group, 
+https://github.com/gavalian/hipo
 \end{thebibliography}
 %\newpage
 %\bibliography{references}

@@ -1,4 +1,8 @@
 \section{Discussion}
 
-So it goes.
+The HiPO data format was developed for CLAS12 to serve as a data format for the entire life cycle of the experimental data. The CLAS12 reconstruction uses it for data processing and production data storage. Petabytes of data are stored in HiPO and have successfully been used by the collaboration to run their physics analysis workflows for the past 7 years. Since the introduction of the single data format, standard tools were developed for data file manipulations, such as data merging, filtering, and selective reduction, eliminating the need for users to write and maintain codes for the most common data manipulation tasks. There are tools (graphical and text-based) to browse the files and display the content of each event for debugging.
+The recent development of columnar data storage can now also be used for storing columnar data from physics analysis. The tests show that it provides exceptional performance in data analysis, surpassing the more established data formats (ROOT and Parquet) currently used in the High Energy and Nuclear Physics fields.
+Future improvements in binding to other languages, such as Python and Julia, will extend the usability of the data format for analysis.
+
+
 

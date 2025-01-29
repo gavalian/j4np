@@ -154,6 +154,130 @@ public class HipoFormat implements Widget {
          title.setText("Type 2 table Memory Layout");
         title.drawString(g2d, startX + offsetX+120, startY+offsetY-lineSpace/2, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
     }
+    
+    public void drawOne2(Graphics2D g2d, Rectangle2D r, Translation2D tr){
+        LatexText text = new LatexText("Input Layer");
+        text.setFont(new Font("Avenir",Font.BOLD,18));
+        
+        LatexText title = new LatexText("Input Layer");
+        title.setFont(new Font("Avenir",Font.PLAIN,18));
+        
+        int startX = 100;
+        int startY = 100;
+        int wordSpace = 50;
+        int lineSpace = 30;
+        int columnSize = 26;
+        int nrows = 5;
+        String[] columns = new String[]{"a","b","c"};
+        Color[]  headers = new Color[]{new Color(0xFF,0x90,0x00), 
+            new Color(0x94,0xF9,0x00), new Color(0x1C,0xFA,0x90)};
+        
+        Color[]     rowc = new Color[]{new Color(0xFF,0xD0,0x6C), 
+            new Color(0xD9,0xFA,0x72), new Color(0x79,0xFC,0xD4)
+        };
+        
+        BasicStroke stroke = new BasicStroke(2);
+        for(int i = 0; i < 3; i++){
+            g2d.setColor(headers[i]);
+            g2d.fillRect(startX+i*wordSpace-wordSpace/2, startY-lineSpace/2, wordSpace, lineSpace);
+            g2d.setColor(Color.BLACK);
+            g2d.setStroke(stroke);
+            g2d.drawRect(startX+i*wordSpace-wordSpace/2, startY-lineSpace/2, wordSpace, lineSpace);
+        }
+        
+        for(int i = 0; i < 3; i++){
+            for(int row = 0; row < nrows; row++){
+                g2d.setColor(rowc[i]);
+                g2d.fillRect(startX+i*wordSpace-wordSpace/2, startY+(row+1)*lineSpace-lineSpace/2, wordSpace, lineSpace);
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(stroke);
+                g2d.drawRect(startX+i*wordSpace-wordSpace/2, startY+(row+1)*lineSpace-lineSpace/2, wordSpace, lineSpace);
+            }
+        }
+        //text.drawString(g2d, 100, 100, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+        for(int i = 0; i < 3; i++){
+            text.setText(columns[i]);    
+            text.drawString(g2d, startX+wordSpace*i, startY, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+        }
+        
+        for(int i = 0; i < 3; i++){
+            for(int row = 0; row < nrows; row++){
+                text.setText(String.format("%s%d",columns[i],row+1));    
+                text.drawString(g2d, startX+wordSpace*i, startY + (row+1)*lineSpace, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+            }
+        }
+        
+        title.setText("Logical Table");
+        title.drawString(g2d, startX + (wordSpace/2)*2, startY-lineSpace, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+        int offsetX = 180;
+        int offsetY = 20;
+        /*
+        for(int row = 0; row < nrows; row++){            
+            for(int i = 0; i < 3; i++){
+
+                int x = offsetX+startX+(i+(row*3))*wordSpace;
+                int y = offsetY+startY;
+                g2d.setColor(rowc[i]);
+                g2d.fillRect(x,y , wordSpace, lineSpace);
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(stroke);
+                g2d.drawRect(x,y , wordSpace, lineSpace);
+                text.setText(String.format("%s%d", columns[i],row+1));
+                text.drawString(g2d, x+wordSpace/2, y+lineSpace/2, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+            }
+        }
+        
+        title.setText("Type 1 table Memory Layout");
+        title.drawString(g2d, startX + offsetX+120, startY+offsetY-lineSpace/2, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+        */
+
+         offsetY = 0;
+         int x = offsetX + startX - wordSpace;        
+         for(int i = 0; i < 3; i++){
+
+             for(int row = 0; row < nrows; row++){ 
+                x += wordSpace;
+                int y = offsetY+startY;
+                g2d.setColor(rowc[i]);
+                g2d.fillRect(x,y , wordSpace, lineSpace);
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(stroke);
+                g2d.drawRect(x,y , wordSpace, lineSpace);
+                text.setText(String.format("%s%d", columns[i],row+1));
+                text.drawString(g2d, x+wordSpace/2, y+lineSpace/2, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+            }
+        }
+         title.setText("Table Memory Layout");
+        title.drawString(g2d, startX + offsetX+100, startY+offsetY-lineSpace/2, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+        
+        
+        offsetY = 120;
+        wordSpace = wordSpace*5;
+        x = offsetX + startX - wordSpace;     
+        for(int i = 0; i < 3; i++){
+            
+            //for(int row = 0; row < nrows; row++){ 
+                x += wordSpace;
+                int y = offsetY+startY;
+                g2d.setColor(rowc[i]);
+                g2d.fillRect(x,y , wordSpace, lineSpace);
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(stroke);
+                g2d.drawRect(x,y , wordSpace, lineSpace);
+                text.setText("bucket/record");
+                this.drawArrow(g2d, x+wordSpace/2, y+lineSpace/2-80, 50);
+                text.drawString(g2d, x+wordSpace/2, y+lineSpace/2, LatexText.TextAlign.CENTER, LatexText.TextAlign.CENTER);
+            //}
+        }
+        
+    }
+    public void drawArrow(Graphics2D g2d, int x, int y, int h){
+        g2d.setColor(Color.BLACK); g2d.setStroke(new BasicStroke(2));
+        g2d.drawLine(x, y, x, y+h);
+        g2d.drawLine(x, y+h, x-5, y+h-5);
+        g2d.drawLine(x, y+h, x+5, y+h-5);
+        
+    }
     public void drawLine(Graphics2D g2d, int x, int y, Color[] colors, String[] labels, int... type){
         int startX = x;
         int startY = y;
@@ -224,21 +348,21 @@ public class HipoFormat implements Widget {
         text.drawString(g2d, 630, 245, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);
         
         
-        text.setText("record[0] (tag=2)");
+        text.setText("record[0] (tag=3)");
         text.drawString(g2d, 280, 345, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);
-        text.setText("record[1] (tag=2)");
+        text.setText("record[1] (tag=3)");
         text.drawString(g2d, 630, 345, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);        
-        text.setText("record[2] (tag=3)");
+        text.setText("record[2] (tag=5)");
         text.drawString(g2d, 280, 405, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);        
-        text.setText("record[3] (tag=1)");
+        text.setText("record[3] (tag=2)");
         text.drawString(g2d, 630, 405, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);
-        text.setText("record[4] (tag=1)");
+        text.setText("record[4] (tag=2)");
         text.drawString(g2d, 280, 465, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);
-        text.setText("record[5] (tag=1)");
+        text.setText("record[5] (tag=2)");
         text.drawString(g2d, 630, 465, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);
-        text.setText("record[6] (tag=1)");
+        text.setText("record[6] (tag=2)");
         text.drawString(g2d, 280, 525, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);
-        text.setText("record[7] (tag=1)");
+        text.setText("record[7] (tag=2)");
         text.drawString(g2d, 630, 525, LatexText.TextAlign.LEFT, LatexText.TextAlign.CENTER);
         
         //this.drawLine(g2d, 230, 140, colors,labels, 1,0,1,1,0,1,0,2,0,0,1,0,1,1);
@@ -251,9 +375,9 @@ public class HipoFormat implements Widget {
     }
     @Override
     public void draw(Graphics2D g2d, Rectangle2D r, Translation2D tr) {
-        //this.drawOne(g2d, r, tr);
+        this.drawOne2(g2d, r, tr);
         //this.drawTwo(g2d, r, tr);
-        this.drawThree(g2d, r, tr);
+        //this.drawThree(g2d, r, tr);
         /*
         LatexText text = new LatexText("Input Layer");
         text.setFont(new Font("Avenir",Font.BOLD,18));

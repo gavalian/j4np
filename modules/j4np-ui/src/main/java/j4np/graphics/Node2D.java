@@ -8,6 +8,8 @@ package j4np.graphics;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
@@ -391,6 +393,14 @@ public class Node2D {
     
     public void setMargins(double xmin, double ymin, double xmax, double ymax){
         
+    }
+    
+    public void applyMouseWheelMoved(MouseWheelEvent e){
+        
+    }
+    
+    public void applyMouseClick(MouseEvent e){
+         
     }
     
     public void applyMouseDrag(int x, int y, int xmove, int ymove){

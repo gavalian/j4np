@@ -13,26 +13,29 @@ Data from physics experiments is organized into small units called "events," wit
 
 \begin{itemize}
 \item {\bf File Header:} This section includes essential information such as the file version, file length (used for consistency checks), the location of the file footer, and other relevant parameters.
-\item {\bf User Header:} This part contains metadata that describes the content of the file. In dictionary-driven formats, it includes descriptors of the data stored within the file. Users can also add additional metadata when creating the file.
+\item {\bf User Header:} This part contains metadata that describes the content of the file any other user provided metadata. In dictionary-driven formats, it includes descriptors (schemas for tabular data) of the data stored within the file.
 \item {\bf Data Records:} These are the compressed, grouped data from individual events. The size of data records is configurable at the time of file creation. Each record is assigned a user-defined identifier, known as a tag, to group similar events together.
 \item {\bf File Footer:} The footer contains metadata about each data record in the file, including its position, size, and tag.
 The general structure of a HiPO file is illustrated in Figure~\ref{schema:file}.
 \end{itemize}
 
-The schematic view of the file structure is shown in Figure~\ref{schema:file}.
+The schematic view of the file structure is shown in Figure~\ref{schema:file}. 
 
 \subsection{File Header}
 
 The file header is a descriptor for the file containing information about the version of the file. This magic word identifies the file format and also carries information about the endianness of the data and the position of the file footer. The header also contains a block of data called "User Data". The user data includes dictionaries of the data objects stored in the file, as well as user-provided metadata describing the file or any parameters the creator may want to include with the file. This metadata comes in the form of key-value pairs usually provided by the user before the file initialization stage. To create a simple file with a given user header, use the code shown in Listing~\ref{lst:open_file}.
-\rule{16.5cm}{0.4pt}
-\begin{lstlisting}[language=java, caption=Java example for writing a file with meta-data., label=lst:open_file]
-// open file with user-specified meta data
+%\rule{16.5cm}{0.4pt}
+\begin{lstlisting}[language=java, caption=Java example for writing a file with meta-data. The reader object opens the file and retrieves the stored mata data in a form of a key/value map., label=lst:open_file]
+// -- open file with user-specified meta data
 HipoWriter w = new HipoWriter(); // create the object
 w.addConfig("date","created on 01/27/2021");
 w.addConfig("author","John Pierce");
 w.addConfig("type","Physics Events from A-Detector")
 w.open("my_new_file.h5");
 w.close();
+// -- read metadata from the file
+HipoReader r = new HipoReader("my_new_file.h5");
+Map<String,String> userInfo = r.getUserConfigurations();
 \end{lstlisting}
 
 
@@ -114,7 +117,7 @@ the data, such as $getInt(entry, row)$ for all integer types and $getDouble(entr
 HipoReader r = new HipoReader("clusters.h5");        
 Bank[] banks = r.getBanks("data::clusters");
 // to read more than on bank use: r.getBanks("a","b","c","d");
-// if the bank is not present in the event, the returned object 
+// If the bank is not present in the event, the returned object 
 // will have getRows()==0, no error is generated.
 while(r.nextEvent(banks)){
   System.out.printf("\%4d, \%5d, \%8.5f \%8.5f \%8.5f\n",
@@ -131,27 +134,31 @@ $getBanks(String... list)$ method accepts a list of the banks to be read in each
 read and analyzed at once. More advanced examples of how to read events and query the content of the events 
 can be found in the examples provided in the repository.
 
-\begin{figure}[h!]
-  \begin{center}
-    \includegraphics[width=0.95\textwidth]{images/table_layouts.pdf}
- \end{center}
-  \caption{Table types with their memory layout. Type 1 tables are optimized for copying and deleting rows from the table without much overhead on copying individual bytes, while Type 2 tables are better for compression, proving $7\%-15\%$ reduction in the bank size.}
- \label{fig:table_layouts}
-\end{figure}
+The Listing~\ref{lst:read_bank} provides a simple reading procedure when the banks are automatically read for each event 
+for the user. The more complex code can be found in the repository where the Event object is read from the file and then
+banks can be read individually from the event, deleted and/or augemented and written into output. 
 
-The HiPO provides two types of tables where the rows and columns are arranged differently. In the example above
-each column from all the rows is grouped together into a contiguous memory, which makes it necessary to declare 
-the number of rows at the bank creation time and the banks' size can not be changed on the fly. The second type
-is when each row is one contiguous memory block and rows can be altered on the fly, which makes it easy to manipulate
-rows programmatically by removing a row or copying a row into an equivalent table. The schematic view of memory
-mapping for these two types of tables is shown in Figure~\ref{fig:table_layouts}. The reason for having two types of
-tables is that one (the case with columns forming a contiguous memory) is better for data compression which makes
-it more efficient for producing final data sets for analysis. The second table type is used for workflows where different
-components work on the same data set that analyzes the tables by appending and removing entries from a given bank.
-In the particular case of experimental physics usage is the data acquisition system, where a table is growing with incoming
-data, and some rows are removed based on some conditions imposed by the analysis software. In our workflows, the table
-where column values are grouped provides $7\%-15\%$ more compression. Examples of how to use different types of tables
-can be found the the code repository.
+%\begin{figure}[h!]
+%  \begin{center}
+%   \includegraphics[width=0.95\textwidth]{images/table_layouts.pdf}
+% \end{center}
+%  \caption{Table types with their memory layout. Type 1 tables are optimized for copying and deleting rows from the table without much overhead on copying individual bytes, while Type 2 tables are better for compression, proving $7\%-15\%$ reduction in the bank size.}
+% \label{fig:table_layouts}
+%\end{figure}
+
+%The HiPO provides two types of tables where the rows and columns are arranged differently. In the example above
+%each column from all the rows is grouped together into a contiguous memory, which makes it necessary to declare 
+%the number of rows at the bank creation time and the banks' size can not be changed on the fly. The second type
+%is when each row is one contiguous memory block and rows can be altered on the fly, which makes it easy to manipulate
+%rows programmatically by removing a row or copying a row into an equivalent table. The schematic view of memory
+%mapping for these two types of tables is shown in Figure~\ref{fig:table_layouts}. The reason for having two types of
+%tables is that one (the case with columns forming a contiguous memory) is better for data compression which makes
+%it more efficient for producing final data sets for analysis. The second table type is used for workflows where different
+%components work on the same data set that analyzes the tables by appending and removing entries from a given bank.
+%In the particular case of experimental physics usage is the data acquisition system, where a table is growing with incoming
+%data, and some rows are removed based on some conditions imposed by the analysis software. In our workflows, the table
+%where column values are grouped provides $7\%-15\%$ more compression. Examples of how to use different types of tables
+%can be found the the code repository.
 
 
 

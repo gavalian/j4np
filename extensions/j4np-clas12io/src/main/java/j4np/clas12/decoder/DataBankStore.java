@@ -41,7 +41,19 @@ public class DataBankStore {
         timeStamp = new CompositeNode(42,2,"il",512);
     }
     
+    public void reset(){
+        if(tdcCache!=null) tdcCache.setRows(0);
+        if(tdcNode != null) tdcNode.setRows(0);
+        if(adcCache != null) adcCache.setRows(0);
+        if(adcCachePulse != null) adcCachePulse.setRows(0);
+        if(adcNode != null) adcNode.setRows(0);         
     
+        if(cache  != null) cache.setRows(0);
+        if(pulse  != null) pulse.setRows(0);
+        if(header != null) header.setRows(0);
+        if(timeStamp != null) timeStamp.setRows(0);
+        if(index != null) index.setRows(0);
+    }
     public static DataBankStore createDecoder(){
         DataBankStore store = new DataBankStore();
         store.cache = Clas12NodeUtils.createNodeTDC(  1, 1, 8192);

@@ -9,6 +9,7 @@ import j4np.clas12.ccdb.DatabaseProvider;
 import j4np.clas12.ccdb.DetectorTools;
 import j4np.clas12.ccdb.DatabaseManager.DecoderDatabase;
 import j4np.data.base.DataEvent;
+import j4np.data.base.DataFrame;
 import j4np.data.base.DataNodeCallback;
 import j4np.data.base.DataWorker;
 import j4np.data.evio.EvioEvent;
@@ -28,6 +29,7 @@ import java.util.Map;
  */
 public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
     
+    public boolean keepEvio = false;
     //protected EvioNodeCallbackStore callbackstore = new EvioNodeCallbackStore();
     /*
     Map<Long,Long> crateMap = new HashMap<>();
@@ -47,6 +49,8 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
        
     }
     
+    public void setKeepEvio(boolean flag){keepEvio = flag;}
+    
     @Override
     public boolean init(HipoReader r) {
         System.out.println(":::: emtpy initalizer"); return true;
@@ -58,6 +62,7 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
     
     @Override
     public void execute(Event t) {
+        //System.out.println("-- running an event with size = " + t.getEventBufferSize());
         int position = t.scan(1, 11);
         if(position<8) return;
         //System.out.println("-------- decoding an event ----");
@@ -67,7 +72,7 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
         EvioNodeCallbackStore callbackstore = new EvioNodeCallbackStore();
         callbackstore.getDecoders().add(new GenericDecoder());
         //System.out.println(" EVIO EVENT LENGTH = " + event.bufferLength());
-        t.reset();
+        if(keepEvio==false) t.reset();
         DataBankStore store = DataBankStore.createDecoder();
         event.setCallback(callbackstore);
         callbackstore.store = store;
@@ -78,103 +83,32 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
         t.write(store.header);
         t.write(store.timeStamp);
     }
-    /*
-    public void translate(Event event , DataBankStore store){
-        int run = store.header.getInt(0, 0);
-        if(run<10) {
-            System.out.println("[decoder] >> warning unknown run number " + run);
-            return;
-        }
-        DecoderDatabase db = manager.get(run);
-        event.scanLeafs(store.index);
-        store.tdcNode.setRows(0);
-        //event.read(node, run, run);
-        for(int i = 0; i < store.index.getRows(); i++){
-            int group = store.index.getInt(0, i);
-            int  item = store.index.getInt(1, i);
-            int   pos = store.index.getInt(2, i);
-            int[] address = new int[5];
-            if(item==21){ 
-                event.read(store.tdcCache, pos);
-                int rows = store.tdcCache.getRows();
-                for(int r = 0; r < rows; r++){
-                    int crate = store.tdcCache.getInt(1, r);
-                    int  slot = store.tdcCache.getInt(2, r);
-                    int chann = store.tdcCache.getInt(3, r);
-                    long key = DetectorTools.hardwareEncoder(crate, slot, chann);
-                    if(db.crateMap.containsKey(key)==true){
-                        long value = db.crateMap.get(key);
-                        DetectorTools.softwareDecoder(value, address);
-                        
-                        store.tdcCache.putByte(  0, r, (byte) address[0]);
-                        store.tdcCache.putByte(  1, r, (byte) address[1]);
-                        store.tdcCache.putByte(  2, r, (byte) address[2]);
-                        store.tdcCache.putShort( 3, r, (byte) address[3]);
-                        store.tdcCache.putByte(  4, r, (byte) (address[4]+1));
-                    }
-                }
-                
-                //event.remove(group, item);
-                store.tdcCache.setGroup(group);
-                store.tdcCache.setItem(31);
-                store.tdcNode.copyRows(store.tdcCache,0,store.tdcCache.getRows());
-                //event.replace(group, 21, store.tdcCache);
-                //event.write(store.tdcCache);
-            }
-            
-        }
-        
-        //event.write(store.tdcNode);
-        //store.index.print();
-    }
     
-    public void translate22(Event event , DataBankStore store){
-        int run = store.header.getInt(0, 0);
-        if(run<10) {
-            System.out.println("[decoder] >> warning unknown run number " + run);
-            return;
-        }
-        DecoderDatabase db = manager.get(run);
-        event.scanLeafs(store.index);
-        store.adcNode.setRows(0);
-        //event.read(node, run, run);
-        for(int i = 0; i < store.index.getRows(); i++){
-            int group = store.index.getInt(0, i);
-            int  item = store.index.getInt(1, i);
-            int   pos = store.index.getInt(2, i);
-            int[] params = new int[5];
-
-            if(item==23){ 
-                System.out.println(" DECODING ADC " + group);
-                event.read(store.adcCachePulse, pos);
-                int rows = store.adcCachePulse.getRows();
-                
-                int npos = 0;
-                while(npos<rows){
-                    int count = store.adcCachePulse.getInt(0, npos);
-                    int crate = store.adcCachePulse.getInt(0,npos+1);
-                    int slot  = store.adcCachePulse.getInt(0,npos+2);
-                    int chan  = store.adcCachePulse.getInt(0,npos+3);
-                    npos += 4;
-                    System.out.printf("%d:%d:%d (%d) \n",crate,slot,chan, count);
-                    long key = DetectorTools.hardwareEncoder(crate, slot, chan);
-                    if(db.fadcMap.containsKey(key)==true){
-                        long value = db.fadcMap.get(key);
-                        DetectorTools.fadcDecoder(value, params);
-                        System.out.printf("\n found parameters %s\n",Arrays.toString(params));
-                    }
-                    npos += count;
-                }
-                                //event.replace(group, 21, store.tdcCache);
-                //event.write(store.tdcCache);
+    @Override
+    public void execute(DataFrame<Event> tf) {
+        //System.out.println(" processing data frame with size = " + tf.getList().size());  
+        DataBankStore store = DataBankStore.createDecoder();
+        EvioNodeCallbackStore callbackstore = new EvioNodeCallbackStore();
+        callbackstore.getDecoders().add(new GenericDecoder());
+        for(int i = 0; i < tf.getCount(); i++){
+            Event t = (Event) tf.getEvent(i);
+            int position = t.scan(1, 11);
+            if(position>8){
+                store.reset();
+                Node n = t.read(1, 11);
+                byte[] data = n.getByte();
+                EvioEvent event = new EvioEvent(data);
+                event.setCallback(callbackstore);
+                callbackstore.store = store;
+                callbackstore.hipoEvent = t;
+                callbackstore.store.timeStamp.setRows(0);
+                if(keepEvio==false) t.reset();
+                event.scan();
+                t.write(store.header);
+                t.write(store.timeStamp);
             }
-            
         }
-        
-        //event.write(store.tdcNode);
-        //store.index.print();
     }
-    */
     
     public static class EvioNodeCallbackStore implements DataNodeCallback {
         
@@ -201,5 +135,5 @@ public class Clas12DecoderService extends DataWorker<HipoReader,Event> {
                 try{ d.decode(node, identification, store, hipoEvent); } catch (Exception e) { }
             }
         } 
-    }
+    }        
 }

@@ -1,0 +1,10 @@
+Tuple HiPO Java loop      | 0.637
+Tuple HiPO Java DataFrame | 0.452
+Tuple HiPO C++  loop      | 0.675
+Tuple HiPO C++  DataFrame | 0.424
+Tuple Parquete DataFrame  | 1.812
+TTree ROOT C++ loop       | 4.692
+TTree ROOT C++ DataFrame  | 5.175
+RNTuple ROOT C++ loop     | 1.843
+RNTuple ROOT C++ loop (CINT) | 3.861
+

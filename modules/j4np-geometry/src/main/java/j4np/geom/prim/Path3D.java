@@ -140,6 +140,42 @@ public class Path3D implements Transformable, Showable {
         return new int[]{pathIndex,arrayIndex};
     }
     
+    public Line3D getIntersection(Line3D line){
+        Line3D   result = new Line3D();
+        Line3D  segment = new Line3D();
+        
+        getLine(segment,0);
+        Line3D    inter = line.distanceSegments(segment);
+        double distance = inter.length();
+        result.copy(inter);
+        for(int i = 0; i < this.getNumLines(); i++){
+            getLine(segment,i);
+            inter = line.distanceSegments(segment);
+            if(inter.length()<distance){
+                distance = inter.length(); result.copy(inter);
+            }
+        }
+        return result;
+    }
+    /*
+    public Line3D getIntersection(List<Line3D> lines){
+        
+        Line3D   result = new Line3D();
+        Line3D  segment = new Line3D();        
+        getLine(segment,0);
+        Line3D    inter = line.distanceSegments(segment);
+        double distance = inter.length();
+        result.copy(inter);
+        for(int i = 0; i < this.getNumLines(); i++){
+            getLine(segment,i);
+            inter = line.distanceSegments(segment);
+            if(inter.length()<distance){
+                distance = inter.length(); result.copy(inter);
+            }
+        }
+        return result;
+    }*/
+    
     public Line3D findClosest(List<Line3D> array){
         if(array.isEmpty()) return new Line3D(0,0,0,1000,1000,1000);
         Line3D pl = new Line3D();

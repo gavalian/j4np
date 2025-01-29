@@ -73,11 +73,11 @@ public class RunInstaRec {
         
         //List<DataWorker>  workers = Arrays.asList(finder);
         //List<DataWorker>  workers = Arrays.asList(convert,dcwrk);//, finder);
-        List<DataWorker>  workers = Arrays.asList(convert,dcwrk, finder);
+        List<DataWorker>  workers = Arrays.asList(convert,dcwrk);//, finder);
         
         List<DataActor>   actors = RunInstaRec.createActors(8,256, workers);
         for(DataActor act : actors) act.setRunWithFrames(false);
-        for(DataActor a : actors) a.setBenchmark(1);
+        //for(DataActor a : actors) a.setBenchmark(1);
         //actors.get(0).setBenchmark(1);
         //actors.get(1).setBenchmark(1);
         stream.addActor(actors);//.addActor(convert2);//.addActor(convert3).addActor(convert4);                

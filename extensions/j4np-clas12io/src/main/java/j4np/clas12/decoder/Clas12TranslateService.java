@@ -8,6 +8,7 @@ import j4np.clas12.ccdb.DatabaseManager;
 import j4np.clas12.ccdb.DetectorTools;
 import j4np.data.base.DataWorker;
 import j4np.hipo5.data.Event;
+import j4np.hipo5.data.Node;
 import j4np.hipo5.io.HipoReader;
 
 /**
@@ -17,12 +18,15 @@ import j4np.hipo5.io.HipoReader;
 public class Clas12TranslateService extends DataWorker<HipoReader,Event> {
     
     DatabaseManager manager = new DatabaseManager();
-
+    private boolean keepEvio = false;
+    
     @Override
     public boolean init(HipoReader src) {
         return true;
     }
 
+    public void setKeepEvio(boolean flag){keepEvio = flag;}
+    
     @Override
     public void execute(Event e) {
         DataBankStore store = DataBankStore.createTranslate();
@@ -31,10 +35,24 @@ public class Clas12TranslateService extends DataWorker<HipoReader,Event> {
         store.tdcNode.setRows(0);
         store.tdcNode.setRows(0);
         store.adcNode.setRows(0);
+        //e.scanShow();
         this.translateTDC(e, store);
         this.translateADC(e, store);
-        
-        e.reset();
+        if(this.keepEvio==true){
+            
+            int position = e.scan(1, 11);
+            //e.scanShow();
+            //System.out.println(" position = " + position);
+            if(position>8) {
+                Node n = e.read(1, 11);
+                e.reset();
+                //System.out.println("writing evio");
+                e.write(n);
+                //e.scanShow();
+            } else e.reset();
+        } else {
+            e.reset();
+        }
         e.write(store.header);
         e.write(store.timeStamp);
         e.write(store.tdcNode);

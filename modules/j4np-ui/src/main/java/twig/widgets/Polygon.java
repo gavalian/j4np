@@ -48,8 +48,14 @@ public class Polygon implements Widget {
     public TAttributesLine attrLine(){ return attrLine;}
     public TAttributesFill attrFill(){ return attrFill;}
     
-    public final void addPoint(double x, double y){
-        points.add(new Point2D.Double(x,y));
+    public final Polygon addPoint(double x, double y){
+        points.add(new Point2D.Double(x,y)); return this;
+    }
+    
+    public final Polygon addPoints(double[] x, double[] y){
+        for(int i = 0; i < x.length; i++)
+            points.add(new Point2D.Double(x[i],y[i])); 
+        return this;
     }
     
     public Polygon setNDF(boolean flag){
