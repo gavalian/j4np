@@ -172,6 +172,23 @@ public class Event implements DataEvent {
         }
     }
     
+    public void move(Structure struct, int group, int item){
+        int position = this.scan(group, item);
+        if(position>=16){
+            int size = this.eventBuffer.getInt(position+4)&0x00FFFFFF;
+            struct.write(eventBuffer, position, size+8);
+        }
+    }
+    
+    public void write(Structure struct){
+        int      length = struct.length() + 8;
+        int    position = eventBuffer.getInt(EVENT_LENGTH_OFFSET);
+        this.require(position+length+64);
+        System.arraycopy(struct.buffer.array(), 0, 
+                eventBuffer.array(), position, length);
+        eventBuffer.putInt(EVENT_LENGTH_OFFSET, position+length);
+    }
+    
     public void write(Node node){
         int bufferSize = node.getBufferSize();
         if(bufferSize<=8) return;
@@ -433,6 +450,15 @@ public class Event implements DataEvent {
         System.out.println("(warning) :>>> no node present with group = " 
                 + group + ", item = " + item + " positoin = " + position);
         return new Node(1,1,DataType.FLOAT,0);
+    }
+    
+    public Structure readAt(int position){
+        int size = this.eventBuffer.getInt(position+4)&0x00FFFFFF;
+        Structure struct = new Structure(1,1,1,size+8);
+        System.out.println(" from event");
+        struct.show();
+        System.arraycopy(this.eventBuffer.array(), position, struct.buffer.array(), 0, size+8);
+        return struct;
     }
     
     public boolean isEmpty(){
