@@ -60,12 +60,12 @@ public class RunInstaRec {
 
         DataActorStream stream = new DataActorStream();
         
-        stream.setSource(chain);//.setSync(w);
+        stream.setSource(chain).setSync(w);
         
         ConverterWorker   convert = new ConverterWorker();
         DriftChamberWorker  dcwrk = new DriftChamberWorker();
         TrackFinderWorker  finder = new TrackFinderWorker();
-
+        Hipo2Hipo4Worker   h2h4 = new Hipo2Hipo4Worker(4*1024);
         
         finder.initNetworks();
 
@@ -73,7 +73,7 @@ public class RunInstaRec {
         
         //List<DataWorker>  workers = Arrays.asList(finder);
         //List<DataWorker>  workers = Arrays.asList(convert,dcwrk);//, finder);
-        List<DataWorker>  workers = Arrays.asList(convert,dcwrk);//, finder);
+        List<DataWorker>  workers = Arrays.asList(convert,dcwrk,h2h4);//, finder);
         
         List<DataActor>   actors = RunInstaRec.createActors(8,256, workers);
         for(DataActor act : actors) act.setRunWithFrames(false);
@@ -84,7 +84,13 @@ public class RunInstaRec {
         stream.run();
         
     }
-    
+    public static void runRaw(String file){
+        //Clas12DecoderService decoder = new Clas12DecoderService();
+        //Clas12FitterService   fitter = new Clas12FitterService();
+        //Clas12TranslateService trans = new Clas12TranslateService();
+        //DriftChamberWorker  dcwrk = new DriftChamberWorker();
+        //TrackFinderWorker  finder = new TrackFinderWorker();
+    }
     public static void main(String[] args){
         
 //        List<String> files = FileUtils.dir("/Users/gavalian/Work/DataSpace/decoded/006677/","*hipo");

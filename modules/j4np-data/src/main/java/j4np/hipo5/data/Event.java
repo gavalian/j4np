@@ -176,6 +176,7 @@ public class Event implements DataEvent {
         int position = this.scan(group, item);
         if(position>=16){
             int size = this.eventBuffer.getInt(position+4)&0x00FFFFFF;
+            //System.out.printf(" writing [%d,%d] size = %d\n ",group,item,size);
             struct.write(eventBuffer, position, size+8);
         }
     }
@@ -313,6 +314,20 @@ public class Event implements DataEvent {
         if(position<0) { node.reset(); return;}
         int   length = this.scanLengthAt(group,item, position);
         node.initFromBuffer(this.eventBuffer.array(), position, length+8);
+    }
+    
+    public Leaf readLeaf(int __cgroup, int __citem, int __lgroup, int __litem){
+        int cposition = scan(__cgroup, __citem);
+        if(cposition<0) return new Leaf();
+        int clength   = scanLengthAt(__cgroup, __citem, cposition);
+        int lposition = scan(__lgroup,__litem, cposition+8, clength);
+        if(lposition<0) return new Leaf();
+        int llength = scanLengthAt(__lgroup,__litem, lposition);
+        
+        System.out.printf(" reading leaf at %d, with length = %d\n",lposition,llength);
+        Leaf leaf = new Leaf(llength+16);
+        leaf.initFromBuffer(this.eventBuffer.array(), lposition, llength+8);
+        return leaf;
     }
     
     public void read(Leaf node){        
@@ -494,6 +509,21 @@ public class Event implements DataEvent {
         //this.eventNodesMap.reset();
         
         while(position + NODE_HEADER_LENGTH < eventLength){
+            short group = eventBuffer.getShort( position  );
+            //System.out.println(" group = " + group);
+            byte  item  = eventBuffer.get(      position + 2);
+            byte  type  = eventBuffer.get(      position + 3);
+            int   size  = eventBuffer.getInt(   position + 4)&0x00FFFFFF;
+            if(__group==group&&__item==item)    return position;
+            position += size + NODE_HEADER_LENGTH;
+        }
+        return -1;
+    }
+    
+    public int scan(int __group, int __item, int __position, int __maxlength){
+        int position = __position;
+        int bufferLength = __position + __maxlength;
+        while(position + NODE_HEADER_LENGTH < bufferLength){
             short group = eventBuffer.getShort( position  );
             //System.out.println(" group = " + group);
             byte  item  = eventBuffer.get(      position + 2);
@@ -885,23 +915,62 @@ public class Event implements DataEvent {
     public static void main(String[] args){
 
         Event event = new Event();
+        Structure st = new Structure(12,120,12,1024);
         
-        CompositeNode node1 = new CompositeNode(12,1,"sssi",1);
-        event.write(node1);
+        Leaf node1 = new Leaf(12,1,"sssifff",25);
+        node1.setRows(2);
+        Leaf node3 = Leaf.random(12, "ssiiff");
+        node3.setGroup(12).setItem(3);
+        node3.print();
+//        event.write(node1);        
+
         
-        event.scanShow();
-        
-        CompositeNode node2 = new CompositeNode(12,2,"fflf",1);
+        Leaf node2 = new Leaf(12,2,"fflf",15);
         node2.setRows(4);
-        event.write(node2);
-        
-        node1.info();
         
         
+        st.write(node1.getByteBuffer(), node1.getLength()+8);
+        st.write(node2.getByteBuffer(), node2.getLength()+8);
+        st.write(node3.getByteBuffer(), node3.getLength()+8);
+        
+        st.show();
+        
+        event.write(st);
+        event.scanShow(); 
+        
+        int pos = event.scan(12, 120);
+        int len = event.scanLengthAt(12, 120, pos);
+        
+        int pos1 = event.scan(12, 1, pos+8, len+8);
+        int len1 = event.scanLengthAt(12, 1, pos1);
+        
+        int pos2 = event.scan(12, 2, pos+8, len+8);
+        int len2 = event.scanLengthAt(12, 2, pos2);
+        
+        System.out.printf(" pos = %d, length = %d\n",pos,len);
+        System.out.printf(" pos 1 = %d, length = %d\n",pos1,len1);
+        System.out.printf(" pos 2 = %d, length = %d\n",pos2,len2);
+        
+        Leaf leaf  = event.readLeaf(12, 120, 12, 2);
+        Leaf leaf1 = event.readLeaf(12, 120, 12, 1);
+        Leaf leaf3 = event.readLeaf(12, 120, 12, 3);
+         
+        leaf.show();
+        leaf.print();
+        
+        leaf1.show();
+        leaf1.print();
+        
+        leaf3.show();
+        leaf3.print();
+        
+        //node1.info();
+        
+        /*
         
         node2.info();
         
-        CompositeNode node3 = new CompositeNode(12,3,"2b4f2l",1);
+        Leaf node3 = new Leaf(12,3,"2b4f2l",1);
         event.write(node3);
         
         
@@ -926,7 +995,8 @@ public class Event implements DataEvent {
         
         event.replace(12,3, node4);
         
-        event.scanShow();
+        event.scanShow();*/
+        
         /*
         SchemaBuilder schemaBuilder = new SchemaBuilder("event",1234,1);
         schemaBuilder.addEntry("pid", "I", "pid");

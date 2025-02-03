@@ -41,11 +41,17 @@ public class Hipo2Hipo4Worker extends DataWorker {
         ev.move(struct, 32200, 2);
         ev.move(struct, 32200, 3);
         
-        Node  evio = ev.read(1, 11);
-        ev.reset();
-        
-        ev.write(evio);
-        ev.write(struct);
+        //ev.write(struct);
+        int position = ev.scan(1, 11);
+        if(position>0){
+            Node  evio = ev.read(1, 11);
+            ev.reset();        
+            ev.write(evio);
+            ev.write(struct);
+        } else {
+            ev.reset();
+            ev.write(struct);
+        }
     }
     
 }
