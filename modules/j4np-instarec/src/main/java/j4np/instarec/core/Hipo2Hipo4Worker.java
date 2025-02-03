@@ -32,7 +32,7 @@ public class Hipo2Hipo4Worker extends DataWorker {
     public void execute(DataEvent e) {
         Event ev = (Event) e;
         
-        Structure struct = new Structure(32000,120,12,containerSize);
+        Structure struct = new Structure(1,12,12,containerSize);
         
         ev.move(struct, 32101, 10);
         ev.move(struct, 32000, 1);
